@@ -120,6 +120,62 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 ### 6) Checking for structures: NONE
 
 ### 7) Checking for compiler characteristics
+AC_CHECK_SIZEOF(short,2)
+AC_CHECK_SIZEOF(int,4)
+
+AC_MSG_CHECKING(size of ino_t)
+sizeof_ino_t=false
+AC_TRY_RUN([
+#include <stdio.h>
+#include <sys/types.h>
+int main()
+{
+  FILE* f;
+  if (!(f=fopen("sizeoftest", "w")))
+    return 1;
+  fprintf(f, "%d\n", sizeof(ino_t));
+  fclose(f);
+  return 0;
+}],sizeof_ino_t=0,,sizeof_ino_t=cross)
+case "$sizeof_ino_t" in
+    false) AC_MSG_ERROR(Needs to know the size of an ino_t.) ;;
+    0)     sizeof_ino_t=`cat sizeoftest 2>/dev/null`; rm sizeoftest;;
+    cross) sizeof_ino_t=4 ;;
+    *)     AC_MSG_ERROR(Fatal) ;;
+esac
+case "$sizeof_ino_t" in
+    [[0-9]]) ;;
+    *)       AC_MSG_ERROR(Non-numeric sizeof(ino_t)=\"$sizeof_ino_t\" ?) ;;
+esac
+AC_MSG_RESULT($sizeof_ino_t)
+AC_DEFINE_UNQUOTED(SIZEOF_INO_T, $sizeof_ino_t)
+
+AC_MSG_CHECKING(size of dev_t)
+sizeof_dev_t=false
+AC_TRY_RUN([
+#include <stdio.h>
+#include <sys/types.h>
+int main()
+{
+  FILE* f;
+  if (!(f=fopen("sizeoftest", "w")))
+    return 1;
+  fprintf(f, "%d\n", sizeof(dev_t));
+  fclose(f);
+  return 0;
+}],sizeof_dev_t=0,,sizeof_dev_t=cross)
+case "$sizeof_dev_t" in
+    false) AC_MSG_ERROR(Needs to know the size of an dev_t.) ;;
+    0)     sizeof_dev_t=`cat sizeoftest 2>/dev/null`; rm sizeoftest;;
+    cross) sizeof_dev_t=4 ;;
+    *)     AC_MSG_ERROR(Fatal) ;;
+esac
+case "$sizeof_dev_t" in
+    [[0-9]]) ;;
+    *)       AC_MSG_ERROR(Non-numeric sizeof(dev_t)=\"$sizeof_dev_t\" ?) ;;
+esac
+AC_MSG_RESULT($sizeof_dev_t)
+AC_DEFINE_UNQUOTED(SIZEOF_DEV_T, $sizeof_dev_t)
 
 ### 8) Checking for library functions
 AC_MSG_CHECKING(for getopt_long())

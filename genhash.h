@@ -23,9 +23,18 @@
 #ifndef GENHASH_H
 #define GENHASH_H
 
+#include "config.h"
+
 /* Generic hash types */
 typedef struct genhash_s genhash_t;
+
+#if SIZEOF_INT==4
 typedef unsigned int hashval_t;
+#elif SIZEOF_SHORT==4
+typedef unsigned short hashval_t;
+#else
+#  error Cannot find 4 bytes integral type !
+#endif
 
 /* Generic hash interface */
 genhash_t* gh_new(hashval_t(*)(const void*), 
