@@ -117,7 +117,7 @@ then
 
       int main() {
         int fd = open("configure", O_RDONLY);
-        caddr_t addr = mmap(NULL, 10, PROT_READ, MMAP_SHARED, fd, 0);
+        caddr_t addr = mmap(NULL, 10, PROT_READ, MAP_SHARED, fd, 0);
         return madvise(addr, 10, MADV_SEQUENTIAL)<0;
       }
     ],

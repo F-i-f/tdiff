@@ -8,13 +8,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
-
-#include <malloc.h>
+#include <fcntl.h>
+#include <errno.h>
 
 #include "config.h"
 
 #if HAVE_GETDENTS
-#  include <fcntl.h>
 #  if HAVE_GETDENTS_SYSCALL_H
 #    include <errno.h>
 #    include <syscall.h>
@@ -35,6 +34,10 @@
 
 #if HAVE_MMAP
 #  include <sys/mman.h>
+#endif
+
+#if HAVE_MALLINFO
+#  include <malloc.h>
 #endif
 
 #define XIT_OK            0
@@ -315,7 +318,7 @@ tree_t *getTree(const char* path)
 void
 pmem(void)
 {
-#ifdef HAVE_MALLINFO
+#if HAVE_MALLINFO
   struct mallinfo minfo;
   minfo = mallinfo();
   fprintf(stderr,
@@ -675,7 +678,7 @@ main(int argc, char*argv[])
   free(t1);
   free(t2);
 
-/*    pmem(); */
+  pmem();
 
   exit(XIT_OK);
 }
