@@ -168,7 +168,7 @@ getDirList(const char* path)
   rv->files = xmalloc(sizeof(const char*)*avail);
 
   while((nread = getdents(fd, &dentbuf.f_dent, 
-			  GETDIRLIST_DENTBUF_SIZE)))
+			  GETDIRLIST_DENTBUF_SIZE))>0)
     {
       union dentptr_u dent;
       /**/
@@ -194,7 +194,7 @@ getDirList(const char* path)
 	}
     }
 
-  if (close(fd)<0)
+  if (nread<0 || close(fd)<0)
     goto err;
 
   return rv;
