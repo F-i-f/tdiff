@@ -884,21 +884,19 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		    (int(*)(const void*, const void*))strpcmp);
 	      qsort(ct2->files, ct2->size, sizeof(char*), 
 		    (int(*)(const void*, const void*))strpcmp);
-	      for (i1 = i2 = 0; i1 < ct1->size && i2 < ct2->size; )
+	      for (i1 = i2 = 0; i1 < ct1->size || i2 < ct2->size; )
 		{
 		  if (i1 == ct1->size)
 		    {
 		      if (opt->dirs)
-			printf("Only in %s: %s\n", p2+opt->root2_length+1, 
-			       ct2->files[i2]);
+			printf("Only in %s: %s\n", p2, ct2->files[i2]);
 		      i2++;
 		      localerr = 1;
 		    }
 		  else if (i2 == ct2->size)
 		    {
 		      if (opt->dirs)
-			printf("Only in %s: %s\n", p1+opt->root1_length+1, 
-			       ct1->files[i1]);
+			printf("Only in %s: %s\n", p1, ct1->files[i1]);
 		      i1++;
 		      localerr = 1;
 		    }
