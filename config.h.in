@@ -1,0 +1,38 @@
+/* Define to 1 if your system has the getdents system call */
+#define HAVE_GETDENTS 0
+
+/* Define to 1 if you system has a getdents syscall in syscall.h but
+   not a getdents function */
+#define HAVE_GETDENTS_SYSCALL_H 0
+
+/* Define to 1 if your system has getdents in sys/getdent.h */
+#define HAVE_SYS_DIRENT_H 0
+
+/* Define to the name of the structure used by the getdents() function */
+#define GETDENTS_STRUCT __none__
+
+/* Define if the elements in the GETDENTS_STRUCT have a field which indicates
+   the length of the current dentry */
+#define GETDENTS_NEXTDENT 0
+
+/* Define to the name of the element in the GETDENTS_STRUCT which indicates
+   the length of the current dentry */
+#define GETDENTS_NEXTDENT_NAME __none__
+
+/* Define what getdents() return. Define as f_byte if it returns a
+   byte counts or f_dent if it returns a GETDENTS_STRUCT count. */
+#define GETDENTS_RETURN_Q 0
+
+/* Define to 1 if your library has the mallinfo function */
+#define HAVE_MALLINFO 0
+
+/* Define to 1 if your system has mmap() */
+#define HAVE_MMAP 0
+
+/* Define to 1 if your system has madvice() */
+#define HAVE_MADVISE 0
+
+/*
+  Local variables:
+  mode: c
+  End: */
