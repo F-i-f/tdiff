@@ -28,8 +28,6 @@
 #define INHASH_STRINGS 100000
 #define DUMMY_STRINGS 100000
 
-char *progname = "genhash_test";
-
 char* genString(void)
 {
   int nchars = random()%64;
@@ -54,6 +52,8 @@ main(void)
   srandom(0);
 
   pmem();
+
+  setprogname("genhash_test");
 
   hash = gh_new(gh_string_hash, gh_string_equal, free, NULL);
 

@@ -29,6 +29,6 @@
 #define XIT_SYS           3
 #define XIT_INTERNALERROR 4
 
-extern char* progname;
+extern const char* progname;
 
 #endif /* ndef TDIFF_H */

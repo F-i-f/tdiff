@@ -80,8 +80,6 @@
 #define XREADLINK_BUF_SIZE 1024
 #define CMPFILE_BUF_SIZE 16384
 
-char* progname;
-
 typedef struct dirl_s
 {
   size_t size;
@@ -1041,7 +1039,6 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 int 
 main(int argc, char*argv[])
 {
-  char* ptr;
   options_t options = { 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 
 			0, 0, 0, 0, ~0, NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
@@ -1050,12 +1047,12 @@ main(int argc, char*argv[])
 
   pmem();
 
-  for (progname=ptr=argv[0]; *ptr;) if (*ptr=='/') progname=++ptr; else ptr++;
+  setprogname(argv[0]);
 
   options.exclusions = gh_new(&gh_string_hash, gh_string_equal, &free, NULL);
 
   /* For getopt */
-  argv[0] = progname;
+  argv[0] = (char*)progname;
 
   while(1)
     {

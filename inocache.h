@@ -24,6 +24,7 @@
 #ifndef INOCACHE_H
 #define INOCACHE_H
 
+#include "genhash.h"
 #include <sys/types.h>
 
 typedef struct ic_ent_s
@@ -39,5 +40,6 @@ inocache_t* ic_new(void);
 void ic_delete(inocache_t*); 
 const char* ic_get(const inocache_t*, const ic_ent_t*);
 int ic_put(inocache_t*, const ic_ent_t*, const char*);
+hashval_t ic_hash(const void* vent);
 
 #endif /* INOCACHE_H */

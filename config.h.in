@@ -76,11 +76,20 @@
 /* Define to 1 if your system has doors (Solaris only probably) */
 #define HAVE_S_IFDOOR 0
 
+/* Define as the sizeof(short) */
+#define SIZEOF_SHORT 0
+
 /* Define as the sizeof(int) */
 #define SIZEOF_INT 0
 
-/* Define as the sizeof(short) */
-#define SIZEOF_SHORT 0
+/* Define as the sizeof(long) */
+#define SIZEOF_LONG 0
+
+/* Define as the sizeof(long long) */
+#define SIZEOF_LONG_LONG 0
+
+/* Define as the sizeof(void*) */
+#define SIZEOF_VOID_P 0
 
 /* Define as the sizeof(ino_t) */
 #define SIZEOF_INO_T 0

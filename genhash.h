@@ -28,12 +28,16 @@
 /* Generic hash types */
 typedef struct genhash_s genhash_t;
 
-#if SIZEOF_INT==4
-typedef unsigned int hashval_t;
-#elif SIZEOF_SHORT==4
+#if SIZEOF_SHORT==SIZEOF_VOID_P
 typedef unsigned short hashval_t;
+#elif SIZEOF_INT==SIZEOF_VOID_P
+typedef unsigned int hashval_t;
+#elif SIZEOF_LONG==SIZEOF_VOID_P
+typedef unsigned long hashval_t;
+#elif SIZEOF_LONG_LONG==SIZEOF_VOID_P
+typedef unsigned long long hashval_t;
 #else
-#  error Cannot find 4 bytes integral type !
+#  error Cannot find pointer-sized integral type !
 #endif
 
 /* Generic hash interface */

@@ -19,17 +19,18 @@
 CC         = @CC@
 RM_F       = rm -f
 CP	   = cp
+AR	   = ar
+RANLIB     = @RANLIB@
 
 # VPATH & scrdir
 srcdir     = @srcdir@
 VPATH      = @srcdir@
 
 # The default targets
-TARGETS      = tdiff genhash_test
+TARGETS      = tdiff genhash_test inocache_test
 
 # Object definitions
-OBJS_TDIFF   = tdiff.o genhash.o utils.o inocache.o
-OBJS_GHTEST  = genhash.o utils.o genhash_test.o
+OBJS         = genhash.o utils.o inocache.o
 
 # Compiler options
 CPPFLAGS     = @CPPFLAGS@ -I$(srcdir) -I.
@@ -45,16 +46,18 @@ all: $(TARGETS)
 %.o: %.c
 	$(CC) $(ALLCFLAGS) -o $@ -c $<
 
-# Program targets
-tdiff: $(OBJS_TDIFF)
-	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+# Library target
+libtdiff.a: $(OBJS)
+	$(AR) rc $@ $?
+	$(RANLIB) $@
 
-genhash_test: $(OBJS_GHTEST)
-	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+# Program targets
+%: %.o libtdiff.a
+	$(CC) $(LDFLAGS) -o $@ $< -L. -ltdiff $(LIBS) 
 
 # Cleaning
 clean::
-	$(RM_F) $(TARGETS) *~ *.o *.d
+	$(RM_F) $(TARGETS) *~ *.o *.d *.a
 
 distclean realclean:: clean
 	$(RM_F) Makefile config.h config.cache config.log config.status \
@@ -80,6 +83,7 @@ config.status: configure
 
 
 # Administratrivia
-.PHONY: all clean realclean maintclean
+.PHONY: all clean realclean maintclean /dev/null
+.SUFFIXES:
 
 include /dev/null $(wildcard *.d)

@@ -29,6 +29,8 @@
 #  include <malloc.h>
 #endif
 
+const char* progname;
+
 void* 
 xmalloc(size_t s)
 {
@@ -67,6 +69,17 @@ xstrdup(const char* s)
   rs = xmalloc(strlen(s)+1);
   strcpy(rs, s);
   return rs;
+}
+
+void
+setprogname(const char *argvname)
+{
+  const char* ptr;
+  for (progname=ptr=argvname; *ptr;) 
+    if (*ptr=='/') 
+      progname=++ptr; 
+    else 
+      ptr++;
 }
 
 #if DEBUG

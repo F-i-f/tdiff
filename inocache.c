@@ -26,14 +26,13 @@
 #include "genhash.h"
 #include <stdlib.h>
 
-static
 hashval_t
 ic_hash(const void* vent)
 {
   const ic_ent_t *ent = (const ic_ent_t*)vent;
   /**/
   hashval_t hv;
-#if SIZEOF_INO_T == 8 || SIZEOF_DEV_T == 8
+#if (SIZEOF_INO_T == 8 || SIZEOF_DEV_T == 8) && SIZEOF_VOID_P == 4
   union 
   { 
     hashval_t hvs[2]; 
@@ -42,6 +41,9 @@ ic_hash(const void* vent)
   } demux;
 #endif
 
+#if SIZEOF_VOID_P == 4
+
+  /* Hashing for 4 bytes */
 #if SIZEOF_INO_T == 4
   hv = ent->ino[0] ^ ent->ino[1];
 #elif SIZEOF_INO_T == 8
@@ -54,7 +56,7 @@ ic_hash(const void* vent)
 #endif
 
 #if SIZEOF_DEV_T == 4
-  hv ^= ent->dev[0];
+  hv ^= ent->dev[0] ^ ent->dev[1];
 #elif SIZEOF_DEV_T == 8
   demux.dev = ent->dev[0];
   hv ^= demux.hvs[0] ^ demux.hvs[1];
@@ -62,6 +64,29 @@ ic_hash(const void* vent)
   hv ^= demux.hvs[0] ^ demux.hvs[1];
 #else
 # error Unknown dev_t size !
+#endif
+
+#elif SIZEOF_VOID_P == 8
+  /* Hashing for 8 bytes */
+
+#if SIZEOF_INO_T == 4
+  hv = ((hashval_t)ent->ino[0])<<32 | ent->ino[1];
+#elif SIZEOF_INO_T == 8
+  hv = ent->ino[0] ^ ent->ino[1];
+#else
+# error Unknown ino_t size !
+#endif
+
+#if SIZEOF_DEV_T == 4
+  hv ^= ((hashval_t)ent->dev[0])<<32 | ent->dev[1];
+#elif SIZEOF_DEV_T == 8
+  hv ^= ent->dev[0] ^ ent->dev[1];
+#else
+# error Unknown dev_t size !
+#endif
+
+#else
+#error Non 4 or 8 bytes pointer !
 #endif
 
   return hv;

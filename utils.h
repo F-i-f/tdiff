@@ -30,6 +30,7 @@
 void* xmalloc(size_t);
 void* xrealloc(void*, size_t);
 char* xstrdup(const char*);
+void setprogname(const char*);
 
 #if DEBUG
 void pmem(void);

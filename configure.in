@@ -14,6 +14,7 @@ fi
 ### 2) Checking for programs
 AC_PROG_CC
 AC_PROG_CPP
+AC_PROG_RANLIB
 
 ### 3) Checking for libraries
 
@@ -122,6 +123,9 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 ### 7) Checking for compiler characteristics
 AC_CHECK_SIZEOF(short,2)
 AC_CHECK_SIZEOF(int,4)
+AC_CHECK_SIZEOF(long, 4)
+AC_CHECK_SIZEOF(long long, 8)
+AC_CHECK_SIZEOF(void *, 4)
 
 AC_MSG_CHECKING(size of ino_t)
 sizeof_ino_t=false
