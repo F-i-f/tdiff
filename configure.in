@@ -88,7 +88,7 @@ esac
 
 ### 8) Checking for library functions
 AC_MSG_CHECKING(for mallinfo())
-AC_TRY_LINK([#include <malloc.h>],[mallinfo()], 
+AC_TRY_LINK([#include <malloc.h>],[mallinfo();], 
 	    AC_DEFINE(HAVE_MALLINFO,1)
 	    AC_MSG_RESULT(yes),
 	    AC_MSG_RESULT(no))
