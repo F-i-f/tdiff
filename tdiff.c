@@ -1,3 +1,25 @@
+/*
+  tdiff - tree diffs
+  Main()
+  Copyright (C) 1999 Philippe Troin <phil@fifi.org>
+
+  $Id$
+  
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation; either version 2 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
+
 #define _GNU_SOURCE 1
 
 #include <stdio.h>
@@ -16,7 +38,10 @@
 #include <grp.h>
 #include <time.h>
 
+#include "tdiff.h"
 #include "config.h"
+#include "utils.h"
+#include "genhash.h"
 
 #if HAVE_GETDENTS
 #  if HAVE_GETDENTS_SYSCALL_H
@@ -41,10 +66,6 @@
 #  include <sys/mman.h>
 #endif
 
-#if HAVE_MALLINFO
-#  include <malloc.h>
-#endif
-
 #if HAVE_GETOPT_LONG
 #  include <getopt.h>
 #endif
@@ -53,25 +74,12 @@
 #  define lstat(f,b) stat(f,b)
 #endif
 
-#define XIT_OK            0
-#define XIT_INVOC         1
-#define XIT_DIFF          2
-#define XIT_SYS           3
-#define XIT_INTERNALERROR 4
-
 #define GETDIRLIST_INITIAL_SIZE 8
 #define GETDIRLIST_DENTBUF_SIZE 8192
 #define XREADLINK_BUF_SIZE 1024
 #define CMPFILE_BUF_SIZE 16384
 
 char* progname;
-
-typedef struct exclusion_s
-{
-  unsigned int hash;
-  char* name;
-  struct exclusion_s *next;
-} exclusion_t;
 
 typedef struct dirl_s
 {
@@ -101,19 +109,18 @@ typedef struct option_s
   unsigned int contents:1;
   unsigned int major:1;
   unsigned int minor:1;
+  unsigned int nommap:1;
   unsigned int exec:1;
   unsigned int exec_always:1;
   unsigned int mode_or;
   unsigned int mode_and;
-  exclusion_t* exclusions;
+  genhash_t*   exclusions;
   dexe_t exec_args;
   dexe_t exec_always_args;
   size_t root1_length;
   size_t root2_length;
 } options_t;
 
-void* xmalloc(size_t);
-void* xrealloc(void*, size_t);
 dirl_t *getDirList(const char* path);
 void freeDirList(dirl_t *d);
 int get_exec_args(char**, int*, dexe_t*);
@@ -122,69 +129,10 @@ char* pconcat(const char* p1, const char* p2);
 int execprocess(const dexe_t *dex, const char* p1, const char* p2);
 
 #if DEBUG
-void pmem(void);
 void printopts(const options_t*);
 #else
-#  define pmem()
 #  define printopts(a)
 #endif
-
-void* 
-xmalloc(size_t s)
-{
-  void *rv;
-  /**/
-
-  rv = malloc(s);
-  if (!rv)
-    {
-      fprintf(stderr, "%s: out of memory in malloc()\n", progname);
-      exit(XIT_SYS);
-    }
-  return rv;
-}
-
-void*
-xrealloc(void* ptr, size_t nsize)
-{
-  void* rv;
-  /**/
-
-  rv = realloc(ptr, nsize);
-  if (!rv)
-    {
-      fprintf(stderr, "%s: out of memory in realloc()\n", progname);
-      exit(XIT_SYS);
-    }
-  return rv;
-}
-
-char* 
-xstrdup(const char* s)
-{
-  char* rs;
-  /**/
-  rs = xmalloc(strlen(s)+1);
-  strcpy(rs, s);
-  return rs;
-}
-
-unsigned int
-hash(const char* string) 
-{
-  // Each letter will be shifted from 0 to 23 bits according to the
-  // sequence: 17,10,3,20,13,6,23,16,9,2,19,12,5,22,15,8,1,18,11,4,
-  // 21,14,7,0
-  unsigned int val = 0;
-  int i = 17;
-  int c;
-
-  while ((c = (*string++)) != 0) {
-    val = val ^ (c<<i);
-    if ((i-=7)<0) i += 24;
-  }
-  return val;
-}
 
 dirl_t *
 getDirList(const char* path)
@@ -329,7 +277,7 @@ getFileType(mode_t m)
 }
 
 int 
-cmpFiles(const char* f1, const char* f2)
+cmpFiles(const options_t *opt, const char* f1, const char* f2)
 {
   enum { res_untested, res_same, res_diff } result;
   int fd1, fd2;
@@ -377,6 +325,9 @@ cmpFiles(const char* f1, const char* f2)
     }
 
   result = res_untested;
+
+  if (opt->nommap)
+    goto map1_failed;
 
 #if HAVE_MMAP
   if (!(ptr1 = mmap(NULL, fs1, PROT_READ, MAP_SHARED, fd1, 0)))
@@ -485,7 +436,13 @@ void
 show_version(void)
 {
   printf("tdiff version 0.1 (CVS $Id$)\n"
-	 "Copyright (C) 1999 Philippe Troin\n");
+	 "Copyright (C) 1999 Philippe Troin.\n"
+	 "Tdiff comes with ABSOLUTELY NO WARRANTY.\n"
+	 "This is free software, and you are welcome to redistribute it\n"
+	 "under certain conditions.\n"
+	 "You should have received a copy of the GNU General Public License\n"
+	 "along with this program; if not, write to the Free Software\n"
+	 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n");
 }
 
 void
@@ -620,29 +577,8 @@ get_numeric_arg(const char* string, unsigned int* val)
 
 #if DEBUG
 void
-pmem(void)
-{
-#if HAVE_MALLINFO
-  struct mallinfo minfo;
-  minfo = mallinfo();
-  fprintf(stderr,
-	  "  brk memory = %7d bytes (%d top bytes unreleased)\n"
-	  " mmap memory = %7d bytes\n"
-	  "total memory = %7d bytes\n",
-	  minfo.arena,
-	  minfo.keepcost,
-	  minfo.hblkhd,
-	  minfo.uordblks);
-#else
-  fprintf(stderr, "memory statistics unavailable\n");
-#endif
-}
-
-void
 printopts(const options_t* o)
 {
-  exclusion_t *x;
-
 #define POPT(x) printf(#x "= %s\n", o->x ? "yes" : "no")
   POPT(dirs);
   POPT(type);
@@ -686,9 +622,6 @@ printopts(const options_t* o)
 	printf(" <%s>", *c++);
       printf("\n");
     }
-  
-  for (x=o->exclusions; x; x=x->next)
-    printf("Exclude: %08X %s\n", x->hash, x->name);
 }
 #endif /* DEBUG */
 
@@ -770,19 +703,6 @@ xreadlink(const char* path)
     }
   buf[nstored] = 0;
   return buf;
-}
-
-int
-isExcluded(const options_t* opt, const char* name)
-{
-  exclusion_t *x;
-  unsigned int nameHash;
-  /**/
-  nameHash = hash(name);
-  for (x = opt->exclusions; x; x=x->next)
-    if (nameHash == x->hash && strcmp(name, x->name)==0)
-      return 1;
-  return 0;
 }
 
 int
@@ -932,7 +852,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		{
 		  if (i1 == ct1->size)
 		    {
-		      if (opt->dirs && !isExcluded(opt, ct2->files[i2]))
+		      if (opt->dirs && !gh_find(opt->exclusions, 
+						ct2->files[i2], NULL))
 			{
 			  printf("Only in %s: %s\n", p2, ct2->files[i2]);
 			  localerr = 1;
@@ -941,7 +862,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		    }
 		  else if (i2 == ct2->size)
 		    {
-		      if (opt->dirs && !isExcluded(opt, ct1->files[i1]))
+		      if (opt->dirs && !gh_find(opt->exclusions, 
+						ct1->files[i1], NULL))
 			{
 			  printf("Only in %s: %s\n", p1, ct1->files[i1]);
 			  localerr = 1;
@@ -950,7 +872,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		    }
 		  else if (!(cmpres = strcmp(ct1->files[i1], ct2->files[i2])))
 		    {
-		      if (!isExcluded(opt, ct1->files[i1]))
+		      if (!gh_find(opt->exclusions, ct1->files[i1], NULL))
 			{
 			  char *np1 = pconcat(p1, ct1->files[i1]);
 			  char *np2 = pconcat(p2, ct2->files[i2]);
@@ -964,7 +886,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		    }
 		  else if (cmpres<0)
 		    {
-		      if (opt->dirs && !isExcluded(opt, ct1->files[i1]))
+		      if (opt->dirs && !gh_find(opt->exclusions,
+						ct1->files[i1], NULL))
 			{
 			  printf("Only in %s: %s\n", p1, ct1->files[i1]);
 			  localerr = 1;
@@ -973,7 +896,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		    }
 		  else /* cmpres>0 */
 		    {
-		      if (opt->dirs && !isExcluded(opt, ct2->files[i2]))
+		      if (opt->dirs && !gh_find(opt->exclusions, 
+						ct2->files[i2], NULL))
 			{
 			  printf("Only in %s: %s\n", p2, ct2->files[i2]);
 			  localerr = 1;
@@ -1017,7 +941,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		      if (!execprocess(&opt->exec_args, p1, p2))
 			localerr = 1;
 		    }
-		  else if (!cmpFiles(p1, p2))
+		  else if (!cmpFiles(opt, p1, p2))
 		    {
 		      printf("%s: contents differ\n",
 			     p1+opt->root1_length+1);
@@ -1083,16 +1007,17 @@ int
 main(int argc, char*argv[])
 {
   char* ptr;
-  options_t options = { 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, ~0,
+  options_t options = { 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, ~0,
 			NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
   int rv;
-  exclusion_t *exclusion;
   /**/
 
   pmem();
 
   for (progname=ptr=argv[0]; *ptr;) if (*ptr=='/') progname=++ptr; else ptr++;
+
+  options.exclusions = gh_new(&gh_string_hash, gh_string_equal, &free, NULL);
 
   /* For getopt */
   argv[0] = progname;
@@ -1134,6 +1059,7 @@ main(int argc, char*argv[])
 	{ "all",         0, 0, 'a' },
 	{ "nothing",     0, 0, 'A' },
 	{ "no-all",      0, 0, 'A' },
+	{ "no-mmap",     0, 0, 'p' },
 	{ "mode-or",     1, 0, '|' },
 	{ "mode-and",    1, 0, '&' },
 	{ "exclude",     1, 0, 'X' },
@@ -1146,7 +1072,7 @@ main(int argc, char*argv[])
 #else
 	     getopt
 #endif
-	     (argc, argv, "vhdDtTmMoOgGzZiIrRsSbBcCjJnNxwaA|:&:X:"
+	     (argc, argv, "vhdDtTmMoOgGzZiIrRsSbBcCjJnNxwaAp|:&:X:W"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -1203,6 +1129,7 @@ main(int argc, char*argv[])
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
 		    = options.major = options.minor = 0; break;
+	case 'p': options.nommap = 1; break;
 	case 'x': 
 	  if (options.exec)
 	    {
@@ -1234,13 +1161,7 @@ main(int argc, char*argv[])
 	    end_after_options = EAO_error;
 	  break;
 	case 'X':
-	  {
-	    exclusion_t* x = xmalloc(sizeof(exclusion_t));
-	    x->name = xstrdup(optarg);
-	    x->hash = hash(x->name);
-	    x->next = options.exclusions;
-	    options.exclusions = x;
-	  }
+	  gh_insert(options.exclusions, xstrdup(optarg), NULL);
 	  break;
 	default:
 	  abort();
@@ -1285,15 +1206,7 @@ main(int argc, char*argv[])
     free(options.exec_args.argv);
   if (options.exec_always)
     free(options.exec_always_args.argv);
-  for (exclusion = options.exclusions; exclusion; )
-    {
-      exclusion_t *nexcl;
-      /**/
-      free(exclusion->name);
-      nexcl = exclusion->next;
-      free(exclusion);
-      exclusion = nexcl;
-    }
+  gh_delete(options.exclusions);
 
   pmem();
 

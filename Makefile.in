@@ -25,26 +25,32 @@ srcdir     = @srcdir@
 VPATH      = @srcdir@
 
 # The default targets
-TARGETS      = tdiff
+TARGETS      = tdiff genhash_test
 
 # Object definitions
-OBJS         = tdiff.o
+OBJS_TDIFF   = tdiff.o genhash.o utils.o
+OBJS_GHTEST  = genhash.o utils.o genhash_test.o
 
 # Compiler options
 CPPFLAGS     = @CPPFLAGS@ -I$(srcdir) -I.
-CFLAGS       = @CFLAGS@ $(CPPFLAGS)
+CFLAGS       = @CFLAGS@
 LIBS         = @LIBS@
+LDFLAGS	     =
+ALLCFLAGS    = $(CFLAGS) $(CPPFLAGS)
 
 # Default rule
 all: $(TARGETS)
 
 # Generic rules
 %.o: %.c
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CC) $(ALLCFLAGS) -o $@ -c $<
 
 # Program targets
-tdiff: $(OBJS)
-	$(CC) -o $@ $^ $(LIBS)
+tdiff: $(OBJS_TDIFF)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+genhash_test: $(OBJS_GHTEST)
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 # Cleaning
 clean::
