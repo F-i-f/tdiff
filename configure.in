@@ -87,6 +87,16 @@ esac
 ### 7) Checking for compiler characteristics
 
 ### 8) Checking for library functions
+AC_MSG_CHECKING(for getopt_long())
+AC_TRY_LINK([#include <unistd.h>
+	     #include <getopt.h>
+	    ],[char *a[1];
+	     getopt_long(0, a, "foo", NULL, NULL);
+	    ],
+	    AC_MSG_RESULT(yes)
+	    AC_DEFINE(HAVE_GETOPT_LONG),
+	    AC_MSG_RESULT(no))
+
 AC_MSG_CHECKING(for mallinfo())
 AC_TRY_LINK([#include <malloc.h>],[mallinfo();], 
 	    AC_DEFINE(HAVE_MALLINFO,1)

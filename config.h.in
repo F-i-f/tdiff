@@ -32,6 +32,9 @@
 /* Define to 1 if your system has madvice() */
 #define HAVE_MADVISE 0
 
+/* Define to 1 if your GNU getopt_long() is available */
+#define HAVE_GETOPT_LONG 0
+
 /*
   Local variables:
   mode: c

@@ -40,6 +40,10 @@
 #  include <malloc.h>
 #endif
 
+#if HAVE_GETOPT_LONG
+#  include <getopt.h>
+#endif
+
 #define XIT_OK            0
 #define XIT_INVOC         1
 #define XIT_DIFF          2
@@ -50,7 +54,63 @@
 #define GETDIRLIST_DENTBUF_SIZE 8192
 #define CMPFILE_BUF_SIZE 16384
 
-const char* progname;
+char* progname;
+
+typedef struct dirl_s
+{
+  size_t size;
+  const char **files;
+} dirl_t;
+
+typedef struct tree_s
+{
+  size_t size;
+  struct ent_s
+  {
+    const char *path;
+    struct stat st;
+  } *ents;
+} tree_t;
+
+typedef struct dexe_s
+{
+  char ** argv;
+  char ** arg1;
+  char ** arg2;
+} dexe_t;
+
+typedef struct option_s
+{
+  unsigned int dirs:1;
+  unsigned int type:1;
+  unsigned int mode:1;
+  unsigned int owner:1;
+  unsigned int group:1;
+  unsigned int ctime:1;
+  unsigned int mtime:1;
+  unsigned int atime:1;
+  unsigned int size:1;
+  unsigned int blocks:1;
+  unsigned int contents:1;
+  unsigned int major:1;
+  unsigned int minor:1;
+  unsigned int exec:1;
+  unsigned int exec_always:1;
+  unsigned int mode_or;
+  unsigned int mode_and;
+  dexe_t exec_args;
+  dexe_t exec_always_args;
+} options_t;
+
+void* xmalloc(size_t);
+void* xrealloc(void*, size_t);
+dirl_t *getDirList(const char* path);
+void freeDirList(dirl_t *d);
+tree_t* mergeTrees(tree_t* t1, tree_t* t2);
+tree_t *getTree(const char* path);
+void pmem(void);
+int get_exec_args(char**, int*, dexe_t*);
+void printopts(const options_t*);
 
 void* 
 xmalloc(size_t s)
@@ -91,12 +151,6 @@ xstrdup(const char* s)
   strcpy(rs, s);
   return rs;
 }
-
-typedef struct dirl_s
-{
-  size_t size;
-  const char **files;
-} dirl_t;
 
 dirl_t *
 getDirList(const char* path)
@@ -214,16 +268,6 @@ freeDirList(dirl_t *d)
   free(d->files);
   free(d);
 }
-
-typedef struct tree_s
-{
-  size_t size;
-  struct ent_s
-  {
-    const char *path;
-    struct stat st;
-  } *ents;
-} tree_t;
 
 tree_t* mergeTrees(tree_t* t1, tree_t* t2)
 {
@@ -503,6 +547,190 @@ cmpFiles(const char* f1, const char* f2)
   return 0;
 }
 
+void
+show_version(void)
+{
+  printf("tdiff version 0.1 (CVS $Header$)\n"
+	 "Copyright (C) 1999 Philippe Troin\n");
+}
+
+void
+show_help(void)
+{
+  printf("usage: %s [options]... <dir1> <dir2>\n"
+	 " Standard options:\n"
+	 "   -v --version: show %s version\n"
+	 "   -h --help\n"
+	 " Switch options:\n"
+	 "   -d --dirs     diff directories (reports missing files)\n"
+	 "   -t --type     diffs for file type differences\n"
+	 "                 (if unset, also size, blocks, major, minor and contents\n"
+	 "                  are not checked either)\n"
+	 "   -m --mode     diffs file modes (permissions)\n"
+	 "   -o --owner    diffs file owner\n"
+	 "   -g --group    diffs file groups\n"
+	 "   -z --ctime    diffs ctime (inode modification time)\n"
+	 "   -i --mtime    diffs mtime (contents modification time)\n"
+	 "   -r --atime    diffs atime (access time)\n"
+	 "   -s --size     diffs file size (for regular files, symlinks)\n"
+	 "   -b --blocks   diffs file blocks (for regular files,symlinks and directories\n"
+	 "   -c --contents diffs file contents (for regular files and symlinks)\n"
+	 "   -j --major    diffs major device numbers (for device files)\n"
+	 "   -n --minor    diffs minor device numbers (for device files)\n"
+	 "  Each of these options can be negated with an uppercase (short option)\n"
+	 "  or with --no-option (eg -M --no-mode for not diffing modes\n"
+	 "   -a --all      equivalent to -dtmogsbcj (sets all but times)\n"
+	 "   -A --no-all   clears all flags (just reports missing files)\n"
+	 " Miscellania:\n"
+	 "   -x --exec <cmd>;         executes <cmd> between files if they are similar\n"
+	 "                            (if file sizes are equal)\n"
+	 "   -w --exec-always <cmd>;  always executes <cmd> between files\n"
+	 "        <cmd> uses %%1 and %%2 as file from <dir1> and <dir2>\n"
+	 "   -| --mode-or <bits>   applies <bits> OR mode before comparison\n"
+	 "   -& --mode-and <bits>  applies <bits> AND mode before comparison\n"
+#if ! HAVE_GETOPT_LONG
+	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
+#endif
+	 ,progname, progname);
+}
+
+int
+get_exec_args(char **argv, int *optind, dexe_t *dex)
+{
+  char **cargv;
+  int found_semi = 0;
+  char ** found_f1 = NULL;
+  char ** found_f2 = NULL;
+  int numargs;
+  int i;
+  /**/
+
+  argv += *optind;
+  cargv = argv;
+  while(1)
+    {
+      if (!*cargv) 
+	break;
+      if (strcmp("%1", *cargv)==0)
+	found_f1 = cargv;
+      else if (strcmp("%2", *cargv)==0)
+	found_f2 = cargv;
+      else if (strcmp(";", *cargv)==0)
+	{
+	  found_semi=1;
+	  break;
+	}
+      ++cargv;
+      (*optind)++;
+    }
+  (*optind)++;
+  if (!found_semi)
+    {
+      fprintf(stderr, 
+	      "%s: missing final semi-colon while scanning command line\n",
+	      progname);
+      return 0;
+    }
+  numargs = cargv-argv;
+  dex->argv = xmalloc(sizeof(char*)*(numargs+1));
+  dex->arg1 = NULL;
+  dex->arg2 = NULL;
+  for (i=0; i<numargs; i++)
+    if (&argv[i] == found_f1)
+      {
+	dex->argv[i] = NULL;
+	dex->arg1 = &dex->argv[i];
+      }
+    else if(&argv[i] == found_f2)
+      {
+	dex->argv[i] = NULL;
+	dex->arg2 = &dex->argv[i];
+      }
+    else
+      {
+	dex->argv[i] = argv[i];
+      }
+  return 1;
+}
+
+int
+get_numeric_arg(const char* string, unsigned int* val)
+{
+  size_t len;
+  char *ptr;
+  unsigned long m;
+
+  len = strlen(string);
+  if (len >=1 && string[0]=='0')
+    {
+      if (len >= 2 && string[1]=='x')
+	m = strtoul(&string[2], &ptr, 16);
+      else
+	m = strtoul(&string[1], &ptr, 8);
+    }
+  else
+    m = strtoul(&string[0], &ptr, 10);
+	
+  if (*ptr)
+    {
+      fprintf(stderr, "%s: not a number \"%s\"\n", progname, string);
+      return 0;
+    }
+  else
+    {
+      *val = m;
+      return 1;
+    }
+}
+
+void
+printopts(const options_t* o)
+{
+#define POPT(x) printf(#x "= %s\n", o->x ? "yes" : "no")
+  POPT(dirs);
+  POPT(type);
+  POPT(mode);
+  POPT(owner);
+  POPT(group);
+  POPT(ctime);
+  POPT(mtime);
+  POPT(atime);
+  POPT(size);
+  POPT(blocks);
+  POPT(contents);
+  POPT(major);
+  POPT(minor);
+  POPT(exec);
+  POPT(exec_always);
+#undef POPT
+  printf("mode OR = %04o\n", o->mode_or);
+  printf("mode AND = %04o\n", o->mode_and);
+  if (o->exec)
+    {
+      char **c = o->exec_args.argv;
+      /**/
+
+      if (o->exec_args.arg1) *(o->exec_args.arg1) = "<arg1>";
+      if (o->exec_args.arg2) *(o->exec_args.arg2) = "<arg2>";
+      printf("Exec cmd line:");
+      while(*c)
+	printf(" <%s>", *c++);
+      printf("\n");
+    }
+  if (o->exec_always)
+    {
+      char **c = o->exec_always_args.argv;
+      /**/
+
+      if (o->exec_always_args.arg1) *(o->exec_always_args.arg1) = "<arg1>";
+      if (o->exec_always_args.arg2) *(o->exec_always_args.arg2) = "<arg2>";
+      printf("Exec always cmd line:");
+      while(*c)
+	printf(" <%s>", *c++);
+      printf("\n");
+    }
+}
+
 int 
 main(int argc, char*argv[])
 {
@@ -510,14 +738,166 @@ main(int argc, char*argv[])
   tree_t *t1, *t2;
   int i1, i2;
   int rootfd;
-   /**/
+  options_t options = { 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, ~0};
+  enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
+  /**/
 
   pmem();
 
   for (progname=ptr=argv[0]; *ptr;) if (*ptr=='/') progname=++ptr; else ptr++;
 
+  /* For getopt */
+  argv[0] = progname;
 
-  if (argc!=3)
+  while(1)
+    {
+#if HAVE_GETOPT_LONG
+      struct option long_options[] = {
+	{ "version",     0, 0, 'v' },
+	{ "help",        0, 0, 'h' },
+	{ "type",        0, 0, 't' },
+	{ "dirs",        0, 0, 'd' },
+	{ "no-dirs",     0, 0, 'D' },
+	{ "no-type",     0, 0, 'T' },
+	{ "mode",        0, 0, 'm' },
+	{ "no-mode",     0, 0, 'M' },
+	{ "owner",       0, 0, 'o' },
+	{ "no-owner",    0, 0, 'O' },
+	{ "group",       0, 0, 'g' },
+	{ "no-group",    0, 0, 'G' },
+	{ "ctime",       0, 0, 'z' },
+	{ "no-ctime",    0, 0, 'Z' },
+	{ "mtime",       0, 0, 'i' },
+	{ "no-mtime",    0, 0, 'I' },
+	{ "atime",       0, 0, 'r' },
+	{ "no-atime",    0, 0, 'R' },
+	{ "size",        0, 0, 's' },
+	{ "no-size",     0, 0, 'S' },
+	{ "blocks",      0, 0, 'b' },
+	{ "no-blocks",   0, 0, 'B' },
+	{ "contents",    0, 0, 'c' },
+	{ "no-contents", 0, 0, 'C' },
+	{ "major",       0, 0, 'j' },
+	{ "no-major",    0, 0, 'J' },
+	{ "minor",       0, 0, 'n' },
+	{ "no-minor",    0, 0, 'N' },
+	{ "exec",        0, 0, 'x' },
+	{ "exec-always", 0, 0, 'w' },
+	{ "all",         0, 0, 'a' },
+	{ "nothing",     0, 0, 'A' },
+	{ "no-all",      0, 0, 'A' },
+	{ "mode-or",     1, 0, '|' },
+	{ "mode-and",    1, 0, '&' },
+	{ 0,             0, 0, 0}
+      };
+#endif /* HAVE_GETOPT_LONG */
+      switch(
+#if HAVE_GETOPT_LONG
+	     getopt_long
+#else
+	     getopt
+#endif
+	     (argc, argv, "vhdDtTmMoOgGzZiIrRsSbBcCjJnNxwaA|:&:"
+#if HAVE_GETOPT_LONG
+	      , long_options, NULL
+#endif
+	      ))
+	{
+	case -1:
+	  /* end of options */
+	  goto end_of_options;
+	case '?':
+	  /* Unknown option */
+	  end_after_options = 1;
+	  break;
+	case 'v':
+	  show_version();
+	  end_after_options = 1;
+	  break;
+	case 'h':
+	  show_help();
+	  end_after_options = 1;
+	  break;
+	case 'd': options.dirs            = 1; break;
+	case 'D': options.dirs            = 0; break;
+	case 't': options.type  	  = 1; break;
+	case 'T': options.type  	  = 0; break;
+	case 'm': options.mode  	  = 1; break;
+	case 'M': options.mode  	  = 0; break;
+	case 'o': options.owner 	  = 1; break;
+	case 'O': options.owner 	  = 0; break;
+	case 'g': options.group 	  = 1; break;
+	case 'G': options.group 	  = 0; break;
+	case 'z': options.ctime 	  = 1; break;
+	case 'Z': options.ctime 	  = 0; break;
+	case 'i': options.mtime 	  = 1; break;
+	case 'I': options.mtime 	  = 0; break;
+	case 'r': options.atime 	  = 1; break;
+	case 'R': options.atime 	  = 0; break;
+	case 's': options.size  	  = 1; break;
+	case 'S': options.size  	  = 0; break;
+	case 'b': options.blocks   	  = 1; break;
+	case 'B': options.blocks   	  = 0; break;
+	case 'c': options.contents 	  = 1; break;
+	case 'C': options.contents 	  = 0; break;
+	case 'j': options.major    	  = 1; break;
+	case 'J': options.major 	  = 0; break;
+	case 'n': options.minor 	  = 1; break;
+	case 'N': options.minor 	  = 0; break;
+	case 'a': options.dirs = options.type 
+		    = options.mode = options.owner = options.group
+		    /* = options.ctime = options.mtime  = options.atime */
+		    = options.size  = options.blocks = options.contents
+		    = options.major = options.minor = 1; break;
+	case 'A': options.dirs = options.type 
+		    = options.mode = options.owner = options.group
+		    /* = options.ctime = options.mtime  = options.atime */
+		    = options.size  = options.blocks = options.contents
+		    = options.major = options.minor = 0; break;
+	case 'x': 
+	  if (get_exec_args(argv, &optind, &options.exec_args))
+	    options.contents = options.exec = 1;
+	  else
+	    end_after_options = EAO_error;
+	  break;
+	case 'w': 
+	  if (get_exec_args(argv, &optind, &options.exec_always_args))
+	    options.exec_always = 1;
+	  else
+	    end_after_options = EAO_error;
+	  break;
+	case '|':
+	   if (!get_numeric_arg(optarg, &options.mode_or))
+	     end_after_options = EAO_error;
+	  break;
+	case '&':
+	   if (!get_numeric_arg(optarg, &options.mode_and))
+	     end_after_options = EAO_error;
+	  break;
+	default:
+	  abort();
+	}
+    }
+ end_of_options:
+  switch (end_after_options)
+    {
+    case EAO_no:
+      break;
+    case EAO_ok:
+      exit(XIT_OK);
+    case EAO_error:
+      exit(XIT_INVOC);
+    default:
+      fprintf(stderr, "%s: unknown EAO enum value\n", progname);
+      exit(XIT_INTERNALERROR);
+    }
+
+  argc -= optind;
+  argv += optind;
+
+  printopts(&options);
+      
+  if (argc!=2)
     {
       fprintf(stderr, "%s: needs two arguments\n", progname);
       exit(XIT_INVOC);
@@ -531,9 +911,9 @@ main(int argc, char*argv[])
       exit(XIT_SYS);
     }
 
-  if (chdir(argv[1])<0)
+  if (chdir(argv[0])<0)
     {
-      perror(argv[1]);
+      perror(argv[0]);
       exit(XIT_INVOC);
     }
   t1 = getTree(xstrdup("."));
@@ -544,7 +924,7 @@ main(int argc, char*argv[])
 	      progname, strerror(errno));
       exit(XIT_SYS);
     }
-  if (chdir(argv[2])<0)
+  if (chdir(argv[1])<0)
     {
       perror(argv[1]);
       exit(XIT_INVOC);
@@ -640,10 +1020,10 @@ main(int argc, char*argv[])
 	      if (rundiff)
 		{
 		  char *f1, *f2;
-		  f1= xmalloc(strlen(argv[1])+1+strlen(t1->ents[i1].path+2)+1);
-		  f2= xmalloc(strlen(argv[2])+1+strlen(t1->ents[i1].path+2)+1);
-		  sprintf(f1, "%s/%s", argv[1], t1->ents[i1].path+2);
-		  sprintf(f2, "%s/%s", argv[2], t1->ents[i1].path+2);
+		  f1= xmalloc(strlen(argv[0])+1+strlen(t1->ents[i1].path+2)+1);
+		  f2= xmalloc(strlen(argv[1])+1+strlen(t1->ents[i1].path+2)+1);
+		  sprintf(f1, "%s/%s", argv[0], t1->ents[i1].path+2);
+		  sprintf(f2, "%s/%s", argv[1], t1->ents[i1].path+2);
 		  if (!cmpFiles(f1, f2))
 		    {
 		      printf("%s: different\n", t1->ents[i1].path+2);
@@ -660,14 +1040,14 @@ main(int argc, char*argv[])
       else if (cmp<0)
 	{
 	miss1:
-	  printf("Only in %s: %s\n", argv[1], t1->ents[i1].path+2);
+	  printf("Only in %s: %s\n", argv[0], t1->ents[i1].path+2);
 	  free((char*)t1->ents[i1].path);
 	  i1++;
 	}
       else 
 	{
 	miss2:
-	  printf("Only in %s: %s\n", argv[2], t2->ents[i2].path+2);
+	  printf("Only in %s: %s\n", argv[1], t2->ents[i2].path+2);
 	  free((char*)t2->ents[i2].path);
 	  i2++;
 	}
