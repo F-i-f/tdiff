@@ -89,7 +89,7 @@ main(void)
     {
       if (!gh_find(hash, inhash[i], &valueptr))
 	printf("couldn't find inhash key !\n");
-      if ((int)valueptr != assocs[i])
+      if ((long)valueptr != assocs[i])
 	printf("stored value changed !\n");
     }
 
