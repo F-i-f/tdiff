@@ -484,7 +484,7 @@ cmpFiles(const char* f1, const char* f2)
 void
 show_version(void)
 {
-  printf("tdiff version 0.1 (CVS $Header$)\n"
+  printf("tdiff version 0.1 (CVS $Id$)\n"
 	 "Copyright (C) 1999 Philippe Troin\n");
 }
 
