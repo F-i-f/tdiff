@@ -66,6 +66,13 @@
 
 char* progname;
 
+typedef struct exclusion_s
+{
+  unsigned int hash;
+  char* name;
+  struct exclusion_s *next;
+} exclusion_t;
+
 typedef struct dirl_s
 {
   size_t size;
@@ -98,6 +105,7 @@ typedef struct option_s
   unsigned int exec_always:1;
   unsigned int mode_or;
   unsigned int mode_and;
+  exclusion_t* exclusions;
   dexe_t exec_args;
   dexe_t exec_always_args;
   size_t root1_length;
@@ -159,6 +167,23 @@ xstrdup(const char* s)
   rs = xmalloc(strlen(s)+1);
   strcpy(rs, s);
   return rs;
+}
+
+unsigned int
+hash(const char* string) 
+{
+  // Each letter will be shifted from 0 to 23 bits according to the
+  // sequence: 17,10,3,20,13,6,23,16,9,2,19,12,5,22,15,8,1,18,11,4,
+  // 21,14,7,0
+  unsigned int val = 0;
+  int i = 17;
+  int c;
+
+  while ((c = (*string++)) != 0) {
+    val = val ^ (c<<i);
+    if ((i-=7)<0) i += 24;
+  }
+  return val;
 }
 
 dirl_t *
@@ -497,6 +522,7 @@ show_help(void)
 	 "        <cmd> uses %%1 and %%2 as file from <dir1> and <dir2>\n"
 	 "   -| --mode-or <bits>   applies <bits> OR mode before comparison\n"
 	 "   -& --mode-and <bits>  applies <bits> AND mode before comparison\n"
+	 "   -X --exclude <file>   omits <file> from report\n"
 #if ! HAVE_GETOPT_LONG
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
 #endif
@@ -615,6 +641,8 @@ pmem(void)
 void
 printopts(const options_t* o)
 {
+  exclusion_t *x;
+
 #define POPT(x) printf(#x "= %s\n", o->x ? "yes" : "no")
   POPT(dirs);
   POPT(type);
@@ -658,6 +686,9 @@ printopts(const options_t* o)
 	printf(" <%s>", *c++);
       printf("\n");
     }
+  
+  for (x=o->exclusions; x; x=x->next)
+    printf("Exclude: %08X %s\n", x->hash, x->name);
 }
 #endif /* DEBUG */
 
@@ -742,6 +773,19 @@ xreadlink(const char* path)
 }
 
 int
+isExcluded(const options_t* opt, const char* name)
+{
+  exclusion_t *x;
+  unsigned int nameHash;
+  /**/
+  nameHash = hash(name);
+  for (x = opt->exclusions; x; x=x->next)
+    if (nameHash == x->hash && strcmp(name, x->name)==0)
+      return 1;
+  return 0;
+}
+
+int
 dodiff(const options_t* opt, const char* p1, const char* p2)
 {
   struct stat sbuf1;
@@ -817,7 +861,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 
       if (gn1) free(gn1);
       if (gn2) free(gn2);
-
+      
       localerr = 1;
     }
   if (opt->ctime && sbuf1.st_ctime != sbuf2.st_ctime)
@@ -888,42 +932,53 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		{
 		  if (i1 == ct1->size)
 		    {
-		      if (opt->dirs)
-			printf("Only in %s: %s\n", p2, ct2->files[i2]);
+		      if (opt->dirs && !isExcluded(opt, ct2->files[i2]))
+			{
+			  printf("Only in %s: %s\n", p2, ct2->files[i2]);
+			  localerr = 1;
+			}
 		      i2++;
-		      localerr = 1;
 		    }
 		  else if (i2 == ct2->size)
 		    {
-		      if (opt->dirs)
-			printf("Only in %s: %s\n", p1, ct1->files[i1]);
+		      if (opt->dirs && !isExcluded(opt, ct1->files[i1]))
+			{
+			  printf("Only in %s: %s\n", p1, ct1->files[i1]);
+			  localerr = 1;
+			}
 		      i1++;
-		      localerr = 1;
 		    }
 		  else if (!(cmpres = strcmp(ct1->files[i1], ct2->files[i2])))
 		    {
-		      char *np1 = pconcat(p1, ct1->files[i1++]);
-		      char *np2 = pconcat(p2, ct2->files[i2++]);
-		      int nrv = dodiff(opt, np1, np2);
-		      free(np1);
-		      free(np2);
-		      if (nrv>rv) rv = nrv;
+		      if (!isExcluded(opt, ct1->files[i1]))
+			{
+			  char *np1 = pconcat(p1, ct1->files[i1]);
+			  char *np2 = pconcat(p2, ct2->files[i2]);
+			  int nrv = dodiff(opt, np1, np2);
+			  free(np1);
+			  free(np2);
+			  if (nrv>rv) rv = nrv;
+			}
+		      i1++;
+		      i2++;
 		    }
 		  else if (cmpres<0)
 		    {
-		      if (opt->dirs)
-			printf("Only in %s: %s\n", p1, 
-			       ct1->files[i1]);
+		      if (opt->dirs && !isExcluded(opt, ct1->files[i1]))
+			{
+			  printf("Only in %s: %s\n", p1, ct1->files[i1]);
+			  localerr = 1;
+			}
 		      i1++;
-		      localerr = 1;
 		    }
 		  else /* cmpres>0 */
 		    {
-		      if (opt->dirs)
-			printf("Only in %s: %s\n", p2, 
-			       ct2->files[i2]);
+		      if (opt->dirs && !isExcluded(opt, ct2->files[i2]))
+			{
+			  printf("Only in %s: %s\n", p2, ct2->files[i2]);
+			  localerr = 1;
+			}
 		      i2++;
-		      localerr = 1;
 		    }
 		}
 	    }
@@ -1028,9 +1083,11 @@ int
 main(int argc, char*argv[])
 {
   char* ptr;
-  options_t options = { 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, ~0};
+  options_t options = { 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, ~0,
+			NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
   int rv;
+  exclusion_t *exclusion;
   /**/
 
   pmem();
@@ -1079,6 +1136,7 @@ main(int argc, char*argv[])
 	{ "no-all",      0, 0, 'A' },
 	{ "mode-or",     1, 0, '|' },
 	{ "mode-and",    1, 0, '&' },
+	{ "exclude",     1, 0, 'X' },
 	{ 0,             0, 0, 0}
       };
 #endif /* HAVE_GETOPT_LONG */
@@ -1088,7 +1146,7 @@ main(int argc, char*argv[])
 #else
 	     getopt
 #endif
-	     (argc, argv, "vhdDtTmMoOgGzZiIrRsSbBcCjJnNxwaA|:&:"
+	     (argc, argv, "vhdDtTmMoOgGzZiIrRsSbBcCjJnNxwaA|:&:X:"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -1168,12 +1226,21 @@ main(int argc, char*argv[])
 	    end_after_options = EAO_error;
 	  break;
 	case '|':
-	   if (!get_numeric_arg(optarg, &options.mode_or))
-	     end_after_options = EAO_error;
+	  if (!get_numeric_arg(optarg, &options.mode_or))
+	    end_after_options = EAO_error;
 	  break;
 	case '&':
-	   if (!get_numeric_arg(optarg, &options.mode_and))
-	     end_after_options = EAO_error;
+	  if (!get_numeric_arg(optarg, &options.mode_and))
+	    end_after_options = EAO_error;
+	  break;
+	case 'X':
+	  {
+	    exclusion_t* x = xmalloc(sizeof(exclusion_t));
+	    x->name = xstrdup(optarg);
+	    x->hash = hash(x->name);
+	    x->next = options.exclusions;
+	    options.exclusions = x;
+	  }
 	  break;
 	default:
 	  abort();
@@ -1218,6 +1285,15 @@ main(int argc, char*argv[])
     free(options.exec_args.argv);
   if (options.exec_always)
     free(options.exec_always_args.argv);
+  for (exclusion = options.exclusions; exclusion; )
+    {
+      exclusion_t *nexcl;
+      /**/
+      free(exclusion->name);
+      nexcl = exclusion->next;
+      free(exclusion);
+      exclusion = nexcl;
+    }
 
   pmem();
 
