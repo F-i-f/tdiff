@@ -81,6 +81,12 @@ case "$getdents" in
 	;;
 esac
 
+AC_MSG_CHECKING(for random in stdlib.h)
+AC_EGREP_CPP(random, [#include <stdlib.h>],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_RANDOM,1),
+	     AC_MSG_RESULT(no))
+
 ### 5) Checking for typedefs: NONE
 AC_MSG_CHECKING(for S_IFLNK in stat)
 AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
@@ -274,6 +280,14 @@ AC_TRY_LINK([#include <sys/stat.h>
 	    AC_MSG_RESULT(yes)
 	    AC_DEFINE(HAVE_LSTAT,1),
 	    AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING(for random())
+AC_TRY_LINK([#include <stdlib.h>],
+	    [srandom(0); random();],
+	    AC_MSG_RESULT(yes)
+	    GENHASH_TEST_TARGET=genhash_test,
+	    AC_MSG_RESULT(no))
+AC_SUBST(GENHASH_TEST_TARGET)
 
 ### 9) Check for "system services"
 

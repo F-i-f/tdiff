@@ -64,6 +64,9 @@
 /* Define to 1 if your system has lstat() */
 #define HAVE_LSTAT 0
 
+/* Define to 1 if stdlib.h contains the random() functions */
+#define HAVE_RANDOM 0
+
 /* Define to 1 if your system has symbolic links */
 #define HAVE_S_IFLNK 0
 

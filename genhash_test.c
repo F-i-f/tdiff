@@ -25,6 +25,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#if ! HAVE_RANDOM
+long int random(void);
+void srandom(unsigned int);
+#endif
+
 #define INHASH_STRINGS 100000
 #define DUMMY_STRINGS 100000
 

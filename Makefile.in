@@ -27,7 +27,7 @@ srcdir     = @srcdir@
 VPATH      = @srcdir@
 
 # The default targets
-TARGETS      = tdiff genhash_test inocache_test
+TARGETS      = tdiff inocache_test @GENHASH_TEST_TARGET@
 
 # Object definitions
 OBJS         = genhash.o utils.o inocache.o
