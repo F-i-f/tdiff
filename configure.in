@@ -107,6 +107,17 @@ AC_EGREP_CPP(random, [#include <stdlib.h>],
 	     AC_DEFINE(HAVE_RANDOM,1),
 	     AC_MSG_RESULT(no))
 
+major_keep_trying=yes
+AC_MSG_CHECKING(for major and minor in mkdev.h)
+AC_EGREP_CPP(major,
+	     [#include <sys/mkdev.h>],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_SYS_MKDEV_H,1)
+	     unset major_keep_trying,
+	     AC_MSG_RESULT(no))
+
+if test "$major_keep_trying"
+then
 AC_MSG_CHECKING(for major and minor in sysmacros.h)
 AC_EGREP_CPP(oh_yes, 
              [#include <sys/sysmacros.h>
@@ -115,8 +126,15 @@ AC_EGREP_CPP(oh_yes,
               #endif
              ],
              AC_MSG_RESULT(yes)
-             AC_DEFINE(HAVE_SYS_SYSMACROS_H,1),
+             AC_DEFINE(HAVE_SYS_SYSMACROS_H,1)
+	     unset major_keep_trying,
              AC_MSG_RESULT(no))
+fi
+
+if test "$major_keep_trying"
+then
+    AC_MSG_ERROR(Cannot find a definition for major() and minor())
+fi
 
 ### 5) Checking for typedefs: NONE
 AC_MSG_CHECKING(for S_IFLNK in stat)

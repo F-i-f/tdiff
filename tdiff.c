@@ -74,8 +74,12 @@
 #  define lstat(f,b) stat(f,b)
 #endif
 
-#if HAVE_SYS_SYSMACROS_H
-#include <sys/sysmacros.h>
+#if HAVE_SYS_MKDEV_H
+#  include <sys/mkdev.h>
+#elif HAVE_SYS_SYSMACROS_H
+#  include <sys/sysmacros.h>
+#else
+#  error Cannot find major() and minor()
 #endif
 
 #define GETDIRLIST_INITIAL_SIZE 8
