@@ -107,6 +107,17 @@ AC_EGREP_CPP(random, [#include <stdlib.h>],
 	     AC_DEFINE(HAVE_RANDOM,1),
 	     AC_MSG_RESULT(no))
 
+AC_MSG_CHECKING(for major and minor in sysmacros.h)
+AC_EGREP_CPP(oh_yes, 
+             [#include <sys/sysmacros.h>
+	      #if defined(minor) && defined(major)
+              oh_yes
+              #endif
+             ],
+             AC_MSG_RESULT(yes)
+             AC_DEFINE(HAVE_SYS_SYSMACROS_H,1),
+             AC_MSG_RESULT(no))
+
 ### 5) Checking for typedefs: NONE
 AC_MSG_CHECKING(for S_IFLNK in stat)
 AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>

@@ -29,9 +29,6 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#if 0
-#include <sys/sysmacros.h>
-#endif
 #include <sys/wait.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -75,6 +72,10 @@
 
 #if !HAVE_LSTAT
 #  define lstat(f,b) stat(f,b)
+#endif
+
+#if HAVE_SYS_SYSMACROS_H
+#include <sys/sysmacros.h>
 #endif
 
 #define GETDIRLIST_INITIAL_SIZE 8
@@ -1286,6 +1287,10 @@ main(int argc, char*argv[])
   if (options.exec_always)
     free(options.exec_always_args.argv);
   gh_delete(options.exclusions);
+
+#if DEBUG
+  gh_stats(options.inocache, "inode cache");
+#endif
   ic_delete(options.inocache);
 
   pmem();

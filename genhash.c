@@ -171,7 +171,7 @@ gh_insert(genhash_t *gh, void* key, void* value)
   if (gh_find_withhash(gh, key, NULL, hv))
     return 0;
   
-  if (gh->entries > primelist[gh->primidx])
+  if (gh->entries > primelist[gh->primidx]*2/3)
     gh_grow(gh);
 
   gh->entries++;

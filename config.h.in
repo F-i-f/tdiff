@@ -49,6 +49,9 @@
    byte counts or f_dent if it returns a GETDENTS_STRUCT count. */
 #define GETDENTS_RETURN_Q 0
 
+/* Define to 1 if your system has major and minor macros in sys/sysmacros.h */
+#define HAVE_SYS_SYSMACROS_H 0
+
 /* Define to 1 if your library has the mallinfo function */
 #define HAVE_MALLINFO 0
 
