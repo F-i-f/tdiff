@@ -956,29 +956,31 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	      content_diff = 0;
 	    }
 	  if (opt->contents)
-	    if (content_diff)
-	      {
-		if (opt->exec)
-		  {
-		    if (!execprocess(&opt->exec_args, p1, p2))
+	    {
+	      if (content_diff)
+		{
+		  if (opt->exec)
+		    {
+		      if (!execprocess(&opt->exec_args, p1, p2))
+			localerr = 1;
+		    }
+		  else if (!cmpFiles(p1, p2))
+		    {
+		      printf("%s: contents differ\n",
+			     p1+opt->root1_length+1);
 		      localerr = 1;
-		  }
-		else if (!cmpFiles(p1, p2))
-		  {
-		    printf("%s: contents differ\n",
-			   p1+opt->root1_length+1);
-		    localerr = 1;
-		  }
+		    }
+		}
+	      else
+		{
+		  printf("%s: contents differ\n",
+			 p1+opt->root1_length+1);
+		  localerr = 1;
 	      }
-	    else
-	      {
-		printf("%s: contents differ\n",
-		       p1+opt->root1_length+1);
-		localerr = 1;
-	      }
-	  if (opt->exec_always)
-	    if (!execprocess(&opt->exec_always_args, p1, p2))
-	      localerr=1;
+	      if (opt->exec_always)
+		if (!execprocess(&opt->exec_always_args, p1, p2))
+		  localerr=1;
+	    }
 	}
 	break;
 #if HAVE_S_IFLNK
@@ -1163,7 +1165,7 @@ main(int argc, char*argv[])
 	      end_after_options = EAO_error;
 	    }
 	  else if (get_exec_args(argv, &optind, &options.exec_always_args))
-	    options.exec_always = 1;
+	    options.contents = options.exec_always = 1;
 	  else
 	    end_after_options = EAO_error;
 	  break;
