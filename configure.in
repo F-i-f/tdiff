@@ -81,6 +81,41 @@ case "$getdents" in
 esac
 
 ### 5) Checking for typedefs: NONE
+AC_MSG_CHECKING(for S_IFLNK in stat)
+AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
+	     #ifdef S_IFLNK
+	     oh_yes_oh_yes
+	     #endif],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_S_IFLNK),
+	     AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING(for S_IFIFO in stat)
+AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
+	     #ifdef S_IFIFO
+	     oh_yes_oh_yes
+	     #endif],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_S_IFIFO),
+	     AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING(for S_IFSOCK in stat)
+AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
+	     #ifdef S_IFSOCK
+	     oh_yes_oh_yes
+	     #endif],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_S_IFSOCK),
+	     AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING(for S_IFDOOR in stat)
+AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
+	     #ifdef S_IFDOOR
+	     oh_yes_oh_yes
+	     #endif],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_S_IFDOOR),
+	     AC_MSG_RESULT(no))
 
 ### 6) Checking for structures: NONE
 
@@ -94,7 +129,7 @@ AC_TRY_LINK([#include <unistd.h>
 	     getopt_long(0, a, "foo", NULL, NULL);
 	    ],
 	    AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_GETOPT_LONG),
+	    AC_DEFINE(HAVE_GETOPT_LONG,1),
 	    AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for mallinfo())
@@ -107,7 +142,7 @@ AC_MSG_CHECKING(for mmap())
 AC_TRY_LINK([#include <sys/mman.h>],
             [mmap((void*)0, 0, 0, 0, 0, 0);],
 	    AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_MMAP),
+	    AC_DEFINE(HAVE_MMAP,1),
 	    AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for madvise())
@@ -126,13 +161,13 @@ then
       #include <fcntl.h>
 
       int main() {
-        int fd = open("configure", O_RDONLY);
+        int fd = open("config.log", O_RDONLY);
         caddr_t addr = mmap(NULL, 10, PROT_READ, MAP_SHARED, fd, 0);
         return madvise(addr, 10, MADV_SEQUENTIAL)<0;
       }
     ],
     AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_MADVISE),    
+    AC_DEFINE(HAVE_MADVISE,1),    
     AC_MSG_RESULT(no),
     AC_MSG_ERROR(cannot test for working madvise() when cross-compiling))
 fi
@@ -172,9 +207,18 @@ fi
 
 
 case "$getdents" in
-    libc)    AC_DEFINE(HAVE_GETDENTS) ;;
-    syscall) AC_DEFINE(HAVE_GETDENTS) AC_DEFINE(HAVE_GETDENTS_SYSCALL) ;;
+    libc)    AC_DEFINE(HAVE_GETDENTS,1) ;;
+    syscall) AC_DEFINE(HAVE_GETDENTS,1) AC_DEFINE(HAVE_GETDENTS_SYSCALL,1) ;;
 esac
+
+AC_MSG_CHECKING(for lstat())
+AC_TRY_LINK([#include <sys/stat.h>
+	    #include <unistd.h>],
+            [struct stat buf;
+	    lstat("/", &buf);],
+	    AC_MSG_RESULT(yes)
+	    AC_DEFINE(HAVE_LSTAT,1),
+	    AC_MSG_RESULT(no))
 
 ### 9) Check for "system services"
 

@@ -44,6 +44,10 @@
 #  include <getopt.h>
 #endif
 
+#if !HAVE_LSTAT
+#  define lstat(f,b) stat(f,b)
+#endif
+
 #define XIT_OK            0
 #define XIT_INVOC         1
 #define XIT_DIFF          2
@@ -387,9 +391,18 @@ getFileType(mode_t m)
     case S_IFREG:  return "regular file";
     case S_IFCHR:  return "character device";
     case S_IFBLK:  return "block device";
+#if HAVE_S_IFIFO
     case S_IFIFO:  return "fifo";
+#endif
+#if HAVE_S_IFLNK
     case S_IFLNK:  return "symbolic link";
+#endif
+#if HAVE_S_IFSOCK
     case S_IFSOCK: return "socket";
+#endif
+#if HAVE_S_IFDOOR
+    case S_IFDOOR: return "door";
+#endif
     default:       return "unknown";
     }
 }

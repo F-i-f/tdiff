@@ -35,6 +35,21 @@
 /* Define to 1 if your GNU getopt_long() is available */
 #define HAVE_GETOPT_LONG 0
 
+/* Define to 1 if your system has lstat() */
+#define HAVE_LSTAT 0
+
+/* Define to 1 if your system has symbolic links */
+#define HAVE_S_IFLNK 0
+
+/* Define to 1 if your system has fifos */
+#define HAVE_S_IFIFO 0
+
+/* Define to 1 if your system has AF_UNIX (AF_LOCAL) sockets */
+#define HAVE_S_IFSOCK 0
+
+/* Define to 1 if your system has doors (Solaris only probably) */
+#define HAVE_S_IFDOOR 0
+
 /*
   Local variables:
   mode: c
