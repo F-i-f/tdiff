@@ -144,7 +144,30 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     AC_DEFINE(HAVE_S_IFDOOR),
 	     AC_MSG_RESULT(no))
 
-### 6) Checking for structures: NONE
+AC_MSG_CHECKING(for S_IFWHT in stat)
+AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
+	     #ifdef S_IFWHT
+	     oh_yes_oh_yes
+	     #endif],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_S_IFWHT),
+	     AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING(for BSD 4.4 flags in stat)
+AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
+	     #if defined(UF_NODUMP) && defined(UF_IMMUTABLE) && defined(UF_APPEND) && defined(UF_OPAQUE) && defined(UF_NOUNLINK) && defined(SF_ARCHIVED) && defined(SF_IMMUTABLE) && defined(SF_APPEND) && defined(SF_NOUNLINK)
+	     oh_yes_oh_yes
+	     #endif],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_BSD4_4FLAGS),
+	     AC_MSG_RESULT(no))
+
+### 6) Checking for structures: 
+AC_MSG_CHECKING(for st_flags in struct stat)
+AC_EGREP_CPP(st_flags,[#include <sys/stat.h>], 
+	     AC_DEFINE(HAVE_ST_FLAGS)
+	     AC_MSG_RESULT(yes),
+	     AC_MSG_RESULT(no))
 
 ### 7) Checking for compiler characteristics
 AC_CHECK_SIZEOF(short,2)
@@ -225,14 +248,16 @@ AC_TRY_LINK([#include <malloc.h>],[mallinfo();],
 	    AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for mmap())
-AC_TRY_LINK([#include <sys/mman.h>],
+AC_TRY_LINK([#include <sys/types.h>
+	     #include <sys/mman.h>],
             [mmap((void*)0, 0, 0, 0, 0, 0);],
 	    AC_MSG_RESULT(yes)
 	    AC_DEFINE(HAVE_MMAP,1),
 	    AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for madvise())
-AC_TRY_LINK([#include <sys/mman.h>],
+AC_TRY_LINK([#include <sys/types.h>
+	     #include <sys/mman.h>],
             [madvise((void*)0, 0, 0);],
 	    AC_MSG_RESULT(yes)
 	    madvise=1,
@@ -242,6 +267,7 @@ if test "$madvise"
 then
     AC_MSG_CHECKING(for working madvise())
     AC_TRY_RUN([
+      #include <stdlib.h>
       #include <sys/types.h>
       #include <sys/mman.h>
       #include <fcntl.h>
@@ -320,7 +346,7 @@ then
     CFLAGS="$CFLAGS -MD"
     LAX_CFLAGS="$LAX_CFLAGS -MD -w"
     case "`uname -s`" in
-	Linux) CFLAGS="$CFLAGS -Wall -Wstrict-prototypes -Werror";;
+	Linux|FreeBSD) CFLAGS="$CFLAGS -Wall -Wstrict-prototypes -Werror";;
     esac
 fi
 AC_SUBST(LAX_CFLAGS)

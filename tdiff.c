@@ -29,7 +29,9 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#if 0
 #include <sys/sysmacros.h>
+#endif
 #include <sys/wait.h>
 #include <dirent.h>
 #include <fcntl.h>
@@ -99,6 +101,7 @@ typedef struct option_s
   unsigned int dirs:1;
   unsigned int type:1;
   unsigned int mode:1;
+  unsigned int flags:1;
   unsigned int owner:1;
   unsigned int group:1;
   unsigned int ctime:1;
@@ -273,6 +276,9 @@ getFileType(mode_t m)
 #if HAVE_S_IFDOOR
     case S_IFDOOR: return "door";
 #endif
+#if HAVE_S_IFWHT
+    case S_IFWHT:  return "whiteout";
+#endif
     default:       return "unknown";
     }
 }
@@ -351,10 +357,9 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
  map2_failed:
   if (munmap(ptr1, fs1)<0)
     perror(f1);
-
- map1_failed:
 #endif /* HAVE_MMAP */
 
+ map1_failed:
   if (result == res_untested)
     {
       char buf1[CMPFILE_BUF_SIZE];
@@ -460,6 +465,9 @@ show_help(void)
 	 "                 (if unset, also size, blocks, major, minor and contents\n"
 	 "                  are not checked either)\n"
 	 "   -m --mode     diffs file modes (permissions)\n"
+#if HAVE_ST_FLAGS
+	 "   -f --flags    diffs flags (4.4BSD)\n"
+#endif
 	 "   -o --owner    diffs file owner\n"
 	 "   -g --group    diffs file groups\n"
 	 "   -z --ctime    diffs ctime (inode modification time)\n"
@@ -768,8 +776,17 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       int mm1, mm2;
       /**/
 
-      rm1 = (~S_IFMT)&(sbuf1.st_mode);
-      rm2 = (~S_IFMT)&(sbuf2.st_mode);
+      /* Note that we mask the symlink modes... because of 4.4BSD */
+      rm1 = ((~S_IFMT)&(sbuf1.st_mode))
+#if HAVE_S_IFLNK
+	|(S_ISLNK(sbuf1.st_mode) ? 0777 : 0)
+#endif
+	;
+      rm2 = ((~S_IFMT)&(sbuf2.st_mode))
+#if HAVE_S_IFLNK
+	|(S_ISLNK(sbuf1.st_mode) ? 0777 : 0)
+#endif
+	;
 
       mm1 = (rm1&(opt->mode_and))|(opt->mode_or);
       mm2 = (rm2&(opt->mode_and))|(opt->mode_or);
@@ -781,6 +798,14 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	  localerr = 1;
 	}
     }
+#if HAVE_ST_FLAGS
+  if (opt->flags && sbuf1.st_flags != sbuf2.st_flags)
+    {
+      printf("%s: flags: %08X %08X\n",
+	     p1+opt->root1_length+1, sbuf1.st_flags, sbuf2.st_flags);
+      localerr = 1;
+    }
+#endif HAVE_ST_FLAGS
   if (opt->owner && sbuf1.st_uid != sbuf2.st_uid)
     {
       const struct passwd* pw;
@@ -1039,7 +1064,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 int 
 main(int argc, char*argv[])
 {
-  options_t options = { 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 
+  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 
 			0, 0, 0, 0, ~0, NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
   int rv;
@@ -1066,6 +1091,8 @@ main(int argc, char*argv[])
 	{ "no-dirs",     0, 0, 'D' },
 	{ "no-type",     0, 0, 'T' },
 	{ "mode",        0, 0, 'm' },
+	{ "flags",       0, 0, 'f' },
+	{ "noflags",     0, 0, 'F' },
 	{ "no-mode",     0, 0, 'M' },
 	{ "owner",       0, 0, 'o' },
 	{ "no-owner",    0, 0, 'O' },
@@ -1105,7 +1132,7 @@ main(int argc, char*argv[])
 #else
 	     getopt
 #endif
-	     (argc, argv, "vVhdDtTmMoOgGzZiIrRsSbBcCjJnNxwaAp|:&:X:W"
+	     (argc, argv, "vVhdDtTmMfFoOgGzZiIrRsSbBcCjJnNxwaAp|:&:X:W"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -1133,6 +1160,8 @@ main(int argc, char*argv[])
 	case 'T': options.type  	  = 0; break;
 	case 'm': options.mode  	  = 1; break;
 	case 'M': options.mode  	  = 0; break;
+	case 'f': options.flags           = 1; break;
+	case 'F': options.flags           = 0; break;
 	case 'o': options.owner 	  = 1; break;
 	case 'O': options.owner 	  = 0; break;
 	case 'g': options.group 	  = 1; break;
@@ -1154,12 +1183,14 @@ main(int argc, char*argv[])
 	case 'n': options.minor 	  = 1; break;
 	case 'N': options.minor 	  = 0; break;
 	case 'a': options.dirs = options.type 
-		    = options.mode = options.owner = options.group
+		    = options.mode = options.flags = options.owner 
+		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
 		    = options.major = options.minor = 1; break;
 	case 'A': options.dirs = options.type 
-		    = options.mode = options.owner = options.group
+		    = options.mode = options.flags = options.owner 
+		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
 		    = options.major = options.minor = 0; break;
@@ -1227,11 +1258,11 @@ main(int argc, char*argv[])
     }
 
   options.root1_length = strlen(argv[0]);
-  while (argv[0][options.root1_length-1] == '/')
+  while (argv[0][options.root1_length-1] == '/' && options.root1_length>1)
     argv[0][--options.root1_length] = 0;
 
   options.root2_length = strlen(argv[1]);
-  while (argv[1][options.root2_length-1] == '/')
+  while (argv[1][options.root2_length-1] == '/' && options.root2_length>1)
     argv[1][--options.root2_length] = 0;
 
   options.inocache = ic_new();
