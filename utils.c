@@ -24,6 +24,7 @@
 #include "utils.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #if HAVE_MALLINFO
 #  include <malloc.h>
