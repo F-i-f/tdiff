@@ -332,6 +332,12 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
       exit(XIT_INTERNALERROR);
     }
 
+  if (fs1 == 0)
+    {
+      result = res_same;
+      goto closefiles;
+    }
+
   result = res_untested;
 
   if (opt->nommap)
@@ -411,6 +417,7 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 	result = res_same;
     }
 
+ closefiles:
   if (close(fd1)<0)
     {
       perror(f1);
