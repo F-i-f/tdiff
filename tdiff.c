@@ -7,9 +7,14 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/sysmacros.h>
+#include <sys/wait.h>
 #include <dirent.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <pwd.h>
+#include <grp.h>
+#include <time.h>
 
 #include "config.h"
 
@@ -56,6 +61,7 @@
 
 #define GETDIRLIST_INITIAL_SIZE 8
 #define GETDIRLIST_DENTBUF_SIZE 8192
+#define XREADLINK_BUF_SIZE 1024
 #define CMPFILE_BUF_SIZE 16384
 
 char* progname;
@@ -65,16 +71,6 @@ typedef struct dirl_s
   size_t size;
   const char **files;
 } dirl_t;
-
-typedef struct tree_s
-{
-  size_t size;
-  struct ent_s
-  {
-    const char *path;
-    struct stat st;
-  } *ents;
-} tree_t;
 
 typedef struct dexe_s
 {
@@ -104,17 +100,26 @@ typedef struct option_s
   unsigned int mode_and;
   dexe_t exec_args;
   dexe_t exec_always_args;
+  size_t root1_length;
+  size_t root2_length;
 } options_t;
 
 void* xmalloc(size_t);
 void* xrealloc(void*, size_t);
 dirl_t *getDirList(const char* path);
 void freeDirList(dirl_t *d);
-tree_t* mergeTrees(tree_t* t1, tree_t* t2);
-tree_t *getTree(const char* path);
-void pmem(void);
 int get_exec_args(char**, int*, dexe_t*);
+int dodiff(const options_t* opt, const char* p1, const char* p2);
+char* pconcat(const char* p1, const char* p2);
+int execprocess(const dexe_t *dex, const char* p1, const char* p2);
+
+#if DEBUG
+void pmem(void);
 void printopts(const options_t*);
+#else
+#  define pmem()
+#  define printopts(a)
+#endif
 
 void* 
 xmalloc(size_t s)
@@ -273,129 +278,20 @@ freeDirList(dirl_t *d)
   free(d);
 }
 
-tree_t* mergeTrees(tree_t* t1, tree_t* t2)
-{
-  tree_t* rt;
-  int i1, i2, ir=0;
-  /**/
-  rt = xmalloc(sizeof(tree_t));
-  rt->size  = t1->size+t2->size;
-  rt->ents = xmalloc(rt->size * sizeof(struct ent_s));
-
-  for ( i1 = 0, i2 = 0, ir = 0; i1 < t1->size || i2 < t2->size; )
-    {
-      const struct ent_s *pick = NULL;
-      /**/
-
-      if (i1 == t1->size)
-	pick = &t2->ents[i2++];
-      else if (i2 == t2->size)
-	pick = &t1->ents[i1++];
-      else
-	{
-	  int cmp;
-	  /**/
-	  cmp = strcmp(t1->ents[i1].path, t2->ents[i2].path);
-	  if (cmp<0)
-	    pick = &t1->ents[i1++];
-	  else if (cmp>0)
-	    pick = &t2->ents[i2++];
-	  else
-	    {
-	      fprintf(stderr, "%s: duplicate path in mergeTree()\n",
-		      progname);
-	      exit(XIT_INTERNALERROR);
-	    }
-	}
-      rt->ents[ir++] = *pick;
-    }
-
-  return rt;
-}
-
-tree_t *getTree(const char* path)
-{
-  struct stat st;
-  tree_t *rt;
-  /**/
-
-  if (lstat(path, &st)<0)
-    {
-      perror(path);
-      return NULL;
-    }
-
-  rt = xmalloc(sizeof(tree_t));
-  rt->size = 1;
-  rt->ents = xmalloc(sizeof(struct ent_s));
-  rt->ents[0].path = path;
-  rt->ents[0].st = st;
-
-  if (S_ISDIR(st.st_mode))
-    {
-      dirl_t* dirl;
-      int i;
-      /**/
-      if ((dirl=getDirList(path)))
-	{
-	  for (i=0; i<dirl->size; ++i)
-	    {
-	      char *npath;
-	      tree_t *nt;
-	      tree_t *mt;
-	      /**/
-	      npath = xmalloc(strlen(path)+1+strlen(dirl->files[i])+1);
-	      sprintf(npath, "%s/%s", path, dirl->files[i]);
-	      if ((nt = getTree(npath)))
-		{
-		  mt = mergeTrees(rt, nt);
-		  free(rt->ents);
-		  free(rt);
-		  free(nt->ents);
-		  free(nt);
-		  rt = mt;
-		}
-	    }
-	  freeDirList(dirl);
-	}
-    }
-  
-  return rt;
-}
-
-void
-pmem(void)
-{
-#if HAVE_MALLINFO
-  struct mallinfo minfo;
-  minfo = mallinfo();
-  fprintf(stderr,
-	  "  brk memory = %7d bytes (%d top bytes unreleased)\n"
-	  " mmap memory = %7d bytes\n"
-	  "total memory = %7d bytes\n",
-	  minfo.arena,
-	  minfo.keepcost,
-	  minfo.hblkhd,
-	  minfo.uordblks);
-#else
-  fprintf(stderr, "memory statistics unavailable\n");
-#endif
-}
-
 const char*
 getFileType(mode_t m)
 {
   switch(m & S_IFMT)
     {
     case S_IFDIR:  return "directory";
-    case S_IFREG:  return "regular file";
-    case S_IFCHR:  return "character device";
-    case S_IFBLK:  return "block device";
+    case S_IFREG:  return "regular-file";
+    case S_IFCHR:  return "character-device";
+    case S_IFBLK:  return "block-device";
 #if HAVE_S_IFIFO
     case S_IFIFO:  return "fifo";
 #endif
 #if HAVE_S_IFLNK
-    case S_IFLNK:  return "symbolic link";
+    case S_IFLNK:  return "symbolic-link";
 #endif
 #if HAVE_S_IFSOCK
     case S_IFSOCK: return "socket";
@@ -593,7 +489,7 @@ show_help(void)
 	 "  Each of these options can be negated with an uppercase (short option)\n"
 	 "  or with --no-option (eg -M --no-mode for not diffing modes\n"
 	 "   -a --all      equivalent to -dtmogsbcj (sets all but times)\n"
-	 "   -A --no-all   clears all flags (just reports missing files)\n"
+	 "   -A --no-all   clears all flags (will not report anything)\n"
 	 " Miscellania:\n"
 	 "   -x --exec <cmd>;         executes <cmd> between files if they are similar\n"
 	 "                            (if file sizes are equal)\n"
@@ -696,6 +592,26 @@ get_numeric_arg(const char* string, unsigned int* val)
     }
 }
 
+#if DEBUG
+void
+pmem(void)
+{
+#if HAVE_MALLINFO
+  struct mallinfo minfo;
+  minfo = mallinfo();
+  fprintf(stderr,
+	  "  brk memory = %7d bytes (%d top bytes unreleased)\n"
+	  " mmap memory = %7d bytes\n"
+	  "total memory = %7d bytes\n",
+	  minfo.arena,
+	  minfo.keepcost,
+	  minfo.hblkhd,
+	  minfo.uordblks);
+#else
+  fprintf(stderr, "memory statistics unavailable\n");
+#endif
+}
+
 void
 printopts(const options_t* o)
 {
@@ -743,16 +659,364 @@ printopts(const options_t* o)
       printf("\n");
     }
 }
+#endif /* DEBUG */
+
+char*
+pconcat(const char* p1, const char* p2)
+{
+  char *rv;
+  int p1_length;
+  /**/
+
+  rv = xmalloc((p1_length=strlen(p1))+1+strlen(p2)+1);
+  strcpy(rv, p1);
+  rv[p1_length] = '/';
+  strcpy(rv+p1_length+1, p2);
+  return rv;
+}
+
+int strpcmp(const char** s1, const char** s2)
+{
+  return (strcmp(*s1, *s2));
+}
+
+int
+execprocess(const dexe_t *dex, const char* p1, const char* p2)
+{
+  int status;
+  /**/
+  *(dex->arg1) = (char*)p1;
+  *(dex->arg2) = (char*)p2;
+  fflush(stdin);
+  fflush(stdout);
+  fflush(stderr);
+  switch(fork())
+    {
+    case -1:
+      /* Failure */
+      fprintf(stderr, "%s: fork(): %s\n", progname, strerror(errno));
+      return 0;
+    case 0:
+      /* Child */
+      if (execvp(dex->argv[0], dex->argv)<0)
+	{
+	  fprintf(stderr, "%s: exec(%s): %s\n", progname, dex->argv[0], 
+		  strerror(errno));
+	  exit(1);
+	}
+      fprintf(stderr, "%s: exec returned positive value\n", progname);
+      exit(XIT_INTERNALERROR);
+    default:
+      /* Parent */
+      if (wait(&status)<0)
+	{
+	  fprintf(stderr, "%s: wait(): %s\n", progname, strerror(errno));
+	  return 0;
+	}
+      return (WIFEXITED(status) && WEXITSTATUS(status)==0) ? 1 : 0;
+    }
+}
+
+char*
+xreadlink(const char* path)
+{
+  char *buf;
+  int bufsize = XREADLINK_BUF_SIZE;
+  int nstored;
+  /**/
+  buf = xmalloc(bufsize);
+ again:
+  if ((nstored=readlink(path, buf, bufsize))<0)
+    {
+      free(buf);
+      perror(path);
+      return NULL;
+    }
+  if (nstored==bufsize-1)
+    {
+      buf = xrealloc(buf, bufsize*=2);
+      goto again;
+    }
+  buf[nstored] = 0;
+  return buf;
+}
+
+int
+dodiff(const options_t* opt, const char* p1, const char* p2)
+{
+  struct stat sbuf1;
+  struct stat sbuf2;
+  int rv = XIT_OK;
+  int localerr = 0;
+  /**/
+
+  /* Stat the paths */
+  if (lstat(p1, &sbuf1)<0)
+    {
+      perror(p1);
+      rv = XIT_SYS;
+    }
+  if (lstat(p2, &sbuf2)<0)
+    {
+      perror(p2);
+      rv = XIT_SYS;
+    }
+  if (rv != XIT_OK)
+    return rv;
+
+  /* Generic perms, owner, etc... */
+  if (opt->mode)
+    {
+      int rm1, rm2;
+      int mm1, mm2;
+      /**/
+
+      rm1 = (~S_IFMT)&(sbuf1.st_mode);
+      rm2 = (~S_IFMT)&(sbuf2.st_mode);
+
+      mm1 = (rm1&(opt->mode_and))|(opt->mode_or);
+      mm2 = (rm2&(opt->mode_and))|(opt->mode_or);
+
+      if (mm1 != mm2)
+	{
+	  printf("%s: mode: %04o %04o (masked %04o %04o)\n",
+		 p1+opt->root1_length+1, rm1, rm2, mm1, mm2);
+	  localerr = 1;
+	}
+    }
+  if (opt->owner && sbuf1.st_uid != sbuf2.st_uid)
+    {
+      const struct passwd* pw1 = getpwuid(sbuf1.st_uid);
+      const struct passwd* pw2 = getpwuid(sbuf2.st_uid);
+      /**/
+      printf("%s: owner: %s(%ld) %s(%ld)\n",
+	     p1+opt->root1_length+1,
+	     pw1 ? pw1->pw_name : "", (long)sbuf1.st_uid,
+	     pw2 ? pw2->pw_name : "", (long)sbuf2.st_uid);
+      localerr = 1;
+    }
+  if (opt->group && sbuf1.st_gid != sbuf2.st_gid)
+    {
+      const struct group* gr1 = getgrgid(sbuf1.st_gid);
+      const struct group* gr2 = getgrgid(sbuf2.st_gid);
+      /**/
+      printf("%s: group: %s(%ld) %s(%ld)\n",
+	     p1+opt->root1_length+1,
+	     gr1 ? gr1->gr_name : "", (long)sbuf1.st_gid,
+	     gr2 ? gr2->gr_name : "", (long)sbuf2.st_gid);
+      localerr = 1;
+    }
+  if (opt->ctime && sbuf1.st_ctime != sbuf2.st_ctime)
+    {
+      char *t1 = xstrdup(ctime(&sbuf1.st_ctime));
+      char *t2 = xstrdup(ctime(&sbuf2.st_ctime));
+      t1[strlen(t1)-1] = 0;
+      t2[strlen(t2)-1] = 0;
+      printf("%s: ctime: [%s] [%s]\n",
+	     p1+opt->root1_length+1, t1, t2);
+      free(t1);
+      free(t2);
+      localerr = 1;
+    }
+  if (opt->mtime && sbuf1.st_mtime != sbuf2.st_mtime)
+    {
+      char *t1 = xstrdup(ctime(&sbuf1.st_mtime));
+      char *t2 = xstrdup(ctime(&sbuf2.st_mtime));
+      t1[strlen(t1)-1] = 0;
+      t2[strlen(t2)-1] = 0;
+      printf("%s: mtime: [%s] [%s]\n",
+	     p1+opt->root1_length+1, t1, t2);
+      free(t1);
+      free(t2);
+      localerr = 1;
+    }
+  if (opt->atime && sbuf1.st_atime != sbuf2.st_atime)
+    {
+      char *t1 = xstrdup(ctime(&sbuf1.st_atime));
+      char *t2 = xstrdup(ctime(&sbuf2.st_atime));
+      t1[strlen(t1)-1] = 0;
+      t2[strlen(t2)-1] = 0;
+      printf("%s: atime: [%s] [%s]\n",
+	     p1+opt->root1_length+1, t1, t2);
+      free(t1);
+      free(t2);
+      localerr = 1;
+    }
+  
+  /* Type tests */
+  if (opt->type && ((sbuf1.st_mode)&S_IFMT) != ((sbuf2.st_mode)&S_IFMT))
+    {
+      printf("%s: type: %s %s\n",
+	     p1+opt->root1_length+1,
+	     getFileType(sbuf1.st_mode), getFileType(sbuf2.st_mode));
+      localerr = 1;
+    }
+  else
+    /* Type specific checks */
+    switch ((sbuf1.st_mode)&S_IFMT)
+      {
+      case S_IFDIR:
+	{
+	  dirl_t *ct1, *ct2;
+	  /**/
+	  ct1 = getDirList(p1);
+	  ct2 = getDirList(p2);
+	  if (ct1 && ct2)
+	    {
+	      int i1, i2;
+	      int cmpres;
+	      /**/
+	      qsort(ct1->files, ct1->size, sizeof(char*), 
+		    (int(*)(const void*, const void*))strpcmp);
+	      qsort(ct2->files, ct2->size, sizeof(char*), 
+		    (int(*)(const void*, const void*))strpcmp);
+	      for (i1 = i2 = 0; i1 < ct1->size && i2 < ct2->size; )
+		{
+		  if (i1 == ct1->size)
+		    {
+		      if (opt->dirs)
+			printf("Only in %s: %s\n", p2+opt->root2_length+1, 
+			       ct2->files[i2]);
+		      i2++;
+		      localerr = 1;
+		    }
+		  else if (i2 == ct2->size)
+		    {
+		      if (opt->dirs)
+			printf("Only in %s: %s\n", p1+opt->root1_length+1, 
+			       ct1->files[i1]);
+		      i1++;
+		      localerr = 1;
+		    }
+		  else if (!(cmpres = strcmp(ct1->files[i1], ct2->files[i2])))
+		    {
+		      char *np1 = pconcat(p1, ct1->files[i1++]);
+		      char *np2 = pconcat(p2, ct2->files[i2++]);
+		      int nrv = dodiff(opt, np1, np2);
+		      free(np1);
+		      free(np2);
+		      if (nrv>rv) rv = nrv;
+		    }
+		  else if (cmpres<0)
+		    {
+		      if (opt->dirs)
+			printf("Only in %s: %s\n", p1, 
+			       ct1->files[i1]);
+		      i1++;
+		      localerr = 1;
+		    }
+		  else /* cmpres>0 */
+		    {
+		      if (opt->dirs)
+			printf("Only in %s: %s\n", p2, 
+			       ct2->files[i2]);
+		      i2++;
+		      localerr = 1;
+		    }
+		}
+	    }
+	  if (ct1) freeDirList(ct1);
+	  if (ct2) freeDirList(ct2);
+	}
+	break;
+      case S_IFREG:
+	{
+	  int content_diff = 1;
+	  /**/
+	  if (opt->blocks && sbuf1.st_blocks != sbuf2.st_blocks)
+	    {
+	      printf("%s: blocks: %ld %ld\n",
+		     p1+opt->root1_length+1,
+		     (long)sbuf1.st_blocks, (long)sbuf2.st_blocks);
+	      localerr = 1;
+	    }
+	  if (sbuf1.st_size != sbuf2.st_size)
+	    {
+	      if (opt->size)
+		{
+		  printf("%s: size: %ld %ld\n",
+			 p1+opt->root1_length+1,
+			 (long)sbuf1.st_size, (long)sbuf2.st_size);
+		  localerr = 1;
+		}
+	      content_diff = 0;
+	    }
+	  if (opt->contents)
+	    if (content_diff)
+	      {
+		if (opt->exec)
+		  {
+		    if (!execprocess(&opt->exec_args, p1, p2))
+		      localerr = 1;
+		  }
+		else if (!cmpFiles(p1, p2))
+		  {
+		    printf("%s: contents differ\n",
+			   p1+opt->root1_length+1);
+		    localerr = 1;
+		  }
+	      }
+	    else
+	      {
+		printf("%s: contents differ\n",
+		       p1+opt->root1_length+1);
+		localerr = 1;
+	      }
+	  if (opt->exec_always)
+	    if (!execprocess(&opt->exec_always_args, p1, p2))
+	      localerr=1;
+	}
+	break;
+#if HAVE_S_IFLNK
+      case S_IFLNK:
+	{
+	  char *lnk1 = xreadlink(p1);
+	  char *lnk2 = xreadlink(p2);
+	  if (lnk1 && lnk2)
+	    if (strcmp(lnk1, lnk2)!=0)
+	      {
+		printf("%s: symbolic links differ\n", p1+opt->root1_length+1);
+		localerr = 1;
+	      }
+	  if (lnk1) free(lnk1);
+	  if (lnk2) free(lnk2);
+	}
+	break;
+#endif /* HAVE_S_IFLNK */
+      case S_IFBLK:
+      case S_IFCHR:
+	if (opt->major && major(sbuf1.st_rdev) != major(sbuf2.st_rdev))
+	  {
+	    printf("%s: major: %ld %ld\n",
+		   p1+opt->root1_length+1,
+		   (long)major(sbuf1.st_rdev),
+		   (long)major(sbuf2.st_rdev));
+	    localerr = 1;
+	  }
+	if (opt->minor && minor(sbuf1.st_rdev) != minor(sbuf2.st_rdev))
+	  {
+	    printf("%s: minor: %ld %ld\n",
+		   p1+opt->root1_length+1,
+		   (long)minor(sbuf1.st_rdev),
+		   (long)minor(sbuf2.st_rdev));
+	    localerr = 1;
+	  }
+	break;
+      default:
+	break;
+      }
+
+  if (localerr && XIT_DIFF>rv) rv = XIT_DIFF;
+  return rv;
+}
 
 int 
 main(int argc, char*argv[])
 {
   char* ptr;
-  tree_t *t1, *t2;
-  int i1, i2;
-  int rootfd;
   options_t options = { 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, ~0};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
+  int rv;
   /**/
 
   pmem();
@@ -868,13 +1132,23 @@ main(int argc, char*argv[])
 		    = options.size  = options.blocks = options.contents
 		    = options.major = options.minor = 0; break;
 	case 'x': 
-	  if (get_exec_args(argv, &optind, &options.exec_args))
+	  if (options.exec)
+	    {
+	      fprintf(stderr, "%s: cannot specify -x twice\n", progname);
+	      end_after_options = EAO_error;
+	    }
+	  else if (get_exec_args(argv, &optind, &options.exec_args))
 	    options.contents = options.exec = 1;
 	  else
 	    end_after_options = EAO_error;
 	  break;
 	case 'w': 
-	  if (get_exec_args(argv, &optind, &options.exec_always_args))
+	  if (options.exec_always)
+	    {
+	      fprintf(stderr, "%s: cannot specify -w twice\n", progname);
+	      end_after_options = EAO_error;
+	    }
+	  else if (get_exec_args(argv, &optind, &options.exec_always_args))
 	    options.exec_always = 1;
 	  else
 	    end_after_options = EAO_error;
@@ -916,162 +1190,22 @@ main(int argc, char*argv[])
       exit(XIT_INVOC);
     }
 
-  rootfd = open(".", O_RDONLY);
-  if (rootfd<0)
-    {
-      fprintf(stderr, "%s: cannot open current directory: %s\n",
-	      progname, strerror(errno));
-      exit(XIT_SYS);
-    }
+  options.root1_length = strlen(argv[0]);
+  while (argv[0][options.root1_length-1] == '/')
+    argv[0][--options.root1_length] = 0;
 
-  if (chdir(argv[0])<0)
-    {
-      perror(argv[0]);
-      exit(XIT_INVOC);
-    }
-  t1 = getTree(xstrdup("."));
+  options.root2_length = strlen(argv[1]);
+  while (argv[1][options.root2_length-1] == '/')
+    argv[1][--options.root2_length] = 0;
 
-  if (fchdir(rootfd)<0)
-    {
-      fprintf(stderr, "%s: cannot come back to current directory: %s\n",
-	      progname, strerror(errno));
-      exit(XIT_SYS);
-    }
-  if (chdir(argv[1])<0)
-    {
-      perror(argv[1]);
-      exit(XIT_INVOC);
-    }
-  t2 = getTree(xstrdup("."));
+  rv = dodiff(&options, argv[0], argv[1]);
 
-  if (fchdir(rootfd)<0)
-    {
-      fprintf(stderr, "%s: cannot come back to current directory: %s\n",
-	      progname, strerror(errno));
-      exit(XIT_SYS);
-    }
-  if (close(rootfd)<0)
-    {
-      fprintf(stderr, "%s: closing current directory: %s\n",
-	      progname, strerror(errno));
-      exit(XIT_SYS);
-    }
-
-  for (i1=0, i2=0; i1<t1->size || i2<t2->size;)
-    {
-      int cmp;
-      /**/
-      if (i1==t1->size)
-	goto miss2;
-      else if (i2==t2->size)
-	goto miss1;
-      cmp = strcmp(t1->ents[i1].path, t2->ents[i2].path);
-      if (cmp==0)
-	{
-	  struct stat *s1 = &t1->ents[i1].st;
-	  struct stat *s2 = &t2->ents[i2].st;
-	  int regfile = 1;
-	  /**/
-
-	  if ((S_IFMT & (s1->st_mode))!=(S_IFMT &(s2->st_mode)))
-	    {
-	      printf("%s: %s vs %s\n",
-		     t1->ents[i1].path+2, 
-		     getFileType(s1->st_mode),
-		     getFileType(s2->st_mode));
-	      regfile = 0;
-	    }
-	  else if (!S_ISREG(s1->st_mode))
-	    regfile = 0;
-
-	  if ((~S_IFMT & (s1->st_mode))!=(~S_IFMT &(s2->st_mode)))
-	    {
-	      printf("%s: mode %04o vs %04o\n",
-		     t1->ents[i1].path+2, 
-		     ~S_IFMT & (s1->st_mode),
-		     ~S_IFMT & (s2->st_mode));
-	    }
-
-	  if (s1->st_uid != s2->st_uid)
-	    {
-	      printf("%s: uid %d vs %d\n",
-		     t1->ents[i1].path+2,
-		     s1->st_uid,
-		     s2->st_uid);
-	    }
-
-	  if (s1->st_gid != s2->st_gid)
-	    {
-	      printf("%s: gid %d vs %d\n",
-		     t1->ents[i1].path+2,
-		     s1->st_gid,
-		     s2->st_gid);
-	    }
-
-	  if (regfile)
-	    {
-	      int rundiff=1;
-	      /**/
-
-	      if (s1->st_size != s2->st_size)
-		{
-		  printf("%s: size %ld vs %ld\n",
-			 t1->ents[i1].path+2,
-			 (long)s1->st_size,
-			 (long)s2->st_size);
-		  rundiff = 0;
-		}
-
-	      if (s1->st_blocks != s2->st_blocks)
-		{
-		  printf("%s: blocks %ld vs %ld\n",
-			 t1->ents[i1].path+2,
-			 (long)s1->st_blocks,
-			 (long)s2->st_blocks);
-		}
-
-	      if (rundiff)
-		{
-		  char *f1, *f2;
-		  f1= xmalloc(strlen(argv[0])+1+strlen(t1->ents[i1].path+2)+1);
-		  f2= xmalloc(strlen(argv[1])+1+strlen(t1->ents[i1].path+2)+1);
-		  sprintf(f1, "%s/%s", argv[0], t1->ents[i1].path+2);
-		  sprintf(f2, "%s/%s", argv[1], t1->ents[i1].path+2);
-		  if (!cmpFiles(f1, f2))
-		    {
-		      printf("%s: different\n", t1->ents[i1].path+2);
-		    }
-		  free(f1);
-		  free(f2);
-		}
-	    }
-
-	  free((char*)t1->ents[i1].path);
-	  free((char*)t2->ents[i2].path);
-	  i1++, i2++;
-	}
-      else if (cmp<0)
-	{
-	miss1:
-	  printf("Only in %s: %s\n", argv[0], t1->ents[i1].path+2);
-	  free((char*)t1->ents[i1].path);
-	  i1++;
-	}
-      else 
-	{
-	miss2:
-	  printf("Only in %s: %s\n", argv[1], t2->ents[i2].path+2);
-	  free((char*)t2->ents[i2].path);
-	  i2++;
-	}
-    }  
-
-  free(t1->ents);
-  free(t2->ents);
-  free(t1);
-  free(t2);
+  if (options.exec)
+    free(options.exec_args.argv);
+  if (options.exec_always)
+    free(options.exec_always_args.argv);
 
   pmem();
 
-  exit(XIT_OK);
+  exit(rv);
 }
