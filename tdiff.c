@@ -820,7 +820,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	     progname, p1+opt->root1_length+1, sbuf1.st_flags, sbuf2.st_flags);
       localerr = 1;
     }
-#endif HAVE_ST_FLAGS
+#endif /* HAVE_ST_FLAGS */
   if (opt->owner && sbuf1.st_uid != sbuf2.st_uid)
     {
       const struct passwd* pw;
