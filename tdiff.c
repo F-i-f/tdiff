@@ -390,7 +390,7 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 	    }
 	  if (nread1 < CMPFILE_BUF_SIZE && nread1 != toread)
 	    {
-	      fprintf(stderr, "%s: short read\n", f1);
+	      fprintf(stderr, "%s: %s: short read\n", progname, f1);
 	      goto fail;
 	    }
 	  nread2 = read(fd2, buf2, CMPFILE_BUF_SIZE);
@@ -401,7 +401,7 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 	    }
 	  if (nread2 < CMPFILE_BUF_SIZE && nread2 != toread)
 	    {	
-	      fprintf(stderr, "%s: short read\n", f2);
+	      fprintf(stderr, "%s: %s: short read\n", progname, f2);
 	      goto fail;
 	    }
 	  if (nread1 != nread2)
@@ -757,7 +757,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   if (sbuf1.st_ino == sbuf2.st_ino && sbuf1.st_dev == sbuf2.st_dev)
     {
       if (opt->verbose)
-	printf("%s: same dev/ino pair, skipping\n", p1+opt->root1_length+1);
+	printf("%s: %s: same dev/ino pair, skipping\n", 
+	       progname, p1+opt->root1_length+1);
       if (opt->exec_always && S_ISREG(sbuf1.st_mode))
 	if (!execprocess(&opt->exec_always_args, p1, p2))
 	  rv=XIT_DIFF;
@@ -776,7 +777,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       const char* ptr;
       ptr = ic_get(opt->inocache, ice);
       if (opt->verbose)
-	printf("%s: already compared hard-linked files at %s\n", icepath, ptr);
+	printf("%s: %s: already compared hard-linked files at %s\n", 
+	       progname, icepath, ptr);
       free(ice);
       free(icepath);
       return rv;
@@ -806,16 +808,16 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 
       if (mm1 != mm2)
 	{
-	  printf("%s: mode: %04o %04o (masked %04o %04o)\n",
-		 p1+opt->root1_length+1, rm1, rm2, mm1, mm2);
+	  printf("%s: %s: mode: %04o %04o (masked %04o %04o)\n",
+		 progname, p1+opt->root1_length+1, rm1, rm2, mm1, mm2);
 	  localerr = 1;
 	}
     }
 #if HAVE_ST_FLAGS
   if (opt->flags && sbuf1.st_flags != sbuf2.st_flags)
     {
-      printf("%s: flags: %08X %08X\n",
-	     p1+opt->root1_length+1, sbuf1.st_flags, sbuf2.st_flags);
+      printf("%s: %s: flags: %08X %08X\n",
+	     progname, p1+opt->root1_length+1, sbuf1.st_flags, sbuf2.st_flags);
       localerr = 1;
     }
 #endif HAVE_ST_FLAGS
@@ -827,7 +829,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       if ((pw = getpwuid(sbuf1.st_uid))) pn1 = xstrdup(pw->pw_name);
       if ((pw = getpwuid(sbuf2.st_uid))) pn2 = xstrdup(pw->pw_name);
 
-      printf("%s: owner: %s(%ld) %s(%ld)\n",
+      printf("%s: %s: owner: %s(%ld) %s(%ld)\n",
+	     progname,
 	     p1+opt->root1_length+1,
 	     pn1 ? pn1 : "", (long)sbuf1.st_uid,
 	     pn2 ? pn2 : "", (long)sbuf2.st_uid);
@@ -845,7 +848,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       if ((gr = getgrgid(sbuf1.st_gid))) gn1 = xstrdup(gr->gr_name);
       if ((gr = getgrgid(sbuf2.st_gid))) gn2 = xstrdup(gr->gr_name);
       
-      printf("%s: group: %s(%ld) %s(%ld)\n",
+      printf("%s: %s: group: %s(%ld) %s(%ld)\n",
+	     progname,
 	     p1+opt->root1_length+1,
 	     gn1 ? gn1 : "", (long)sbuf1.st_gid,
 	     gn2 ? gn2 : "", (long)sbuf2.st_gid);
@@ -865,8 +869,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       char *t2 = xstrdup(ctime(&sbuf2.st_ctime));
       t1[strlen(t1)-1] = 0;
       t2[strlen(t2)-1] = 0;
-      printf("%s: ctime: [%s] [%s]\n",
-	     p1+opt->root1_length+1, t1, t2);
+      printf("%s: %s: ctime: [%s] [%s]\n",
+	     progname, p1+opt->root1_length+1, t1, t2);
       free(t1);
       free(t2);
       localerr = 1;
@@ -881,8 +885,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       char *t2 = xstrdup(ctime(&sbuf2.st_mtime));
       t1[strlen(t1)-1] = 0;
       t2[strlen(t2)-1] = 0;
-      printf("%s: mtime: [%s] [%s]\n",
-	     p1+opt->root1_length+1, t1, t2);
+      printf("%s: %s: mtime: [%s] [%s]\n",
+	     progname, p1+opt->root1_length+1, t1, t2);
       free(t1);
       free(t2);
       localerr = 1;
@@ -897,8 +901,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       char *t2 = xstrdup(ctime(&sbuf2.st_atime));
       t1[strlen(t1)-1] = 0;
       t2[strlen(t2)-1] = 0;
-      printf("%s: atime: [%s] [%s]\n",
-	     p1+opt->root1_length+1, t1, t2);
+      printf("%s: %s: atime: [%s] [%s]\n",
+	     progname, p1+opt->root1_length+1, t1, t2);
       free(t1);
       free(t2);
       localerr = 1;
@@ -907,7 +911,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   /* Type tests */
   if (opt->type && ((sbuf1.st_mode)&S_IFMT) != ((sbuf2.st_mode)&S_IFMT))
     {
-      printf("%s: type: %s %s\n",
+      printf("%s: %s: type: %s %s\n",
+	     progname,
 	     p1+opt->root1_length+1,
 	     getFileType(sbuf1.st_mode), getFileType(sbuf2.st_mode));
       localerr = 1;
@@ -938,7 +943,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		      if (opt->dirs && !gh_find(opt->exclusions, 
 						ct2->files[i2], NULL))
 			{
-			  printf("Only in %s: %s\n", p2, ct2->files[i2]);
+			  printf("%s: only in %s: %s\n", 
+				 progname, p2, ct2->files[i2]);
 			  localerr = 1;
 			}
 		      i2++;
@@ -948,7 +954,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		      if (opt->dirs && !gh_find(opt->exclusions, 
 						ct1->files[i1], NULL))
 			{
-			  printf("Only in %s: %s\n", p1, ct1->files[i1]);
+			  printf("%s: only in %s: %s\n", 
+				 progname, p1, ct1->files[i1]);
 			  localerr = 1;
 			}
 		      i1++;
@@ -972,7 +979,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		      if (opt->dirs && !gh_find(opt->exclusions,
 						ct1->files[i1], NULL))
 			{
-			  printf("Only in %s: %s\n", p1, ct1->files[i1]);
+			  printf("%s: only in %s: %s\n", 
+				 progname, p1, ct1->files[i1]);
 			  localerr = 1;
 			}
 		      i1++;
@@ -982,7 +990,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		      if (opt->dirs && !gh_find(opt->exclusions, 
 						ct2->files[i2], NULL))
 			{
-			  printf("Only in %s: %s\n", p2, ct2->files[i2]);
+			  printf("%s: only in %s: %s\n", 
+				 progname, p2, ct2->files[i2]);
 			  localerr = 1;
 			}
 		      i2++;
@@ -999,7 +1008,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	  /**/
 	  if (opt->blocks && sbuf1.st_blocks != sbuf2.st_blocks)
 	    {
-	      printf("%s: blocks: %ld %ld\n",
+	      printf("%s: %s: blocks: %ld %ld\n",
+		     progname, 
 		     p1+opt->root1_length+1,
 		     (long)sbuf1.st_blocks, (long)sbuf2.st_blocks);
 	      localerr = 1;
@@ -1008,7 +1018,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	    {
 	      if (opt->size)
 		{
-		  printf("%s: size: %ld %ld\n",
+		  printf("%s: %s: size: %ld %ld\n",
+			 progname,
 			 p1+opt->root1_length+1,
 			 (long)sbuf1.st_size, (long)sbuf2.st_size);
 		  localerr = 1;
@@ -1026,15 +1037,15 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		    }
 		  else if (!cmpFiles(opt, p1, p2))
 		    {
-		      printf("%s: contents differ\n",
-			     p1+opt->root1_length+1);
+		      printf("%s: %s: contents differ\n",
+			     progname, p1+opt->root1_length+1);
 		      localerr = 1;
 		    }
 		}
 	      else
 		{
-		  printf("%s: contents differ\n",
-			 p1+opt->root1_length+1);
+		  printf("%s: %s: contents differ\n",
+			 progname, p1+opt->root1_length+1);
 		  localerr = 1;
 	      }
 	      if (opt->exec_always)
@@ -1051,7 +1062,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	  if (lnk1 && lnk2)
 	    if (strcmp(lnk1, lnk2)!=0)
 	      {
-		printf("%s: symbolic links differ\n", p1+opt->root1_length+1);
+		printf("%s: %s: symbolic links differ\n", 
+		       progname, p1+opt->root1_length+1);
 		localerr = 1;
 	      }
 	  if (lnk1) free(lnk1);
@@ -1063,7 +1075,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       case S_IFCHR:
 	if (opt->major && major(sbuf1.st_rdev) != major(sbuf2.st_rdev))
 	  {
-	    printf("%s: major: %ld %ld\n",
+	    printf("%s: %s: major: %ld %ld\n",
+		   progname,
 		   p1+opt->root1_length+1,
 		   (long)major(sbuf1.st_rdev),
 		   (long)major(sbuf2.st_rdev));
@@ -1071,7 +1084,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	  }
 	if (opt->minor && minor(sbuf1.st_rdev) != minor(sbuf2.st_rdev))
 	  {
-	    printf("%s: minor: %ld %ld\n",
+	    printf("%s: %s: minor: %ld %ld\n",
+		   progname,
 		   p1+opt->root1_length+1,
 		   (long)minor(sbuf1.st_rdev),
 		   (long)minor(sbuf2.st_rdev));
