@@ -24,8 +24,16 @@
 #include "utils.h"
 
 #include <string.h>
+#include <stdio.h>
 
 #define GH_INITIAL_SIZE 97
+
+static int primelist[] =
+{
+  101, 211, 401, 809, 1601, 3203, 6421, 12809, 25601, 51203, 102407,
+  204803, 409609, 819229, 1638463, 3276803, 6553621, 13107229, 26214401,
+  52428841, 104857601, 0
+};
 
 typedef struct hashbucket_s
 {
@@ -38,7 +46,7 @@ typedef struct hashbucket_s
 struct genhash_s
 {
   int entries;
-  int size;
+  int primidx;
   hashval_t (*hashfunc)(const void*);
   int (*cmpfunc)(const void*, const void*);
   void (*delkeyfunc)(void*);
@@ -57,13 +65,13 @@ gh_new(hashval_t (*hashfunc)(const void*),
   
   gh = xmalloc(sizeof(genhash_t));
   gh->entries  	   = 0;
-  gh->size     	   = GH_INITIAL_SIZE;
+  gh->primidx      = 0;
   gh->hashfunc 	   = hashfunc;
   gh->cmpfunc  	   = cmpfunc;
   gh->delkeyfunc   = delkeyfunc;
   gh->delvaluefunc = delvaluefunc;
-  gh->buckets      = xmalloc(sizeof(hashbucket_t*)*gh->size);
-  memset(gh->buckets, 0, sizeof(hashbucket_t*)*gh->size);
+  gh->buckets      = xmalloc(sizeof(hashbucket_t*)*primelist[0]);
+  memset(gh->buckets, 0, sizeof(hashbucket_t*)*primelist[0]);
 
   return gh;
 }
@@ -76,7 +84,7 @@ gh_delete(genhash_t* gh)
   hashbucket_t *nbucket;
   /**/
 
-  for (i=0; i < gh->size; i++)
+  for (i=0; i < primelist[gh->primidx]; i++)
     for (cbucket = gh->buckets[i]; cbucket; )
       {
 	if (gh->delkeyfunc)
@@ -103,11 +111,12 @@ gh_grow(genhash_t* gh)
   hashval_t newval;
   /**/
 
-  newsize = gh->size*2-1;
+  newsize = primelist[gh->primidx+1];
+  if (newsize==0) abort(); /* Prime list exhausted */
   newbuckets = xmalloc(sizeof(hashbucket_t*)*newsize);
   memset(newbuckets, 0, sizeof(hashbucket_t*)*newsize);
 
-  for (i=0; i < gh->size; i++)
+  for (i=0; i < primelist[gh->primidx]; i++)
     for (cbucket = gh->buckets[i]; cbucket; )
       {
 	nbucket = cbucket->next;
@@ -118,7 +127,7 @@ gh_grow(genhash_t* gh)
       }
   
   free(gh->buckets);
-  gh->size = newsize;
+  gh->primidx++;
   gh->buckets = newbuckets;
 }
 
@@ -129,7 +138,9 @@ gh_find_withhash(const genhash_t *gh, const void* key, void** value,
   hashbucket_t *cbucket;
   /**/
 
-  for (cbucket = gh->buckets[hv % gh->size]; cbucket; cbucket = cbucket->next)
+  for (cbucket = gh->buckets[hv % primelist[gh->primidx]]; 
+       cbucket; 
+       cbucket = cbucket->next)
     if (cbucket->hash == hv && gh->cmpfunc(key, cbucket->key))
       break;
 
@@ -160,7 +171,7 @@ gh_insert(genhash_t *gh, void* key, void* value)
   if (gh_find_withhash(gh, key, NULL, hv))
     return 0;
   
-  if (gh->entries > gh->size)
+  if (gh->entries > primelist[gh->primidx])
     gh_grow(gh);
 
   gh->entries++;
@@ -169,8 +180,8 @@ gh_insert(genhash_t *gh, void* key, void* value)
   nbucket->hash  = hv;
   nbucket->key   = key;
   nbucket->value = value;
-  nbucket->next  = gh->buckets[hv % gh->size];
-  gh->buckets[hv % gh->size] = nbucket;
+  nbucket->next  = gh->buckets[hv % primelist[gh->primidx]];
+  gh->buckets[hv % primelist[gh->primidx]] = nbucket;
 
   return 1;
 }
@@ -215,4 +226,42 @@ int
 gh_identify_equal(const void* s1, const void* s2)
 {
   return s1 == s2;
+}
+
+void
+gh_stats(const genhash_t *gh, const char* name)
+{
+  int i;
+  hashbucket_t *cbucket;
+  int obucks=0;
+  int maxbucklen=0;
+  /**/
+
+  for (i=0; i<primelist[gh->primidx]; i++)
+    {
+      int cbuck = 0;
+      for (cbucket = gh->buckets[i]; cbucket; cbucket = cbucket->next)
+	cbuck++;
+
+      if (cbuck)
+	{
+	  obucks++;
+	  if (cbuck>maxbucklen)
+	    maxbucklen = cbuck;
+	}
+    }
+
+  fprintf(stderr,
+	  " Hashing statistics for %s (@%p):\n"
+	  "    Table size              : %8d\n"
+	  "    Entry count             : %8d\n"
+	  "    Occupied buckets        : %8d\n"
+	  "    Distribution efficiency : %8.04g%%\n"
+	  "    Average bucket length   : %8.04g\n"
+	  "    Max bucket length       : %8d\n",
+	  name, gh,
+	  primelist[gh->primidx], gh->entries,
+	  obucks, ((double)obucks)/gh->entries*100,
+	  ((double)gh->entries)/obucks,
+	  maxbucklen);
 }

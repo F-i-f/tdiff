@@ -98,6 +98,7 @@ main(void)
 	printf("stored value changed !\n");
     }
 
+  gh_stats(hash, "string hash");
   gh_delete(hash);
 
   pmem();
