@@ -257,15 +257,10 @@ then
 		;;
 	esac
     else
+	AC_DEFINE(HAVE_GETDENTS,0)
 	AC_MSG_RESULT(no)
     fi
 fi
-
-
-case "$getdents" in
-    libc)    AC_DEFINE(HAVE_GETDENTS,1) ;;
-    syscall) AC_DEFINE(HAVE_GETDENTS,1) AC_DEFINE(HAVE_GETDENTS_SYSCALL,1) ;;
-esac
 
 AC_MSG_CHECKING(for lstat())
 AC_TRY_LINK([#include <sys/stat.h>
