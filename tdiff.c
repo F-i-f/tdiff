@@ -502,6 +502,7 @@ show_help(void)
 	 "   -| --mode-or <bits>   applies <bits> OR mode before comparison\n"
 	 "   -& --mode-and <bits>  applies <bits> AND mode before comparison\n"
 	 "   -X --exclude <file>   omits <file> from report\n"
+	 "   -p --no-mmap          do not use mmap() for comparisons (saves on vmem\n"
 #if ! HAVE_GETOPT_LONG
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
 #endif
@@ -1110,14 +1111,14 @@ main(int argc, char*argv[])
 	{ "verbose",     0, 0, 'v' },
 	{ "version",     0, 0, 'V' },
 	{ "help",        0, 0, 'h' },
-	{ "type",        0, 0, 't' },
 	{ "dirs",        0, 0, 'd' },
 	{ "no-dirs",     0, 0, 'D' },
+	{ "type",        0, 0, 't' },
 	{ "no-type",     0, 0, 'T' },
 	{ "mode",        0, 0, 'm' },
-	{ "flags",       0, 0, 'f' },
-	{ "noflags",     0, 0, 'F' },
 	{ "no-mode",     0, 0, 'M' },
+	{ "flags",       0, 0, 'f' },
+	{ "no-flags",    0, 0, 'F' },
 	{ "owner",       0, 0, 'o' },
 	{ "no-owner",    0, 0, 'O' },
 	{ "group",       0, 0, 'g' },
@@ -1138,11 +1139,11 @@ main(int argc, char*argv[])
 	{ "no-major",    0, 0, 'J' },
 	{ "minor",       0, 0, 'n' },
 	{ "no-minor",    0, 0, 'N' },
-	{ "exec",        0, 0, 'x' },
-	{ "exec-always", 0, 0, 'w' },
 	{ "all",         0, 0, 'a' },
 	{ "nothing",     0, 0, 'A' },
 	{ "no-all",      0, 0, 'A' },
+	{ "exec",        0, 0, 'x' },
+	{ "exec-always", 0, 0, 'w' },
 	{ "no-mmap",     0, 0, 'p' },
 	{ "mode-or",     1, 0, '|' },
 	{ "mode-and",    1, 0, '&' },
