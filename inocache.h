@@ -28,8 +28,8 @@
 
 typedef struct ic_ent_s
 {
-  ino_t ino;
-  dev_t dev;
+  ino_t ino[2];
+  dev_t dev[2];
 } ic_ent_t;
 
 struct genhash_s;
@@ -38,6 +38,6 @@ typedef struct genhash_s inocache_t;
 inocache_t* ic_new(void);
 void ic_delete(inocache_t*); 
 const char* ic_get(const inocache_t*, const ic_ent_t*);
-void ic_put(inocache_t*, const ic_ent_t*, const char*);
+int ic_put(inocache_t*, const ic_ent_t*, const char*);
 
 #endif /* INOCACHE_H */

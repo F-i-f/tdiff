@@ -42,6 +42,7 @@
 #include "config.h"
 #include "utils.h"
 #include "genhash.h"
+#include "inocache.h"
 
 #if HAVE_GETDENTS
 #  if HAVE_GETDENTS_SYSCALL_H
@@ -96,6 +97,7 @@ typedef struct dexe_s
 
 typedef struct option_s
 {
+  unsigned int verbose:1;
   unsigned int dirs:1;
   unsigned int type:1;
   unsigned int mode:1;
@@ -119,6 +121,7 @@ typedef struct option_s
   dexe_t exec_always_args;
   size_t root1_length;
   size_t root2_length;
+  inocache_t *inocache;
 } options_t;
 
 dirl_t *getDirList(const char* path);
@@ -450,7 +453,8 @@ show_help(void)
 {
   printf("usage: %s [options]... <dir1> <dir2>\n"
 	 " Standard options:\n"
-	 "   -v --version: show %s version\n"
+	 "   -v --verbose: tell more about inode cached comparisons\n"
+	 "   -V --version: show %s version\n"
 	 "   -h --help\n"
 	 " Switch options:\n"
 	 "   -d --dirs     diff directories (reports missing files)\n"
@@ -710,6 +714,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 {
   struct stat sbuf1;
   struct stat sbuf2;
+  ic_ent_t *ice;
+  char *icepath;
   int rv = XIT_OK;
   int localerr = 0;
   /**/
@@ -727,6 +733,35 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
     }
   if (rv != XIT_OK)
     return rv;
+
+  /* Check if we're comparing the same dev/inode pair */
+  if (sbuf1.st_ino == sbuf2.st_ino && sbuf1.st_dev == sbuf2.st_dev)
+    {
+      if (opt->verbose)
+	printf("%s: same dev/ino pair, skipping\n", p1+opt->root1_length+1);
+      if (opt->exec_always && S_ISREG(sbuf1.st_mode))
+	if (!execprocess(&opt->exec_always_args, p1, p2))
+	  rv=XIT_DIFF;
+      return rv;
+    }
+
+  /* Check if we have compared these two guys before */
+  ice = xmalloc(sizeof(ic_ent_t));
+  ice->ino[0] = sbuf1.st_ino;
+  ice->dev[0] = sbuf1.st_dev;
+  ice->ino[1] = sbuf2.st_ino;
+  ice->dev[1] = sbuf2.st_dev;
+  icepath = xstrdup(p1+opt->root1_length+1);
+  if (! ic_put(opt->inocache, ice, icepath))
+    {
+      const char* ptr;
+      ptr = ic_get(opt->inocache, ice);
+      if (opt->verbose)
+	printf("%s: already compared hard-linked files at %s\n", icepath, ptr);
+      free(ice);
+      free(icepath);
+      return rv;
+    }
 
   /* Generic perms, owner, etc... */
   if (opt->mode)
@@ -1007,8 +1042,8 @@ int
 main(int argc, char*argv[])
 {
   char* ptr;
-  options_t options = { 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, ~0,
-			NULL};
+  options_t options = { 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 
+			0, 0, 0, 0, ~0, NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
   int rv;
   /**/
@@ -1026,7 +1061,8 @@ main(int argc, char*argv[])
     {
 #if HAVE_GETOPT_LONG
       struct option long_options[] = {
-	{ "version",     0, 0, 'v' },
+	{ "verbose",     0, 0, 'v' },
+	{ "version",     0, 0, 'V' },
 	{ "help",        0, 0, 'h' },
 	{ "type",        0, 0, 't' },
 	{ "dirs",        0, 0, 'd' },
@@ -1072,7 +1108,7 @@ main(int argc, char*argv[])
 #else
 	     getopt
 #endif
-	     (argc, argv, "vhdDtTmMoOgGzZiIrRsSbBcCjJnNxwaAp|:&:X:W"
+	     (argc, argv, "vVhdDtTmMoOgGzZiIrRsSbBcCjJnNxwaAp|:&:X:W"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -1085,7 +1121,7 @@ main(int argc, char*argv[])
 	  /* Unknown option */
 	  end_after_options = 1;
 	  break;
-	case 'v':
+	case 'V':
 	  show_version();
 	  end_after_options = 1;
 	  break;
@@ -1093,6 +1129,7 @@ main(int argc, char*argv[])
 	  show_help();
 	  end_after_options = 1;
 	  break;
+	case 'v': options.verbose         = 1; break;
 	case 'd': options.dirs            = 1; break;
 	case 'D': options.dirs            = 0; break;
 	case 't': options.type  	  = 1; break;
@@ -1200,6 +1237,8 @@ main(int argc, char*argv[])
   while (argv[1][options.root2_length-1] == '/')
     argv[1][--options.root2_length] = 0;
 
+  options.inocache = ic_new();
+
   rv = dodiff(&options, argv[0], argv[1]);
 
   if (options.exec)
@@ -1207,6 +1246,7 @@ main(int argc, char*argv[])
   if (options.exec_always)
     free(options.exec_always_args.argv);
   gh_delete(options.exclusions);
+  ic_delete(options.inocache);
 
   pmem();
 

@@ -22,11 +22,9 @@
 */
 
 #include "inocache.h"
-#include "tdiff.h"
 #include "config.h"
 #include "genhash.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 static
 hashval_t
@@ -34,7 +32,7 @@ ic_hash(const void* vent)
 {
   const ic_ent_t *ent = (const ic_ent_t*)vent;
   /**/
-  hashval_t hino, hdev;
+  hashval_t hv;
 #if SIZEOF_INO_T == 8 || SIZEOF_DEV_T == 8
   union 
   { 
@@ -45,24 +43,28 @@ ic_hash(const void* vent)
 #endif
 
 #if SIZEOF_INO_T == 4
-  hino = ent->ino;
+  hv = ent->ino[0] ^ ent->ino[1];
 #elif SIZEOF_INO_T == 8
-  demux.ino = ent->ino;
-  hino = demux.hvs[0] ^ demux.hvs[1];
+  demux.ino = ent->ino[0];
+  hv = demux.hvs[0] ^ demux.hvs[1];
+  demux.ino = ent->ino[1];
+  gv ^= demux.hvs[0] ^ demux.hvs[1];
 #else
 # error Unknown ino_t size !
 #endif
 
 #if SIZEOF_DEV_T == 4
-  hdev = ent->dev;
+  hv ^= ent->dev[0];
 #elif SIZEOF_DEV_T == 8
-  demux.dev = ent->dev;
-  hdev = demux.hvs[0] ^ demux.hvs[1];
+  demux.dev = ent->dev[0];
+  hv ^= demux.hvs[0] ^ demux.hvs[1];
+  demux.dev = ent->dev[1];
+  hv ^= demux.hvs[0] ^ demux.hvs[1];
 #else
 # error Unknown dev_t size !
 #endif
 
-  return hino ^ hdev;
+  return hv;
 }
 
 static
@@ -72,7 +74,8 @@ ic_equal(const void* ve1, const void* ve2)
   const ic_ent_t *e1 = (const ic_ent_t*)ve1;
   const ic_ent_t *e2 = (const ic_ent_t*)ve2;
 
-  return e1->ino == e2->ino && e1->dev == e2->dev;
+  return e1->ino[0] == e2->ino[0] && e1->ino[1] == e2->ino[1]
+    && e1->dev[0] == e2->dev[0] && e2->dev[1] == e2->dev[1];
 }
 
 inocache_t* 
@@ -96,12 +99,7 @@ ic_get(const inocache_t* ic, const ic_ent_t *ent)
     return NULL;
 }
 
-void ic_put(inocache_t* ic, const ic_ent_t* ent, const char* str)
+int ic_put(inocache_t* ic, const ic_ent_t* ent, const char* str)
 {
-  if (!gh_insert(ic, (void*)ent, (void*)str))
-    {
-      fprintf(stderr, "%s: put twice the same dev/ino into inocache\n",
-	      progname);
-      exit(XIT_INTERNALERROR);
-    }
+  return gh_insert(ic, (void*)ent, (void*)str);
 }
