@@ -43,7 +43,7 @@ int
 main(void)
 {
   char * inhash[INHASH_STRINGS];
-  int    assocs[INHASH_STRINGS];
+  long    assocs[INHASH_STRINGS];
   char * dummies[DUMMY_STRINGS];
   int i;
   genhash_t* hash;
