@@ -85,6 +85,9 @@
 /* Define to 1 if your system has UF_* and SF_* flags (4.4BSD only probably) */
 #define HAVE_BSD4_4FLAGS 0
 
+/* Define to 1 if your system has nanosecond file time resolution */
+#define HAVE_ST_XTIMESPEC 0
+
 /* Define to 1 if your system has st_flags in struct stat (4.4BSD only probably) */
 #define HAVE_ST_FLAGS 0
 

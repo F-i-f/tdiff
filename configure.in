@@ -163,6 +163,12 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     AC_MSG_RESULT(no))
 
 ### 6) Checking for structures: 
+AC_MSG_CHECKING(for BSD 4.4 extended times in stat)
+AC_EGREP_CPP(st_atimespec, [#include <sys/stat.h>],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_ST_XTIMESPEC),
+	     AC_MSG_RESULT(no))
+
 AC_MSG_CHECKING(for st_flags in struct stat)
 AC_EGREP_CPP(st_flags,[#include <sys/stat.h>], 
 	     AC_DEFINE(HAVE_ST_FLAGS)

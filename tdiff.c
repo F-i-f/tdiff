@@ -842,7 +842,11 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       
       localerr = 1;
     }
-  if (opt->ctime && sbuf1.st_ctime != sbuf2.st_ctime)
+  if (opt->ctime && sbuf1.st_ctime != sbuf2.st_ctime
+#if HAVE_ST_XTIMESPEC
+      && sbuf1.st_ctimespec.tv_nsec != sbuf2.st_ctimespec.tv_nsec
+#endif
+      )
     {
       char *t1 = xstrdup(ctime(&sbuf1.st_ctime));
       char *t2 = xstrdup(ctime(&sbuf2.st_ctime));
@@ -854,7 +858,11 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       free(t2);
       localerr = 1;
     }
-  if (opt->mtime && sbuf1.st_mtime != sbuf2.st_mtime)
+  if (opt->mtime && sbuf1.st_mtime != sbuf2.st_mtime
+#if HAVE_ST_XTIMESPEC
+      && sbuf1.st_mtimespec.tv_nsec != sbuf2.st_mtimespec.tv_nsec
+#endif
+      )
     {
       char *t1 = xstrdup(ctime(&sbuf1.st_mtime));
       char *t2 = xstrdup(ctime(&sbuf2.st_mtime));
@@ -866,7 +874,11 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       free(t2);
       localerr = 1;
     }
-  if (opt->atime && sbuf1.st_atime != sbuf2.st_atime)
+  if (opt->atime && sbuf1.st_atime != sbuf2.st_atime
+#if HAVE_ST_XTIMESPEC
+      && sbuf1.st_atimespec.tv_nsec != sbuf2.st_atimespec.tv_nsec
+#endif
+      )
     {
       char *t1 = xstrdup(ctime(&sbuf1.st_atime));
       char *t2 = xstrdup(ctime(&sbuf2.st_atime));
