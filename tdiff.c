@@ -786,24 +786,38 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
     }
   if (opt->owner && sbuf1.st_uid != sbuf2.st_uid)
     {
-      const struct passwd* pw1 = getpwuid(sbuf1.st_uid);
-      const struct passwd* pw2 = getpwuid(sbuf2.st_uid);
+      const struct passwd* pw;
+      char *pn1=NULL, *pn2=NULL;
       /**/
+      if ((pw = getpwuid(sbuf1.st_uid))) pn1 = xstrdup(pw->pw_name);
+      if ((pw = getpwuid(sbuf2.st_uid))) pn2 = xstrdup(pw->pw_name);
+
       printf("%s: owner: %s(%ld) %s(%ld)\n",
 	     p1+opt->root1_length+1,
-	     pw1 ? pw1->pw_name : "", (long)sbuf1.st_uid,
-	     pw2 ? pw2->pw_name : "", (long)sbuf2.st_uid);
+	     pn1 ? pn1 : "", (long)sbuf1.st_uid,
+	     pn2 ? pn2 : "", (long)sbuf2.st_uid);
+
+      if (pn1) free(pn1);
+      if (pn2) free(pn2);
+
       localerr = 1;
     }
   if (opt->group && sbuf1.st_gid != sbuf2.st_gid)
     {
-      const struct group* gr1 = getgrgid(sbuf1.st_gid);
-      const struct group* gr2 = getgrgid(sbuf2.st_gid);
+      const struct group* gr;
+      char *gn1=NULL, *gn2=NULL;
       /**/
+      if ((gr = getgrgid(sbuf1.st_gid))) gn1 = xstrdup(gr->gr_name);
+      if ((gr = getgrgid(sbuf2.st_gid))) gn2 = xstrdup(gr->gr_name);
+      
       printf("%s: group: %s(%ld) %s(%ld)\n",
 	     p1+opt->root1_length+1,
-	     gr1 ? gr1->gr_name : "", (long)sbuf1.st_gid,
-	     gr2 ? gr2->gr_name : "", (long)sbuf2.st_gid);
+	     gn1 ? gn1 : "", (long)sbuf1.st_gid,
+	     gn2 ? gn2 : "", (long)sbuf2.st_gid);
+
+      if (gn1) free(gn1);
+      if (gn2) free(gn2);
+
       localerr = 1;
     }
   if (opt->ctime && sbuf1.st_ctime != sbuf2.st_ctime)
