@@ -17,6 +17,7 @@
 
 # General program definitions
 CC         = @CC@
+LD	   = $(CC)
 RM_F       = rm -f
 CP	   = cp
 AR	   = ar
@@ -52,8 +53,8 @@ libtdiff.a: $(OBJS)
 	$(RANLIB) $@
 
 # Program targets
-%: %.o libtdiff.a
-	$(CC) $(LDFLAGS) -o $@ $< -L. -ltdiff $(LIBS) 
+$(TARGETS): %: %.o libtdiff.a
+	$(LD) $(LDFLAGS) -o $@ $< -L. -ltdiff $(LIBS) 
 
 # Cleaning
 clean::
