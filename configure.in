@@ -1,27 +1,28 @@
 #  tdiff - tree diffs
 #  configure.in
-#  Copyright (C) 1999 Philippe Troin <phil@fifi.org>
+#  Copyright (C) 1999, 2006 Philippe Troin <phil@fifi.org>
 #
 #  $Id$
-#  
+#
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation; either version 2 of the License, or
 #  (at your option) any later version.
-#  
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-#  
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-AC_PREREQ(2.0)
+AC_PREREQ(2.59)
 
 # Get started
-AC_INIT(tdiff.c)
+AC_INIT
+AC_CONFIG_SRCDIR([tdiff.c])
 
 # Remember if CFLAGS was set
 if test -z "$CFLAGS"
@@ -30,17 +31,20 @@ then
 fi
 
 ### 1) Checking for system
+AC_CANONICAL_TARGET
+AC_SYS_LARGEFILE
 
 ### 2) Checking for programs
 AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_RANLIB
+AC_PROG_EGREP
 
 ### 3) Checking for libraries
 
 ### 4) Checking for header files
 AC_MSG_CHECKING(for getdents() in libc)
-AC_EGREP_CPP(getdents, [#include <sys/dirent.h>], 
+AC_EGREP_CPP(getdents, [#include <sys/dirent.h>],
 	     getdents=libc)
 if test "$getdents"
 then
@@ -50,9 +54,12 @@ then
     if test "$getdents_sysdirent"
     then
 	AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_SYS_DIRENT_H, 1)
-	AC_DEFINE(GETDENTS_STRUCT, dirent)
-	AC_DEFINE(GETDENTS_RETURN_Q, f_dent)
+	AC_DEFINE(HAVE_SYS_DIRENT_H, 1,
+	  [Define if your system has <sys/dirent.h>])
+	AC_DEFINE(GETDENTS_STRUCT, dirent,
+	  [Define to the name of your system struct returned by getdents()])
+	AC_DEFINE(GETDENTS_RETURN_Q, f_dent,
+	  [Define to the name of the filed inside struct GETDENTS_STRUCT that points to the next dentry.])
 	getdents="sys_dirent"
     else
 	AC_MSG_RESULT(no)
@@ -60,10 +67,10 @@ then
     fi
 else
     AC_MSG_RESULT(no)
-    if test `uname` = Linux
-    then
+    case "$target_os" in
+      linux*)
 	AC_MSG_CHECKING(for getdents syscall)
-	AC_EGREP_CPP(found_sys_getdents, 
+	AC_EGREP_CPP(found_sys_getdents,
 	[#include <syscall.h>
 	#ifdef SYS_getdents
 	found_sys_getdents
@@ -72,7 +79,8 @@ else
 	if test "$getdents"
 	then
 	    AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1)
+	    AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1,
+	      [Define to 1 if you have SYS_getdents in <syscall.h>])
 	    AC_DEFINE(GETDENTS_STRUCT, dent)
 	    AC_DEFINE(GETDENTS_NEXTDENT, 1)
 	    AC_DEFINE(GETDENTS_NEXTDENT_NAME, d_reclen)
@@ -80,7 +88,8 @@ else
 	else
 	    AC_MSG_RESULT(no)
 	fi
-    fi
+	;;
+    esac
 fi
 
 case "$getdents" in
@@ -89,15 +98,17 @@ case "$getdents" in
 	;;
     syscall)
 	getdents_decl="#include <syscall.h>
-         #include <errno.h>
-         _syscall3(int, getdents, unsigned int, fd, char*, buf, unsigned int, count);
-	 int getdents(unsigned int fd, char* buf, unsigned int count);
+	 #include <errno.h>
+	 int getdents(int fd, char* buf, unsigned int count)
+         {
+            return syscall(SYS_getdents, fd, buf, count);
+         }
 	 struct dent {
 	   long           d_ino;
-           off_t          d_off;
+	   off_t          d_off;
 	   unsigned short d_reclen;
 	   char           *d_name;
-         };"
+	 };"
 	;;
 esac
 
@@ -119,16 +130,16 @@ AC_EGREP_CPP(major,
 if test "$major_keep_trying"
 then
 AC_MSG_CHECKING(for major and minor in sysmacros.h)
-AC_EGREP_CPP(oh_yes, 
-             [#include <sys/sysmacros.h>
+AC_EGREP_CPP(oh_yes,
+	     [#include <sys/sysmacros.h>
 	      #if defined(minor) && defined(major)
-              oh_yes
-              #endif
-             ],
-             AC_MSG_RESULT(yes)
-             AC_DEFINE(HAVE_SYS_SYSMACROS_H,1)
+	      oh_yes
+	      #endif
+	     ],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_SYS_SYSMACROS_H,1)
 	     unset major_keep_trying,
-             AC_MSG_RESULT(no))
+	     AC_MSG_RESULT(no))
 fi
 
 if test "$major_keep_trying"
@@ -191,7 +202,7 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     AC_DEFINE(HAVE_BSD4_4FLAGS),
 	     AC_MSG_RESULT(no))
 
-### 6) Checking for structures: 
+### 6) Checking for structures:
 AC_MSG_CHECKING(for BSD 4.4 extended times in stat)
 AC_EGREP_CPP(st_atimespec, [#include <sys/stat.h>],
 	     AC_MSG_RESULT(yes)
@@ -199,151 +210,85 @@ AC_EGREP_CPP(st_atimespec, [#include <sys/stat.h>],
 	     AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for st_flags in struct stat)
-AC_EGREP_CPP(st_flags,[#include <sys/stat.h>], 
+AC_EGREP_CPP(st_flags,[#include <sys/stat.h>],
 	     AC_DEFINE(HAVE_ST_FLAGS)
 	     AC_MSG_RESULT(yes),
 	     AC_MSG_RESULT(no))
 
 ### 7) Checking for compiler characteristics
-AC_CHECK_SIZEOF(short,2)
-AC_CHECK_SIZEOF(int,4)
-AC_CHECK_SIZEOF(long, 4)
-AC_CHECK_SIZEOF(long long, 8)
-AC_CHECK_SIZEOF(void *, 4)
-
-AC_MSG_CHECKING(size of ino_t)
-sizeof_ino_t=false
-AC_TRY_RUN([
-#include <stdio.h>
-#include <sys/types.h>
-int main()
-{
-  FILE* f;
-  if (!(f=fopen("sizeoftest", "w")))
-    return 1;
-  fprintf(f, "%d\n", sizeof(ino_t));
-  fclose(f);
-  return 0;
-}],sizeof_ino_t=0,,sizeof_ino_t=cross)
-case "$sizeof_ino_t" in
-    false) AC_MSG_ERROR(Needs to know the size of an ino_t.) ;;
-    0)     sizeof_ino_t=`cat sizeoftest 2>/dev/null`; rm sizeoftest;;
-    cross) sizeof_ino_t=4 ;;
-    *)     AC_MSG_ERROR(Fatal) ;;
-esac
-case "$sizeof_ino_t" in
-    [[0-9]]) ;;
-    *)       AC_MSG_ERROR(Non-numeric sizeof(ino_t)=\"$sizeof_ino_t\" ?) ;;
-esac
-AC_MSG_RESULT($sizeof_ino_t)
-AC_DEFINE_UNQUOTED(SIZEOF_INO_T, $sizeof_ino_t)
-
-AC_MSG_CHECKING(size of dev_t)
-sizeof_dev_t=false
-AC_TRY_RUN([
-#include <stdio.h>
-#include <sys/types.h>
-int main()
-{
-  FILE* f;
-  if (!(f=fopen("sizeoftest", "w")))
-    return 1;
-  fprintf(f, "%d\n", sizeof(dev_t));
-  fclose(f);
-  return 0;
-}],sizeof_dev_t=0,,sizeof_dev_t=cross)
-case "$sizeof_dev_t" in
-    false) AC_MSG_ERROR(Needs to know the size of an dev_t.) ;;
-    0)     sizeof_dev_t=`cat sizeoftest 2>/dev/null`; rm sizeoftest;;
-    cross) sizeof_dev_t=4 ;;
-    *)     AC_MSG_ERROR(Fatal) ;;
-esac
-case "$sizeof_dev_t" in
-    [[0-9]]) ;;
-    *)       AC_MSG_ERROR(Non-numeric sizeof(dev_t)=\"$sizeof_dev_t\" ?) ;;
-esac
-AC_MSG_RESULT($sizeof_dev_t)
-AC_DEFINE_UNQUOTED(SIZEOF_DEV_T, $sizeof_dev_t)
+AC_CHECK_SIZEOF(short)
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(long long)
+AC_CHECK_SIZEOF(void *)
+AC_CHECK_SIZEOF(ino_t)
+AC_CHECK_SIZEOF(dev_t)
 
 ### 8) Checking for library functions
 AC_MSG_CHECKING(for getopt_long())
-AC_TRY_LINK([#include <unistd.h>
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <unistd.h>
 	     #include <getopt.h>
-	    ],[char *a[1];
+	    ]], [[char *a[1];
 	     getopt_long(0, a, "foo", NULL, NULL);
-	    ],
-	    AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_GETOPT_LONG,1),
-	    AC_MSG_RESULT(no))
+	    ]])],[AC_MSG_RESULT(yes)
+	    AC_DEFINE(HAVE_GETOPT_LONG,1)],[AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for mallinfo())
-AC_TRY_LINK([#include <malloc.h>],[mallinfo();], 
-	    AC_DEFINE(HAVE_MALLINFO,1)
-	    AC_MSG_RESULT(yes),
-	    AC_MSG_RESULT(no))
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <malloc.h>]], [[mallinfo();]])],[AC_DEFINE(HAVE_MALLINFO,1)
+	    AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for mmap())
-AC_TRY_LINK([#include <sys/types.h>
-	     #include <sys/mman.h>],
-            [mmap((void*)0, 0, 0, 0, 0, 0);],
-	    AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_MMAP,1),
-	    AC_MSG_RESULT(no))
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+	     #include <sys/mman.h>]], [[mmap((void*)0, 0, 0, 0, 0, 0);]])],[AC_MSG_RESULT(yes)
+	    AC_DEFINE(HAVE_MMAP,1)],[AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for madvise())
-AC_TRY_LINK([#include <sys/types.h>
-	     #include <sys/mman.h>],
-            [madvise((void*)0, 0, 0);],
-	    AC_MSG_RESULT(yes)
-	    madvise=1,
-	    AC_MSG_RESULT(no))
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+	     #include <sys/mman.h>]], [[madvise((void*)0, 0, 0);]])],[AC_MSG_RESULT(yes)
+	    madvise=1],[AC_MSG_RESULT(no)])
 
 if test "$madvise"
 then
     AC_MSG_CHECKING(for working madvise())
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
       #include <stdlib.h>
       #include <sys/types.h>
       #include <sys/mman.h>
       #include <fcntl.h>
 
       int main() {
-        int fd = open("config.log", O_RDONLY);
-        caddr_t addr = mmap(NULL, 10, PROT_READ, MAP_SHARED, fd, 0);
-        return madvise(addr, 10, MADV_SEQUENTIAL)<0;
+	int fd = open("config.log", O_RDONLY);
+	caddr_t addr = mmap(NULL, 10, PROT_READ, MAP_SHARED, fd, 0);
+	return madvise(addr, 10, MADV_SEQUENTIAL)<0;
       }
-    ],
-    AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_MADVISE,1),    
-    AC_MSG_RESULT(no),
-    AC_MSG_ERROR(cannot test for working madvise() when cross-compiling))
+    ]])],[AC_MSG_RESULT(yes)
+    AC_DEFINE(HAVE_MADVISE,1)],[AC_MSG_RESULT(no)],[AC_MSG_ERROR(cannot test for working madvise() when cross-compiling)])
 fi
 
 if test "$getdents"
 then
     AC_MSG_CHECKING(for working getdents)
-    AC_TRY_RUN([
+    AC_RUN_IFELSE([AC_LANG_SOURCE([[
       #include <sys/types.h>
       #include <fcntl.h>
       $getdents_decl
       int main() {
-        char buf[10000];
-        int fd;
-        int nread;
-        fd = open(".", O_RDONLY);
-        nread = getdents(fd, buf, 10000);
-        return nread<=0;
+	char buf[10000];
+	int fd;
+	int nread;
+	fd = open(".", O_RDONLY);
+	nread = getdents(fd, buf, 10000);
+	return nread<=0;
       }
-    ], getdents_works=1,,
-    AC_MSG_ERROR(cannot test for working getdents() when cross-compiling))
+    ]])],[getdents_works=1],[],[AC_MSG_ERROR(cannot test for working getdents() when cross-compiling)])
     if test "$getdents_works"
     then
 	AC_MSG_RESULT(yes)
 	case "$getdents" in
-	    libc)    
+	    libc)
 		AC_DEFINE(HAVE_GETDENTS,1)
 		;;
-	    syscall) 
+	    syscall)
 		AC_DEFINE(HAVE_GETDENTS,1)
 		;;
 	esac
@@ -354,20 +299,14 @@ then
 fi
 
 AC_MSG_CHECKING(for lstat())
-AC_TRY_LINK([#include <sys/stat.h>
-	    #include <unistd.h>],
-            [struct stat buf;
-	    lstat("/", &buf);],
-	    AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_LSTAT,1),
-	    AC_MSG_RESULT(no))
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/stat.h>
+	    #include <unistd.h>]], [[struct stat buf;
+	    lstat("/", &buf);]])],[AC_MSG_RESULT(yes)
+	    AC_DEFINE(HAVE_LSTAT,1)],[AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for random())
-AC_TRY_LINK([#include <stdlib.h>],
-	    [srandom(0); random();],
-	    AC_MSG_RESULT(yes)
-	    GENHASH_TEST_TARGET=genhash_test,
-	    AC_MSG_RESULT(no))
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>]], [[srandom(0); random();]])],[AC_MSG_RESULT(yes)
+	    GENHASH_TEST_TARGET=genhash_test],[AC_MSG_RESULT(no)])
 AC_SUBST(GENHASH_TEST_TARGET)
 
 ### 9) Check for "system services"
@@ -387,7 +326,8 @@ fi
 AC_SUBST(LAX_CFLAGS)
 
 AC_CONFIG_HEADER(config.h)
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile])
+AC_OUTPUT
 
 # Local variables:
 # mode: sh

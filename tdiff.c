@@ -53,8 +53,11 @@
        unsigned short d_reclen;
        char           d_name[NAME_MAX+1];
      };
-     _syscall3(int, getdents, uint, fd, struct dent*, buf, uint, count);
-     int getdents(unsigned int fd, struct dent* buf, unsigned int count);
+     int
+     getdents(int fd, char* buf, unsigned count)
+     {
+       return syscall(SYS_getdents, fd, buf, count);
+     }
 #  elif HAVE_SYS_DIRENT_H
 #    include <sys/dirent.h>
 #  else
@@ -171,7 +174,7 @@ getDirList(const char* path)
   avail = GETDIRLIST_INITIAL_SIZE;
   rv->files = xmalloc(sizeof(const char*)*avail);
 
-  while((nread = getdents(fd, &dentbuf.f_dent, 
+  while((nread = getdents(fd, (char*)&dentbuf.f_dent, 
 			  GETDIRLIST_DENTBUF_SIZE))>0)
     {
       union dentptr_u dent;
@@ -1018,10 +1021,10 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	    {
 	      if (opt->size)
 		{
-		  printf("%s: %s: size: %ld %ld\n",
+		  printf("%s: %s: size: %lld %lld\n",
 			 progname,
 			 p1+opt->root1_length+1,
-			 (long)sbuf1.st_size, (long)sbuf2.st_size);
+			 (long long)sbuf1.st_size, (long long)sbuf2.st_size);
 		  localerr = 1;
 		}
 	      content_diff = 0;

@@ -1,0 +1,9 @@
+2006-09-19  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.c: Call getdents correctly on modern linux.  Use long long
+	to print file sizes for LFS compatibility.
+
+	* configure.in: Fix getdents detection on modern linux.  Upgrade
+	to autoconf 2.59.  Use LFS.
+
+	* inocache.c (ic_hash): Fix 64-bit hashing.
