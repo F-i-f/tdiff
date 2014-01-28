@@ -1,5 +1,7 @@
 2014-01-28  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (AM_CFLAGS): Add -Wall.
+
 	* tdiff.c (newStrList, pushStrList): Created and abstracted.
 	(compareStrList): Created and abstracted string list comparison.
 

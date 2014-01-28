@@ -19,7 +19,7 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 AM_CPPFLAGS =  -D_GNU_SOURCE
-AM_CFLAGS   = -g -O2 -Wstrict-prototypes -Werror
+AM_CFLAGS   = -g -O2 -Wstrict-prototypes -Werror -Wall
 
 noinst_LIBRARIES   = libtdiff.a
 
