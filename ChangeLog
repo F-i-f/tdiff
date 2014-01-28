@@ -1,3 +1,7 @@
+2014-01-28  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.c (newStrList, pushStrList): Created and abstracted.
+
 2014-01-27  Philippe Troin  <phil@fifi.org>
 
 	* Convert to automake.

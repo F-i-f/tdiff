@@ -85,16 +85,17 @@
 #  error Cannot find major() and minor()
 #endif
 
-#define GETDIRLIST_INITIAL_SIZE 8
+#define GETSTRLIST_INITIAL_SIZE 8
 #define GETDIRLIST_DENTBUF_SIZE 8192
 #define XREADLINK_BUF_SIZE 1024
 #define CMPFILE_BUF_SIZE 16384
 
-typedef struct dirl_s
+typedef struct strl_s
 {
   size_t size;
-  const char **files;
-} dirl_t;
+  size_t avail;
+  const char **strings;
+} strl_t;
 
 typedef struct dexe_s
 {
@@ -133,8 +134,8 @@ typedef struct option_s
   inocache_t *inocache;
 } options_t;
 
-dirl_t *getDirList(const char* path);
-void freeDirList(dirl_t *d);
+strl_t *getDirList(const char* path);
+void freeStrlist(strl_t *d);
 int get_exec_args(char**, int*, dexe_t*);
 int dodiff(const options_t* opt, const char* p1, const char* p2);
 char* pconcat(const char* p1, const char* p2);
@@ -146,7 +147,40 @@ void printopts(const options_t*);
 #  define printopts(a)
 #endif
 
-dirl_t *
+void
+newStrList(strl_t **l)
+{
+  strl_t* rv;
+  /**/
+  *l = NULL;
+  rv = xmalloc(sizeof(strl_t));
+  rv->size = 0;
+  rv->avail = GETSTRLIST_INITIAL_SIZE;
+  rv->strings = xmalloc(sizeof(const char*)*rv->avail);
+
+  *l =rv;
+}
+
+void
+pushStrList(strl_t *l, const char* s)
+{
+  if (l->size == l->avail)
+    l->strings = xrealloc(l->strings, (l->avail*=2)*sizeof(const char*));
+  l->strings[l->size++] = xstrdup(s);
+}
+
+void
+freeStrList(strl_t *d)
+{
+  int i;
+  /**/
+  for (i=0; i<d->size; ++i)
+    free((char*)d->strings[i]);
+  free(d->strings);
+  free(d);
+}
+
+strl_t *
 getDirList(const char* path)
 #if HAVE_GETDENTS
 {
@@ -161,18 +195,14 @@ getDirList(const char* path)
     char                   *f_byte;
   };
   int fd;
-  dirl_t *rv = NULL;
-  int avail;
+  strl_t *rv = NULL;
   int nread;
   /**/
   fd = open(path, O_RDONLY);
   if (fd<0)
     goto err;
 
-  rv = xmalloc(sizeof(dirl_t));
-  rv->size = 0;
-  avail = GETDIRLIST_INITIAL_SIZE;
-  rv->files = xmalloc(sizeof(const char*)*avail);
+  newStrList(&rv);
 
   while((nread = getdents(fd, (char*)&dentbuf.f_dent,
 			  GETDIRLIST_DENTBUF_SIZE))>0)
@@ -194,10 +224,7 @@ getDirList(const char* path)
 			  && dent.f_dent->d_name[2]== 0))))
 	    continue;
 
-	  if (rv->size == avail)
-	    rv->files = xrealloc(rv->files, (avail*=2)*sizeof(const char*));
-
-	  rv->files[rv->size++] = xstrdup(dent.f_dent->d_name);
+	  pushStrList(rv, dent.f_dent->d_name);
 	}
     }
 
@@ -215,16 +242,13 @@ getDirList(const char* path)
   DIR *dir;
   struct dirent *dent;
   int avail;
-  dirl_t *rv = NULL;
+  strl_t *rv = NULL;
   /**/
   dir = opendir(path);
   if (!dir)
     goto err;
 
-  rv = xmalloc(sizeof(dirl_t));
-  rv->size = 0;
-  avail = GETDIRLIST_INITIAL_SIZE;
-  rv->files = xmalloc(sizeof(const char*)*avail);
+  newStrList(&rv);
 
   while ((dent = readdir(dir)))
     {
@@ -235,10 +259,7 @@ getDirList(const char* path)
 		      && dent->d_name[2]== 0))))
 	continue;
 
-      if (rv->size == avail)
-	rv->files = xrealloc(rv->files, (avail*=2)*sizeof(const char*));
-
-      rv->files[rv->size++] = xstrdup(dent->d_name);
+      pushStrList(rv, dent->d_name);
     }
 
   if (closedir(dir))
@@ -251,17 +272,6 @@ getDirList(const char* path)
   return rv;
 }
 #endif
-
-void
-freeDirList(dirl_t *d)
-{
-  int i;
-  /**/
-  for (i=0; i<d->size; ++i)
-    free((char*)d->files[i]);
-  free(d->files);
-  free(d);
-}
 
 const char*
 getFileType(mode_t m)
@@ -933,7 +943,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       {
       case S_IFDIR:
 	{
-	  dirl_t *ct1, *ct2;
+	  strl_t *ct1, *ct2;
 	  /**/
 	  ct1 = getDirList(p1);
 	  ct2 = getDirList(p2);
@@ -942,19 +952,19 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	      int i1, i2;
 	      int cmpres;
 	      /**/
-	      qsort(ct1->files, ct1->size, sizeof(char*),
+	      qsort(ct1->strings, ct1->size, sizeof(char*),
 		    (int(*)(const void*, const void*))strpcmp);
-	      qsort(ct2->files, ct2->size, sizeof(char*),
+	      qsort(ct2->strings, ct2->size, sizeof(char*),
 		    (int(*)(const void*, const void*))strpcmp);
 	      for (i1 = i2 = 0; i1 < ct1->size || i2 < ct2->size; )
 		{
 		  if (i1 == ct1->size)
 		    {
 		      if (opt->dirs && !gh_find(opt->exclusions,
-						ct2->files[i2], NULL))
+						ct2->strings[i2], NULL))
 			{
 			  printf("%s: only in %s: %s\n",
-				 progname, p2, ct2->files[i2]);
+				 progname, p2, ct2->strings[i2]);
 			  localerr = 1;
 			}
 		      i2++;
@@ -962,20 +972,20 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		  else if (i2 == ct2->size)
 		    {
 		      if (opt->dirs && !gh_find(opt->exclusions,
-						ct1->files[i1], NULL))
+						ct1->strings[i1], NULL))
 			{
 			  printf("%s: only in %s: %s\n",
-				 progname, p1, ct1->files[i1]);
+				 progname, p1, ct1->strings[i1]);
 			  localerr = 1;
 			}
 		      i1++;
 		    }
-		  else if (!(cmpres = strcmp(ct1->files[i1], ct2->files[i2])))
+		  else if (!(cmpres = strcmp(ct1->strings[i1], ct2->strings[i2])))
 		    {
-		      if (!gh_find(opt->exclusions, ct1->files[i1], NULL))
+		      if (!gh_find(opt->exclusions, ct1->strings[i1], NULL))
 			{
-			  char *np1 = pconcat(p1, ct1->files[i1]);
-			  char *np2 = pconcat(p2, ct2->files[i2]);
+			  char *np1 = pconcat(p1, ct1->strings[i1]);
+			  char *np2 = pconcat(p2, ct2->strings[i2]);
 			  int nrv = dodiff(opt, np1, np2);
 			  free(np1);
 			  free(np2);
@@ -987,10 +997,10 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		  else if (cmpres<0)
 		    {
 		      if (opt->dirs && !gh_find(opt->exclusions,
-						ct1->files[i1], NULL))
+						ct1->strings[i1], NULL))
 			{
 			  printf("%s: only in %s: %s\n",
-				 progname, p1, ct1->files[i1]);
+				 progname, p1, ct1->strings[i1]);
 			  localerr = 1;
 			}
 		      i1++;
@@ -998,18 +1008,18 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		  else /* cmpres>0 */
 		    {
 		      if (opt->dirs && !gh_find(opt->exclusions,
-						ct2->files[i2], NULL))
+						ct2->strings[i2], NULL))
 			{
 			  printf("%s: only in %s: %s\n",
-				 progname, p2, ct2->files[i2]);
+				 progname, p2, ct2->strings[i2]);
 			  localerr = 1;
 			}
 		      i2++;
 		    }
 		}
 	    }
-	  if (ct1) freeDirList(ct1);
-	  if (ct2) freeDirList(ct2);
+	  if (ct1) freeStrList(ct1);
+	  if (ct2) freeStrList(ct2);
 	}
 	break;
       case S_IFREG:
