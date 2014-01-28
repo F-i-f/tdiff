@@ -19,9 +19,10 @@
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 AC_INIT([tdiff],[0.1])
-AM_INIT_AUTOMAKE([foreign])
-
 AC_PREREQ([2.69])
+AC_CANONICAL_TARGET
+
+AM_INIT_AUTOMAKE([foreign])
 
 # Get started
 AC_CONFIG_SRCDIR([tdiff.c])
@@ -217,6 +218,13 @@ AC_EGREP_CPP(st_flags,[#include <sys/stat.h>],
 	     AC_DEFINE(HAVE_ST_FLAGS,1,[FIXME])
 	     AC_MSG_RESULT(yes),
 	     AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING(for getxattr in attr/xattr.h)
+AC_EGREP_CPP(getxattr,[#include <attr/xattr.h>],
+	     AC_DEFINE(HAVE_GETXATTR,1,[Define to 1 if your system has xattrs])
+	     AC_MSG_RESULT(yes),
+	     AC_MSG_RESULT(no))
+
 
 ### 7) Checking for compiler characteristics
 AC_CHECK_SIZEOF(short)
