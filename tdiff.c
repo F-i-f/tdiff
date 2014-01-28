@@ -169,6 +169,18 @@ pushStrList(strl_t *l, const char* s)
   l->strings[l->size++] = xstrdup(s);
 }
 
+int strpcmp(const char** s1, const char** s2)
+{
+  return (strcmp(*s1, *s2));
+}
+
+void
+sortStrList(const strl_t *l)
+{
+  qsort(l->strings, l->size, sizeof(char*),
+	(int(*)(const void*, const void*))strpcmp);
+}
+
 void
 freeStrList(strl_t *d)
 {
@@ -178,6 +190,83 @@ freeStrList(strl_t *d)
     free((char*)d->strings[i]);
   free(d->strings);
   free(d);
+}
+
+int
+compareStrList(const char *p1, const char* p2,
+	       const strl_t *ct1, const strl_t *ct2,
+	       const char* reportMissingStr1,
+	       const char* reportMissingStr2,
+	       int (*reportMissing)(const char*, void*),
+	       int (*compareEntries)(const char* p1, const char* p2,
+				     const char* e,
+				     void*),
+	       void *clientData)
+{
+  int	i1, i2;
+  int	cmpres;
+  int	rv	 = XIT_OK;
+  int	localerr = 0;
+  /**/
+  sortStrList(ct1);
+  sortStrList(ct2);
+
+  for (i1 = i2 = 0; i1 < ct1->size || i2 < ct2->size; )
+    {
+      if (i1 == ct1->size)
+	{
+	  if (reportMissing(ct2->strings[i2], clientData))
+	    {
+	      printf("%s: %s: %s\n",
+		     progname, ct2->strings[i2], reportMissingStr2);
+	      localerr = 1;
+	    }
+	  i2++;
+	}
+      else if (i2 == ct2->size)
+	{
+	  if (reportMissing(ct1->strings[i1], clientData))
+	    {
+	      printf("%s: %s: %s\n",
+		     progname, ct1->strings[i1], reportMissingStr1);
+	      localerr = 1;
+	    }
+	  i1++;
+	}
+      else if (!(cmpres = strcmp(ct1->strings[i1], ct2->strings[i2])))
+	{
+	  int nrv;
+	  /**/
+	  nrv = compareEntries(p1, p2, ct1->strings[i1], clientData);
+	  if (nrv>rv) rv = nrv;
+	  i1++;
+	  i2++;
+	}
+      else if (cmpres<0)
+	{
+	  if (reportMissing(ct1->strings[i1], clientData))
+	    {
+	      printf("%s: %s: %s\n",
+		     progname, ct1->strings[i1], reportMissingStr1);
+	      localerr = 1;
+	    }
+	  i1++;
+	}
+      else /* cmpres>0 */
+	{
+	  if (reportMissing(ct2->strings[i2], clientData))
+	    {
+	      printf("%s: %s: %s\n",
+		     progname, ct2->strings[i2], reportMissingStr2);
+	      localerr = 1;
+	    }
+	  i2++;
+	}
+    }
+
+  if (localerr && XIT_DIFF>rv) rv = XIT_DIFF;
+
+  return rv;
 }
 
 strl_t *
@@ -682,11 +771,6 @@ pconcat(const char* p1, const char* p2)
   return rv;
 }
 
-int strpcmp(const char** s1, const char** s2)
-{
-  return (strcmp(*s1, *s2));
-}
-
 int
 execprocess(const dexe_t *dex, const char* p1, const char* p2)
 {
@@ -746,6 +830,37 @@ xreadlink(const char* path)
     }
   buf[nstored] = 0;
   return buf;
+}
+
+typedef struct fileCompareClientData_s
+{
+  const options_t *opt;
+} fileCompareClientData_t;
+
+static int
+reportMissingFile(const char* s, void* voidClientData)
+{
+  fileCompareClientData_t *clientData = (fileCompareClientData_t*)voidClientData;
+  return clientData->opt->dirs && !gh_find(clientData->opt->exclusions, s, NULL);
+}
+
+static int
+compareFileEntries(const char* p1, const char* p2,
+		   const char* e,
+		   void* voidClientData)
+{
+  fileCompareClientData_t *clientData = (fileCompareClientData_t*)voidClientData;
+  int rv = XIT_OK;
+  /**/
+  if (!gh_find(clientData->opt->exclusions, e, NULL))
+    {
+      char *np1 = pconcat(p1, e);
+      char *np2 = pconcat(p2, e);
+      rv = dodiff(clientData->opt, np1, np2);
+      free(np1);
+      free(np2);
+    }
+  return rv;
 }
 
 int
@@ -944,82 +1059,31 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       case S_IFDIR:
 	{
 	  strl_t *ct1, *ct2;
+	  int nrv;
+	  size_t reportMissingStr1_len = strlen(p1)+9;
+	  size_t reportMissingStr2_len = strlen(p2)+9;
+	  char reportMissingStr1[reportMissingStr1_len];
+	  char reportMissingStr2[reportMissingStr2_len];
+	  fileCompareClientData_t clientData;
 	  /**/
 	  ct1 = getDirList(p1);
 	  ct2 = getDirList(p2);
-	  if (ct1 && ct2)
-	    {
-	      int i1, i2;
-	      int cmpres;
-	      /**/
-	      qsort(ct1->strings, ct1->size, sizeof(char*),
-		    (int(*)(const void*, const void*))strpcmp);
-	      qsort(ct2->strings, ct2->size, sizeof(char*),
-		    (int(*)(const void*, const void*))strpcmp);
-	      for (i1 = i2 = 0; i1 < ct1->size || i2 < ct2->size; )
-		{
-		  if (i1 == ct1->size)
-		    {
-		      if (opt->dirs && !gh_find(opt->exclusions,
-						ct2->strings[i2], NULL))
-			{
-			  printf("%s: only in %s: %s\n",
-				 progname, p2, ct2->strings[i2]);
-			  localerr = 1;
-			}
-		      i2++;
-		    }
-		  else if (i2 == ct2->size)
-		    {
-		      if (opt->dirs && !gh_find(opt->exclusions,
-						ct1->strings[i1], NULL))
-			{
-			  printf("%s: only in %s: %s\n",
-				 progname, p1, ct1->strings[i1]);
-			  localerr = 1;
-			}
-		      i1++;
-		    }
-		  else if (!(cmpres = strcmp(ct1->strings[i1], ct2->strings[i2])))
-		    {
-		      if (!gh_find(opt->exclusions, ct1->strings[i1], NULL))
-			{
-			  char *np1 = pconcat(p1, ct1->strings[i1]);
-			  char *np2 = pconcat(p2, ct2->strings[i2]);
-			  int nrv = dodiff(opt, np1, np2);
-			  free(np1);
-			  free(np2);
-			  if (nrv>rv) rv = nrv;
-			}
-		      i1++;
-		      i2++;
-		    }
-		  else if (cmpres<0)
-		    {
-		      if (opt->dirs && !gh_find(opt->exclusions,
-						ct1->strings[i1], NULL))
-			{
-			  printf("%s: only in %s: %s\n",
-				 progname, p1, ct1->strings[i1]);
-			  localerr = 1;
-			}
-		      i1++;
-		    }
-		  else /* cmpres>0 */
-		    {
-		      if (opt->dirs && !gh_find(opt->exclusions,
-						ct2->strings[i2], NULL))
-			{
-			  printf("%s: only in %s: %s\n",
-				 progname, p2, ct2->strings[i2]);
-			  localerr = 1;
-			}
-		      i2++;
-		    }
-		}
-	    }
-	  if (ct1) freeStrList(ct1);
-	  if (ct2) freeStrList(ct2);
+	  snprintf(reportMissingStr1, reportMissingStr1_len,
+		   "only in %s", p1);
+	  snprintf(reportMissingStr2, reportMissingStr2_len,
+		   "only in %s", p2);
+	  clientData.opt = opt;
+	  nrv = compareStrList(p1, p2,
+			       ct1, ct2,
+			       reportMissingStr1, reportMissingStr2,
+			       reportMissingFile,
+			       compareFileEntries,
+			       &clientData);
+	  if (nrv > rv)
+	    rv = nrv;
+
+	  freeStrList(ct1);
+	  freeStrList(ct2);
 	}
 	break;
       case S_IFREG:
