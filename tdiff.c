@@ -1,20 +1,20 @@
 /*
   tdiff - tree diffs
   Main()
-  Copyright (C) 1999 Philippe Troin <phil@fifi.org>
+  Copyright (C) 1999, 2008, 2014 Philippe Troin <phil@fifi.org>
 
   $Id$
-  
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
+  the Free Software Foundation; either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
@@ -174,30 +174,30 @@ getDirList(const char* path)
   avail = GETDIRLIST_INITIAL_SIZE;
   rv->files = xmalloc(sizeof(const char*)*avail);
 
-  while((nread = getdents(fd, (char*)&dentbuf.f_dent, 
+  while((nread = getdents(fd, (char*)&dentbuf.f_dent,
 			  GETDIRLIST_DENTBUF_SIZE))>0)
     {
       union dentptr_u dent;
       /**/
       for (dent.f_byte = dentbuf.f_byte;
 	   dent.GETDENTS_RETURN_Q-dentbuf.GETDENTS_RETURN_Q<nread;
-#if GETDENTS_NEXTDENT
-	  dent.GETDENTS_RETURN_Q += dent.f_dent->GETDENTS_NEXTDENT_NAME)
+#ifdef GETDENTS_NEXTDENT
+	  dent.GETDENTS_RETURN_Q += dent.f_dent->GETDENTS_NEXTDENT)
 #else
 	  dent.f_dent++)
 #endif
 	{
-	  if (!dent.f_dent->d_name 
-	      || (dent.f_dent->d_name[0]=='.' 
+	  if (!dent.f_dent->d_name
+	      || (dent.f_dent->d_name[0]=='.'
 		  && (dent.f_dent->d_name[1] == 0
 		      || (dent.f_dent->d_name[1]=='.'
 			  && dent.f_dent->d_name[2]== 0))))
 	    continue;
-      
+
 	  if (rv->size == avail)
 	    rv->files = xrealloc(rv->files, (avail*=2)*sizeof(const char*));
 
-	  rv->files[rv->size++] = xstrdup(dent.f_dent->d_name);	  
+	  rv->files[rv->size++] = xstrdup(dent.f_dent->d_name);
 	}
     }
 
@@ -228,13 +228,13 @@ getDirList(const char* path)
 
   while ((dent = readdir(dir)))
     {
-      if (!dent->d_name 
-	  || (dent->d_name[0]=='.' 
+      if (!dent->d_name
+	  || (dent->d_name[0]=='.'
 	      && (dent->d_name[1] == 0
 		  || (dent->d_name[1]=='.'
 		      && dent->d_name[2]== 0))))
 	continue;
-      
+
       if (rv->size == avail)
 	rv->files = xrealloc(rv->files, (avail*=2)*sizeof(const char*));
 
@@ -291,7 +291,7 @@ getFileType(mode_t m)
     }
 }
 
-int 
+int
 cmpFiles(const options_t *opt, const char* f1, const char* f2)
 {
   enum { res_untested, res_same, res_diff } result;
@@ -356,10 +356,17 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
   if (!(ptr2 = mmap(NULL, fs2, PROT_READ, MAP_SHARED, fd2, 0)))
     goto map2_failed;
 
-#if HAVE_MADVISE
+#if HAVE_MADVISE && defined(MADV_SEQUENTIAL)
   if (madvise(ptr1, fs1, MADV_SEQUENTIAL)<0)
     perror(f1);
   if (madvise(ptr2, fs2, MADV_SEQUENTIAL)<0)
+    perror(f2);
+#endif /* HAVE_MADVISE */
+
+#if HAVE_MADVISE && defined(MADV_WILLNEED)
+  if (madvise(ptr1, fs1, MADV_WILLNEED)<0)
+    perror(f1);
+  if (madvise(ptr2, fs2, MADV_WILLNEED)<0)
     perror(f2);
 #endif /* HAVE_MADVISE */
 
@@ -403,13 +410,13 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 	      goto fail;
 	    }
 	  if (nread2 < CMPFILE_BUF_SIZE && nread2 != toread)
-	    {	
+	    {
 	      fprintf(stderr, "%s: %s: short read\n", progname, f2);
 	      goto fail;
 	    }
 	  if (nread1 != nread2)
 	    {
-	      fprintf(stderr, "%s: read different number of bytes\n", 
+	      fprintf(stderr, "%s: read different number of bytes\n",
 		      progname);
 	      goto fail;
 	    }
@@ -527,7 +534,7 @@ get_exec_args(char **argv, int *optind, dexe_t *dex)
   cargv = argv;
   while(1)
     {
-      if (!*cargv) 
+      if (!*cargv)
 	break;
       if (strcmp("%1", *cargv)==0)
 	found_f1 = cargv;
@@ -544,7 +551,7 @@ get_exec_args(char **argv, int *optind, dexe_t *dex)
   (*optind)++;
   if (!found_semi)
     {
-      fprintf(stderr, 
+      fprintf(stderr,
 	      "%s: missing final semi-colon while scanning command line\n",
 	      progname);
       return 0;
@@ -588,7 +595,7 @@ get_numeric_arg(const char* string, unsigned int* val)
     }
   else
     m = strtoul(&string[0], &ptr, 10);
-	
+
   if (*ptr)
     {
       fprintf(stderr, "%s: not a number \"%s\"\n", progname, string);
@@ -690,7 +697,7 @@ execprocess(const dexe_t *dex, const char* p1, const char* p2)
       /* Child */
       if (execvp(dex->argv[0], dex->argv)<0)
 	{
-	  fprintf(stderr, "%s: exec(%s): %s\n", progname, dex->argv[0], 
+	  fprintf(stderr, "%s: exec(%s): %s\n", progname, dex->argv[0],
 		  strerror(errno));
 	  exit(1);
 	}
@@ -760,7 +767,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   if (sbuf1.st_ino == sbuf2.st_ino && sbuf1.st_dev == sbuf2.st_dev)
     {
       if (opt->verbose)
-	printf("%s: %s: same dev/ino pair, skipping\n", 
+	printf("%s: %s: same dev/ino pair, skipping\n",
 	       progname, p1+opt->root1_length+1);
       if (opt->exec_always && S_ISREG(sbuf1.st_mode))
 	if (!execprocess(&opt->exec_always_args, p1, p2))
@@ -780,7 +787,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       const char* ptr;
       ptr = ic_get(opt->inocache, ice);
       if (opt->verbose)
-	printf("%s: %s: already compared hard-linked files at %s\n", 
+	printf("%s: %s: already compared hard-linked files at %s\n",
 	       progname, icepath, ptr);
       free(ice);
       free(icepath);
@@ -850,7 +857,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       /**/
       if ((gr = getgrgid(sbuf1.st_gid))) gn1 = xstrdup(gr->gr_name);
       if ((gr = getgrgid(sbuf2.st_gid))) gn2 = xstrdup(gr->gr_name);
-      
+
       printf("%s: %s: group: %s(%ld) %s(%ld)\n",
 	     progname,
 	     p1+opt->root1_length+1,
@@ -859,7 +866,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 
       if (gn1) free(gn1);
       if (gn2) free(gn2);
-      
+
       localerr = 1;
     }
   if (opt->ctime && sbuf1.st_ctime != sbuf2.st_ctime
@@ -910,7 +917,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       free(t2);
       localerr = 1;
     }
-  
+
   /* Type tests */
   if (opt->type && ((sbuf1.st_mode)&S_IFMT) != ((sbuf2.st_mode)&S_IFMT))
     {
@@ -935,18 +942,18 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	      int i1, i2;
 	      int cmpres;
 	      /**/
-	      qsort(ct1->files, ct1->size, sizeof(char*), 
+	      qsort(ct1->files, ct1->size, sizeof(char*),
 		    (int(*)(const void*, const void*))strpcmp);
-	      qsort(ct2->files, ct2->size, sizeof(char*), 
+	      qsort(ct2->files, ct2->size, sizeof(char*),
 		    (int(*)(const void*, const void*))strpcmp);
 	      for (i1 = i2 = 0; i1 < ct1->size || i2 < ct2->size; )
 		{
 		  if (i1 == ct1->size)
 		    {
-		      if (opt->dirs && !gh_find(opt->exclusions, 
+		      if (opt->dirs && !gh_find(opt->exclusions,
 						ct2->files[i2], NULL))
 			{
-			  printf("%s: only in %s: %s\n", 
+			  printf("%s: only in %s: %s\n",
 				 progname, p2, ct2->files[i2]);
 			  localerr = 1;
 			}
@@ -954,10 +961,10 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		    }
 		  else if (i2 == ct2->size)
 		    {
-		      if (opt->dirs && !gh_find(opt->exclusions, 
+		      if (opt->dirs && !gh_find(opt->exclusions,
 						ct1->files[i1], NULL))
 			{
-			  printf("%s: only in %s: %s\n", 
+			  printf("%s: only in %s: %s\n",
 				 progname, p1, ct1->files[i1]);
 			  localerr = 1;
 			}
@@ -982,7 +989,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		      if (opt->dirs && !gh_find(opt->exclusions,
 						ct1->files[i1], NULL))
 			{
-			  printf("%s: only in %s: %s\n", 
+			  printf("%s: only in %s: %s\n",
 				 progname, p1, ct1->files[i1]);
 			  localerr = 1;
 			}
@@ -990,10 +997,10 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		    }
 		  else /* cmpres>0 */
 		    {
-		      if (opt->dirs && !gh_find(opt->exclusions, 
+		      if (opt->dirs && !gh_find(opt->exclusions,
 						ct2->files[i2], NULL))
 			{
-			  printf("%s: only in %s: %s\n", 
+			  printf("%s: only in %s: %s\n",
 				 progname, p2, ct2->files[i2]);
 			  localerr = 1;
 			}
@@ -1012,7 +1019,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	  if (opt->blocks && sbuf1.st_blocks != sbuf2.st_blocks)
 	    {
 	      printf("%s: %s: blocks: %ld %ld\n",
-		     progname, 
+		     progname,
 		     p1+opt->root1_length+1,
 		     (long)sbuf1.st_blocks, (long)sbuf2.st_blocks);
 	      localerr = 1;
@@ -1065,7 +1072,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	  if (lnk1 && lnk2)
 	    if (strcmp(lnk1, lnk2)!=0)
 	      {
-		printf("%s: %s: symbolic links differ\n", 
+		printf("%s: %s: symbolic links differ\n",
 		       progname, p1+opt->root1_length+1);
 		localerr = 1;
 	      }
@@ -1103,10 +1110,10 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   return rv;
 }
 
-int 
+int
 main(int argc, char*argv[])
 {
-  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 
+  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1,
 			0, 0, 0, 0, ~0, NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
   int rv;
@@ -1198,46 +1205,46 @@ main(int argc, char*argv[])
 	case 'v': options.verbose         = 1; break;
 	case 'd': options.dirs            = 1; break;
 	case 'D': options.dirs            = 0; break;
-	case 't': options.type  	  = 1; break;
-	case 'T': options.type  	  = 0; break;
-	case 'm': options.mode  	  = 1; break;
-	case 'M': options.mode  	  = 0; break;
+	case 't': options.type		  = 1; break;
+	case 'T': options.type		  = 0; break;
+	case 'm': options.mode		  = 1; break;
+	case 'M': options.mode		  = 0; break;
 	case 'f': options.flags           = 1; break;
 	case 'F': options.flags           = 0; break;
-	case 'o': options.owner 	  = 1; break;
-	case 'O': options.owner 	  = 0; break;
-	case 'g': options.group 	  = 1; break;
-	case 'G': options.group 	  = 0; break;
-	case 'z': options.ctime 	  = 1; break;
-	case 'Z': options.ctime 	  = 0; break;
-	case 'i': options.mtime 	  = 1; break;
-	case 'I': options.mtime 	  = 0; break;
-	case 'r': options.atime 	  = 1; break;
-	case 'R': options.atime 	  = 0; break;
-	case 's': options.size  	  = 1; break;
-	case 'S': options.size  	  = 0; break;
-	case 'b': options.blocks   	  = 1; break;
-	case 'B': options.blocks   	  = 0; break;
-	case 'c': options.contents 	  = 1; break;
-	case 'C': options.contents 	  = 0; break;
-	case 'j': options.major    	  = 1; break;
-	case 'J': options.major 	  = 0; break;
-	case 'n': options.minor 	  = 1; break;
-	case 'N': options.minor 	  = 0; break;
-	case 'a': options.dirs = options.type 
-		    = options.mode = options.flags = options.owner 
+	case 'o': options.owner		  = 1; break;
+	case 'O': options.owner		  = 0; break;
+	case 'g': options.group		  = 1; break;
+	case 'G': options.group		  = 0; break;
+	case 'z': options.ctime		  = 1; break;
+	case 'Z': options.ctime		  = 0; break;
+	case 'i': options.mtime		  = 1; break;
+	case 'I': options.mtime		  = 0; break;
+	case 'r': options.atime		  = 1; break;
+	case 'R': options.atime		  = 0; break;
+	case 's': options.size		  = 1; break;
+	case 'S': options.size		  = 0; break;
+	case 'b': options.blocks	  = 1; break;
+	case 'B': options.blocks	  = 0; break;
+	case 'c': options.contents	  = 1; break;
+	case 'C': options.contents	  = 0; break;
+	case 'j': options.major		  = 1; break;
+	case 'J': options.major		  = 0; break;
+	case 'n': options.minor		  = 1; break;
+	case 'N': options.minor		  = 0; break;
+	case 'a': options.dirs = options.type
+		    = options.mode = options.flags = options.owner
 		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
 		    = options.major = options.minor = 1; break;
-	case 'A': options.dirs = options.type 
-		    = options.mode = options.flags = options.owner 
+	case 'A': options.dirs = options.type
+		    = options.mode = options.flags = options.owner
 		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
 		    = options.major = options.minor = 0; break;
 	case 'p': options.nommap = 1; break;
-	case 'x': 
+	case 'x':
 	  if (options.exec)
 	    {
 	      fprintf(stderr, "%s: cannot specify -x twice\n", progname);
@@ -1248,7 +1255,7 @@ main(int argc, char*argv[])
 	  else
 	    end_after_options = EAO_error;
 	  break;
-	case 'w': 
+	case 'w':
 	  if (options.exec_always)
 	    {
 	      fprintf(stderr, "%s: cannot specify -w twice\n", progname);
@@ -1292,7 +1299,7 @@ main(int argc, char*argv[])
   argv += optind;
 
   printopts(&options);
-      
+
   if (argc!=2)
     {
       fprintf(stderr, "%s: needs two arguments\n", progname);

@@ -1,3 +1,9 @@
+2014-01-27  Philippe Troin  <phil@fifi.org>
+
+	* Convert to automake.
+
+	* tdiff.c (cmpFiles): Use madvise(MADV_WILLNEED)
+
 2006-09-19  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.c: Call getdents correctly on modern linux.  Use long long

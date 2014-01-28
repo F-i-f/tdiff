@@ -1,12 +1,12 @@
 #  tdiff - tree diffs
-#  configure.in
-#  Copyright (C) 1999, 2006 Philippe Troin <phil@fifi.org>
+#  configure.ac
+#  Copyright (C) 1999, 2006, 2008, 2014 Philippe Troin <phil@fifi.org>
 #
 #  $Id$
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation; either version 2 of the License, or
+#  the Free Software Foundation; either version 3 of the License, or
 #  (at your option) any later version.
 #
 #  This program is distributed in the hope that it will be useful,
@@ -18,10 +18,12 @@
 #  along with this program; if not, write to the Free Software
 #  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-AC_PREREQ(2.59)
+AC_INIT([tdiff],[0.1])
+AM_INIT_AUTOMAKE([foreign])
+
+AC_PREREQ([2.69])
 
 # Get started
-AC_INIT
 AC_CONFIG_SRCDIR([tdiff.c])
 
 # Remember if CFLAGS was set
@@ -31,7 +33,6 @@ then
 fi
 
 ### 1) Checking for system
-AC_CANONICAL_TARGET
 AC_SYS_LARGEFILE
 
 ### 2) Checking for programs
@@ -39,6 +40,7 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_RANLIB
 AC_PROG_EGREP
+AC_PROG_INSTALL
 
 ### 3) Checking for libraries
 
@@ -82,8 +84,8 @@ else
 	    AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1,
 	      [Define to 1 if you have SYS_getdents in <syscall.h>])
 	    AC_DEFINE(GETDENTS_STRUCT, dent)
-	    AC_DEFINE(GETDENTS_NEXTDENT, 1)
-	    AC_DEFINE(GETDENTS_NEXTDENT_NAME, d_reclen)
+	    AC_DEFINE(GETDENTS_NEXTDENT, d_reclen,
+	      [Define to the name of the field in your system's dentry structure that has a jump offeset to get to the next entry.])
 	    AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
 	else
 	    AC_MSG_RESULT(no)
@@ -100,9 +102,9 @@ case "$getdents" in
 	getdents_decl="#include <syscall.h>
 	 #include <errno.h>
 	 int getdents(int fd, char* buf, unsigned int count)
-         {
-            return syscall(SYS_getdents, fd, buf, count);
-         }
+	 {
+	    return syscall(SYS_getdents, fd, buf, count);
+	 }
 	 struct dent {
 	   long           d_ino;
 	   off_t          d_off;
@@ -115,7 +117,7 @@ esac
 AC_MSG_CHECKING(for random in stdlib.h)
 AC_EGREP_CPP(random, [#include <stdlib.h>],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_RANDOM,1),
+	     AC_DEFINE(HAVE_RANDOM,1,[FIXME]),
 	     AC_MSG_RESULT(no))
 
 major_keep_trying=yes
@@ -123,7 +125,7 @@ AC_MSG_CHECKING(for major and minor in mkdev.h)
 AC_EGREP_CPP(major,
 	     [#include <sys/mkdev.h>],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_SYS_MKDEV_H,1)
+	     AC_DEFINE(HAVE_SYS_MKDEV_H,1,[FIXME])
 	     unset major_keep_trying,
 	     AC_MSG_RESULT(no))
 
@@ -137,7 +139,7 @@ AC_EGREP_CPP(oh_yes,
 	      #endif
 	     ],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_SYS_SYSMACROS_H,1)
+	     AC_DEFINE(HAVE_SYS_SYSMACROS_H,1,[FIXME])
 	     unset major_keep_trying,
 	     AC_MSG_RESULT(no))
 fi
@@ -154,7 +156,7 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     oh_yes_oh_yes
 	     #endif],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFLNK),
+	     AC_DEFINE(HAVE_S_IFLNK,1,[FIXME]),
 	     AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for S_IFIFO in stat)
@@ -163,7 +165,7 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     oh_yes_oh_yes
 	     #endif],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFIFO),
+	     AC_DEFINE(HAVE_S_IFIFO,1,[FIXME]),
 	     AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for S_IFSOCK in stat)
@@ -172,7 +174,7 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     oh_yes_oh_yes
 	     #endif],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFSOCK),
+	     AC_DEFINE(HAVE_S_IFSOCK,1,[FIXME]),
 	     AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for S_IFDOOR in stat)
@@ -181,7 +183,7 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     oh_yes_oh_yes
 	     #endif],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFDOOR),
+	     AC_DEFINE(HAVE_S_IFDOOR,1,[FIXME]),
 	     AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for S_IFWHT in stat)
@@ -190,7 +192,7 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     oh_yes_oh_yes
 	     #endif],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFWHT),
+	     AC_DEFINE(HAVE_S_IFWHT,1,[FIXME]),
 	     AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for BSD 4.4 flags in stat)
@@ -199,19 +201,20 @@ AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     oh_yes_oh_yes
 	     #endif],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_BSD4_4FLAGS),
+	     AC_DEFINE(HAVE_BSD4_4FLAGS, 1,
+	       [Define to 1 if your system has the BSD4.4 UFS flags (UF_NODUMP, etc)]),
 	     AC_MSG_RESULT(no))
 
 ### 6) Checking for structures:
 AC_MSG_CHECKING(for BSD 4.4 extended times in stat)
 AC_EGREP_CPP(st_atimespec, [#include <sys/stat.h>],
 	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_ST_XTIMESPEC),
+	     AC_DEFINE(HAVE_ST_XTIMESPEC,1,[FIXME]),
 	     AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for st_flags in struct stat)
 AC_EGREP_CPP(st_flags,[#include <sys/stat.h>],
-	     AC_DEFINE(HAVE_ST_FLAGS)
+	     AC_DEFINE(HAVE_ST_FLAGS,1,[FIXME])
 	     AC_MSG_RESULT(yes),
 	     AC_MSG_RESULT(no))
 
@@ -231,16 +234,16 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <unistd.h>
 	    ]], [[char *a[1];
 	     getopt_long(0, a, "foo", NULL, NULL);
 	    ]])],[AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_GETOPT_LONG,1)],[AC_MSG_RESULT(no)])
+	    AC_DEFINE(HAVE_GETOPT_LONG,1,[Define to 1 if your system has the GNU getopt_long().])],[AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for mallinfo())
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <malloc.h>]], [[mallinfo();]])],[AC_DEFINE(HAVE_MALLINFO,1)
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <malloc.h>]], [[mallinfo();]])],[AC_DEFINE(HAVE_MALLINFO,1,[FIXME])
 	    AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for mmap())
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
 	     #include <sys/mman.h>]], [[mmap((void*)0, 0, 0, 0, 0, 0);]])],[AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_MMAP,1)],[AC_MSG_RESULT(no)])
+	    AC_DEFINE(HAVE_MMAP,1,[FIXME])],[AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for madvise())
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
@@ -262,7 +265,7 @@ then
 	return madvise(addr, 10, MADV_SEQUENTIAL)<0;
       }
     ]])],[AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_MADVISE,1)],[AC_MSG_RESULT(no)],[AC_MSG_ERROR(cannot test for working madvise() when cross-compiling)])
+    AC_DEFINE(HAVE_MADVISE,1,[FIXME])],[AC_MSG_RESULT(no)],[AC_MSG_ERROR(cannot test for working madvise() when cross-compiling)])
 fi
 
 if test "$getdents"
@@ -286,7 +289,7 @@ then
 	AC_MSG_RESULT(yes)
 	case "$getdents" in
 	    libc)
-		AC_DEFINE(HAVE_GETDENTS,1)
+		AC_DEFINE(HAVE_GETDENTS,1,[Define to 1 if your system had a working getdents() system call.])
 		;;
 	    syscall)
 		AC_DEFINE(HAVE_GETDENTS,1)
@@ -302,7 +305,7 @@ AC_MSG_CHECKING(for lstat())
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/stat.h>
 	    #include <unistd.h>]], [[struct stat buf;
 	    lstat("/", &buf);]])],[AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_LSTAT,1)],[AC_MSG_RESULT(no)])
+	    AC_DEFINE(HAVE_LSTAT,1,[FIXME])],[AC_MSG_RESULT(no)])
 
 AC_MSG_CHECKING(for random())
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>]], [[srandom(0); random();]])],[AC_MSG_RESULT(yes)
