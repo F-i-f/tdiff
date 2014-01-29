@@ -86,7 +86,7 @@ else
 	      [Define to 1 if you have SYS_getdents in <syscall.h>])
 	    AC_DEFINE(GETDENTS_STRUCT, dent)
 	    AC_DEFINE(GETDENTS_NEXTDENT, d_reclen,
-	      [Define to the name of the field in your system's dentry structure that has a jump offeset to get to the next entry.])
+	      [Define to the name of the field in your system's dentry structure that has a jump offeset to get to the next entry.]) dnl '
 	    AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
 	else
 	    AC_MSG_RESULT(no)
@@ -315,10 +315,9 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/stat.h>
 	    lstat("/", &buf);]])],[AC_MSG_RESULT(yes)
 	    AC_DEFINE(HAVE_LSTAT,1,[FIXME])],[AC_MSG_RESULT(no)])
 
-AC_MSG_CHECKING(for random())
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>]], [[srandom(0); random();]])],[AC_MSG_RESULT(yes)
-	    GENHASH_TEST_TARGET=genhash_test],[AC_MSG_RESULT(no)])
-AC_SUBST(GENHASH_TEST_TARGET)
+AC_SEARCH_LIBS([acl_get_file],[acl],[
+  AC_DEFINE([HAVE_ACL],1,[Define if your system has ACLs])
+])
 
 ### 9) Check for "system services"
 

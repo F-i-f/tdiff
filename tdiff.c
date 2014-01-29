@@ -25,6 +25,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+
 #include <unistd.h>
 
 #include <sys/types.h>
@@ -89,6 +91,10 @@
 #include <attr/xattr.h>
 #endif
 
+#if HAVE_ACL
+#include <sys/acl.h>
+#endif
+
 #define GETSTRLIST_INITIAL_SIZE 8
 #define XATTR_BUF_SIZE 16384
 #define GETDIRLIST_DENTBUF_SIZE 8192
@@ -127,6 +133,7 @@ typedef struct option_s
   unsigned int major:1;
   unsigned int minor:1;
   unsigned int xattr:1;
+  unsigned int acl:1;
   unsigned int nommap:1;
   unsigned int exec:1;
   unsigned int exec_always:1;
@@ -146,6 +153,7 @@ int get_exec_args(char**, int*, dexe_t*);
 int dodiff(const options_t* opt, const char* p1, const char* p2);
 char* pconcat(const char* p1, const char* p2);
 int execprocess(const dexe_t *dex, const char* p1, const char* p2);
+int dropAclXattrs(const char*);
 
 #if DEBUG
 void printopts(const options_t*);
@@ -173,6 +181,16 @@ pushStrList(strl_t *l, const char* s)
   if (l->size == l->avail)
     l->strings = xrealloc(l->strings, (l->avail*=2)*sizeof(const char*));
   l->strings[l->size++] = xstrdup(s);
+}
+
+void
+pushStrListSized(strl_t *l, const char* s, size_t sz)
+{
+  if (l->size == l->avail)
+    l->strings = xrealloc(l->strings, (l->avail*=2)*sizeof(const char*));
+  char *buf = xmalloc(sz);
+  memcpy(buf, s, sz);
+  l->strings[l->size++] = buf;
 }
 
 int strpcmp(const char** s1, const char** s2)
@@ -203,7 +221,7 @@ compareStrList(const char *p1, const char* p2,
 	       const strl_t *ct1, const strl_t *ct2,
 	       void (*reportMissing)(int, const char*, const char*, void*),
 	       int (*compareEntries)(const char* p1, const char* p2,
-				     const char* e,
+				     const char* e1, const char* e2,
 				     void*),
 	       void *clientData)
 {
@@ -231,7 +249,7 @@ compareStrList(const char *p1, const char* p2,
 	{
 	  int nrv;
 	  /**/
-	  nrv = compareEntries(p1, p2, ct1->strings[i1], clientData);
+	  nrv = compareEntries(p1, p2, ct1->strings[i1], ct2->strings[i2], clientData);
 	  if (nrv>rv) rv = nrv;
 	  i1++;
 	  i2++;
@@ -292,6 +310,7 @@ getXattrList(const char* path)
        p += strlen(p)+1)
     pushStrList(rv, p);
 
+  free(buf);
   return rv;
 }
 
@@ -307,6 +326,12 @@ reportMissingXattr(int which, const char* f, const char* xn, void* voidClientDat
   const char*			subp;
   int				rootlen;
   /**/
+
+#if HAVE_ACL
+  if (dropAclXattrs(xn))
+    return;
+#endif
+
   switch(which)
     {
     case 1:
@@ -353,15 +378,23 @@ getXattr(const char* p, const char* name, size_t *retSize)
 
 int
 compareXattrs(const char* p1, const char* p2,
-	      const char* e,
+	      const char* e1, const char* e2,
 	      void* voidClientData)
 {
   xattrCompareClientData_t* clientData = (xattrCompareClientData_t*)voidClientData;
   int rv = XIT_OK;
   size_t sz1 = 0;
   size_t sz2 = 0;
-  void* buf1 = getXattr(p1, e, &sz1);
-  void* buf2 = getXattr(p2, e, &sz2);
+  void* buf1;
+  void* buf2;
+
+#if HAVE_ACL
+  if (dropAclXattrs(e1))
+    return rv;
+#endif
+
+  buf1 = getXattr(p1, e1, &sz1);
+  buf2 = getXattr(p2, e1, &sz2);
 
   if (!buf1)
     {
@@ -380,7 +413,7 @@ compareXattrs(const char* p1, const char* p2,
   if (sz1 != sz2 || memcmp(buf1, buf2, sz1))
     {
       printf("%s: %s: xattr %s: contents differ\n",
-	     progname, p1+clientData->opt->root1_length+1, e);
+	     progname, p1+clientData->opt->root1_length+1, e1);
       if (XIT_DIFF > rv)
 	rv = XIT_DIFF;
     }
@@ -392,7 +425,221 @@ compareXattrs(const char* p1, const char* p2,
     free(buf2);
   return rv;
 }
+
+int
+dropAclXattrs(const char *xn)
+{
+  return (!strcmp(xn, "system.posix_acl_access")
+	  || !strcmp(xn, "system.posix_acl_default"));
+}
 #endif
+
+/*
+ * ACL comparisons
+ */
+#if HAVE_ACL
+strl_t *
+getAclList(const char* path, acl_type_t acltype)
+{
+  acl_t acl = acl_get_file(path , acltype);
+  ssize_t acllen;
+  char *acls;
+  char *p;
+  strl_t *rv;
+  /**/
+
+  if (acl == NULL)
+    switch(errno)
+      {
+      case ENOTSUP:
+	newStrList(&rv);
+	return rv;
+      default:
+	perror(path);
+	return NULL;
+      }
+
+  acls = acl_to_text(acl, &acllen);
+  if (!acls)
+    {
+      perror(path);
+      acl_free(acl);
+      return NULL;
+    }
+
+  newStrList(&rv);
+
+  const char* beg_user;
+  enum {
+    STATE_FIRST_WS,
+    STATE_USER,
+    STATE_USER_FIRST_COLON,
+    STATE_PERM1,
+    STATE_PERM2,
+    STATE_PERM3,
+    STATE_LAST_WS,
+    STATE_COMMENT
+  } state = STATE_FIRST_WS;
+
+  for (p = acls; p < acls+acllen; ++p)
+    switch(state)
+      {
+      case STATE_FIRST_WS:
+	if (!isspace(*p))
+	  state = STATE_USER;
+	beg_user = p;
+	break;
+      case STATE_USER:
+      case STATE_USER_FIRST_COLON:
+	if (*p == ':')
+	  ++state;
+	else if (isspace(*p))
+	  abort();
+	break;
+      case STATE_PERM1:
+      case STATE_PERM2:
+      case STATE_PERM3:
+	switch(*p)
+	  {
+	  case 'r':
+	  case 'w':
+	  case 'x':
+	  case '-':
+	    break;
+	  default:
+	    fprintf(stderr, "%s: unexpected character in state %d: %c\n",
+		    progname, state, *p);
+	    abort();
+	  }
+	if (state == STATE_PERM3)
+	  {
+	    char buf[p-beg_user+2];
+	    memcpy(buf, beg_user, p-beg_user+1);
+	    buf[p-beg_user+1] = 0;
+	    buf[p-beg_user-3] = 0;
+	    if (strcmp(buf, "user:")
+		&& strcmp(buf, "group:")
+		&& strcmp(buf, "other:"))
+	      pushStrListSized(rv, buf, p-beg_user+2);
+	  }
+	state += 1;
+	break;
+      case STATE_LAST_WS:
+	switch (*p)
+	  {
+	  case '#':
+	    state = STATE_COMMENT;
+	    break;
+	  case '\n':
+	    state = STATE_FIRST_WS;
+	    break;
+	  default:
+	    if (!isspace(*p))
+	      {
+		fprintf(stderr, "%s: unexpected non-whitespace character in state %d: %c (code=%d)\n",
+			progname, state, *p, *p);
+		abort();
+	      }
+	  }
+	break;
+      case STATE_COMMENT:
+	if (*p == '\n')
+	  state = STATE_FIRST_WS;
+	break;
+      default:
+	abort();
+      }
+
+  if (state != STATE_FIRST_WS)
+    abort();
+
+  acl_free(acls);
+  acl_free(acl);
+
+  return rv;
+}
+
+typedef struct aclCompareClientData_s
+{
+  const options_t*	opt;
+  const char*		acldescr;
+} aclCompareClientData_t;
+
+void
+reportMissingAcl(int which, const char* f, const char* xn, void* voidClientData)
+{
+  aclCompareClientData_t*	clientData = (aclCompareClientData_t*)voidClientData;
+  const char*			subp;
+  int				rootlen;
+  /**/
+  switch(which)
+    {
+    case 1:
+      subp = f+(rootlen = clientData->opt->root1_length)+1;
+      break;
+    case 2:
+      subp = f+(rootlen = clientData->opt->root2_length)+1;
+      break;
+    default:
+      abort();
+    }
+  printf("%s: %s: %s acl %s: only present in %.*s\n",
+	 progname, subp, clientData->acldescr, xn, rootlen, f);
+}
+
+int
+compareAcls(const char* p1, const char* p2,
+	    const char* e1, const char* e2,
+	    void* voidClientData)
+{
+  aclCompareClientData_t* clientData = (aclCompareClientData_t*)voidClientData;
+  int rv = XIT_OK;
+  const char *v1;
+  const char *v2;
+
+  v1 = e1 + strlen(e1)+1;
+  v2 = e2 + strlen(e1)+1;
+
+  if (strcmp(v1, v2))
+    {
+      printf("%s: %s: %s acl %s: %s %s\n",
+	     progname, p1+clientData->opt->root1_length+1, clientData->acldescr, e1, v1, v2);
+      if (XIT_DIFF > rv)
+	rv = XIT_DIFF;
+    }
+
+  return rv;
+}
+
+int
+diffacl(const options_t* opt, const char* p1, const char* p2,
+	acl_type_t acltype, const char* acldescr)
+{
+  strl_t *acl1 = getAclList(p1, acltype);
+  strl_t *acl2 = getAclList(p2, acltype);
+  aclCompareClientData_t clientData;
+  int rv;
+  /**/
+
+  clientData.opt = opt;
+  clientData.acldescr = acldescr;
+
+  if (acl1 && acl2)
+    rv = compareStrList(p1, p2,
+			acl1, acl2,
+			reportMissingAcl,
+			compareAcls,
+			&clientData);
+  else
+    rv = XIT_SYS;
+
+  if (acl1) freeStrList(acl1);
+  if (acl2) freeStrList(acl2);
+
+  return rv;
+}
+
+#endif /* HAVE_ACL */
 
 /*
  * Directory comparisons
@@ -729,9 +976,23 @@ show_help(void)
 #if HAVE_GETXATTR
 	 "   -q --xattr    diffs file extended attributes\n"
 #endif
+#if HAVE_ACL
+	 "   -l --acl      diffs file ACLs\n"
+#endif
 	 "  Each of these options can be negated with an uppercase (short option)\n"
 	 "  or with --no-option (eg -M --no-mode for not diffing modes\n"
-	 "   -a --all      equivalent to -dtmogsbcj (sets all but times)\n"
+	 "   -a --all      equivalent to -dtm"
+#if HAVE_ST_FLAGS
+	 "f"
+#endif
+	 "ogsbcj"
+#if HAVE_GETXATTR
+	 "q"
+#endif
+#if HAVE_ACL
+	 "l"
+#endif
+	 " (sets all but times)\n"
 	 "   -A --no-all   clears all flags (will not report anything)\n"
 	 " Miscellania:\n"
 	 "   -x --exec <cmd>;         executes <cmd> between files if they are similar\n"
@@ -856,6 +1117,7 @@ printopts(const options_t* o)
   POPT(major);
   POPT(minor);
   POPT(xattr);
+  POPT(acl);
   POPT(exec);
   POPT(exec_always);
 #undef POPT
@@ -1004,16 +1266,16 @@ reportMissingFile(int which, const char* d, const char *f, void* voidClientData)
 
 static int
 compareFileEntries(const char* p1, const char* p2,
-		   const char* e,
+		   const char* e1, const char* e2,
 		   void* voidClientData)
 {
   fileCompareClientData_t *clientData = (fileCompareClientData_t*)voidClientData;
   int rv = XIT_OK;
   /**/
-  if (!gh_find(clientData->opt->exclusions, e, NULL))
+  if (!gh_find(clientData->opt->exclusions, e1, NULL))
     {
-      char *np1 = pconcat(p1, e);
-      char *np2 = pconcat(p2, e);
+      char *np1 = pconcat(p1, e1);
+      char *np2 = pconcat(p2, e1);
       rv = dodiff(clientData->opt, np1, np2);
       free(np1);
       free(np2);
@@ -1222,6 +1484,22 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
     }
 #endif
 
+#if HAVE_ACL
+  if (opt->acl
+#if HAVE_S_IFLNK
+      && ((sbuf1.st_mode)&S_IFMT) != S_IFLNK
+      && ((sbuf2.st_mode)&S_IFMT) != S_IFLNK
+#endif
+      )
+    {
+      int nrv;
+      /**/
+      nrv = diffacl(opt, p1, p2, ACL_TYPE_ACCESS, "access");
+      if (nrv > rv)
+	rv = nrv;
+    }
+#endif
+
   /* Type tests */
   if (opt->type && ((sbuf1.st_mode)&S_IFMT) != ((sbuf2.st_mode)&S_IFMT))
     {
@@ -1241,6 +1519,16 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	  int nrv;
 	  fileCompareClientData_t clientData;
 	  /**/
+
+#if HAVE_ACL
+	  if (opt->acl)
+	    {
+	      nrv = diffacl(opt, p1, p2, ACL_TYPE_DEFAULT, "default");
+	      if (nrv > rv)
+		rv = nrv;
+	    }
+#endif
+
 	  ct1 = getDirList(p1);
 	  ct2 = getDirList(p2);
 	  clientData.opt = opt;
@@ -1357,7 +1645,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 int
 main(int argc, char*argv[])
 {
-  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
 			0, 0, 0, 0, ~0, NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
   int rv;
@@ -1413,6 +1701,10 @@ main(int argc, char*argv[])
 	{ "xattr",       0, 0, 'q' },
 	{ "no-xattr",    0, 0, 'Q' },
 #endif
+#if HAVE_GETXATTR
+	{ "acl",         0, 0, 'l' },
+	{ "no-acl",      0, 0, 'L' },
+#endif
 	{ "all",         0, 0, 'a' },
 	{ "nothing",     0, 0, 'A' },
 	{ "no-all",      0, 0, 'A' },
@@ -1438,6 +1730,9 @@ main(int argc, char*argv[])
 	      "oOgGzZiIrRsSbBcCjJnN"
 #if HAVE_GETXATTR
 	      "qQ"
+#endif
+#if HAVE_ACL
+	      "lL"
 #endif
 	      "xwaAp|:&:X:W"
 #if HAVE_GETOPT_LONG
@@ -1495,18 +1790,24 @@ main(int argc, char*argv[])
 	case 'q': options.xattr		  = 1; break;
 	case 'Q': options.xattr		  = 0; break;
 #endif
+#if HAVE_ACL
+	case 'l': options.acl		  = 1; break;
+	case 'L': options.acl		  = 0; break;
+#endif
 	case 'a': options.dirs = options.type
 		    = options.mode = options.flags = options.owner
 		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
-		    = options.major = options.minor = options.xattr = 1; break;
+		    = options.major = options.minor = options.xattr
+		    = options.acl = 1; break;
 	case 'A': options.dirs = options.type
 		    = options.mode = options.flags = options.owner
 		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
-		    = options.major = options.minor = options.xattr = 0; break;
+		    = options.major = options.minor = options.xattr
+		    = options.acl = 0; break;
 	case 'p': options.nommap = 1; break;
 	case 'x':
 	  if (options.exec)
