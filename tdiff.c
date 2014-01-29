@@ -204,9 +204,12 @@ pushStrList(strl_t *l, const char* s)
 void
 pushStrListSized(strl_t *l, const char* s, size_t sz)
 {
+  char *buf;
+  /**/
+
   if (l->size == l->avail)
     l->strings = xrealloc(l->strings, (l->avail*=2)*sizeof(const char*));
-  char *buf = xmalloc(sz);
+  buf = xmalloc(sz);
   memcpy(buf, s, sz);
   l->strings[l->size++] = buf;
 }
