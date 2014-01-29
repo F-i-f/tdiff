@@ -85,7 +85,12 @@
 #  error Cannot find major() and minor()
 #endif
 
+#if HAVE_GETXATTR
+#include <attr/xattr.h>
+#endif
+
 #define GETSTRLIST_INITIAL_SIZE 8
+#define XATTR_BUF_SIZE 16384
 #define GETDIRLIST_DENTBUF_SIZE 8192
 #define XREADLINK_BUF_SIZE 1024
 #define CMPFILE_BUF_SIZE 16384
@@ -121,6 +126,7 @@ typedef struct option_s
   unsigned int contents:1;
   unsigned int major:1;
   unsigned int minor:1;
+  unsigned int xattr:1;
   unsigned int nommap:1;
   unsigned int exec:1;
   unsigned int exec_always:1;
@@ -195,9 +201,7 @@ freeStrList(strl_t *d)
 int
 compareStrList(const char *p1, const char* p2,
 	       const strl_t *ct1, const strl_t *ct2,
-	       const char* reportMissingStr1,
-	       const char* reportMissingStr2,
-	       int (*reportMissing)(const char*, void*),
+	       void (*reportMissing)(int, const char*, const char*, void*),
 	       int (*compareEntries)(const char* p1, const char* p2,
 				     const char* e,
 				     void*),
@@ -215,22 +219,12 @@ compareStrList(const char *p1, const char* p2,
     {
       if (i1 == ct1->size)
 	{
-	  if (reportMissing(ct2->strings[i2], clientData))
-	    {
-	      printf("%s: %s: %s\n",
-		     progname, ct2->strings[i2], reportMissingStr2);
-	      localerr = 1;
-	    }
+	  reportMissing(2, p2, ct2->strings[i2], clientData);
 	  i2++;
 	}
       else if (i2 == ct2->size)
 	{
-	  if (reportMissing(ct1->strings[i1], clientData))
-	    {
-	      printf("%s: %s: %s\n",
-		     progname, ct1->strings[i1], reportMissingStr1);
-	      localerr = 1;
-	    }
+	  reportMissing(1, p1, ct1->strings[i1], clientData);
 	  i1++;
 	}
       else if (!(cmpres = strcmp(ct1->strings[i1], ct2->strings[i2])))
@@ -244,22 +238,12 @@ compareStrList(const char *p1, const char* p2,
 	}
       else if (cmpres<0)
 	{
-	  if (reportMissing(ct1->strings[i1], clientData))
-	    {
-	      printf("%s: %s: %s\n",
-		     progname, ct1->strings[i1], reportMissingStr1);
-	      localerr = 1;
-	    }
+	  reportMissing(1, p1, ct1->strings[i1], clientData);
 	  i1++;
 	}
       else /* cmpres>0 */
 	{
-	  if (reportMissing(ct2->strings[i2], clientData))
-	    {
-	      printf("%s: %s: %s\n",
-		     progname, ct2->strings[i2], reportMissingStr2);
-	      localerr = 1;
-	    }
+	  reportMissing(2, p2, ct2->strings[i2], clientData);
 	  i2++;
 	}
     }
@@ -269,6 +253,150 @@ compareStrList(const char *p1, const char* p2,
   return rv;
 }
 
+/*
+ * Xattrs comparisons
+ */
+#if HAVE_GETXATTR
+strl_t*
+getXattrList(const char* path)
+{
+  strl_t *rv;
+  char *buf;
+  size_t bufSize = XATTR_BUF_SIZE;
+  ssize_t rSize;
+  const char *p;
+  const char *p_e;
+  /**/
+
+  buf = xmalloc(bufSize);
+ again:
+  rSize = llistxattr(path, buf, bufSize);
+  if (rSize == -1)
+    switch(errno)
+      {
+      case ENOTSUP:
+	return rv;
+      case ERANGE:
+	free(buf);
+	buf = xmalloc(bufSize *= 2);
+	goto again;
+      default:
+	perror(path);
+	free(buf);
+	return NULL;
+      }
+
+  newStrList(&rv);
+  for (p = buf, p_e = buf+rSize;
+       p < p_e && *p;
+       p += strlen(p)+1)
+    pushStrList(rv, p);
+
+  return rv;
+}
+
+typedef struct xattrCompareClientData_s
+{
+  const options_t *opt;
+} xattrCompareClientData_t;
+
+static void
+reportMissingXattr(int which, const char* f, const char* xn, void* voidClientData)
+{
+  xattrCompareClientData_t*	clientData = (xattrCompareClientData_t*)voidClientData;
+  const char*			subp;
+  int				rootlen;
+  /**/
+  switch(which)
+    {
+    case 1:
+      subp = f+(rootlen = clientData->opt->root1_length)+1;
+      break;
+    case 2:
+      subp = f+(rootlen = clientData->opt->root2_length)+1;
+      break;
+    default:
+      abort();
+    }
+  printf("%s: %s: xattr %s: only present in %.*s\n",
+	 progname, subp, xn, rootlen, f);
+}
+
+void*
+getXattr(const char* p, const char* name, size_t *retSize)
+{
+  size_t	 bufSize = XATTR_BUF_SIZE;
+  void		*buf	 = xmalloc(bufSize);
+  ssize_t	 sz;
+  /**/
+
+  *retSize = 0;
+
+ again:
+  sz	 = lgetxattr(p, name, buf, bufSize);
+
+  if (sz == -1)
+    switch(errno)
+      {
+      case ERANGE:
+	free(buf);
+	buf = xmalloc(bufSize *= 2);
+	goto again;
+      default:
+	free(buf);
+	return 0;
+      }
+
+  *retSize = sz;
+  return buf;
+}
+
+int
+compareXattrs(const char* p1, const char* p2,
+	      const char* e,
+	      void* voidClientData)
+{
+  xattrCompareClientData_t* clientData = (xattrCompareClientData_t*)voidClientData;
+  int rv = XIT_OK;
+  size_t sz1 = 0;
+  size_t sz2 = 0;
+  void* buf1 = getXattr(p1, e, &sz1);
+  void* buf2 = getXattr(p2, e, &sz2);
+
+  if (!buf1)
+    {
+      rv = XIT_SYS;
+      perror(p1);
+      goto ret;
+    }
+
+  if (!buf2)
+    {
+      rv = XIT_SYS;
+      perror(p2);
+      goto ret;
+    }
+
+  if (sz1 != sz2 || memcmp(buf1, buf2, sz1))
+    {
+      printf("%s: %s: xattr %s: contents differ\n",
+	     progname, p1+clientData->opt->root1_length+1, e);
+      if (XIT_DIFF > rv)
+	rv = XIT_DIFF;
+    }
+
+ ret:
+  if (buf1)
+    free(buf1);
+  if (buf2)
+    free(buf2);
+  return rv;
+}
+#endif
+
+/*
+ * Directory comparisons
+ */
 strl_t *
 getDirList(const char* path)
 #if HAVE_GETDENTS
@@ -330,7 +458,6 @@ getDirList(const char* path)
 {
   DIR *dir;
   struct dirent *dent;
-  int avail;
   strl_t *rv = NULL;
   /**/
   dir = opendir(path);
@@ -599,6 +726,9 @@ show_help(void)
 	 "   -c --contents diffs file contents (for regular files and symlinks)\n"
 	 "   -j --major    diffs major device numbers (for device files)\n"
 	 "   -n --minor    diffs minor device numbers (for device files)\n"
+#if HAVE_GETXATTR
+	 "   -q --xattr    diffs file extended attributes\n"
+#endif
 	 "  Each of these options can be negated with an uppercase (short option)\n"
 	 "  or with --no-option (eg -M --no-mode for not diffing modes\n"
 	 "   -a --all      equivalent to -dtmogsbcj (sets all but times)\n"
@@ -725,6 +855,7 @@ printopts(const options_t* o)
   POPT(contents);
   POPT(major);
   POPT(minor);
+  POPT(xattr);
   POPT(exec);
   POPT(exec_always);
 #undef POPT
@@ -837,11 +968,38 @@ typedef struct fileCompareClientData_s
   const options_t *opt;
 } fileCompareClientData_t;
 
-static int
-reportMissingFile(const char* s, void* voidClientData)
+static void
+reportMissingFile(int which, const char* d, const char *f, void* voidClientData)
 {
   fileCompareClientData_t *clientData = (fileCompareClientData_t*)voidClientData;
-  return clientData->opt->dirs && !gh_find(clientData->opt->exclusions, s, NULL);
+  if ( clientData->opt->dirs && !gh_find(clientData->opt->exclusions, f, NULL) )
+    {
+      const char*	subp;
+      int		rootlen;
+      size_t		fp_len = strlen(f)+strlen(d)+1;
+      char		fp[fp_len];
+
+      switch(which)
+	{
+	case 1:
+	  subp = d+(rootlen = clientData->opt->root1_length);
+	  break;
+	case 2:
+	  subp = d+(rootlen = clientData->opt->root2_length);
+	  break;
+	default:
+	  abort();
+	}
+      if (*subp)
+	{
+	  if (*subp != '/')
+	    abort();
+	  ++subp;
+	}
+      snprintf(fp, fp_len, "%s%s%s", subp, *subp ? "/" : "", f);
+      printf("%s: %s: only present in %.*s\n",
+	     progname, fp, rootlen, d);
+    }
 }
 
 static int
@@ -1043,6 +1201,27 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       localerr = 1;
     }
 
+#if HAVE_GETXATTR
+  if (opt->xattr)
+    {
+      strl_t *xl1 = getXattrList(p1);
+      strl_t *xl2 = getXattrList(p2);
+      xattrCompareClientData_t clientData;
+      int nrv;
+      /**/
+      clientData.opt = opt;
+      nrv = compareStrList(p1, p2,
+			   xl1, xl2,
+			   reportMissingXattr,
+			   compareXattrs,
+			   &clientData);
+      if (nrv > rv)
+	rv = nrv;
+      freeStrList(xl1);
+      freeStrList(xl2);
+    }
+#endif
+
   /* Type tests */
   if (opt->type && ((sbuf1.st_mode)&S_IFMT) != ((sbuf2.st_mode)&S_IFMT))
     {
@@ -1060,22 +1239,13 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	{
 	  strl_t *ct1, *ct2;
 	  int nrv;
-	  size_t reportMissingStr1_len = strlen(p1)+9;
-	  size_t reportMissingStr2_len = strlen(p2)+9;
-	  char reportMissingStr1[reportMissingStr1_len];
-	  char reportMissingStr2[reportMissingStr2_len];
 	  fileCompareClientData_t clientData;
 	  /**/
 	  ct1 = getDirList(p1);
 	  ct2 = getDirList(p2);
-	  snprintf(reportMissingStr1, reportMissingStr1_len,
-		   "only in %s", p1);
-	  snprintf(reportMissingStr2, reportMissingStr2_len,
-		   "only in %s", p2);
 	  clientData.opt = opt;
 	  nrv = compareStrList(p1, p2,
 			       ct1, ct2,
-			       reportMissingStr1, reportMissingStr2,
 			       reportMissingFile,
 			       compareFileEntries,
 			       &clientData);
@@ -1187,7 +1357,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 int
 main(int argc, char*argv[])
 {
-  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1,
+  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1,
 			0, 0, 0, 0, ~0, NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
   int rv;
@@ -1215,8 +1385,10 @@ main(int argc, char*argv[])
 	{ "no-type",     0, 0, 'T' },
 	{ "mode",        0, 0, 'm' },
 	{ "no-mode",     0, 0, 'M' },
+#if HAVE_ST_FLAGS
 	{ "flags",       0, 0, 'f' },
 	{ "no-flags",    0, 0, 'F' },
+#endif
 	{ "owner",       0, 0, 'o' },
 	{ "no-owner",    0, 0, 'O' },
 	{ "group",       0, 0, 'g' },
@@ -1237,6 +1409,10 @@ main(int argc, char*argv[])
 	{ "no-major",    0, 0, 'J' },
 	{ "minor",       0, 0, 'n' },
 	{ "no-minor",    0, 0, 'N' },
+#if HAVE_GETXATTR
+	{ "xattr",       0, 0, 'q' },
+	{ "no-xattr",    0, 0, 'Q' },
+#endif
 	{ "all",         0, 0, 'a' },
 	{ "nothing",     0, 0, 'A' },
 	{ "no-all",      0, 0, 'A' },
@@ -1255,7 +1431,15 @@ main(int argc, char*argv[])
 #else
 	     getopt
 #endif
-	     (argc, argv, "vVhdDtTmMfFoOgGzZiIrRsSbBcCjJnNxwaAp|:&:X:W"
+	     (argc, argv, "vVhdDtTmM"
+#if HAVE_ST_FLAGS
+	      "fF"
+#endif
+	      "oOgGzZiIrRsSbBcCjJnN"
+#if HAVE_GETXATTR
+	      "qQ"
+#endif
+	      "xwaAp|:&:X:W"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -1283,8 +1467,10 @@ main(int argc, char*argv[])
 	case 'T': options.type		  = 0; break;
 	case 'm': options.mode		  = 1; break;
 	case 'M': options.mode		  = 0; break;
+#if HAVE_ST_FLAGS
 	case 'f': options.flags           = 1; break;
 	case 'F': options.flags           = 0; break;
+#endif
 	case 'o': options.owner		  = 1; break;
 	case 'O': options.owner		  = 0; break;
 	case 'g': options.group		  = 1; break;
@@ -1305,18 +1491,22 @@ main(int argc, char*argv[])
 	case 'J': options.major		  = 0; break;
 	case 'n': options.minor		  = 1; break;
 	case 'N': options.minor		  = 0; break;
+#if HAVE_GETXATTR
+	case 'q': options.xattr		  = 1; break;
+	case 'Q': options.xattr		  = 0; break;
+#endif
 	case 'a': options.dirs = options.type
 		    = options.mode = options.flags = options.owner
 		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
-		    = options.major = options.minor = 1; break;
+		    = options.major = options.minor = options.xattr = 1; break;
 	case 'A': options.dirs = options.type
 		    = options.mode = options.flags = options.owner
 		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
-		    = options.major = options.minor = 0; break;
+		    = options.major = options.minor = options.xattr = 0; break;
 	case 'p': options.nommap = 1; break;
 	case 'x':
 	  if (options.exec)

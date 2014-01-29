@@ -1,5 +1,7 @@
 2014-01-28  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (compareXattrs): Compare Xattrs, reorg missing elements printing.
+
 	* Makefile.am (AM_CFLAGS): Add -Wall.
 
 	* tdiff.c (newStrList, pushStrList): Created and abstracted.
