@@ -27,13 +27,8 @@ AM_INIT_AUTOMAKE([foreign])
 # Get started
 AC_CONFIG_SRCDIR([tdiff.c])
 
-# Remember if CFLAGS was set
-if test -z "$CFLAGS"
-then
-    cflags_unset=true
-fi
-
 ### 1) Checking for system
+AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
 
 ### 2) Checking for programs
@@ -213,10 +208,20 @@ AC_EGREP_CPP(st_atimespec, [#include <sys/stat.h>],
 	     AC_DEFINE(HAVE_ST_XTIMESPEC,1,[FIXME]),
 	     AC_MSG_RESULT(no))
 
+
 AC_MSG_CHECKING(for st_flags in struct stat)
 AC_EGREP_CPP(st_flags,[#include <sys/stat.h>],
 	     AC_DEFINE(HAVE_ST_FLAGS,1,[FIXME])
 	     AC_MSG_RESULT(yes),
+	     AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING(for nanosecond resolution in stat)
+AC_EGREP_CPP(st_atim, [
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_ST_TIMENSEC,1,[Define to 1 if your system provides nanosecond timestamps (st_atimensec,, st_ctimensec, st_mtimensec]),
 	     AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for getxattr in attr/xattr.h)
@@ -322,18 +327,6 @@ AC_SEARCH_LIBS([acl_get_file],[acl],[
 ### 9) Check for "system services"
 
 ### END: output
-
-# Add additional CFLAGS if CFLAGS was not set
-LAX_CFLAGS="$CFLAGS"
-if test "$cflags_unset" && test "$CC" = gcc
-then
-    CFLAGS="$CFLAGS -MD"
-    LAX_CFLAGS="$LAX_CFLAGS -MD -w"
-    case "`uname -s`" in
-	Linux|FreeBSD) CFLAGS="$CFLAGS -Wall -Wstrict-prototypes -Werror";;
-    esac
-fi
-AC_SUBST(LAX_CFLAGS)
 
 AC_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile])

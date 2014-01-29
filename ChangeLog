@@ -1,3 +1,9 @@
+2014-01-29  Philippe Troin  <phil@fifi.org>
+
+	* configure.ac, Makefile.am, tdiff.c: Add support for nanosecond
+	timestamps on Linux.  Fix CFLAGS mess.  Fix reporting data
+	corruption when reporting on the root folders of the comparison.
+
 2014-01-28  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.c (compareXattrs): Compare Xattrs, reorg missing elements
