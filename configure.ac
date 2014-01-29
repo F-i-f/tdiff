@@ -26,6 +26,7 @@ AM_INIT_AUTOMAKE([foreign])
 
 # Get started
 AC_CONFIG_SRCDIR([tdiff.c])
+AC_LANG([C])
 
 ### 1) Checking for system
 AC_USE_SYSTEM_EXTENSIONS
@@ -216,10 +217,16 @@ AC_EGREP_CPP(st_flags,[#include <sys/stat.h>],
 	     AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING(for nanosecond resolution in stat)
-AC_EGREP_CPP(st_atim, [
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>],
+#include <unistd.h>
+
+int main()
+{
+  struct stat sbuf;
+  return sbuf.st_atim.tv_nsec;
+}])],
 	     AC_MSG_RESULT(yes)
 	     AC_DEFINE(HAVE_ST_TIMENSEC,1,[Define to 1 if your system provides nanosecond timestamps (st_atimensec,, st_ctimensec, st_mtimensec]),
 	     AC_MSG_RESULT(no))
