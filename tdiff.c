@@ -16,8 +16,7 @@
   GNU General Public License for more details.
 
   You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #define _GNU_SOURCE 1
@@ -1064,14 +1063,13 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 void
 show_version(void)
 {
-  printf("tdiff version 0.1 (CVS $Id$)\n"
-	 "Copyright (C) 1999 Philippe Troin.\n"
+  printf("tdiff version " VERSION " (SVN $Id$)\n"
+	 "Copyright (C) 1999-2014 Philippe Troin <phil@fifi.org>.\n"
 	 "Tdiff comes with ABSOLUTELY NO WARRANTY.\n"
 	 "This is free software, and you are welcome to redistribute it\n"
 	 "under certain conditions.\n"
 	 "You should have received a copy of the GNU General Public License\n"
-	 "along with this program; if not, write to the Free Software\n"
-	 "Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA\n");
+	 "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n");
 }
 
 void
@@ -1085,7 +1083,7 @@ show_help(void)
 	 " Switch options:\n"
 	 "   -d --dirs     diff directories (reports missing files)\n"
 	 "   -t --type     diffs for file type differences\n"
-	 "                 (if unset, also size, blocks, major, minor and contents\n"
+	 "                 (if unset, then size, blocks, major, minor and contents\n"
 	 "                  are not checked either)\n"
 	 "   -m --mode     diffs file modes (permissions)\n"
 #if HAVE_ST_FLAGS
@@ -1127,10 +1125,10 @@ show_help(void)
 	 "                            (if file sizes are equal)\n"
 	 "   -w --exec-always <cmd>;  always executes <cmd> between files\n"
 	 "        <cmd> uses %%1 and %%2 as file from <dir1> and <dir2>\n"
-	 "   -| --mode-or <bits>   applies <bits> OR mode before comparison\n"
-	 "   -& --mode-and <bits>  applies <bits> AND mode before comparison\n"
-	 "   -X --exclude <file>   omits <file> from report\n"
-	 "   -p --no-mmap          do not use mmap() for comparisons (saves on vmem\n"
+	 "   -| --mode-or <bits>      applies <bits> OR mode before comparison\n"
+	 "   -& --mode-and <bits>     applies <bits> AND mode before comparison\n"
+	 "   -X --exclude <file>      omits <file> from report\n"
+	 "   -p --no-mmap             do not use mmap() for comparisons (saves on vmem)\n"
 #if ! HAVE_GETOPT_LONG
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
 #endif

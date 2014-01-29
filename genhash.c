@@ -1,23 +1,22 @@
 /*
   tdiff - tree diffs
   Generic hash implementation.
-  Copyright (C) 1999 Philippe Troin <phil@fifi.org>
+  Copyright (C) 1999, 2014 Philippe Troin <phil@fifi.org>
 
   $Id$
-  
+
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
+  the Free Software Foundation; either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "genhash.h"
@@ -55,19 +54,19 @@ struct genhash_s
 };
 
 genhash_t*
-gh_new(hashval_t (*hashfunc)(const void*), 
+gh_new(hashval_t (*hashfunc)(const void*),
        int (*cmpfunc)(const void*, const void*),
        void (*delkeyfunc)(void*),
        void (*delvaluefunc)(void*))
 {
   genhash_t* gh;
   /**/
-  
+
   gh = xmalloc(sizeof(genhash_t));
-  gh->entries  	   = 0;
+  gh->entries	   = 0;
   gh->primidx      = 0;
-  gh->hashfunc 	   = hashfunc;
-  gh->cmpfunc  	   = cmpfunc;
+  gh->hashfunc	   = hashfunc;
+  gh->cmpfunc	   = cmpfunc;
   gh->delkeyfunc   = delkeyfunc;
   gh->delvaluefunc = delvaluefunc;
   gh->buckets      = xmalloc(sizeof(hashbucket_t*)*primelist[0]);
@@ -76,7 +75,7 @@ gh_new(hashval_t (*hashfunc)(const void*),
   return gh;
 }
 
-void 
+void
 gh_delete(genhash_t* gh)
 {
   int i;
@@ -100,7 +99,7 @@ gh_delete(genhash_t* gh)
   free(gh);
 }
 
-static void 
+static void
 gh_grow(genhash_t* gh)
 {
   int newsize;
@@ -125,21 +124,21 @@ gh_grow(genhash_t* gh)
 	newbuckets[newval] = cbucket;
 	cbucket = nbucket;
       }
-  
+
   free(gh->buckets);
   gh->primidx++;
   gh->buckets = newbuckets;
 }
 
 static int
-gh_find_withhash(const genhash_t *gh, const void* key, void** value, 
+gh_find_withhash(const genhash_t *gh, const void* key, void** value,
 		 hashval_t hv)
 {
   hashbucket_t *cbucket;
   /**/
 
-  for (cbucket = gh->buckets[hv % primelist[gh->primidx]]; 
-       cbucket; 
+  for (cbucket = gh->buckets[hv % primelist[gh->primidx]];
+       cbucket;
        cbucket = cbucket->next)
     if (cbucket->hash == hv && gh->cmpfunc(key, cbucket->key))
       break;
@@ -154,7 +153,7 @@ gh_find_withhash(const genhash_t *gh, const void* key, void** value,
     return 0;
 }
 
-int 
+int
 gh_find(const genhash_t *gh, const void* key, void** value)
 {
   return gh_find_withhash(gh, key, value, gh->hashfunc(key));
@@ -170,7 +169,7 @@ gh_insert(genhash_t *gh, void* key, void* value)
   hv = gh->hashfunc(key);
   if (gh_find_withhash(gh, key, NULL, hv))
     return 0;
-  
+
   if (gh->entries > primelist[gh->primidx]*2/3)
     gh_grow(gh);
 
@@ -193,7 +192,7 @@ gh_remove(genhash_t *gh, const void* key)
 }
 
 hashval_t
-gh_string_hash(const void* vstring) 
+gh_string_hash(const void* vstring)
 {
   // Each letter will be shifted from 0 to 23 bits according to the
   // sequence: 17,10,3,20,13,6,23,16,9,2,19,12,5,22,15,8,1,18,11,4,
