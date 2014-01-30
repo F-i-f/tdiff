@@ -1367,6 +1367,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   int rv = XIT_OK;
   int localerr = 0;
   const char *subpath;
+  int content_diff = 1;
   /**/
 
   /* Stat the paths */
@@ -1545,6 +1546,27 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       localerr = 1;
     }
 
+  if (opt->blocks && sbuf1.st_blocks != sbuf2.st_blocks)
+    {
+      printf("%s: %s: blocks: %ld %ld\n",
+	     progname,
+	     subpath,
+	     (long)sbuf1.st_blocks, (long)sbuf2.st_blocks);
+      localerr = 1;
+    }
+  if (sbuf1.st_size != sbuf2.st_size)
+    {
+      if (opt->size)
+	{
+	  printf("%s: %s: size: %lld %lld\n",
+		 progname,
+		 subpath,
+		 (long long)sbuf1.st_size, (long long)sbuf2.st_size);
+	  localerr = 1;
+	}
+      content_diff = 0;
+    }
+
 #if HAVE_GETXATTR
   if (opt->xattr)
     {
@@ -1631,28 +1653,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	break;
       case S_IFREG:
 	{
-	  int content_diff = 1;
 	  /**/
-	  if (opt->blocks && sbuf1.st_blocks != sbuf2.st_blocks)
-	    {
-	      printf("%s: %s: blocks: %ld %ld\n",
-		     progname,
-		     subpath,
-		     (long)sbuf1.st_blocks, (long)sbuf2.st_blocks);
-	      localerr = 1;
-	    }
-	  if (sbuf1.st_size != sbuf2.st_size)
-	    {
-	      if (opt->size)
-		{
-		  printf("%s: %s: size: %lld %lld\n",
-			 progname,
-			 subpath,
-			 (long long)sbuf1.st_size, (long long)sbuf2.st_size);
-		  localerr = 1;
-		}
-	      content_diff = 0;
-	    }
 	  if (opt->contents)
 	    {
 	      if (content_diff)

@@ -2,6 +2,9 @@
 
 	* tdiff.c (main): Move -n/N option (minor) to -k/K.
 	(main): Create --nlinks/-n --hardlinks/-e options.
+	(dodiff): Don't do type-specific checks unless both objects are
+	the same type.
+	(dodiff): Do block and size diffs for all types of files.
 
 2014-01-29  Philippe Troin  <phil@fifi.org>
 
