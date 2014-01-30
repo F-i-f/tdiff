@@ -1,3 +1,7 @@
+2014-01-30  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.c (main): Move -n/N option (minor) to -k/K.
+
 2014-01-29  Philippe Troin  <phil@fifi.org>
 
 	* configure.ac, Makefile.am, tdiff.c: Add support for nanosecond

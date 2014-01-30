@@ -1098,7 +1098,7 @@ show_help(void)
 	 "   -b --blocks   diffs file blocks (for regular files,symlinks and directories\n"
 	 "   -c --contents diffs file contents (for regular files and symlinks)\n"
 	 "   -j --major    diffs major device numbers (for device files)\n"
-	 "   -n --minor    diffs minor device numbers (for device files)\n"
+	 "   -k --minor    diffs minor device numbers (for device files)\n"
 #if HAVE_GETXATTR
 	 "   -q --xattr    diffs file extended attributes\n"
 #endif
@@ -1771,8 +1771,8 @@ main(int argc, char*argv[])
 	{ "no-contents", 0, 0, 'C' },
 	{ "major",       0, 0, 'j' },
 	{ "no-major",    0, 0, 'J' },
-	{ "minor",       0, 0, 'n' },
-	{ "no-minor",    0, 0, 'N' },
+	{ "minor",       0, 0, 'k' },
+	{ "no-minor",    0, 0, 'K' },
 #if HAVE_GETXATTR
 	{ "xattr",       0, 0, 'q' },
 	{ "no-xattr",    0, 0, 'Q' },
@@ -1803,7 +1803,7 @@ main(int argc, char*argv[])
 #if HAVE_ST_FLAGS
 	      "fF"
 #endif
-	      "oOgGzZiIrRsSbBcCjJnN"
+	      "oOgGzZiIrRsSbBcCjJkK"
 #if HAVE_GETXATTR
 	      "qQ"
 #endif
@@ -1860,8 +1860,8 @@ main(int argc, char*argv[])
 	case 'C': options.contents	  = 0; break;
 	case 'j': options.major		  = 1; break;
 	case 'J': options.major		  = 0; break;
-	case 'n': options.minor		  = 1; break;
-	case 'N': options.minor		  = 0; break;
+	case 'k': options.minor		  = 1; break;
+	case 'K': options.minor		  = 0; break;
 #if HAVE_GETXATTR
 	case 'q': options.xattr		  = 1; break;
 	case 'Q': options.xattr		  = 0; break;
