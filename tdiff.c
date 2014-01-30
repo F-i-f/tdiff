@@ -1592,13 +1592,16 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 #endif
 
   /* Type tests */
-  if (opt->type && ((sbuf1.st_mode)&S_IFMT) != ((sbuf2.st_mode)&S_IFMT))
+  if (((sbuf1.st_mode)&S_IFMT) != ((sbuf2.st_mode)&S_IFMT))
     {
-      printf("%s: %s: type: %s %s\n",
-	     progname,
-	     subpath,
-	     getFileType(sbuf1.st_mode), getFileType(sbuf2.st_mode));
-      localerr = 1;
+      if (opt->type)
+	{
+	  printf("%s: %s: type: %s %s\n",
+		 progname,
+		 subpath,
+		 getFileType(sbuf1.st_mode), getFileType(sbuf2.st_mode));
+	  localerr = 1;
+	}
     }
   else
     /* Type specific checks */
