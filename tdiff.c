@@ -1554,6 +1554,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	     (long)sbuf1.st_blocks, (long)sbuf2.st_blocks);
       localerr = 1;
     }
+
   if (sbuf1.st_size != sbuf2.st_size)
     {
       if (opt->size)
@@ -1565,6 +1566,15 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	  localerr = 1;
 	}
       content_diff = 0;
+    }
+
+  if (opt->nlinks && sbuf1.st_nlink != sbuf2.st_nlink)
+    {
+      printf("%s: %s: nlinks: %ld %ld\n",
+	     progname,
+	     subpath,
+	     (long)sbuf1.st_nlink, (long)sbuf2.st_nlink);
+      localerr = 1;
     }
 
 #if HAVE_GETXATTR

@@ -5,6 +5,7 @@
 	(dodiff): Don't do type-specific checks unless both objects are
 	the same type.
 	(dodiff): Do block and size diffs for all types of files.
+	(dodiff): Check nlinks.
 
 2014-01-29  Philippe Troin  <phil@fifi.org>
 
