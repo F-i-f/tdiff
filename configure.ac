@@ -17,11 +17,11 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([tdiff],[0.1])
+AC_INIT([tdiff],[0.2])
 AC_PREREQ([2.69])
 AC_CANONICAL_TARGET
 
-AM_INIT_AUTOMAKE([foreign])
+AM_INIT_AUTOMAKE([gnu])
 
 # Get started
 AC_CONFIG_SRCDIR([tdiff.c])

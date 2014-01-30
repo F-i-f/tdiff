@@ -41,5 +41,5 @@ check: $(noinst_PROGRAMS)
 	./genhash_test
 
 maintainer-clean-local:
-	rm -f Makefile.in aclocal.m4 configure config.guess config.h.in
-	rm -f config.sub depcomp install-sh missing
+	rm -f INSTALL Makefile.in aclocal.m4 configure config.guess
+	rm -f  config.h.in config.sub depcomp install-sh missing
