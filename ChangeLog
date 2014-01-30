@@ -1,6 +1,7 @@
 2014-01-30  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.c (main): Move -n/N option (minor) to -k/K.
+	(main): Create --nlinks/-n --hardlinks/-e options.
 
 2014-01-29  Philippe Troin  <phil@fifi.org>
 

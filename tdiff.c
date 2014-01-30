@@ -139,6 +139,8 @@ typedef struct option_s
   unsigned int size:1;
   unsigned int blocks:1;
   unsigned int contents:1;
+  unsigned int nlinks:1;
+  unsigned int hardlinks:1;
   unsigned int major:1;
   unsigned int minor:1;
   unsigned int xattr:1;
@@ -1081,29 +1083,31 @@ show_help(void)
 	 "   -V --version: show %s version\n"
 	 "   -h --help\n"
 	 " Switch options:\n"
-	 "   -d --dirs     diff directories (reports missing files)\n"
-	 "   -t --type     diffs for file type differences\n"
-	 "                 (if unset, then size, blocks, major, minor and contents\n"
-	 "                  are not checked either)\n"
-	 "   -m --mode     diffs file modes (permissions)\n"
+	 "   -d --dirs      diff directories (reports missing files)\n"
+	 "   -t --type      diffs for file type differences\n"
+	 "                  (if unset, then size, blocks, major, minor and contents\n"
+	 "                   are not checked either)\n"
+	 "   -m --mode      diffs file modes (permissions)\n"
 #if HAVE_ST_FLAGS
-	 "   -f --flags    diffs flags (4.4BSD)\n"
+	 "   -f --flags     diffs flags (4.4BSD)\n"
 #endif
-	 "   -o --owner    diffs file owner\n"
-	 "   -g --group    diffs file groups\n"
-	 "   -z --ctime    diffs ctime (inode modification time)\n"
-	 "   -i --mtime    diffs mtime (contents modification time)\n"
-	 "   -r --atime    diffs atime (access time)\n"
-	 "   -s --size     diffs file size (for regular files, symlinks)\n"
-	 "   -b --blocks   diffs file blocks (for regular files,symlinks and directories\n"
-	 "   -c --contents diffs file contents (for regular files and symlinks)\n"
-	 "   -j --major    diffs major device numbers (for device files)\n"
-	 "   -k --minor    diffs minor device numbers (for device files)\n"
+	 "   -o --owner     diffs file owner\n"
+	 "   -g --group     diffs file groups\n"
+	 "   -z --ctime     diffs ctime (inode modification time)\n"
+	 "   -i --mtime     diffs mtime (contents modification time)\n"
+	 "   -r --atime     diffs atime (access time)\n"
+	 "   -s --size      diffs file size (for regular files, symlinks)\n"
+	 "   -b --blocks    diffs file blocks (for regular files,symlinks and directories\n"
+	 "   -c --contents  diffs file contents (for regular files and symlinks)\n"
+	 "   -n --nlinks    diffs the (hard) link count \n"
+	 "   -e --hardlinks diffs the hard link targets\n"
+	 "   -j --major     diffs major device numbers (for device files)\n"
+	 "   -k --minor     diffs minor device numbers (for device files)\n"
 #if HAVE_GETXATTR
-	 "   -q --xattr    diffs file extended attributes\n"
+	 "   -q --xattr     diffs file extended attributes\n"
 #endif
 #if HAVE_ACL
-	 "   -l --acl      diffs file ACLs\n"
+	 "   -l --acl       diffs file ACLs\n"
 #endif
 	 "  Each of these options can be negated with an uppercase (short option)\n"
 	 "  or with --no-option (eg -M --no-mode for not diffing modes\n"
@@ -1111,7 +1115,7 @@ show_help(void)
 #if HAVE_ST_FLAGS
 	 "f"
 #endif
-	 "ogsbcj"
+	 "ogsbcnejk"
 #if HAVE_GETXATTR
 	 "q"
 #endif
@@ -1240,6 +1244,8 @@ printopts(const options_t* o)
   POPT(size);
   POPT(blocks);
   POPT(contents);
+  POPT(nlinks);
+  POPT(hardlinks);
   POPT(major);
   POPT(minor);
   POPT(xattr);
@@ -1721,7 +1727,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 int
 main(int argc, char*argv[])
 {
-  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1,
+  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 			0, 0, 0, 0, ~0, NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
   int rv;
@@ -1740,57 +1746,61 @@ main(int argc, char*argv[])
     {
 #if HAVE_GETOPT_LONG
       struct option long_options[] = {
-	{ "verbose",     0, 0, 'v' },
-	{ "version",     0, 0, 'V' },
-	{ "help",        0, 0, 'h' },
-	{ "dirs",        0, 0, 'd' },
-	{ "no-dirs",     0, 0, 'D' },
-	{ "type",        0, 0, 't' },
-	{ "no-type",     0, 0, 'T' },
-	{ "mode",        0, 0, 'm' },
-	{ "no-mode",     0, 0, 'M' },
+	{ "verbose",      0, 0, 'v' },
+	{ "version",      0, 0, 'V' },
+	{ "help",         0, 0, 'h' },
+	{ "dirs",         0, 0, 'd' },
+	{ "no-dirs",      0, 0, 'D' },
+	{ "type",         0, 0, 't' },
+	{ "no-type",      0, 0, 'T' },
+	{ "mode",         0, 0, 'm' },
+	{ "no-mode",      0, 0, 'M' },
 #if HAVE_ST_FLAGS
-	{ "flags",       0, 0, 'f' },
-	{ "no-flags",    0, 0, 'F' },
+	{ "flags",        0, 0, 'f' },
+	{ "no-flags",     0, 0, 'F' },
 #endif
-	{ "owner",       0, 0, 'o' },
-	{ "no-owner",    0, 0, 'O' },
-	{ "group",       0, 0, 'g' },
-	{ "no-group",    0, 0, 'G' },
-	{ "ctime",       0, 0, 'z' },
-	{ "no-ctime",    0, 0, 'Z' },
-	{ "mtime",       0, 0, 'i' },
-	{ "no-mtime",    0, 0, 'I' },
-	{ "atime",       0, 0, 'r' },
-	{ "no-atime",    0, 0, 'R' },
-	{ "size",        0, 0, 's' },
-	{ "no-size",     0, 0, 'S' },
-	{ "blocks",      0, 0, 'b' },
-	{ "no-blocks",   0, 0, 'B' },
-	{ "contents",    0, 0, 'c' },
-	{ "no-contents", 0, 0, 'C' },
-	{ "major",       0, 0, 'j' },
-	{ "no-major",    0, 0, 'J' },
-	{ "minor",       0, 0, 'k' },
-	{ "no-minor",    0, 0, 'K' },
+	{ "owner",        0, 0, 'o' },
+	{ "no-owner",     0, 0, 'O' },
+	{ "group",        0, 0, 'g' },
+	{ "no-group",     0, 0, 'G' },
+	{ "ctime",        0, 0, 'z' },
+	{ "no-ctime",     0, 0, 'Z' },
+	{ "mtime",        0, 0, 'i' },
+	{ "no-mtime",     0, 0, 'I' },
+	{ "atime",        0, 0, 'r' },
+	{ "no-atime",     0, 0, 'R' },
+	{ "size",         0, 0, 's' },
+	{ "no-size",      0, 0, 'S' },
+	{ "blocks",       0, 0, 'b' },
+	{ "no-blocks",    0, 0, 'B' },
+	{ "contents",     0, 0, 'c' },
+	{ "no-contents",  0, 0, 'C' },
+	{ "nlinks",       0, 0, 'n' },
+	{ "no-nlinks",    0, 0, 'N' },
+	{ "hardlinks",    0, 0, 'e' },
+	{ "no-hardlinks", 0, 0, 'E' },
+	{ "major",        0, 0, 'j' },
+	{ "no-major",     0, 0, 'J' },
+	{ "minor",        0, 0, 'k' },
+	{ "no-minor",     0, 0, 'K' },
 #if HAVE_GETXATTR
-	{ "xattr",       0, 0, 'q' },
-	{ "no-xattr",    0, 0, 'Q' },
+	{ "xattr",        0, 0, 'q' },
+	{ "no-xattr",     0, 0, 'Q' },
 #endif
 #if HAVE_GETXATTR
-	{ "acl",         0, 0, 'l' },
-	{ "no-acl",      0, 0, 'L' },
+	{ "acl",          0, 0, 'l' },
+	{ "no-acl",       0, 0, 'L' },
 #endif
-	{ "all",         0, 0, 'a' },
-	{ "nothing",     0, 0, 'A' },
-	{ "no-all",      0, 0, 'A' },
-	{ "exec",        0, 0, 'x' },
-	{ "exec-always", 0, 0, 'w' },
-	{ "no-mmap",     0, 0, 'p' },
-	{ "mode-or",     1, 0, '|' },
-	{ "mode-and",    1, 0, '&' },
-	{ "exclude",     1, 0, 'X' },
-	{ 0,             0, 0, 0}
+	{ "all",          0, 0, 'a' },
+	{ "nothing",      0, 0, 'A' },
+	{ "no-all",       0, 0, 'A' },
+	{ "exec",         0, 0, 'x' },
+	{ "exec-always",  0, 0, 'w' },
+	{ "no-mmap",      0, 0, 'p' },
+	{ "mode-or",      1, 0, '|' },
+	{ "mode-and",     1, 0, '&' },
+	{ "exclude",      1, 0, 'X' },
+	{ 0,              0, 0, 0}
       };
 #endif /* HAVE_GETOPT_LONG */
       switch(
@@ -1803,7 +1813,7 @@ main(int argc, char*argv[])
 #if HAVE_ST_FLAGS
 	      "fF"
 #endif
-	      "oOgGzZiIrRsSbBcCjJkK"
+	      "oOgGzZiIrRsSbBcCnNeEjJkK"
 #if HAVE_GETXATTR
 	      "qQ"
 #endif
@@ -1860,6 +1870,10 @@ main(int argc, char*argv[])
 	case 'C': options.contents	  = 0; break;
 	case 'j': options.major		  = 1; break;
 	case 'J': options.major		  = 0; break;
+	case 'n': options.nlinks	  = 1; break;
+	case 'N': options.nlinks	  = 0; break;
+	case 'e': options.hardlinks	  = 1; break;
+	case 'E': options.hardlinks	  = 0; break;
 	case 'k': options.minor		  = 1; break;
 	case 'K': options.minor		  = 0; break;
 #if HAVE_GETXATTR
@@ -1875,13 +1889,15 @@ main(int argc, char*argv[])
 		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
+		    = options.nlinks = options.hardlinks
 		    = options.major = options.minor = options.xattr
 		    = options.acl = 1; break;
 	case 'A': options.dirs = options.type
 		    = options.mode = options.flags = options.owner
 		    = options.group
-		    /* = options.ctime = options.mtime  = options.atime */
+		    = options.ctime = options.mtime  = options.atime /* extra for -A */
 		    = options.size  = options.blocks = options.contents
+		    = options.nlinks = options.hardlinks
 		    = options.major = options.minor = options.xattr
 		    = options.acl = 0; break;
 	case 'p': options.nommap = 1; break;
