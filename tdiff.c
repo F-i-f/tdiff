@@ -1546,26 +1546,30 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       localerr = 1;
     }
 
-  if (opt->blocks && sbuf1.st_blocks != sbuf2.st_blocks)
+  // Don't report on sizes and blocks for directories
+  if (((sbuf1.st_mode)&S_IFMT) != S_IFDIR)
     {
-      printf("%s: %s: blocks: %ld %ld\n",
-	     progname,
-	     subpath,
-	     (long)sbuf1.st_blocks, (long)sbuf2.st_blocks);
-      localerr = 1;
-    }
-
-  if (sbuf1.st_size != sbuf2.st_size)
-    {
-      if (opt->size)
+      if (opt->blocks && sbuf1.st_blocks != sbuf2.st_blocks)
 	{
-	  printf("%s: %s: size: %lld %lld\n",
+	  printf("%s: %s: blocks: %ld %ld\n",
 		 progname,
 		 subpath,
-		 (long long)sbuf1.st_size, (long long)sbuf2.st_size);
+		 (long)sbuf1.st_blocks, (long)sbuf2.st_blocks);
 	  localerr = 1;
 	}
-      content_diff = 0;
+
+      if (sbuf1.st_size != sbuf2.st_size)
+	{
+	  if (opt->size)
+	    {
+	      printf("%s: %s: size: %lld %lld\n",
+		     progname,
+		     subpath,
+		     (long long)sbuf1.st_size, (long long)sbuf2.st_size);
+	      localerr = 1;
+	    }
+	  content_diff = 0;
+	}
     }
 
   if (opt->nlinks && sbuf1.st_nlink != sbuf2.st_nlink)
