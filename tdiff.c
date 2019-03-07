@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Main()
-  Copyright (C) 1999, 2008, 2014 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2008, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -800,7 +800,7 @@ reportMissingFile(int which, const char* d, const char *f, commonClientData_t* c
 	}
       else
 	{
-	  subp = ".";
+	  subp = "";
 	}
       snprintf(fp, fp_len, "%s%s%s", subp, *subp ? "/" : "", f);
       printf("%s: %s: only present in %.*s\n",
