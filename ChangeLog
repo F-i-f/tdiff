@@ -1,5 +1,10 @@
 2019-03-07  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (getDirList, cmpFiles): Open files with O_NOATIME if
+	available.
+
+	* configure.ac (O_NOATIME): Add a check for O_NOATIME.
+
 	* Makefile.am (clean-local): Remove backup files.
 
 	* tdiff.c (show_version): Show git revision in --version.

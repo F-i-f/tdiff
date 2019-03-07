@@ -697,7 +697,11 @@ getDirList(const char* path)
   strl_t *rv = NULL;
   int nread;
   /**/
-  fd = open(path, O_RDONLY);
+  fd = open(path, O_RDONLY
+#if HAVE_O_NOATIME
+		  |O_NOATIME
+#endif /* HAVE_O_NOATIME */
+	    );
   if (fd<0)
     goto err;
 
@@ -898,7 +902,11 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 #endif
   /**/
 
-  if ((fd1 = open(f1, O_RDONLY))<0)
+  if ((fd1 = open(f1, O_RDONLY
+#if HAVE_O_NOATIME
+		     |O_NOATIME
+#endif /* HAVE_O_NOATIME */
+		  ))<0)
     {
       perror(f1);
       return 0;
@@ -913,7 +921,11 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
       perror(f1);
       return 0;
     }
-  if ((fd2 = open(f2, O_RDONLY))<0)
+  if ((fd2 = open(f2, O_RDONLY
+#if HAVE_O_NOATIME
+		     |O_NOATIME
+#endif /* HAVE_O_NOATIME */
+		  ))<0)
     {
       perror(f2);
       return 0;

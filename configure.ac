@@ -160,6 +160,17 @@ then
 fi
 
 ### 5) Checking for typedefs: NONE
+AC_MSG_CHECKING(for O_NOATIME)
+AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/types.h>
+	     #include <sys/stat.h>
+	     #include <fcntl.h>
+	     #ifdef O_NOATIME
+	     oh_yes_oh_yes
+	     #endif],
+	     AC_MSG_RESULT(yes)
+	     AC_DEFINE(HAVE_O_NOATIME,1,[Define if your system has the O_NOATIME open() flag.]),
+	     AC_MSG_RESULT(no))
+
 AC_MSG_CHECKING(for S_IFLNK in stat)
 AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
 	     #ifdef S_IFLNK
