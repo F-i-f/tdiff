@@ -1063,8 +1063,12 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 void
 show_version(void)
 {
-  printf("tdiff version " VERSION " (SVN $Id$)\n"
-	 "Copyright (C) 1999-2014 Philippe Troin <phil+github-commits@fifi.org>.\n"
+  printf("tdiff version " VERSION
+#ifdef GIT_REVISION
+	 " (git: " GIT_REVISION ")"
+#endif
+	 "\n"
+	 "Copyright (C) 1999-2019 Philippe Troin <phil+github-commits@fifi.org>.\n"
 	 "Tdiff comes with ABSOLUTELY NO WARRANTY.\n"
 	 "This is free software, and you are welcome to redistribute it\n"
 	 "under certain conditions.\n"

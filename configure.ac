@@ -37,6 +37,21 @@ AC_PROG_RANLIB
 AC_PROG_EGREP
 AC_PROG_INSTALL
 
+# Embed git revision
+AH_TEMPLATE([GIT_REVISION], [Define to the git revision corresponding to the code checked out to build this release.])
+AC_CHECK_PROG([have_git], [git], [yes], [no])
+if test "x$have_git" = xyes
+then
+  AC_MSG_CHECKING(for git revision)
+  if git_head_ref="`git rev-parse HEAD`"
+  then
+    AC_DEFINE_UNQUOTED([GIT_REVISION], ["$git_head_ref"])
+    AC_MSG_RESULT([$git_head_ref])
+  else
+    AC_MSG_RESULT([unknown or failed])
+  fi
+fi
+
 ### 3) Checking for libraries
 
 ### 4) Checking for header files

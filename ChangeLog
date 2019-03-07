@@ -1,5 +1,9 @@
 2019-03-07  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (show_version): Show git revision in --version.
+
+	* configure.ac: AC_DEFINE the git revision.
+
 	* Makefile.am (maintainer-clean-local): Clean config.aux.
 
 	* configure.ac: Add AC_CONFIG_AUX_DIR(config.aux)
