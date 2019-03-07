@@ -34,6 +34,8 @@ inocache_test_LDADD   = libtdiff.a
 genhash_test_SOURCES  = genhash_test.c
 genhash_test_LDADD    = libtdiff.a
 
+CLEANFILES = *~ */*~
+
 check: $(noinst_PROGRAMS)
 	./inocache_test
 	./genhash_test
