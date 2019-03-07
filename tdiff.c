@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Main()
-  Copyright (C) 1999, 2008, 2014 Philippe Troin <phil@fifi.org>
+  Copyright (C) 1999, 2008, 2014 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -1064,7 +1064,7 @@ void
 show_version(void)
 {
   printf("tdiff version " VERSION " (SVN $Id$)\n"
-	 "Copyright (C) 1999-2014 Philippe Troin <phil@fifi.org>.\n"
+	 "Copyright (C) 1999-2014 Philippe Troin <phil+github-commits@fifi.org>.\n"
 	 "Tdiff comes with ABSOLUTELY NO WARRANTY.\n"
 	 "This is free software, and you are welcome to redistribute it\n"
 	 "under certain conditions.\n"

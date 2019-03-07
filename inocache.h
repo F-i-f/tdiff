@@ -2,7 +2,7 @@
   tdiff - tree diffs
   inocache.h - Cache the inode already looked up so that we don't have to
 	       run tests twice on them.
-  Copyright (C) 1999, 2014 Philippe Troin <phil@fifi.org>
+  Copyright (C) 1999, 2014 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

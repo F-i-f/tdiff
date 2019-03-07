@@ -1,6 +1,6 @@
 #  tdiff - tree diffs
 #  configure.ac
-#  Copyright (C) 1999, 2006, 2008, 2014 Philippe Troin <phil@fifi.org>
+#  Copyright (C) 1999, 2006, 2008, 2014 Philippe Troin <phil+github-commits@fifi.org>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by

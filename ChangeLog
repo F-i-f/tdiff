@@ -1,9 +1,9 @@
-2014-01-31  Philippe Troin  <phil@fifi.org>
+2014-01-31  Philippe Troin  <phil+github-commits@fifi.org>
 
 	* tdiff.c (dodiff): Do block and size diffs for all types of files
 	EXCEPT directories.
 
-2014-01-30  Philippe Troin  <phil@fifi.org>
+2014-01-30  Philippe Troin  <phil+github-commits@fifi.org>
 
 	* tdiff.c (main): Move -n/N option (minor) to -k/K.
 	(main): Create --nlinks/-n --hardlinks/-e options.
@@ -12,13 +12,13 @@
 	(dodiff): Do block and size diffs for all types of files.
 	(dodiff): Check nlinks.
 
-2014-01-29  Philippe Troin  <phil@fifi.org>
+2014-01-29  Philippe Troin  <phil+github-commits@fifi.org>
 
 	* configure.ac, Makefile.am, tdiff.c: Add support for nanosecond
 	timestamps on Linux.  Fix CFLAGS mess.  Fix reporting data
 	corruption when reporting on the root folders of the comparison.
 
-2014-01-28  Philippe Troin  <phil@fifi.org>
+2014-01-28  Philippe Troin  <phil+github-commits@fifi.org>
 
 	* tdiff.c (compareXattrs): Compare Xattrs, reorg missing elements
 	printing.
@@ -29,13 +29,13 @@
 	* tdiff.c (newStrList, pushStrList): Created and abstracted.
 	(compareStrList): Created and abstracted string list comparison.
 
-2014-01-27  Philippe Troin  <phil@fifi.org>
+2014-01-27  Philippe Troin  <phil+github-commits@fifi.org>
 
 	* Convert to automake.
 
 	* tdiff.c (cmpFiles): Use madvise(MADV_WILLNEED)
 
-2006-09-19  Philippe Troin  <phil@fifi.org>
+2006-09-19  Philippe Troin  <phil+github-commits@fifi.org>
 
 	* tdiff.c: Call getdents correctly on modern linux.  Use long long
 	to print file sizes for LFS compatibility.
