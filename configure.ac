@@ -15,7 +15,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([tdiff],[0.2])
+AC_INIT([tdiff],[0.2.99.WIP])
 AC_PREREQ([2.69])
 AC_CANONICAL_TARGET
 
