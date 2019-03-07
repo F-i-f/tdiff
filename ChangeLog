@@ -1,5 +1,9 @@
 2019-03-07  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (maintainer-clean-local): Clean config.aux.
+
+	* configure.ac: Add AC_CONFIG_AUX_DIR(config.aux)
+
 	* tdiff.c (reportMissingFile): Fix bug where tdiff / otherdir
 	would report missing files in / with the missing last character.
 

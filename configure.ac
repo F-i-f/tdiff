@@ -1,6 +1,6 @@
 #  tdiff - tree diffs
 #  configure.ac
-#  Copyright (C) 1999, 2006, 2008, 2014 Philippe Troin <phil+github-commits@fifi.org>
+#  Copyright (C) 1999, 2006, 2008, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_INIT([tdiff],[0.2.99.WIP])
+AC_CONFIG_AUX_DIR([config.aux])
 AC_PREREQ([2.69])
 AC_CANONICAL_TARGET
 

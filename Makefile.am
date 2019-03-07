@@ -1,6 +1,6 @@
 #  tdiff - tree diffs
 #  Makefile.am
-#  Copyright (C) 2014 Philippe Troin <phil+github-commits@fifi.org>
+#  Copyright (C) 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -39,5 +39,5 @@ check: $(noinst_PROGRAMS)
 	./genhash_test
 
 maintainer-clean-local:
-	rm -f INSTALL Makefile.in aclocal.m4 configure config.guess
-	rm -f  config.h.in config.sub depcomp install-sh missing
+	rm -f INSTALL Makefile.in aclocal.m4 configure config.h.in
+	rm -fr config.aux
