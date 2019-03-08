@@ -254,8 +254,8 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
 
 if test "$madvise"
 then
-    AC_MSG_CHECKING(for working madvise())
-    AC_RUN_IFELSE([AC_LANG_SOURCE([[
+    AC_CACHE_CHECK([for working madvise()], [fi_cv_working_madvise],
+    [AC_RUN_IFELSE([AC_LANG_SOURCE([[
       #include <stdlib.h>
       #include <sys/types.h>
       #include <sys/mman.h>
@@ -266,8 +266,18 @@ then
 	caddr_t addr = mmap(NULL, 10, PROT_READ, MAP_SHARED, fd, 0);
 	return madvise(addr, 10, MADV_SEQUENTIAL)<0;
       }
-    ]])],[AC_MSG_RESULT(yes)
-    AC_DEFINE(HAVE_MADVISE,1,[FIXME])],[AC_MSG_RESULT(no)],[AC_MSG_ERROR(cannot test for working madvise() when cross-compiling)])
+    ]])],
+    [fi_cv_working_madvise=yes],
+    [fi_cv_working_madvise=no],
+    [fi_cv_working_madvise=cross-compiling])])
+    if test "x$fi_cv_working_madvise" = xcross-compiling
+    then
+      AC_MSG_WARN(assuming working madvise() when cross-compiling)
+    fi
+    if test "x$fi_cv_working_madvise" = xyes -o "x$fi_cv_working_madvise" = xcross-compiling
+    then
+      AC_DEFINE([HAVE_MADVISE], [1], [Define to 1 if your system has a working madvise() syscall])
+    fi
 fi
 
 if test "$getdents"
