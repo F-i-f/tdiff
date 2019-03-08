@@ -170,6 +170,13 @@ void printopts(const options_t*);
 #  define printopts(a)
 #endif
 
+void
+xperror(const char* msg, const char *filename)
+{
+  fprintf(stderr, "%s: %s: %s: %s (errno=%d)\n",
+	  progname, filename, msg, strerror(errno), errno);
+}
+
 /*
  * String list handling
  */
@@ -321,7 +328,7 @@ getXattrList(const char* path)
 	buf = xmalloc(bufSize *= 2);
 	goto again;
       default:
-	perror(path);
+	xperror("cannot get extended attribute list, llistxattr()", path);
 	free(buf);
 	return NULL;
       }
@@ -424,14 +431,14 @@ compareXattrs(const char* p1, const char* p2,
   if (!buf1)
     {
       rv = XIT_SYS;
-      perror(p1);
+      xperror("cannot get extended attribute list, lgetxattr()", p1);
       goto ret;
     }
 
   if (!buf2)
     {
       rv = XIT_SYS;
-      perror(p2);
+      xperror("cannot get extended attribute list, lgetxattr()", p2);
       goto ret;
     }
 
@@ -480,14 +487,14 @@ getAclList(const char* path, acl_type_t acltype)
 	newStrList(&rv);
 	return rv;
       default:
-	perror(path);
+	xperror("cannot get ACL, acl_get_file()", path);
 	return NULL;
       }
 
   acls = acl_to_text(acl, &acllen);
   if (!acls)
     {
-      perror(path);
+      xperror("cannot get ACL, acl_to_text()", path);
       acl_free(acl);
       return NULL;
     }
@@ -737,7 +744,7 @@ getDirList(const char* path)
   return rv;
 
  err:
-  perror(path);
+  xperror("cannot get directory listing, getdents()", path);
   return rv;
 }
 #else
@@ -769,7 +776,7 @@ getDirList(const char* path)
   return rv;
 
  err:
-  perror(path);
+  xperror("cannot get directory listing, readdir()", path);
   return rv;
 }
 #endif
@@ -907,17 +914,17 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 #endif /* HAVE_O_NOATIME */
 		  ))<0)
     {
-      perror(f1);
+      xperror("cannot open file, open()", f1);
       return 0;
     }
   if ((fs1=lseek(fd1, 0, SEEK_END))<0)
     {
-      perror(f1);
+      xperror("cannot seek in file, lseek()", f1);
       return 0;
     }
   if (lseek(fd1, 0, SEEK_SET)<0)
     {
-      perror(f1);
+      xperror("cannot seek in file, lseek()", f1);
       return 0;
     }
   if ((fd2 = open(f2, O_RDONLY
@@ -926,17 +933,17 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 #endif /* HAVE_O_NOATIME */
 		  ))<0)
     {
-      perror(f2);
+      xperror("cannot open file, open()", f2);
       return 0;
     }
   if ((fs2=lseek(fd2, 0, SEEK_END))<0)
     {
-      perror(f2);
+      xperror("cannot seek in file, lseek()", f2);
       return 0;
     }
   if (lseek(fd2, 0, SEEK_SET)<0)
     {
-      perror(f2);
+      xperror("cannot seek in file, lseek()", f2);
       return 0;
     }
   if (fs1 != fs2)
@@ -965,26 +972,26 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 
 #if HAVE_MADVISE && defined(MADV_SEQUENTIAL)
   if (madvise(ptr1, fs1, MADV_SEQUENTIAL)<0)
-    perror(f1);
+    xperror("cannot madvise(MADV_SEQUENTIAL)", f1);
   if (madvise(ptr2, fs2, MADV_SEQUENTIAL)<0)
-    perror(f2);
+    xperror("cannot madvise(MADV_SEQUENTIAL)", f2);
 #endif /* HAVE_MADVISE */
 
 #if HAVE_MADVISE && defined(MADV_WILLNEED)
   if (madvise(ptr1, fs1, MADV_WILLNEED)<0)
-    perror(f1);
+    xperror("cannot madvise(MADV_WILLNEED)", f1);
   if (madvise(ptr2, fs2, MADV_WILLNEED)<0)
-    perror(f2);
+    xperror("cannot madvise(MADV_WILLNEED)", f2);
 #endif /* HAVE_MADVISE */
 
   result = memcmp(ptr1, ptr2, fs1)==0 ? res_same : res_diff;
 
   if (munmap(ptr2, fs2)<0)
-    perror(f2);
+    xperror("cannot munmap()", f2);
 
  map2_failed:
   if (munmap(ptr1, fs1)<0)
-    perror(f1);
+    xperror("cannot munmap()", f1);
 #endif /* HAVE_MMAP */
 
  map1_failed:
@@ -1002,7 +1009,7 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 	  nread1 = read(fd1, buf1, CMPFILE_BUF_SIZE);
 	  if (nread1 < 0)
 	    {
-	      perror(f1);
+	      xperror("read()", f1);
 	      goto fail;
 	    }
 	  if (nread1 < CMPFILE_BUF_SIZE && nread1 != toread)
@@ -1013,7 +1020,7 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 	  nread2 = read(fd2, buf2, CMPFILE_BUF_SIZE);
 	  if (nread2 < 0)
 	    {
-	      perror(f2);
+	      xperror("read()", f2);
 	      goto fail;
 	    }
 	  if (nread2 < CMPFILE_BUF_SIZE && nread2 != toread)
@@ -1041,12 +1048,12 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
  closefiles:
   if (close(fd1)<0)
     {
-      perror(f1);
+      xperror("cannot close file, close()", f1);
       goto fail;
     }
   if (close(fd2)<0)
     {
-      perror(f2);
+      xperror("cannot close file, close()", f2);
       goto fail;
     }
 
@@ -1364,7 +1371,7 @@ xreadlink(const char* path)
   if ((nstored=readlink(path, buf, bufsize))<0)
     {
       free(buf);
-      perror(path);
+      xperror("cannot read link target, readlink()", path);
       return NULL;
     }
   if (nstored==bufsize-1)
@@ -1392,12 +1399,12 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   /* Stat the paths */
   if (lstat(p1, &sbuf1)<0)
     {
-      perror(p1);
+      xperror("cannot get inode status, lstat()", p1);
       rv = XIT_SYS;
     }
   if (lstat(p2, &sbuf2)<0)
     {
-      perror(p2);
+      xperror("cannot get inode status, lstat()", p2);
       rv = XIT_SYS;
     }
   if (rv != XIT_OK)

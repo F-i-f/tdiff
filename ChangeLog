@@ -1,5 +1,9 @@
 2019-03-08  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (xperror): Created.
+	(getXattrList, compareXattrs, getAclList, getDirList, cmpFiles)
+	(xreadlink, dodiff): Use xperror.
+
 	* configure.ac (HAVE_GETOPT_LONG, HAVE_MALLINFO, madvise-check)
 	(HAVE_LSTAT): Use FI_LINK_IFELSE.
 
