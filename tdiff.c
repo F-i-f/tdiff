@@ -80,7 +80,7 @@
 #  include <sys/mkdev.h>
 #elif HAVE_SYS_SYSMACROS_H
 #  include <sys/sysmacros.h>
-#else
+#elif ! HAVE_MAJOR_MINOR_FUNCTIONS
 #  error Cannot find major() and minor()
 #endif
 
@@ -754,11 +754,10 @@ getDirList(const char* path)
 
   while ((dent = readdir(dir)))
     {
-      if (!dent->d_name
-	  || (dent->d_name[0]=='.'
-	      && (dent->d_name[1] == 0
-		  || (dent->d_name[1]=='.'
-		      && dent->d_name[2]== 0))))
+      if (dent->d_name[0]=='.'
+	  && (dent->d_name[1] == 0
+	      || (dent->d_name[1]=='.'
+		  && dent->d_name[2]== 0)))
 	continue;
 
       pushStrList(rv, dent->d_name);
@@ -1469,9 +1468,89 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 #if HAVE_ST_FLAGS
   if (opt->flags && sbuf1.st_flags != sbuf2.st_flags)
     {
-      printf("%s: %s: flags: %08X %08X\n",
-	     progname, subpath, sbuf1.st_flags, sbuf2.st_flags);
-      localerr = 1;
+      int flags1 = sbuf1.st_flags;
+      int flags2 = sbuf2.st_flags;
+
+#define CHECK_FLAG(flag, desc) do {			  \
+	if ((flags1 & (flag)) != ( flags2 & (flag))) {	  \
+	  printf("%s: %s: flag %s only set in %.*s\n",	  \
+		 progname, subpath, desc,		  \
+		 (int)( (flags1 & (flag))		  \
+		     ? opt->root1_length		  \
+		     : opt->root2_length ),		  \
+		 ( (flags1 & (flag)) ? p1 : p2 ));	  \
+	  localerr = 1;					  \
+	}						  \
+	flags1 &= ~flag;				  \
+	flags2 &= ~flag;				  \
+      } while(0)
+
+#if HAVE_UF_NODUMP
+      CHECK_FLAG(UF_NODUMP, "nodump");
+#endif
+#if HAVE_UF_IMMUTABLE
+      CHECK_FLAG(UF_IMMUTABLE, "uimmutable");
+#endif
+#if HAVE_UF_APPEND
+      CHECK_FLAG(UF_APPEND, "uappend");
+#endif
+#if HAVE_UF_OPAQUE
+      CHECK_FLAG(UF_OPAQUE, "opaque");
+#endif
+#if HAVE_UF_NOUNLINK
+      CHECK_FLAG(UF_NOUNLINK, "uunlink");
+#endif
+#if HAVE_UF_COMPRESSED
+      CHECK_FLAG(UF_COMPRESSED, "compressed");
+#endif
+#if HAVE_UF_TRACKED
+      CHECK_FLAG(UF_TRACKED, "tracked");
+#endif
+#if HAVE_UF_SYSTEM
+      CHECK_FLAG(UF_SYSTEM, "system");
+#endif
+#if HAVE_UF_SPARSE
+      CHECK_FLAG(UF_SPARSE, "sparse");
+#endif
+#if HAVE_UF_OFFLINE
+      CHECK_FLAG(UF_OFFLINE, "offline");
+#endif
+#if HAVE_UF_REPARSE
+      CHECK_FLAG(UF_REPARSE, "reparse");
+#endif
+#if HAVE_UF_ARCHIVE
+      CHECK_FLAG(UF_ARCHIVE, "uarchive");
+#endif
+#if HAVE_UF_READONLY
+      CHECK_FLAG(UF_READONLY, "readonly");
+#endif
+#if HAVE_UF_HIDDEN
+      CHECK_FLAG(UF_HIDDEN, "hidden");
+#endif
+#if HAVE_SF_ARCHIVED
+      CHECK_FLAG(SF_ARCHIVED, "archived");
+#endif
+#if HAVE_SF_IMMUTABLE
+      CHECK_FLAG(SF_IMMUTABLE, "simmutable");
+#endif
+#if HAVE_SF_APPEND
+      CHECK_FLAG(SF_APPEND, "sappend");
+#endif
+#if HAVE_SF_NOUNLINK
+      CHECK_FLAG(SF_NOUNLINK, "sunlink");
+#endif
+#if HAVE_SF_SNAPSHOT
+      CHECK_FLAG(SF_SNAPSHOT, "snapshot");
+#endif
+
+#undef CHECK_FLAG
+
+      if (flags1 != flags2)
+	{
+	  printf("%s: %s: unknown flags: %08X %08X\n",
+		 progname, subpath, flags1, flags2);
+	  localerr = 1;
+	}
     }
 #endif /* HAVE_ST_FLAGS */
   if (opt->owner && sbuf1.st_uid != sbuf2.st_uid)

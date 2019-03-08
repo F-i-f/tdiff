@@ -1,3 +1,14 @@
+2019-03-08  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.c (getDirList): Remove superflous test in readdir()
+	version. (FreeBSD 12).
+	(dodiff): Spell-out flag differences by name instead of just
+	giving the hex flags.
+
+	* configure.ac (HAVE_MAJOR_MINOR_FUNCTIONS): Also check if
+	major() and minor() are functions (FreeBSD 12).
+	(HAVE_UF_*): Update with new flags.
+
 2019-03-07  Philippe Troin  <phil@fifi.org>
 
 	* m4/fi_check_identifiers.m4 (FI_CHECK_IDENTIFIERS): Created.

@@ -119,6 +119,7 @@ fi
 # Major / minor
 AH_TEMPLATE(HAVE_SYS_MKDEV_H, [Define to 1 if your system has major and minor definitions in mkdev.h])
 AH_TEMPLATE(HAVE_SYS_SYSMACROS_H, [Define to 1 if your system has major and minor definitions in sys/sysmacros.h])
+AH_TEMPLATE(HAVE_MAJOR_MINOR_FUNCTIONS, [Define to 1 if your system has major and minor functions])
 
 major_keep_trying=yes
 AC_CACHE_CHECK([for major and minor in mkdev.h], fi_cv_majmin_mkdev, [
@@ -152,6 +153,27 @@ fi
 
 if test "$major_keep_trying"
 then
+  AC_CACHE_CHECK([for major() and minor() functions], [fi_cv_majmin_functions],
+  [AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+int main()
+{
+  return major(0)+minor(0);
+}])],
+		     [fi_cv_majmin_functions=yes],
+		     [fi_cv_majmin_functions=no])])
+  if test "x$fi_cv_majmin_functions" = xyes
+  then
+    AC_DEFINE(HAVE_MAJOR_MINOR_FUNCTIONS, 1)
+    unset major_keep_trying
+  fi
+fi
+
+if test "$major_keep_trying"
+then
     AC_MSG_ERROR([Cannot find a definition for major() and minor()])
 fi
 
@@ -165,7 +187,8 @@ FI_CHECK_DEFINE([O_NOATIME], [#include <sys/types.h>
 
 FI_CHECK_DEFINES([S_IFLNK S_IFIFO S_IFSOCK S_IFDOOR S_IFWHT \
 		  UF_NODUMP UF_IMMUTABLE UF_APPEND UF_OPAQUE UF_NOUNLINK \
-		  UF_COMPRESSED UF_HIDDEN \
+		  UF_COMPRESSED UF_TRACKED UF_SYSTEM UF_SPARSE UF_OFFLINE \
+		  UF_REPARSE UF_ARCHIVE UF_READONLY UF_HIDDEN \
 		  SF_ARCHIVED SF_IMMUTABLE SF_APPEND SF_NOUNLINK SF_SNAPSHOT],
 		 [#include <sys/stat.h>],
 		 [in <sys/stat.h>])
