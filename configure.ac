@@ -230,27 +230,34 @@ AC_CHECK_SIZEOF(ino_t)
 AC_CHECK_SIZEOF(dev_t)
 
 ### 8) Checking for library functions
-AC_MSG_CHECKING(for getopt_long())
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <unistd.h>
-	     #include <getopt.h>
-	    ]], [[char *a[1];
-	     getopt_long(0, a, "foo", NULL, NULL);
-	    ]])],[AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_GETOPT_LONG,1,[Define to 1 if your system has the GNU getopt_long().])],[AC_MSG_RESULT(no)])
+FI_LINK_IFELSE([for getopt_long()], [HAVE_GETOPT_LONG],
+	       [AC_LANG_PROGRAM([[#include <unistd.h>
+				  #include <getopt.h>
+				 ]],
+				[[char *a[1];
+				  getopt_long(0, a, "foo", NULL, NULL);
+				 ]])],
+	       [Define to 1 if your system has the GNU getopt_long().])
 
-AC_MSG_CHECKING(for mallinfo())
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <malloc.h>]], [[mallinfo();]])],[AC_DEFINE(HAVE_MALLINFO,1,[FIXME])
-	    AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+FI_LINK_IFELSE([for mallinfo()], [HAVE_MALLINFO],
+	       [AC_LANG_PROGRAM([[#include <malloc.h>]],
+				[[mallinfo();]])],
+	       [Define to 1 if your system has mallinfo().])
 
-AC_MSG_CHECKING(for mmap())
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-	     #include <sys/mman.h>]], [[mmap((void*)0, 0, 0, 0, 0, 0);]])],[AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_MMAP,1,[FIXME])],[AC_MSG_RESULT(no)])
+FI_LINK_IFELSE([for mmap()], [HAVE_MMAP],
+	       [AC_LANG_PROGRAM([[#include <sys/types.h>
+				  #include <sys/mman.h>
+				 ]],
+				[[mmap((void*)0, 0, 0, 0, 0, 0);]])],
+	       [Define to 1 if your system has mmap().])
 
-AC_MSG_CHECKING(for madvise())
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
-	     #include <sys/mman.h>]], [[madvise((void*)0, 0, 0);]])],[AC_MSG_RESULT(yes)
-	    madvise=1],[AC_MSG_RESULT(no)])
+FI_LINK_IFELSE([for madvise()], [],
+	       [AC_LANG_PROGRAM([[#include <sys/types.h>
+				  #include <sys/mman.h>
+				 ]],
+				[[madvise((void*)0, 0, 0);]])],
+	       [],
+	       [madvise=1])
 
 if test "$madvise"
 then
@@ -313,11 +320,14 @@ then
     fi
 fi
 
-AC_MSG_CHECKING(for lstat())
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/stat.h>
-	    #include <unistd.h>]], [[struct stat buf;
-	    lstat("/", &buf);]])],[AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_LSTAT,1,[FIXME])],[AC_MSG_RESULT(no)])
+FI_LINK_IFELSE([for lstat()], [HAVE_LSTAT],
+	       [AC_LANG_PROGRAM([[#include <sys/stat.h>
+				  #include <unistd.h>
+				 ]],
+				[[struct stat buf;
+				  lstat("/", &buf);]
+				])],
+	       [Define to 1 if your system has lstat().])
 
 AC_SEARCH_LIBS([acl_get_file],[acl],[
   AC_DEFINE([HAVE_ACL],1,[Define if your system has ACLs])

@@ -1,5 +1,10 @@
 2019-03-08  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac (HAVE_GETOPT_LONG, HAVE_MALLINFO, madvise-check)
+	(HAVE_LSTAT): Use FI_LINK_IFELSE.
+
+	* m4/fi_link_ifelse.m4 (FI_LINK_IFELSE):  Created.
+
 	* tdiff.c (show_help, main): Add -W option as a shortcut to -w
 	diff %1 %2 \;.
 	Allow -w/-W/-x options to be specified more than once (and warn
