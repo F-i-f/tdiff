@@ -1,5 +1,8 @@
 2019-03-08  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (getAclList): acl_get_file() can return EINVAL on
+	MacOSX.
+
 	* tdiff.c (xperror): Created.
 	(getXattrList, compareXattrs, getAclList, getDirList, cmpFiles)
 	(xreadlink, dodiff): Use xperror.

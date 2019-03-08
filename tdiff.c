@@ -484,6 +484,7 @@ getAclList(const char* path, acl_type_t acltype)
     switch(errno)
       {
       case ENOTSUP:
+      case EINVAL:
 	newStrList(&rv);
 	return rv;
       default:
