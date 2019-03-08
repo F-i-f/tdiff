@@ -1142,6 +1142,8 @@ show_help(void)
 	 "                            (if file sizes are equal)\n"
 	 "   -w --exec-always <cmd>;  always executes <cmd> between files\n"
 	 "        <cmd> uses %%1 and %%2 as file from <dir1> and <dir2>\n"
+	 "   -W --exec-always-diff ;  always executes \"diff -uN\" between files\n"
+	 "        equivalent to -w diff -uN %%1 %%2 \\;\n"
 	 "   -| --mode-or <bits>      applies <bits> OR mode before comparison\n"
 	 "   -& --mode-and <bits>     applies <bits> AND mode before comparison\n"
 	 "   -X --exclude <file>      omits <file> from report\n"
@@ -1190,6 +1192,10 @@ get_exec_args(char **argv, int *optind, dexe_t *dex)
       return 0;
     }
   numargs = cargv-argv;
+  if (dex->argv != NULL)
+    {
+      free(dex->argv);
+    }
   dex->argv = xmalloc(sizeof(char*)*(numargs+1));
   dex->arg1 = NULL;
   dex->arg2 = NULL;
@@ -1841,7 +1847,7 @@ main(int argc, char*argv[])
   options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 			0, 0, 0, 0, ~0, NULL};
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
-  int rv;
+  int rv, optcode;
   /**/
 
   pmem();
@@ -1857,64 +1863,65 @@ main(int argc, char*argv[])
     {
 #if HAVE_GETOPT_LONG
       struct option long_options[] = {
-	{ "verbose",      0, 0, 'v' },
-	{ "version",      0, 0, 'V' },
-	{ "help",         0, 0, 'h' },
-	{ "dirs",         0, 0, 'd' },
-	{ "no-dirs",      0, 0, 'D' },
-	{ "type",         0, 0, 't' },
-	{ "no-type",      0, 0, 'T' },
-	{ "mode",         0, 0, 'm' },
-	{ "no-mode",      0, 0, 'M' },
+	{ "verbose",           0, 0, 'v' },
+	{ "version",           0, 0, 'V' },
+	{ "help",              0, 0, 'h' },
+	{ "dirs",              0, 0, 'd' },
+	{ "no-dirs",           0, 0, 'D' },
+	{ "type",              0, 0, 't' },
+	{ "no-type",           0, 0, 'T' },
+	{ "mode",              0, 0, 'm' },
+	{ "no-mode",           0, 0, 'M' },
 #if HAVE_ST_FLAGS
-	{ "flags",        0, 0, 'f' },
-	{ "no-flags",     0, 0, 'F' },
+	{ "flags",             0, 0, 'f' },
+	{ "no-flags",          0, 0, 'F' },
 #endif
-	{ "owner",        0, 0, 'o' },
-	{ "no-owner",     0, 0, 'O' },
-	{ "group",        0, 0, 'g' },
-	{ "no-group",     0, 0, 'G' },
-	{ "ctime",        0, 0, 'z' },
-	{ "no-ctime",     0, 0, 'Z' },
-	{ "mtime",        0, 0, 'i' },
-	{ "no-mtime",     0, 0, 'I' },
-	{ "atime",        0, 0, 'r' },
-	{ "no-atime",     0, 0, 'R' },
-	{ "size",         0, 0, 's' },
-	{ "no-size",      0, 0, 'S' },
-	{ "blocks",       0, 0, 'b' },
-	{ "no-blocks",    0, 0, 'B' },
-	{ "contents",     0, 0, 'c' },
-	{ "no-contents",  0, 0, 'C' },
-	{ "nlinks",       0, 0, 'n' },
-	{ "no-nlinks",    0, 0, 'N' },
-	{ "hardlinks",    0, 0, 'e' },
-	{ "no-hardlinks", 0, 0, 'E' },
-	{ "major",        0, 0, 'j' },
-	{ "no-major",     0, 0, 'J' },
-	{ "minor",        0, 0, 'k' },
-	{ "no-minor",     0, 0, 'K' },
+	{ "owner",             0, 0, 'o' },
+	{ "no-owner",          0, 0, 'O' },
+	{ "group",             0, 0, 'g' },
+	{ "no-group",          0, 0, 'G' },
+	{ "ctime",             0, 0, 'z' },
+	{ "no-ctime",          0, 0, 'Z' },
+	{ "mtime",             0, 0, 'i' },
+	{ "no-mtime",          0, 0, 'I' },
+	{ "atime",             0, 0, 'r' },
+	{ "no-atime",          0, 0, 'R' },
+	{ "size",              0, 0, 's' },
+	{ "no-size",           0, 0, 'S' },
+	{ "blocks",            0, 0, 'b' },
+	{ "no-blocks",         0, 0, 'B' },
+	{ "contents",          0, 0, 'c' },
+	{ "no-contents",       0, 0, 'C' },
+	{ "nlinks",            0, 0, 'n' },
+	{ "no-nlinks",         0, 0, 'N' },
+	{ "hardlinks",         0, 0, 'e' },
+	{ "no-hardlinks",      0, 0, 'E' },
+	{ "major",             0, 0, 'j' },
+	{ "no-major",          0, 0, 'J' },
+	{ "minor",             0, 0, 'k' },
+	{ "no-minor",          0, 0, 'K' },
 #if HAVE_GETXATTR
-	{ "xattr",        0, 0, 'q' },
-	{ "no-xattr",     0, 0, 'Q' },
+	{ "xattr",             0, 0, 'q' },
+	{ "no-xattr",          0, 0, 'Q' },
 #endif
 #if HAVE_GETXATTR
-	{ "acl",          0, 0, 'l' },
-	{ "no-acl",       0, 0, 'L' },
+	{ "acl",               0, 0, 'l' },
+	{ "no-acl",            0, 0, 'L' },
 #endif
-	{ "all",          0, 0, 'a' },
-	{ "nothing",      0, 0, 'A' },
-	{ "no-all",       0, 0, 'A' },
-	{ "exec",         0, 0, 'x' },
-	{ "exec-always",  0, 0, 'w' },
-	{ "no-mmap",      0, 0, 'p' },
-	{ "mode-or",      1, 0, '|' },
-	{ "mode-and",     1, 0, '&' },
-	{ "exclude",      1, 0, 'X' },
-	{ 0,              0, 0, 0}
+	{ "all",               0, 0, 'a' },
+	{ "nothing",           0, 0, 'A' },
+	{ "no-all",            0, 0, 'A' },
+	{ "exec",              0, 0, 'x' },
+	{ "exec-always",       0, 0, 'w' },
+	{ "exec-always-diff",  0, 0, 'W' },
+	{ "no-mmap",           0, 0, 'p' },
+	{ "mode-or",           1, 0, '|' },
+	{ "mode-and",          1, 0, '&' },
+	{ "exclude",           1, 0, 'X' },
+	{ 0,                   0, 0, 0}
       };
 #endif /* HAVE_GETOPT_LONG */
-      switch(
+      switch( ( optcode =
 #if HAVE_GETOPT_LONG
 	     getopt_long
 #else
@@ -1931,11 +1938,11 @@ main(int argc, char*argv[])
 #if HAVE_ACL
 	      "lL"
 #endif
-	      "xwaAp|:&:X:W"
+	      "xwWaAp|:&:X:"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
-	      ))
+	      )))
 	{
 	case -1:
 	  /* end of options */
@@ -2015,24 +2022,42 @@ main(int argc, char*argv[])
 	case 'x':
 	  if (options.exec)
 	    {
-	      fprintf(stderr, "%s: cannot specify -x twice\n", progname);
-	      end_after_options = EAO_error;
+	      fprintf(stderr, "%s: -x specified twice, only the last command line will run\n", progname);
 	    }
-	  else if (get_exec_args(argv, &optind, &options.exec_args))
+	  if (get_exec_args(argv, &optind, &options.exec_args))
 	    options.contents = options.exec = 1;
 	  else
 	    end_after_options = EAO_error;
 	  break;
 	case 'w':
+	case 'W':
 	  if (options.exec_always)
 	    {
-	      fprintf(stderr, "%s: cannot specify -w twice\n", progname);
-	      end_after_options = EAO_error;
+	      fprintf(stderr, "%s: -w/-W specified twice, only the last command line will run\n", progname);
 	    }
-	  else if (get_exec_args(argv, &optind, &options.exec_always_args))
-	    options.contents = options.exec_always = 1;
-	  else
-	    end_after_options = EAO_error;
+	  if (optcode == 'w')
+	    {
+	      if (get_exec_args(argv, &optind, &options.exec_always_args))
+		options.contents = options.exec_always = 1;
+	      else
+		end_after_options = EAO_error;
+	    }
+	  else /* -W */
+	    {
+	      if (options.exec_always_args.argv != NULL)
+		{
+		  free(options.exec_always_args.argv);
+		}
+	      options.exec_always_args.argv = xmalloc(sizeof(char*)*5);
+	      options.exec_always_args.argv[0] = "diff";
+	      options.exec_always_args.argv[1] = "-uN";
+	      options.exec_always_args.argv[2] = NULL;
+	      options.exec_always_args.argv[3] = NULL;
+	      options.exec_always_args.argv[4] = NULL;
+	      options.exec_always_args.arg1 = &options.exec_always_args.argv[2];
+	      options.exec_always_args.arg2 = &options.exec_always_args.argv[3];
+	      options.contents = options.exec_always = 1;
+	    }
 	  break;
 	case '|':
 	  if (!get_numeric_arg(optarg, &options.mode_or))

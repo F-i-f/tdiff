@@ -1,5 +1,10 @@
 2019-03-08  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (show_help, main): Add -W option as a shortcut to -w
+	diff %1 %2 \;.
+	Allow -w/-W/-x options to be specified more than once (and warn
+	about it).
+
 	* configure.ac (HAVE_MADVISE): Don't assume that madvise() is
 	broken when cross-compiling, but warn about the assumption.
 
