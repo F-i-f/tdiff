@@ -17,10 +17,8 @@
 
 AC_INIT([tdiff],[0.2.99.WIP])
 AC_CONFIG_AUX_DIR([config.aux])
-AC_PREREQ([2.69])
-AC_CANONICAL_TARGET
-
-AM_INIT_AUTOMAKE([gnu])
+AC_CANONICAL_TARGET()
+FI_PROJECT()
 
 # Get started
 AC_CONFIG_SRCDIR([tdiff.c])
@@ -33,74 +31,59 @@ AC_SYS_LARGEFILE
 ### 2) Checking for programs
 AC_PROG_CC
 AC_PROG_CPP
+AM_PROG_AR
 AC_PROG_RANLIB
 AC_PROG_EGREP
 AC_PROG_INSTALL
 
-# Embed git revision
-AH_TEMPLATE([GIT_REVISION], [Define to the git revision corresponding to the code checked out to build this release.])
-AC_CHECK_PROG([have_git], [git], [yes], [no])
-if test "x$have_git" = xyes
-then
-  AC_MSG_CHECKING(for git revision)
-  if git_head_ref="`git rev-parse HEAD`"
-  then
-    AC_DEFINE_UNQUOTED([GIT_REVISION], ["$git_head_ref"])
-    AC_MSG_RESULT([$git_head_ref])
-  else
-    AC_MSG_RESULT([unknown or failed])
-  fi
-fi
+FI_GIT_REVISION
 
 ### 3) Checking for libraries
 
 ### 4) Checking for header files
-AC_MSG_CHECKING(for getdents() in libc)
-AC_EGREP_CPP(getdents, [#include <sys/dirent.h>],
-	     getdents=libc)
-if test "$getdents"
+
+# Getdents
+AH_TEMPLATE(HAVE_SYS_DIRENT_H, [Define if your system has <sys/dirent.h>])
+AH_TEMPLATE(GETDENTS_STRUCT, [Define to the name of your system struct returned by getdents()])
+AH_TEMPLATE(GETDENTS_RETURN_Q, [Define to the name of the filed inside struct GETDENTS_STRUCT that points to the next dentry.])
+AH_TEMPLATE(GETDENTS_NEXTDENT, [Define to the name of the field in your system's dentry structure that has a jump offeset to get to the next entry.]) dnl '
+AH_TEMPLATE(HAVE_GETDENTS_SYSCALL_H, [Define to 1 if you have SYS_getdents in <syscall.h>])
+
+AC_CACHE_CHECK([for getdents() in libc],[fi_cv_getdents_in_libc], [
+  AC_EGREP_CPP(getdents, [#include <sys/dirent.h>],
+	       fi_cv_getdents_in_libc=yes, fi_cv_getdents_in_libc=no)])
+
+if test "x$fi_cv_getdents_in_libc" = xyes
 then
-    AC_MSG_RESULT(yes)
-    AC_MSG_CHECKING(for getdents() in sys/dirent.h)
-    AC_EGREP_CPP(getdents, [#include <sys/dirent.h>], getdents_sysdirent=1)
-    if test "$getdents_sysdirent"
-    then
-	AC_MSG_RESULT(yes)
-	AC_DEFINE(HAVE_SYS_DIRENT_H, 1,
-	  [Define if your system has <sys/dirent.h>])
-	AC_DEFINE(GETDENTS_STRUCT, dirent,
-	  [Define to the name of your system struct returned by getdents()])
-	AC_DEFINE(GETDENTS_RETURN_Q, f_dent,
-	  [Define to the name of the filed inside struct GETDENTS_STRUCT that points to the next dentry.])
-	getdents="sys_dirent"
-    else
-	AC_MSG_RESULT(no)
-	unset getdents
-    fi
+  AC_CACHE_CHECK([for getdents() in sys/dirent.h], [fi_cv_getdents_in_dirent], [
+    AC_EGREP_CPP(getdents, [#include <sys/dirent.h>],
+		 fi_cv_getdents_in_dirent=yes, fi_cv_getdents_in_dirent=no)])
+  if test "x$fi_cv_getdents_in_dirent" = xyes
+  then
+    getdents="sys_dirent"
+    AC_DEFINE(HAVE_SYS_DIRENT_H, 1)
+    AC_DEFINE(GETDENTS_STRUCT, dirent)
+    AC_DEFINE(GETDENTS_RETURN_Q, f_dent)
+  fi
 else
-    AC_MSG_RESULT(no)
-    case "$target_os" in
-      linux*)
-	AC_MSG_CHECKING(for getdents syscall)
+  case "$target_os" in
+    linux*)
+      AC_CACHE_CHECK([for getdents syscall], [fi_cv_getdents_syscall], [
 	AC_EGREP_CPP(found_sys_getdents,
-	[#include <syscall.h>
-	#ifdef SYS_getdents
-	found_sys_getdents
-	#endif
-	], getdents=syscall)
-	if test "$getdents"
-	then
-	    AC_MSG_RESULT(yes)
-	    AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1,
-	      [Define to 1 if you have SYS_getdents in <syscall.h>])
-	    AC_DEFINE(GETDENTS_STRUCT, dent)
-	    AC_DEFINE(GETDENTS_NEXTDENT, d_reclen,
-	      [Define to the name of the field in your system's dentry structure that has a jump offeset to get to the next entry.]) dnl '
-	    AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
-	else
-	    AC_MSG_RESULT(no)
-	fi
-	;;
+	  [#include <syscall.h>
+	  #ifdef SYS_getdents
+	  found_sys_getdents
+	  #endif
+	  ], fi_cv_getdents_syscall=yes, fi_cv_getdents_syscall=no)])
+      if test "x$fi_cv_getdents_syscall" = xyes
+      then
+	getdents=syscall
+	AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1)
+	AC_DEFINE(GETDENTS_STRUCT, dent)
+	AC_DEFINE(GETDENTS_NEXTDENT, d_reclen)
+	AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
+      fi
+      ;;
     esac
 fi
 
@@ -124,124 +107,77 @@ case "$getdents" in
 	;;
 esac
 
-AC_MSG_CHECKING(for random in stdlib.h)
-AC_EGREP_CPP(random, [#include <stdlib.h>],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_RANDOM,1,[FIXME]),
-	     AC_MSG_RESULT(no))
+AC_CACHE_CHECK([for random in stdlib.h], fi_cv_have_random, [
+  AC_EGREP_CPP(random, [#include <stdlib.h>],
+	       fi_cv_have_random=yes,
+	       fi_cv_have_random=no)])
+if test "x$fi_cv_have_random" = xyes
+then
+  AC_DEFINE(HAVE_RANDOM,1,[FIXME])
+fi
+
+# Major / minor
+AH_TEMPLATE(HAVE_SYS_MKDEV_H, [Define to 1 if your system has major and minor definitions in mkdev.h])
+AH_TEMPLATE(HAVE_SYS_SYSMACROS_H, [Define to 1 if your system has major and minor definitions in sys/sysmacros.h])
 
 major_keep_trying=yes
-AC_MSG_CHECKING(for major and minor in mkdev.h)
-AC_EGREP_CPP(major,
-	     [#include <sys/mkdev.h>],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_SYS_MKDEV_H,1,[FIXME])
-	     unset major_keep_trying,
-	     AC_MSG_RESULT(no))
-
-if test "$major_keep_trying"
+AC_CACHE_CHECK([for major and minor in mkdev.h], fi_cv_majmin_mkdev, [
+  AC_EGREP_CPP(major,
+	       [#include <sys/mkdev.h>],
+	       fi_cv_majmin_mkdev=yes,
+	       fi_cv_majmin_mkdev=no)])
+if test "x$fi_cv_majmin_mkdev" = xyes
 then
-AC_MSG_CHECKING(for major and minor in sysmacros.h)
-AC_EGREP_CPP(oh_yes,
-	     [#include <sys/sysmacros.h>
-	      #if defined(minor) && defined(major)
-	      oh_yes
-	      #endif
-	     ],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_SYS_SYSMACROS_H,1,[FIXME])
-	     unset major_keep_trying,
-	     AC_MSG_RESULT(no))
+  AC_DEFINE(HAVE_SYS_MKDEV_H,1)
+  unset major_keep_trying
 fi
 
 if test "$major_keep_trying"
 then
-    AC_MSG_ERROR(Cannot find a definition for major() and minor())
+  AC_CACHE_CHECK([for major and minor in sysmacros.h], fi_cv_majmin_sysmacros, [
+    AC_EGREP_CPP(oh_yes,
+		 [#include <sys/sysmacros.h>
+		  #if defined(minor) && defined(major)
+		  oh_yes
+		  #endif
+		 ],
+		 fi_cv_majmin_sysmacros=yes,
+		 fi_cv_majmin_sysmacros=no)])
+  if test "x$fi_cv_majmin_sysmacros" = xyes
+  then
+    AC_DEFINE(HAVE_SYS_SYSMACROS_H, 1)
+    unset major_keep_trying
+  fi
+fi
+
+if test "$major_keep_trying"
+then
+    AC_MSG_ERROR([Cannot find a definition for major() and minor()])
 fi
 
 ### 5) Checking for typedefs: NONE
-AC_MSG_CHECKING(for O_NOATIME)
-AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/types.h>
-	     #include <sys/stat.h>
-	     #include <fcntl.h>
-	     #ifdef O_NOATIME
-	     oh_yes_oh_yes
-	     #endif],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_O_NOATIME,1,[Define if your system has the O_NOATIME open() flag.]),
-	     AC_MSG_RESULT(no))
 
-AC_MSG_CHECKING(for S_IFLNK in stat)
-AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
-	     #ifdef S_IFLNK
-	     oh_yes_oh_yes
-	     #endif],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFLNK,1,[FIXME]),
-	     AC_MSG_RESULT(no))
+### 6) Checking for macros
 
-AC_MSG_CHECKING(for S_IFIFO in stat)
-AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
-	     #ifdef S_IFIFO
-	     oh_yes_oh_yes
-	     #endif],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFIFO,1,[FIXME]),
-	     AC_MSG_RESULT(no))
+FI_CHECK_DEFINE([O_NOATIME], [#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>])
 
-AC_MSG_CHECKING(for S_IFSOCK in stat)
-AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
-	     #ifdef S_IFSOCK
-	     oh_yes_oh_yes
-	     #endif],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFSOCK,1,[FIXME]),
-	     AC_MSG_RESULT(no))
-
-AC_MSG_CHECKING(for S_IFDOOR in stat)
-AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
-	     #ifdef S_IFDOOR
-	     oh_yes_oh_yes
-	     #endif],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFDOOR,1,[FIXME]),
-	     AC_MSG_RESULT(no))
-
-AC_MSG_CHECKING(for S_IFWHT in stat)
-AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
-	     #ifdef S_IFWHT
-	     oh_yes_oh_yes
-	     #endif],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_S_IFWHT,1,[FIXME]),
-	     AC_MSG_RESULT(no))
-
-AC_MSG_CHECKING(for BSD 4.4 flags in stat)
-AC_EGREP_CPP(oh_yes_oh_yes, [#include <sys/stat.h>
-	     #if defined(UF_NODUMP) && defined(UF_IMMUTABLE) && defined(UF_APPEND) && defined(UF_OPAQUE) && defined(UF_NOUNLINK) && defined(SF_ARCHIVED) && defined(SF_IMMUTABLE) && defined(SF_APPEND) && defined(SF_NOUNLINK)
-	     oh_yes_oh_yes
-	     #endif],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_BSD4_4FLAGS, 1,
-	       [Define to 1 if your system has the BSD4.4 UFS flags (UF_NODUMP, etc)]),
-	     AC_MSG_RESULT(no))
+FI_CHECK_DEFINES([S_IFLNK S_IFIFO S_IFSOCK S_IFDOOR S_IFWHT \
+		  UF_NODUMP UF_IMMUTABLE UF_APPEND UF_OPAQUE UF_NOUNLINK \
+		  UF_COMPRESSED UF_HIDDEN \
+		  SF_ARCHIVED SF_IMMUTABLE SF_APPEND SF_NOUNLINK SF_SNAPSHOT],
+		 [#include <sys/stat.h>],
+		 [in <sys/stat.h>])
 
 ### 6) Checking for structures:
-AC_MSG_CHECKING(for BSD 4.4 extended times in stat)
-AC_EGREP_CPP(st_atimespec, [#include <sys/stat.h>],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_ST_XTIMESPEC,1,[FIXME]),
-	     AC_MSG_RESULT(no))
+AH_TEMPLATE([HAVE_ST_XTIMESPEC],[Define to 1 if your struct stat has the st_Xtimespec fields])
+FI_CHECK_IDENTIFIERS([st_atimespec st_flags],
+		     [#include <sys/stat.h>],
+		     [in <sys/stat.h>])
 
-
-AC_MSG_CHECKING(for st_flags in struct stat)
-AC_EGREP_CPP(st_flags,[#include <sys/stat.h>],
-	     AC_DEFINE(HAVE_ST_FLAGS,1,[FIXME])
-	     AC_MSG_RESULT(yes),
-	     AC_MSG_RESULT(no))
-
-AC_MSG_CHECKING(for nanosecond resolution in stat)
-AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+AC_CACHE_CHECK([for nanosecond resolution in stat], [fi_cv_have_st_timensec],
+[AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -251,16 +187,15 @@ int main()
   struct stat sbuf;
   return sbuf.st_atim.tv_nsec;
 }])],
-	     AC_MSG_RESULT(yes)
-	     AC_DEFINE(HAVE_ST_TIMENSEC,1,[Define to 1 if your system provides nanosecond timestamps (st_atimensec,, st_ctimensec, st_mtimensec]),
-	     AC_MSG_RESULT(no))
+		   [fi_cv_have_st_timensec=yes],
+		   [fi_cv_have_st_timensec=no])])
+if test "x$fi_cv_have_st_timensec" = xyes
+then
+  AC_DEFINE([HAVE_ST_TIMENSEC], [1],
+	    [Define to 1 if your system provides nanosecond timestamps (st_atimensec,, st_ctimensec, st_mtimensec)])
+fi
 
-AC_MSG_CHECKING(for getxattr in attr/xattr.h)
-AC_EGREP_CPP(getxattr,[#include <attr/xattr.h>],
-	     AC_DEFINE(HAVE_GETXATTR,1,[Define to 1 if your system has xattrs])
-	     AC_MSG_RESULT(yes),
-	     AC_MSG_RESULT(no))
-
+FI_CHECK_IDENTIFIER([getxattr], [#include <attr/xattr.h>], [in <attr/xattr.h>])
 
 ### 7) Checking for compiler characteristics
 AC_CHECK_SIZEOF(short)

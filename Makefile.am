@@ -15,7 +15,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AM_CFLAGS   = -Wstrict-prototypes -Werror -Wall
+ACLOCAL_AMFLAGS = -I m4
+
+AM_CFLAGS       = -Wstrict-prototypes -Werror -Wall
 
 noinst_LIBRARIES   = libtdiff.a
 

@@ -1,5 +1,36 @@
 2019-03-07  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_check_identifiers.m4 (FI_CHECK_IDENTIFIERS): Created.
+
+	* m4/fi_check_identifier.m4 (FI_CHECK_IDENTIFIER): Created.
+
+	* m4/fi_check_egrep.m4 (FI_CHECK_EGREP): Created.
+
+	* configure.ac : Factorize initialization code to FI_PROJECT().
+
+	* m4/fi_project.m4 (FI_PROJECT): Created.
+
+	* configure.ac (AM_MAINTAINER_MODE): Added.
+	(AM_PROG_AR): Added, caught by -Wall.
+	(getdents, random, najor & minor, st_timensec): Implement caching.
+	(GIT_REVISION) Factorized to m4/fi_get_revision.m4.
+	(O_NOATIME, S_XXX, UF_XXX, SF_XXX): Use factorized
+	m4/fi_get_defines.
+	(st_atimespec, st_flags, getxattr): Use factorized
+	FI_CHECK_IDENTIFIER.
+
+	* NEWS: Added 0.2.99.WIP release for distcheck.
+
+	* configure.ac (AM_INIT_AUTOMAKE): Add -Wall, check-news.
+
+	* Makefile.am (ACLOCAL_AMFLAGS): Set m4 include path.
+
+	* m4/fi_git_revision.m4 (FI_GIT_REVISION): Created.
+
+	* m4/fi_check_defines.m4 (FI_CHECK_DEFINES): Created.
+
+	* m4/fi_check_define.m4 (FI_CHECK_DEFINE): Created.
+
 	* tdiff.c (getDirList, cmpFiles): Open files with O_NOATIME if
 	available.
 
