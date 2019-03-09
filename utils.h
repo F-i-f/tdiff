@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Prototypes for misc utilities.
-  Copyright (C) 1999, 2014 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -29,10 +29,6 @@ void* xrealloc(void*, size_t);
 char* xstrdup(const char*);
 void setprogname(const char*);
 
-#if DEBUG
 void pmem(void);
-#else /* ! DEBUG */
-#  define pmem()
-#endif /* DEBUG */
 
 #endif /* ndef UTILS_H */

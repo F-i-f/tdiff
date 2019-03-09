@@ -1,3 +1,15 @@
+2019-03-09  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.c (printopts): Dump verbosityLevel and nommap.
+	(VERB_MEM_STATS): Defined.
+	(main): Show memory stats on verbose lovel VERB_MEM_STATS.
+	(main): Use line buffering for stdout and stderr to avoid
+	intermingling their outputs.
+
+	* utils.c (pmem): Coerce all numbers to long for portability.
+
+	* utils.c, utils.h (pmem): Always define, remove #ifdef DEBUG.
+
 2019-03-08  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.c : Rename opt to opts everywhere for consistency.

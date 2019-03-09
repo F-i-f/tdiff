@@ -111,6 +111,7 @@
 #define VERB_STATS	1
 #define VERB_SKIPS	2
 #define VERB_HASH_STATS 3
+#define VERB_MEM_STATS  4
 
 typedef long long counter_t;
 
@@ -1288,7 +1289,8 @@ get_numeric_arg(const char* string, unsigned int* val)
 void
 printopts(const options_t* o)
 {
-#define POPT(x) printf(#x "= %s\n", o->x ? "yes" : "no")
+#define POPT(x) printf(#x " = %s\n", o->x ? "yes" : "no")
+  printf("verbosityLevel = %d\n", o->verbosityLevel);
   POPT(dirs);
   POPT(type);
   POPT(mode);
@@ -1306,6 +1308,7 @@ printopts(const options_t* o)
   POPT(minor);
   POPT(xattr);
   POPT(acl);
+  POPT(nommap);
   POPT(exec);
   POPT(exec_always);
 #undef POPT
@@ -1894,9 +1897,19 @@ main(int argc, char*argv[])
   int rv, optcode;
   /**/
 
-  pmem();
+  /* Set stdout and stderr to line buffered to avoid intermingling
+     their outputs. */
+  setvbuf(stdout, NULL, _IOLBF, 0);
+  setvbuf(stderr, NULL, _IOLBF, 0);
 
   setprogname(argv[0]);
+
+  #if DEBUG
+  fprintf(stderr, "%s: memory stats at start:\n",
+	  progname);
+  pmem();
+  fprintf(stderr, "%s: end\n", progname);
+  #endif
 
   memset(&options, 0, sizeof(options));
 
@@ -2170,6 +2183,14 @@ main(int argc, char*argv[])
       exit(XIT_INVOC);
     }
 
+  if ( options.verbosityLevel >= VERB_MEM_STATS)
+    {
+      fprintf(stderr, "%s: memory stats before starting traversal:\n",
+	      progname);
+      pmem();
+      fprintf(stderr, "%s: end\n", progname);
+    }
+
   options.root1_length = strlen(argv[0]);
   while (argv[0][options.root1_length-1] == '/' && options.root1_length>1)
     argv[0][--options.root1_length] = 0;
@@ -2227,9 +2248,22 @@ main(int argc, char*argv[])
       fprintf(stderr, "%s: end\n", progname);
     }
 
+  if ( options.verbosityLevel >= VERB_MEM_STATS)
+    {
+      fprintf(stderr, "%s: memory stats before releasing inode cache:\n",
+	      progname);
+      pmem();
+      fprintf(stderr, "%s: end\n", progname);
+    }
+
   ic_delete(options.inocache);
 
-  pmem();
+  if ( options.verbosityLevel >= VERB_MEM_STATS)
+    {
+      fprintf(stderr, "%s: memory stats before exit:\n", progname);
+      pmem();
+      fprintf(stderr, "%s: end\n", progname);
+    }
 
   exit(rv);
 }

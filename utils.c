@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Misc utilities.
-  Copyright (C) 1999, 2014 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -80,7 +80,6 @@ setprogname(const char *argvname)
       ptr++;
 }
 
-#if DEBUG
 void
 pmem(void)
 {
@@ -88,15 +87,14 @@ pmem(void)
   struct mallinfo minfo;
   minfo = mallinfo();
   fprintf(stderr,
-	  "  brk memory = %7d bytes (%d top bytes unreleased)\n"
-	  " mmap memory = %7d bytes\n"
-	  "total memory = %7d bytes\n",
-	  minfo.arena,
-	  minfo.keepcost,
-	  minfo.hblkhd,
-	  minfo.uordblks);
+	  "  brk memory = %7ld bytes (%ld top bytes unreleased)\n"
+	  " mmap memory = %7ld bytes\n"
+	  "total memory = %7ld bytes\n",
+	  (long)minfo.arena,
+	  (long)minfo.keepcost,
+	  (long)minfo.hblkhd,
+	  (long)minfo.uordblks);
 #else
   fprintf(stderr, "memory statistics unavailable\n");
 #endif
 }
-#endif /* DEBUG */
