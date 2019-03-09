@@ -103,13 +103,16 @@
 #endif
 
 #define GETSTRLIST_INITIAL_SIZE 8
-#define XATTR_BUF_SIZE 16384
+#define XATTR_BUF_SIZE		16384
 #define GETDIRLIST_DENTBUF_SIZE 8192
-#define XREADLINK_BUF_SIZE 1024
-#define CMPFILE_BUF_SIZE 16384
+#define XREADLINK_BUF_SIZE	1024
+#define CMPFILE_BUF_SIZE	16384
 
-#define VERB_SKIPS 1
-#define VERB_HASH_STATS   2
+#define VERB_STATS	1
+#define VERB_SKIPS	2
+#define VERB_HASH_STATS 3
+
+typedef long long counter_t;
 
 typedef struct strl_s
 {
@@ -157,12 +160,22 @@ typedef struct option_s
   size_t root1_length;
   size_t root2_length;
   inocache_t *inocache;
+  struct
+  {
+    counter_t singles;
+    counter_t compared;
+    counter_t contents_compared;
+    counter_t excluded;
+    counter_t skipped_same;
+    counter_t skipped_cache;
+  } stats;
+
 } options_t;
 
 strl_t *getDirList(const char* path);
 void freeStrlist(strl_t *d);
 int get_exec_args(char**, int*, dexe_t*);
-int dodiff(const options_t* opt, const char* p1, const char* p2);
+int dodiff(options_t* opts, const char* p1, const char* p2);
 char* pconcat(const char* p1, const char* p2);
 int execprocess(const dexe_t *dex, const char* p1, const char* p2);
 int dropAclXattrs(const char*);
@@ -185,7 +198,7 @@ xperror(const char* msg, const char *filename)
  */
 typedef struct commonClientData_s
 {
-  const options_t *opt;
+  options_t *opts;
 } commonClientData_t;
 
 void
@@ -361,10 +374,10 @@ reportMissingXattr(int which, const char* f, const char* xn, commonClientData_t*
   switch(which)
     {
     case 1:
-      subp = f+(rootlen = clientData->opt->root1_length);
+      subp = f+(rootlen = clientData->opts->root1_length);
       break;
     case 2:
-      subp = f+(rootlen = clientData->opt->root2_length);
+      subp = f+(rootlen = clientData->opts->root2_length);
       break;
     default:
       abort();
@@ -448,7 +461,7 @@ compareXattrs(const char* p1, const char* p2,
   if (sz1 != sz2 || memcmp(buf1, buf2, sz1))
     {
       printf("%s: %s: xattr %s: contents differ\n",
-	     progname, p1+clientData->opt->root1_length+1, e1);
+	     progname, p1+clientData->opts->root1_length+1, e1);
       if (XIT_DIFF > rv)
 	rv = XIT_DIFF;
     }
@@ -611,10 +624,10 @@ reportMissingAcl(int which, const char* f, const char* xn, commonClientData_t* c
   switch(which)
     {
     case 1:
-      subp = f+(rootlen = clientData->cmn.opt->root1_length);
+      subp = f+(rootlen = clientData->cmn.opts->root1_length);
       break;
     case 2:
-      subp = f+(rootlen = clientData->cmn.opt->root2_length);
+      subp = f+(rootlen = clientData->cmn.opts->root2_length);
       break;
     default:
       abort();
@@ -649,7 +662,7 @@ compareAcls(const char* p1, const char* p2,
   if (strcmp(v1, v2))
     {
       printf("%s: %s: %s acl %s: %s %s\n",
-	     progname, p1+clientData->cmn.opt->root1_length+1, clientData->acldescr, e1, v1, v2);
+	     progname, p1+clientData->cmn.opts->root1_length+1, clientData->acldescr, e1, v1, v2);
       if (XIT_DIFF > rv)
 	rv = XIT_DIFF;
     }
@@ -658,7 +671,7 @@ compareAcls(const char* p1, const char* p2,
 }
 
 int
-diffacl(const options_t* opt, const char* p1, const char* p2,
+diffacl(options_t* opts, const char* p1, const char* p2,
 	acl_type_t acltype, const char* acldescr)
 {
   strl_t *acl1 = getAclList(p1, acltype);
@@ -667,7 +680,7 @@ diffacl(const options_t* opt, const char* p1, const char* p2,
   int rv;
   /**/
 
-  clientData.cmn.opt = opt;
+  clientData.cmn.opts = opts;
   clientData.acldescr = acldescr;
 
   if (acl1 && acl2)
@@ -788,20 +801,27 @@ getDirList(const char* path)
 static void
 reportMissingFile(int which, const char* d, const char *f, commonClientData_t* clientData)
 {
-  if ( clientData->opt->dirs && !gh_find(clientData->opt->exclusions, f, NULL) )
+  if ( ! clientData->opts->dirs )
+    return;
+
+  if ( gh_find(clientData->opts->exclusions, f, NULL) )
+    ++ clientData->opts->stats.excluded;
+  else
     {
       const char*	subp;
       int		rootlen;
       size_t		fp_len = strlen(f)+strlen(d)+1;
       char		fp[fp_len];
 
+      ++ clientData->opts->stats.singles;
+
       switch(which)
 	{
 	case 1:
-	  subp = d+(rootlen = clientData->opt->root1_length);
+	  subp = d+(rootlen = clientData->opts->root1_length);
 	  break;
 	case 2:
-	  subp = d+(rootlen = clientData->opt->root2_length);
+	  subp = d+(rootlen = clientData->opts->root2_length);
 	  break;
 	default:
 	  abort();
@@ -829,11 +849,14 @@ compareFileEntries(const char* p1, const char* p2,
 {
   int rv = XIT_OK;
   /**/
-  if (!gh_find(clientData->opt->exclusions, e1, NULL))
+
+  if (gh_find(clientData->opts->exclusions, e1, NULL))
+    ++ clientData->opts->stats.excluded;
+  else
     {
       char *np1 = pconcat(p1, e1);
       char *np2 = pconcat(p2, e1);
-      rv = dodiff(clientData->opt, np1, np2);
+      rv = dodiff(clientData->opts, np1, np2);
       free(np1);
       free(np2);
     }
@@ -902,7 +925,7 @@ reportTimeDiscrepancy(const char* f, const char* whattime,
 
 
 int
-cmpFiles(const options_t *opt, const char* f1, const char* f2)
+cmpFiles(const options_t *opts, const char* f1, const char* f2)
 {
   enum { res_untested, res_same, res_diff } result;
   int fd1, fd2;
@@ -965,7 +988,7 @@ cmpFiles(const options_t *opt, const char* f1, const char* f2)
 
   result = res_untested;
 
-  if (opt->nommap)
+  if (opts->nommap)
     goto map1_failed;
 
 #if HAVE_MMAP
@@ -1104,8 +1127,9 @@ show_help(void)
   printf("usage: %s [options]... <dir1> <dir2>\n"
 	 " Standard options:\n"
 	 "   -v --verbose: increase verbosity level, can be used more than once:\n"
-	 "        -v:  report on skipped files\n"
-	 "        -vv: report inode cache stats\n"
+	 "        -v:   report overall statistics\n"
+	 "        -vv:  report on skipped files\n"
+	 "        -vvv: internal data structures statistics\n"
 	 "   -V --version: show %s version\n"
 	 "   -h --help\n"
 	 " Switch options:\n"
@@ -1390,7 +1414,7 @@ xreadlink(const char* path)
 }
 
 int
-dodiff(const options_t* opt, const char* p1, const char* p2)
+dodiff(options_t* opts, const char* p1, const char* p2)
 {
   struct stat sbuf1;
   struct stat sbuf2;
@@ -1401,6 +1425,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   const char *subpath;
   int content_diff = 1;
   /**/
+
+  ++ opts->stats.compared;
 
   /* Stat the paths */
   if (lstat(p1, &sbuf1)<0)
@@ -1416,7 +1442,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   if (rv != XIT_OK)
     return rv;
 
-  subpath = p1+opt->root1_length;
+  subpath = p1+opts->root1_length;
   switch(*subpath)
     {
     case '\0': subpath = "."; break;
@@ -1427,11 +1453,12 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   /* Check if we're comparing the same dev/inode pair */
   if (sbuf1.st_ino == sbuf2.st_ino && sbuf1.st_dev == sbuf2.st_dev)
     {
-      if (opt->verbosityLevel >= VERB_SKIPS)
-	printf("%s: %s: same dev/ino pair, skipping\n",
+      ++ opts->stats.skipped_same;
+      if (opts->verbosityLevel >= VERB_SKIPS)
+	fprintf(stderr, "%s: %s: same dev/ino pair, skipping\n",
 	       progname, subpath);
-      if (opt->exec_always && S_ISREG(sbuf1.st_mode))
-	if (!execprocess(&opt->exec_always_args, p1, p2))
+      if (opts->exec_always && S_ISREG(sbuf1.st_mode))
+	if (!execprocess(&opts->exec_always_args, p1, p2))
 	  rv=XIT_DIFF;
       return rv;
     }
@@ -1444,20 +1471,23 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   ice->ino[1] = sbuf2.st_ino;
   ice->dev[1] = sbuf2.st_dev;
   icepath = xstrdup(subpath);
-  if (! ic_put(opt->inocache, ice, icepath))
+  if (! ic_put(opts->inocache, ice, icepath))
     {
-      const char* ptr;
-      ptr = ic_get(opt->inocache, ice);
-      if (opt->verbosityLevel >= VERB_SKIPS)
-	printf("%s: %s: already compared hard-linked files at %s\n",
-	       progname, icepath, ptr);
+      ++ opts->stats.skipped_cache;
+      if (opts->verbosityLevel >= VERB_SKIPS)
+	{
+	  const char* ptr;
+	  ptr = ic_get(opts->inocache, ice);
+	  fprintf(stderr, "%s: %s: already compared hard-linked files at %s\n",
+		 progname, icepath, ptr);
+	}
       free(ice);
       free(icepath);
       return rv;
     }
 
   /* Generic perms, owner, etc... */
-  if (opt->mode)
+  if (opts->mode)
     {
       int rm1, rm2;
       int mm1, mm2;
@@ -1475,8 +1505,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 #endif
 	;
 
-      mm1 = (rm1&(opt->mode_and))|(opt->mode_or);
-      mm2 = (rm2&(opt->mode_and))|(opt->mode_or);
+      mm1 = (rm1&(opts->mode_and))|(opts->mode_or);
+      mm2 = (rm2&(opts->mode_and))|(opts->mode_or);
 
       if (mm1 != mm2)
 	{
@@ -1486,7 +1516,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	}
     }
 #if HAVE_ST_FLAGS
-  if (opt->flags && sbuf1.st_flags != sbuf2.st_flags)
+  if (opts->flags && sbuf1.st_flags != sbuf2.st_flags)
     {
       int flags1 = sbuf1.st_flags;
       int flags2 = sbuf2.st_flags;
@@ -1496,8 +1526,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	  printf("%s: %s: flag %s only set in %.*s\n",	  \
 		 progname, subpath, desc,		  \
 		 (int)( (flags1 & (flag))		  \
-		     ? opt->root1_length		  \
-		     : opt->root2_length ),		  \
+		     ? opts->root1_length		  \
+		     : opts->root2_length ),		  \
 		 ( (flags1 & (flag)) ? p1 : p2 ));	  \
 	  localerr = 1;					  \
 	}						  \
@@ -1573,7 +1603,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	}
     }
 #endif /* HAVE_ST_FLAGS */
-  if (opt->owner && sbuf1.st_uid != sbuf2.st_uid)
+  if (opts->owner && sbuf1.st_uid != sbuf2.st_uid)
     {
       const struct passwd* pw;
       char *pn1=NULL, *pn2=NULL;
@@ -1592,7 +1622,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 
       localerr = 1;
     }
-  if (opt->group && sbuf1.st_gid != sbuf2.st_gid)
+  if (opts->group && sbuf1.st_gid != sbuf2.st_gid)
     {
       const struct group* gr;
       char *gn1=NULL, *gn2=NULL;
@@ -1611,7 +1641,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 
       localerr = 1;
     }
-  if (opt->ctime && sbuf1.st_ctime != sbuf2.st_ctime
+  if (opts->ctime && sbuf1.st_ctime != sbuf2.st_ctime
 #ifdef ST_CTIMENSEC
       && sbuf1.ST_CTIMENSEC.tv_nsec != sbuf2.ST_CTIMENSEC.tv_nsec
 #endif
@@ -1627,7 +1657,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 			    );
       localerr = 1;
     }
-  if (opt->mtime && sbuf1.st_mtime != sbuf2.st_mtime
+  if (opts->mtime && sbuf1.st_mtime != sbuf2.st_mtime
 #ifdef ST_MTIMENSEC
       && sbuf1.ST_MTIMENSEC.tv_nsec != sbuf2.ST_MTIMENSEC.tv_nsec
 #endif
@@ -1642,7 +1672,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 #endif
 			    );
     }
-  if (opt->atime && sbuf1.st_atime != sbuf2.st_atime
+  if (opts->atime && sbuf1.st_atime != sbuf2.st_atime
 #ifdef ST_ATIMENSEC
       && sbuf1.ST_ATIMENSEC.tv_nsec != sbuf2.ST_ATIMENSEC.tv_nsec
 #endif
@@ -1662,7 +1692,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   // Don't report on sizes and blocks for directories
   if (((sbuf1.st_mode)&S_IFMT) != S_IFDIR)
     {
-      if (opt->blocks && sbuf1.st_blocks != sbuf2.st_blocks)
+      if (opts->blocks && sbuf1.st_blocks != sbuf2.st_blocks)
 	{
 	  printf("%s: %s: blocks: %ld %ld\n",
 		 progname,
@@ -1673,7 +1703,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 
       if (sbuf1.st_size != sbuf2.st_size)
 	{
-	  if (opt->size)
+	  if (opts->size)
 	    {
 	      printf("%s: %s: size: %lld %lld\n",
 		     progname,
@@ -1685,7 +1715,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 	}
     }
 
-  if (opt->nlinks && sbuf1.st_nlink != sbuf2.st_nlink)
+  if (opts->nlinks && sbuf1.st_nlink != sbuf2.st_nlink)
     {
       printf("%s: %s: nlinks: %ld %ld\n",
 	     progname,
@@ -1695,14 +1725,14 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
     }
 
 #if HAVE_GETXATTR
-  if (opt->xattr)
+  if (opts->xattr)
     {
       strl_t *xl1 = getXattrList(p1);
       strl_t *xl2 = getXattrList(p2);
       commonClientData_t clientData;
       int nrv;
       /**/
-      clientData.opt = opt;
+      clientData.opts = opts;
       nrv = compareStrList(p1, p2,
 			   xl1, xl2,
 			   reportMissingXattr,
@@ -1716,7 +1746,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 #endif
 
 #if HAVE_ACL
-  if (opt->acl
+  if (opts->acl
 #if HAVE_S_IFLNK
       && ((sbuf1.st_mode)&S_IFMT) != S_IFLNK
       && ((sbuf2.st_mode)&S_IFMT) != S_IFLNK
@@ -1725,16 +1755,16 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
     {
       int nrv;
       /**/
-      nrv = diffacl(opt, p1, p2, ACL_TYPE_ACCESS, "access");
+      nrv = diffacl(opts, p1, p2, ACL_TYPE_ACCESS, "access");
       if (nrv > rv)
 	rv = nrv;
     }
 
-  if (opt->acl
+  if (opts->acl
       && ((sbuf1.st_mode)&S_IFMT) == S_IFDIR
       && ((sbuf2.st_mode)&S_IFMT) == S_IFDIR)
     {
-      int nrv = diffacl(opt, p1, p2, ACL_TYPE_DEFAULT, "default");
+      int nrv = diffacl(opts, p1, p2, ACL_TYPE_DEFAULT, "default");
       if (nrv > rv)
 	rv = nrv;
     }
@@ -1743,7 +1773,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   /* Type tests */
   if (((sbuf1.st_mode)&S_IFMT) != ((sbuf2.st_mode)&S_IFMT))
     {
-      if (opt->type)
+      if (opts->type)
 	{
 	  printf("%s: %s: type: %s %s\n",
 		 progname,
@@ -1765,7 +1795,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 
 	  ct1 = getDirList(p1);
 	  ct2 = getDirList(p2);
-	  clientData.opt = opt;
+	  clientData.opts = opts;
 	  nrv = compareStrList(p1, p2,
 			       ct1, ct2,
 			       reportMissingFile,
@@ -1781,16 +1811,17 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
       case S_IFREG:
 	{
 	  /**/
-	  if (opt->contents)
+	  if (opts->contents)
 	    {
 	      if (content_diff)
 		{
-		  if (opt->exec)
+		  ++ opts->stats.contents_compared;
+		  if (opts->exec)
 		    {
-		      if (!execprocess(&opt->exec_args, p1, p2))
+		      if (!execprocess(&opts->exec_args, p1, p2))
 			localerr = 1;
 		    }
-		  else if (!cmpFiles(opt, p1, p2))
+		  else if (!cmpFiles(opts, p1, p2))
 		    {
 		      printf("%s: %s: contents differ\n",
 			     progname, subpath);
@@ -1803,8 +1834,8 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 			 progname, subpath);
 		  localerr = 1;
 	      }
-	      if (opt->exec_always)
-		if (!execprocess(&opt->exec_always_args, p1, p2))
+	      if (opts->exec_always)
+		if (!execprocess(&opts->exec_always_args, p1, p2))
 		  localerr=1;
 	    }
 	}
@@ -1828,7 +1859,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 #endif /* HAVE_S_IFLNK */
       case S_IFBLK:
       case S_IFCHR:
-	if (opt->major && major(sbuf1.st_rdev) != major(sbuf2.st_rdev))
+	if (opts->major && major(sbuf1.st_rdev) != major(sbuf2.st_rdev))
 	  {
 	    printf("%s: %s: major: %ld %ld\n",
 		   progname,
@@ -1837,7 +1868,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 		   (long)major(sbuf2.st_rdev));
 	    localerr = 1;
 	  }
-	if (opt->minor && minor(sbuf1.st_rdev) != minor(sbuf2.st_rdev))
+	if (opts->minor && minor(sbuf1.st_rdev) != minor(sbuf2.st_rdev))
 	  {
 	    printf("%s: %s: minor: %ld %ld\n",
 		   progname,
@@ -1858,8 +1889,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 int
 main(int argc, char*argv[])
 {
-  options_t options = { 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-			0, 0, 0, 0, ~0, NULL};
+  options_t options;
   enum { EAO_no, EAO_ok, EAO_error } end_after_options = EAO_no;
   int rv, optcode;
   /**/
@@ -1868,7 +1898,34 @@ main(int argc, char*argv[])
 
   setprogname(argv[0]);
 
-  options.exclusions = gh_new(&gh_string_hash, gh_string_equal, &free, NULL);
+  memset(&options, 0, sizeof(options));
+
+  /* options.verbosityLevel = 0; */
+  options.dirs		    = 1;
+  options.type		    = 1;
+  options.mode		    = 1;
+  options.flags		    = 1;
+  options.owner		    = 1;
+  options.group		    = 1;
+  /* options.ctime	    = 0 ; */
+  /* options.mtime	    = 0 ; */
+  /* options.atime	    = 0 ; */
+  options.size		    = 1;
+  options.blocks	    = 1;
+  options.contents	    = 1;
+  options.nlinks	    = 1;
+  options.hardlinks	    = 1;
+  options.major		    = 1;
+  options.minor		    = 1;
+  options.xattr		    = 1;
+  options.acl		    = 1;
+  /* options.nommap	    = 0; */
+  /* options.exec           = 0; */
+  /* options.exec_always    = 0; */
+  /* options.mode_or        = 0; */
+  options.mode_and	    = ~0;
+
+  options.exclusions = gh_new(&gh_string_hash, &gh_string_equal, &free, NULL);
 
   /* For getopt */
   argv[0] = (char*)progname;
@@ -2131,8 +2188,44 @@ main(int argc, char*argv[])
     free(options.exec_always_args.argv);
   gh_delete(options.exclusions);
 
-  if (options.verbosityLevel >= VERB_HASH_STATS)
-    gh_stats(options.inocache, "inode cache");
+  if (options.verbosityLevel >= VERB_STATS)
+    {
+      fprintf(stderr, "%s: %12lld          inode pairs compared\n",
+	      progname, options.stats.compared);
+      if (options.contents)
+	{
+	  fprintf(stderr, "%s: %12lld (%5.02f%%) file pair contents compared\n",
+		  progname,
+		  options.stats.contents_compared,
+		  ( 100.0 * options.stats.contents_compared
+		    / options.stats.compared));
+	}
+      fprintf(stderr, "%s: %12lld (%5.02f%%) inode pairs skipped as identical\n",
+	      progname,
+	      options.stats.skipped_same,
+	      ( 100.0 * options.stats.skipped_same
+		/ options.stats.compared));
+      fprintf(stderr, "%s: %12lld (%5.02f%%) inode pairs skipped as already seen\n",
+	      progname,
+	      options.stats.skipped_cache,
+	      ( 100.0 * options.stats.skipped_cache
+		/ options.stats.compared));
+
+      if ( options.dirs )
+	fprintf(stderr, "%s: %12lld          unmatched paths\n",
+		progname, options.stats.singles);
+
+      fprintf(stderr, "%s: %12lld          excluded paths\n",
+	      progname, options.stats.excluded);
+
+    }
+
+  if ( options.verbosityLevel >= VERB_HASH_STATS )
+    {
+      fprintf(stderr, "%s: inode cache statistics:\n", progname);
+      gh_stats(options.inocache, "inode cache");
+      fprintf(stderr, "%s: end\n", progname);
+    }
 
   ic_delete(options.inocache);
 

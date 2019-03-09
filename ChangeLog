@@ -1,5 +1,18 @@
 2019-03-08  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c : Rename opt to opts everywhere for consistency.
+	(VERB_STATS): Defined.
+	(struct option_s): Added stats member.
+	(reportMissingFile): Count single files.
+	(reportMissingFile, compareFileEntries): Count excluded files.
+	(show_help): Added -vvv option.
+	(dodiff): Count compared, contents-compared and two kinds of
+	skipped files.
+	(main): Initialize options with memset + assignments instead of
+	initializer.
+	(main): Prints stats on -v.
+	(dodiff): Print skip messages on stderr.
+
 	* tdiff.c (VERB_SKIPS, VERB_HASH_STATS): Defined.
 	(struct option_s): Rename verbose to verbosityLevel.
 	(show_help): Add doc on multiple verbosity levels.
