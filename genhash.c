@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Generic hash implementation.
-  Copyright (C) 1999, 2014 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -190,7 +190,7 @@ gh_remove(genhash_t *gh, const void* key)
 }
 
 hashval_t
-gh_string_hash(const void* vstring)
+gh_string_hash_old(const void* vstring)
 {
   // Each letter will be shifted from 0 to 23 bits according to the
   // sequence: 17,10,3,20,13,6,23,16,9,2,19,12,5,22,15,8,1,18,11,4,
@@ -204,6 +204,20 @@ gh_string_hash(const void* vstring)
     val = val ^ (c<<i);
     if ((i-=7)<0) i += 24;
   }
+  return val;
+}
+
+/* DJB2 hash */
+hashval_t
+gh_string_hash(const void* vstr)
+{
+  const char* str = (const char*)vstr;
+  hashval_t val = 5381;
+  hashval_t c;
+
+  while ((c = *str++))
+    val = ((val << 5) + val) + c; /* val * 33 + c */
+
   return val;
 }
 

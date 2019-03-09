@@ -2,7 +2,7 @@
   tdiff - tree diffs
   inocache.c - Cache the inode already looked up so that we don't have to
 	       run tests twice on them.
-  Copyright (C) 1999, 2006, 2014 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2006, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,68 +23,17 @@
 #include "genhash.h"
 #include <stdlib.h>
 
+/* DJB2 hash */
 hashval_t
 ic_hash(const void* vent)
 {
-  const ic_ent_t *ent = (const ic_ent_t*)vent;
+  const char *bytes = (const char*)vent;
+  hashval_t hv = 5381;
+  int i;
   /**/
-  hashval_t hv;
-#if (SIZEOF_INO_T == 8 || SIZEOF_DEV_T == 8) && SIZEOF_VOID_P == 4
-  union
-  {
-    hashval_t hvs[2];
-    ino_t ino;
-    dev_t dev;
-  } demux;
-#endif
 
-#if SIZEOF_VOID_P == 4
-
-  /* Hashing for 4 bytes */
-#if SIZEOF_INO_T == 4
-  hv = ent->ino[0] ^ ent->ino[1];
-#elif SIZEOF_INO_T == 8
-  demux.ino = ent->ino[0];
-  hv = demux.hvs[0] ^ demux.hvs[1];
-  demux.ino = ent->ino[1];
-  hv ^= demux.hvs[0] ^ demux.hvs[1];
-#else
-# error Unknown ino_t size !
-#endif
-
-#if SIZEOF_DEV_T == 4
-  hv ^= ent->dev[0] ^ ent->dev[1];
-#elif SIZEOF_DEV_T == 8
-  demux.dev = ent->dev[0];
-  hv ^= demux.hvs[0] ^ demux.hvs[1];
-  demux.dev = ent->dev[1];
-  hv ^= demux.hvs[0] ^ demux.hvs[1];
-#else
-# error Unknown dev_t size !
-#endif
-
-#elif SIZEOF_VOID_P == 8
-  /* Hashing for 8 bytes */
-
-#if SIZEOF_INO_T == 4
-  hv = ((hashval_t)ent->ino[0])<<32 | ent->ino[1];
-#elif SIZEOF_INO_T == 8
-  hv = ent->ino[0] ^ ent->ino[1];
-#else
-# error Unknown ino_t size !
-#endif
-
-#if SIZEOF_DEV_T == 4
-  hv ^= ((hashval_t)ent->dev[0])<<32 | ent->dev[1];
-#elif SIZEOF_DEV_T == 8
-  hv ^= ent->dev[0] ^ ent->dev[1];
-#else
-# error Unknown dev_t size !
-#endif
-
-#else
-#error Non 4 or 8 bytes pointer !
-#endif
+  for (i=0; i < sizeof(ic_ent_t); ++i)
+    hv = (( hv << 5 ) + hv) + bytes[i]; /* hv * 33 + bytes[i] */
 
   return hv;
 }

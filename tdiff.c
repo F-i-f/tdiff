@@ -1433,6 +1433,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
 
   /* Check if we have compared these two guys before */
   ice = xmalloc(sizeof(ic_ent_t));
+  memset(ice, 0, sizeof(*ice));
   ice->ino[0] = sbuf1.st_ino;
   ice->dev[0] = sbuf1.st_dev;
   ice->ino[1] = sbuf2.st_ino;

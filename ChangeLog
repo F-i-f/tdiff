@@ -1,5 +1,13 @@
 2019-03-08  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (dodiff): Since DJB2 hash will go through all bytes in
+	the structure including gaps, memset it.
+
+	* inocache.c (ic_hash): Use DJB2 hash algorithm.
+
+	* genhash.c (gh_string_hash): Rename to gh_string_hash_old.
+	(gh_string_hash): Use DJB2 hash algorithm.
+
 	* tdiff.c (getAclList): acl_get_file() can return EINVAL on
 	MacOSX.
 
