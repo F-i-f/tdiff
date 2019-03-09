@@ -108,6 +108,9 @@
 #define XREADLINK_BUF_SIZE 1024
 #define CMPFILE_BUF_SIZE 16384
 
+#define VERB_SKIPS 1
+#define VERB_HASH_STATS   2
+
 typedef struct strl_s
 {
   size_t size;
@@ -124,7 +127,7 @@ typedef struct dexe_s
 
 typedef struct option_s
 {
-  unsigned int verbose:1;
+  unsigned int verbosityLevel:8;
   unsigned int dirs:1;
   unsigned int type:1;
   unsigned int mode:1;
@@ -1100,7 +1103,9 @@ show_help(void)
 {
   printf("usage: %s [options]... <dir1> <dir2>\n"
 	 " Standard options:\n"
-	 "   -v --verbose: tell more about inode cached comparisons\n"
+	 "   -v --verbose: increase verbosity level, can be used more than once:\n"
+	 "        -v:  report on skipped files\n"
+	 "        -vv: report inode cache stats\n"
 	 "   -V --version: show %s version\n"
 	 "   -h --help\n"
 	 " Switch options:\n"
@@ -1422,7 +1427,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
   /* Check if we're comparing the same dev/inode pair */
   if (sbuf1.st_ino == sbuf2.st_ino && sbuf1.st_dev == sbuf2.st_dev)
     {
-      if (opt->verbose)
+      if (opt->verbosityLevel >= VERB_SKIPS)
 	printf("%s: %s: same dev/ino pair, skipping\n",
 	       progname, subpath);
       if (opt->exec_always && S_ISREG(sbuf1.st_mode))
@@ -1443,7 +1448,7 @@ dodiff(const options_t* opt, const char* p1, const char* p2)
     {
       const char* ptr;
       ptr = ic_get(opt->inocache, ice);
-      if (opt->verbose)
+      if (opt->verbosityLevel >= VERB_SKIPS)
 	printf("%s: %s: already compared hard-linked files at %s\n",
 	       progname, icepath, ptr);
       free(ice);
@@ -1968,7 +1973,7 @@ main(int argc, char*argv[])
 	  show_help();
 	  end_after_options = 1;
 	  break;
-	case 'v': options.verbose         = 1; break;
+	case 'v': options.verbosityLevel += 1; break;
 	case 'd': options.dirs            = 1; break;
 	case 'D': options.dirs            = 0; break;
 	case 't': options.type		  = 1; break;
@@ -2126,9 +2131,9 @@ main(int argc, char*argv[])
     free(options.exec_always_args.argv);
   gh_delete(options.exclusions);
 
-#if DEBUG
-  gh_stats(options.inocache, "inode cache");
-#endif
+  if (options.verbosityLevel >= VERB_HASH_STATS)
+    gh_stats(options.inocache, "inode cache");
+
   ic_delete(options.inocache);
 
   pmem();

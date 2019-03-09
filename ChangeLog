@@ -1,5 +1,12 @@
 2019-03-08  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (VERB_SKIPS, VERB_HASH_STATS): Defined.
+	(struct option_s): Rename verbose to verbosityLevel.
+	(show_help): Add doc on multiple verbosity levels.
+	(dodiff, main): Use verbosityLevel instead of verbose.
+	(main): Show inode cache stats if verbosity level is
+	VERB_HASH_STATS or more.
+
 	* tdiff.c (dodiff): Since DJB2 hash will go through all bytes in
 	the structure including gaps, memset it.
 
