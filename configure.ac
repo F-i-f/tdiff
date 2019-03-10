@@ -45,7 +45,7 @@ FI_GIT_REVISION
 # Getdents
 AH_TEMPLATE(HAVE_SYS_DIRENT_H, [Define if your system has <sys/dirent.h>])
 AH_TEMPLATE(GETDENTS_STRUCT, [Define to the name of your system struct returned by getdents()])
-AH_TEMPLATE(GETDENTS_RETURN_Q, [Define to the name of the filed inside struct GETDENTS_STRUCT that points to the next dentry.])
+AH_TEMPLATE(GETDENTS_RETURN_Q, [Define to the name of the field inside struct GETDENTS_STRUCT that points to the next dentry.])
 AH_TEMPLATE(GETDENTS_NEXTDENT, [Define to the name of the field in your system's dentry structure that has a jump offeset to get to the next entry.]) dnl '
 AH_TEMPLATE(HAVE_GETDENTS_SYSCALL_H, [Define to 1 if you have SYS_getdents in <syscall.h>])
 
