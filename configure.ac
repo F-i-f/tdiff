@@ -181,7 +181,7 @@ fi
 
 ### 6) Checking for macros
 
-FI_CHECK_DEFINE([O_NOATIME], [#include <sys/types.h>
+FI_CHECK_DEFINES([O_NOATIME O_DIRECTORY], [#include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>])
 
@@ -238,6 +238,14 @@ FI_LINK_IFELSE([for getopt_long()], [HAVE_GETOPT_LONG],
 				  getopt_long(0, a, "foo", NULL, NULL);
 				 ]])],
 	       [Define to 1 if your system has the GNU getopt_long().])
+
+FI_LINK_IFELSE([for fdopendir()], [HAVE_FDOPENDIR],
+	       [AC_LANG_PROGRAM([[#include <sys/types.h>
+				  #include <dirent.h>
+				 ]],
+				[[fdopendir(0);
+				 ]])],
+	       [Define to 1 if your system has fdopendir().])
 
 FI_LINK_IFELSE([for mallinfo()], [HAVE_MALLINFO],
 	       [AC_LANG_PROGRAM([[#include <malloc.h>]],

@@ -1,5 +1,12 @@
 2019-03-09  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (getDirList): Have the opendir() implementation use open with
+	O_NOATIME followed by fdopendir if fdopendir is available instead
+	of calling opendir (which does not set O_NOATIME).
+
+	* configure.ac (HAVE_O_DIRECTORY, HAVE_FDOPENDIR): New feature
+	checks.
+
 	* tdiff.c (printopts): Dump verbosityLevel and nommap.
 	(VERB_MEM_STATS): Defined.
 	(main): Show memory stats on verbose lovel VERB_MEM_STATS.

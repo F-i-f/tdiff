@@ -723,6 +723,9 @@ getDirList(const char* path)
   int nread;
   /**/
   fd = open(path, O_RDONLY
+#if HAVE_O_DIRECTORY
+	       |O_DIRECTORY
+#endif /* HAVE_O_DIRECTORY */
 #if HAVE_O_NOATIME
 		  |O_NOATIME
 #endif /* HAVE_O_NOATIME */
@@ -767,13 +770,37 @@ getDirList(const char* path)
 }
 #else
 {
-  DIR *dir;
+#if HAVE_FDOPENDIR
+  int		 dirfd;
+#endif /* HAVE_FDOPENDIR */
+  DIR		*dir;
   struct dirent *dent;
-  strl_t *rv = NULL;
+  strl_t	*rv = NULL;
   /**/
+
+#if HAVE_FDOPENDIR
+  dirfd = open(path, O_RDONLY
+#if HAVE_O_DIRECTORY
+	       |O_DIRECTORY
+#endif /* HAVE_O_DIRECTORY */
+#if HAVE_O_NOATIME
+	       |O_NOATIME
+#endif /* HAVE_O_NOATIME */
+	       );
+  if ( dirfd < 0 )
+    goto err;
+
+  dir = fdopendir(dirfd);
+  if (!dir)
+    {
+      close(dirfd);
+      goto err;
+    }
+#else /* ! HAVE_FDOPENDIR */
   dir = opendir(path);
   if (!dir)
     goto err;
+#endif /* ! HAVE_FDOPENDIR */
 
   newStrList(&rv);
 
