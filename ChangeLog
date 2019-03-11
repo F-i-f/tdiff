@@ -1,5 +1,11 @@
 2019-03-11  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac : Use FI_CHECK_SHELL_FUNCTIONS_DIR([zsh]).
+
+	* m4/fi_check_shell_functions_dir.m4
+	(FI_CHECK_SHELL_FUNCTIONS_DIR): Created new macro after
+	factorizing the zsh shell function code in configure.ac.
+
 	* Makefile.am (ZSH_FUNCTIONS_DIR): Define substituted variable.
 	(install-data-local, uninstall-local): (Un)Install zsh completion
 	function if requested.
