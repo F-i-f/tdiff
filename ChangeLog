@@ -1,3 +1,12 @@
+2019-03-10  Philippe Troin  <phil@fifi.org>
+
+	* configure.ac (HAVE_MMAP, HAVE_MADVISE): Removed feature tests.
+
+	* tdiff.c (cmpFiles, dodiff): Pass the struct stat of both files
+	to avoid extra seeks.
+	(cmpFiles): Remove mmap()-base compare algorithm.
+	(struct option_s, show_help, printopts, main): Remove nommap.
+
 2019-03-09  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.c (getDirList): Have the opendir() implementation use open with

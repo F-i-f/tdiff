@@ -64,10 +64,6 @@
 #  endif
 #endif
 
-#if HAVE_MMAP
-#  include <sys/mman.h>
-#endif
-
 #if HAVE_GETOPT_LONG
 #  include <getopt.h>
 #endif
@@ -150,7 +146,6 @@ typedef struct option_s
   unsigned int minor:1;
   unsigned int xattr:1;
   unsigned int acl:1;
-  unsigned int nommap:1;
   unsigned int exec:1;
   unsigned int exec_always:1;
   unsigned int mode_or;
@@ -953,15 +948,28 @@ reportTimeDiscrepancy(const char* f, const char* whattime,
 
 
 int
-cmpFiles(const options_t *opts, const char* f1, const char* f2)
+cmpFiles(const options_t *opts,
+	 const char* f1, const struct stat sbuf1,
+	 const char* f2, const struct stat sbuf2)
 {
-  enum { res_untested, res_same, res_diff } result;
   int fd1, fd2;
-  off_t fs1, fs2;
-#if HAVE_MMAP
-  caddr_t ptr1, ptr2;
-#endif
+  int result = 1;
+  char buf1[CMPFILE_BUF_SIZE];
+  char buf2[CMPFILE_BUF_SIZE];
+  ssize_t toread;
   /**/
+
+  if (sbuf1.st_size != sbuf2.st_size)
+    {
+      fprintf(stderr, "%s: cmpFiles called on files of different sizes\n",
+	      progname);
+      exit(XIT_INTERNALERROR);
+    }
+
+  if (sbuf1.st_size == 0)
+    {
+      return 1;
+    }
 
   if ((fd1 = open(f1, O_RDONLY
 #if HAVE_O_NOATIME
@@ -972,16 +980,6 @@ cmpFiles(const options_t *opts, const char* f1, const char* f2)
       xperror("cannot open file, open()", f1);
       return 0;
     }
-  if ((fs1=lseek(fd1, 0, SEEK_END))<0)
-    {
-      xperror("cannot seek in file, lseek()", f1);
-      return 0;
-    }
-  if (lseek(fd1, 0, SEEK_SET)<0)
-    {
-      xperror("cannot seek in file, lseek()", f1);
-      return 0;
-    }
   if ((fd2 = open(f2, O_RDONLY
 #if HAVE_O_NOATIME
 		     |O_NOATIME
@@ -989,143 +987,68 @@ cmpFiles(const options_t *opts, const char* f1, const char* f2)
 		  ))<0)
     {
       xperror("cannot open file, open()", f2);
-      return 0;
-    }
-  if ((fs2=lseek(fd2, 0, SEEK_END))<0)
-    {
-      xperror("cannot seek in file, lseek()", f2);
-      return 0;
-    }
-  if (lseek(fd2, 0, SEEK_SET)<0)
-    {
-      xperror("cannot seek in file, lseek()", f2);
-      return 0;
-    }
-  if (fs1 != fs2)
-    {
-      fprintf(stderr, "%s: cmpFiles called on files of different sizes\n",
-	      progname);
-      exit(XIT_INTERNALERROR);
+      goto fail1;
     }
 
-  if (fs1 == 0)
+	/**/
+
+  for (toread = sbuf1.st_size; toread>0; )
     {
-      result = res_same;
-      goto closefiles;
-    }
-
-  result = res_untested;
-
-  if (opts->nommap)
-    goto map1_failed;
-
-#if HAVE_MMAP
-  if (!(ptr1 = mmap(NULL, fs1, PROT_READ, MAP_SHARED, fd1, 0)))
-    goto map1_failed;
-  if (!(ptr2 = mmap(NULL, fs2, PROT_READ, MAP_SHARED, fd2, 0)))
-    goto map2_failed;
-
-#if HAVE_MADVISE && defined(MADV_SEQUENTIAL)
-  if (madvise(ptr1, fs1, MADV_SEQUENTIAL)<0)
-    xperror("cannot madvise(MADV_SEQUENTIAL)", f1);
-  if (madvise(ptr2, fs2, MADV_SEQUENTIAL)<0)
-    xperror("cannot madvise(MADV_SEQUENTIAL)", f2);
-#endif /* HAVE_MADVISE */
-
-#if HAVE_MADVISE && defined(MADV_WILLNEED)
-  if (madvise(ptr1, fs1, MADV_WILLNEED)<0)
-    xperror("cannot madvise(MADV_WILLNEED)", f1);
-  if (madvise(ptr2, fs2, MADV_WILLNEED)<0)
-    xperror("cannot madvise(MADV_WILLNEED)", f2);
-#endif /* HAVE_MADVISE */
-
-  result = memcmp(ptr1, ptr2, fs1)==0 ? res_same : res_diff;
-
-  if (munmap(ptr2, fs2)<0)
-    xperror("cannot munmap()", f2);
-
- map2_failed:
-  if (munmap(ptr1, fs1)<0)
-    xperror("cannot munmap()", f1);
-#endif /* HAVE_MMAP */
-
- map1_failed:
-  if (result == res_untested)
-    {
-      char buf1[CMPFILE_BUF_SIZE];
-      char buf2[CMPFILE_BUF_SIZE];
-      ssize_t toread;
+      int nread1, nread2;
       /**/
-
-      for (toread = fs1; toread>0; )
+      nread1 = read(fd1, buf1, CMPFILE_BUF_SIZE);
+      if (nread1 < 0)
 	{
-	  int nread1, nread2;
-	  /**/
-	  nread1 = read(fd1, buf1, CMPFILE_BUF_SIZE);
-	  if (nread1 < 0)
-	    {
-	      xperror("read()", f1);
-	      goto fail;
-	    }
-	  if (nread1 < CMPFILE_BUF_SIZE && nread1 != toread)
-	    {
-	      fprintf(stderr, "%s: %s: short read\n", progname, f1);
-	      goto fail;
-	    }
-	  nread2 = read(fd2, buf2, CMPFILE_BUF_SIZE);
-	  if (nread2 < 0)
-	    {
-	      xperror("read()", f2);
-	      goto fail;
-	    }
-	  if (nread2 < CMPFILE_BUF_SIZE && nread2 != toread)
-	    {
-	      fprintf(stderr, "%s: %s: short read\n", progname, f2);
-	      goto fail;
-	    }
-	  if (nread1 != nread2)
-	    {
-	      fprintf(stderr, "%s: read different number of bytes\n",
-		      progname);
-	      goto fail;
-	    }
-	  if (memcmp(buf1, buf2, nread1)!=0)
-	    {
-	      result = res_diff;
-	      break;
-	    }
-	  toread -= nread1;
+	  xperror("read()", f1);
+	  goto fail;
 	}
-      if (result==res_untested)
-	result = res_same;
+      if (nread1 < CMPFILE_BUF_SIZE && nread1 != toread)
+	{
+	  fprintf(stderr, "%s: %s: short read\n", progname, f1);
+	  goto fail;
+	}
+      nread2 = read(fd2, buf2, CMPFILE_BUF_SIZE);
+      if (nread2 < 0)
+	{
+	  xperror("read()", f2);
+	  goto fail;
+	}
+      if (nread2 < CMPFILE_BUF_SIZE && nread2 != toread)
+	{
+	  fprintf(stderr, "%s: %s: short read\n", progname, f2);
+	  goto fail;
+	}
+      if (nread1 != nread2)
+	{
+	  fprintf(stderr, "%s: %s, %s: read different number of bytes (%d vs. %d)\n",
+		  progname, f1, f2, (int)nread1, (int)nread2);
+	  goto fail;
+	}
+      if (memcmp(buf1, buf2, nread1)!=0)
+	{
+	  result = 0;
+	  break;
+	}
+      toread -= nread1;
     }
 
- closefiles:
-  if (close(fd1)<0)
-    {
-      xperror("cannot close file, close()", f1);
-      goto fail;
-    }
   if (close(fd2)<0)
     {
       xperror("cannot close file, close()", f2);
-      goto fail;
+      goto fail1;
+    }
+  if (close(fd1)<0)
+    {
+      xperror("cannot close file, close()", f1);
+      return 0;
     }
 
-  switch(result)
-    {
-    case res_same:
-      return 1;
-    case res_diff:
-      return 0;
-    default:
-      fprintf(stderr, "%s: programming error in cmpFiles\n", progname);
-      exit(XIT_INTERNALERROR);
-    }
+  return result;
 
  fail:
-  close(fd1);
   close(fd2);
+ fail1:
+  close(fd1);
   return 0;
 }
 
@@ -1212,7 +1135,6 @@ show_help(void)
 	 "   -| --mode-or <bits>      applies <bits> OR mode before comparison\n"
 	 "   -& --mode-and <bits>     applies <bits> AND mode before comparison\n"
 	 "   -X --exclude <file>      omits <file> from report\n"
-	 "   -p --no-mmap             do not use mmap() for comparisons (saves on vmem)\n"
 #if ! HAVE_GETOPT_LONG
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
 #endif
@@ -1335,7 +1257,6 @@ printopts(const options_t* o)
   POPT(minor);
   POPT(xattr);
   POPT(acl);
-  POPT(nommap);
   POPT(exec);
   POPT(exec_always);
 #undef POPT
@@ -1851,7 +1772,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		      if (!execprocess(&opts->exec_args, p1, p2))
 			localerr = 1;
 		    }
-		  else if (!cmpFiles(opts, p1, p2))
+		  else if (!cmpFiles(opts, p1, sbuf1, p2, sbuf2))
 		    {
 		      printf("%s: %s: contents differ\n",
 			     progname, subpath);
@@ -1959,7 +1880,6 @@ main(int argc, char*argv[])
   options.minor		    = 1;
   options.xattr		    = 1;
   options.acl		    = 1;
-  /* options.nommap	    = 0; */
   /* options.exec           = 0; */
   /* options.exec_always    = 0; */
   /* options.mode_or        = 0; */
@@ -2025,7 +1945,6 @@ main(int argc, char*argv[])
 	{ "exec",              0, 0, 'x' },
 	{ "exec-always",       0, 0, 'w' },
 	{ "exec-always-diff",  0, 0, 'W' },
-	{ "no-mmap",           0, 0, 'p' },
 	{ "mode-or",           1, 0, '|' },
 	{ "mode-and",          1, 0, '&' },
 	{ "exclude",           1, 0, 'X' },
@@ -2049,7 +1968,7 @@ main(int argc, char*argv[])
 #if HAVE_ACL
 	      "lL"
 #endif
-	      "xwWaAp|:&:X:"
+	      "xwWaA|:&:X:"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -2129,7 +2048,6 @@ main(int argc, char*argv[])
 		    = options.nlinks = options.hardlinks
 		    = options.major = options.minor = options.xattr
 		    = options.acl = 0; break;
-	case 'p': options.nommap = 1; break;
 	case 'x':
 	  if (options.exec)
 	    {
