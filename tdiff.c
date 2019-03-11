@@ -1064,6 +1064,39 @@ show_version(void)
 	 " (git: " GIT_REVISION ")"
 #endif
 	 "\n"
+
+	 "Features: acl="
+#if HAVE_ACL
+	 "yes"
+#else /* ! HAVE_ACL */
+	 "no"
+#endif /* ! HAVE_ACL */
+
+	 ", flags="
+#if HAVE_ST_FLAGS
+	 "BSD"
+#else /* ! HAVE_ST_FLAGS */
+	 "no"
+#endif /* ! HAVE_ST_FLAGS */
+
+	 ", readdir="
+#if HAVE_GETDENTS
+#  if HAVE_GETDENTS_SYSCALL_H
+	 "getdents(syscall)"
+#  else /* ! HAVE_GETDENTS_SYSCALL_H */
+	 "getdents(libc)"
+#  endif /* ! HAVE_GETDENTS_SYSCALL_H */
+#else /* ! HAVE_GETDENTS */
+	 "readdir"
+#endif /* ! HAVE_GETDENTS */
+
+	 ", xattr="
+#if HAVE_GETXATTR
+	 "yes"
+#else /* ! HAVE_GETXATTR */
+	 "no"
+#endif /* ! HAVE_GETXATTR */
+	 "\n\n"
 	 "Copyright (C) 1999-2019 Philippe Troin <phil+github-commits@fifi.org>.\n"
 	 "Tdiff comes with ABSOLUTELY NO WARRANTY.\n"
 	 "This is free software, and you are welcome to redistribute it\n"
