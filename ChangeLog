@@ -1,5 +1,8 @@
 2019-03-10  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (distclean-local): Remove autom4te.cache on
+	distclean.
+
 	* configure.ac, tdiff.c : If a libc getdents is found, prefer it
 	over the syscall versions.
 
