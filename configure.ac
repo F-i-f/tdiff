@@ -20,6 +20,13 @@ AC_CONFIG_AUX_DIR([config.aux])
 AC_CANONICAL_TARGET()
 FI_PROJECT()
 
+# Options
+with_zsh_fpath=default
+AC_ARG_WITH([zsh-functions-dir],
+	    AC_HELP_STRING([--with-zsh-functions-dir=PATH],[Install zsh completions to PATH])
+	    AC_HELP_STRING([--without-zsh-functions-dir],[Do not install zsh completions]),
+	    [with_zsh_fpath=$withval])
+
 # Get started
 AC_CONFIG_SRCDIR([tdiff.c])
 AC_LANG([C])
@@ -37,6 +44,8 @@ AC_PROG_EGREP
 AC_PROG_INSTALL
 
 FI_GIT_REVISION
+
+AC_CHECK_PROG([have_zsh], [zsh], [yes], [no])
 
 ### 3) Checking for libraries
 
@@ -301,6 +310,30 @@ AC_SEARCH_LIBS([acl_get_file],[acl],[
 ])
 
 ### 9) Check for "system services"
+
+### Set paths and extra macros
+if test "x$with_zsh_fpath" = xdefault
+then
+  if test "x$have_zsh" = xyes
+  then
+    with_zsh_fpath=yes
+  else
+    with_zsh_fpath=no
+  fi
+fi
+case "$with_zsh_fpath" in
+  no)
+    ;;
+  yes)
+    ZSH_FUNCTIONS_DIR="$datarootdir/zsh/site-functions"
+    AC_SUBST(ZSH_FUNCTIONS_DIR)
+    ;;
+  *)
+    ZSH_FUNCTIONS_DIR="$with_zsh_fpath"
+    AC_SUBST(ZSH_FUNCTIONS_DIR)
+    ;;
+esac
+AM_CONDITIONAL([INSTALL_ZSH_FUNCTIONS], [test "x$ZSH_FUNCTIONS_DIR" != x])
 
 ### END: output
 

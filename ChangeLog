@@ -1,3 +1,20 @@
+2019-03-11  Philippe Troin  <phil@fifi.org>
+
+	* Makefile.am (ZSH_FUNCTIONS_DIR): Define substituted variable.
+	(install-data-local, uninstall-local): (Un)Install zsh completion
+	function if requested.
+	(EXTRA_DIST): Define it to tdiff.zsh.
+
+	* configure.ac (--with-zsh-functions-dir): Added new --with
+	option.
+	(have_zsh): Test for zsh existence for determining default for
+	--with-zsh-functions-dir option.
+	(ZSH_FUNCTIONS_DIR): AC_SUBST when --with-zsh-functions-dir is
+	active.
+	(INSTALL_ZSH_FUNCTIONS): New conditional to install zsh functions.
+
+	* tdiff.zsh: Created.
+
 2019-03-10  Philippe Troin  <phil@fifi.org>
 
 	* Makefile.am (distclean-local): Remove autom4te.cache on

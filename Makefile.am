@@ -19,6 +19,8 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_CFLAGS       = -Wstrict-prototypes -Werror -Wall
 
+ZSH_FUNCTIONS_DIR = @ZSH_FUNCTIONS_DIR@
+
 noinst_LIBRARIES   = libtdiff.a
 
 libtdiff_a_SOURCES = genhash.c genhash.h utils.c utils.h inocache.c inocache.h
@@ -36,9 +38,24 @@ inocache_test_LDADD   = libtdiff.a
 genhash_test_SOURCES  = genhash_test.c
 genhash_test_LDADD    = libtdiff.a
 
+EXTRA_DIST = tdiff.zsh
+
 check: $(noinst_PROGRAMS)
 	./inocache_test
 	./genhash_test
+
+
+install-data-local:
+if INSTALL_ZSH_FUNCTIONS
+	$(MKDIR_P) $(DESTDIR)$(ZSH_FUNCTIONS_DIR)
+	$(INSTALL_DATA) $(srcdir)/tdiff.zsh $(DESTDIR)$(ZSH_FUNCTIONS_DIR)/_tdiff
+endif
+
+uninstall-local:
+if INSTALL_ZSH_FUNCTIONS
+	rm -f $(DESTDIR)$(ZSH_FUNCTIONS_DIR)/_tdiff
+	rmdir $(DESTDIR)$(ZSH_FUNCTIONS_DIR) || : Ignoring rmdir failure
+endif
 
 CLEANFILES = *~ */*~
 
