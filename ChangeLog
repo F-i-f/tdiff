@@ -1,4 +1,6 @@
 2019-03-11  Philippe Troin  <phil@fifi.org>
+	* tdiff.c (get_numeric_arg): Renamed to get_octal_arg. Defaulted
+	to parsing numbers as octal.
 
 	* tdiff.c (struct option_s, printopts, main): Remove hardlinks.
 	(show_help, main): Remove -e, --hardlinks, -E, --no-hardlinks

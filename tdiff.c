@@ -1230,22 +1230,17 @@ get_exec_args(char **argv, int *optind, dexe_t *dex)
 }
 
 int
-get_numeric_arg(const char* string, unsigned int* val)
+get_octal_arg(const char* string, unsigned int* val)
 {
   size_t len;
   char *ptr;
   unsigned long m;
 
   len = strlen(string);
-  if (len >=1 && string[0]=='0')
-    {
-      if (len >= 2 && string[1]=='x')
-	m = strtoul(&string[2], &ptr, 16);
-      else
-	m = strtoul(&string[1], &ptr, 8);
-    }
+  if (len > 2 && string[0]=='0' && string[1]=='x')
+    m = strtoul(&string[2], &ptr, 16);
   else
-    m = strtoul(&string[0], &ptr, 10);
+    m = strtoul(string, &ptr, 8);
 
   if (*ptr)
     {
@@ -1254,6 +1249,11 @@ get_numeric_arg(const char* string, unsigned int* val)
     }
   else
     {
+      if (m > 07777)
+	fprintf(stderr,
+		"%s: file mode \"%s\" too big, should be in the 0-7777 range (octal)\n",
+		progname, string);
+
       *val = m;
       return 1;
     }
@@ -2108,11 +2108,11 @@ main(int argc, char*argv[])
 	    }
 	  break;
 	case '|':
-	  if (!get_numeric_arg(optarg, &options.mode_or))
+	  if (!get_octal_arg(optarg, &options.mode_or))
 	    end_after_options = EAO_error;
 	  break;
 	case '&':
-	  if (!get_numeric_arg(optarg, &options.mode_and))
+	  if (!get_octal_arg(optarg, &options.mode_and))
 	    end_after_options = EAO_error;
 	  break;
 	case 'X':
