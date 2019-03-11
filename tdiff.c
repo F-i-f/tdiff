@@ -43,12 +43,14 @@
 #include "inocache.h"
 
 #if HAVE_GETDENTS
-#  if HAVE_GETDENTS_SYSCALL_H
-#    include "linux_getdents.c"
-#  elif HAVE_SYS_DIRENT_H
+#  if HAVE_SYS_DIRENT_H
 #    include <sys/dirent.h>
+#  elif HAVE_GETDENTS64_SYSCALL_H
+#    include "linux_getdents64.c"
+#  elif HAVE_GETDENTS_SYSCALL_H
+#    include "linux_getdents.c"
 #  else
-#    error HAVE_GETDENTS is set, but i do not know how to get it !!!
+#    error HAVE_GETDENTS is set, but I do not know how to get it !!!
 #  endif
 #endif
 
@@ -1069,11 +1071,15 @@ show_version(void)
 
 	 ", readdir="
 #if HAVE_GETDENTS
-#  if HAVE_GETDENTS_SYSCALL_H
-	 "getdents(syscall)"
-#  else /* ! HAVE_GETDENTS_SYSCALL_H */
+#  if HAVE_SYS_DIRENT_H
 	 "getdents(libc)"
-#  endif /* ! HAVE_GETDENTS_SYSCALL_H */
+#  elif HAVE_GETDENTS64_SYSCALL_H
+	 "getdents64(syscall)"
+#  elif HAVE_GETDENTS_SYSCALL_H
+	 "getdents(syscall)"
+#  else
+#    error HAVE_GETDENTS is set, but I do not know how to get it !!!
+#  endif
 #else /* ! HAVE_GETDENTS */
 	 "readdir"
 #endif /* ! HAVE_GETDENTS */

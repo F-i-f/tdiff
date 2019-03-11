@@ -1,5 +1,13 @@
 2019-03-10  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac, tdiff.c : If a libc getdents is found, prefer it
+	over the syscall versions.
+
+	* configure.ac (HAVE_GETDENTS64_SYSCALL_H): Added feature test.
+	Always check libc getdents.
+
+	* tdiff.c : Support getdents64.
+
 	* configure.ac (HAVE_GETDENTS): Use FI_CHECK_EGREP whenever
 	possible.  Use cache and include linux_getdents.c to check working
 	getdents.

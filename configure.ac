@@ -48,8 +48,42 @@ AH_TEMPLATE(GETDENTS_STRUCT, [Define to the name of your system struct returned 
 AH_TEMPLATE(GETDENTS_RETURN_Q, [Define to the name of the field inside struct GETDENTS_STRUCT that points to the next dentry.])
 AH_TEMPLATE(GETDENTS_NEXTDENT, [Define to the name of the field in your system's dentry structure that has a jump offeset to get to the next entry.]) dnl '
 AH_TEMPLATE(HAVE_GETDENTS_SYSCALL_H, [Define to 1 if you have SYS_getdents in <syscall.h>])
+AH_TEMPLATE(HAVE_GETDENTS64_SYSCALL_H, [Define to 1 if you have SYS_getdents64 in <syscall.h>])
 
 getdents="not-found"
+
+case "$target_os" in
+  linux*)
+    FI_CHECK_EGREP([getdents syscall],
+		   [fi_found_sys_getdents],
+		   [#include <syscall.h>
+		    #ifdef SYS_getdents
+		    fi_found_sys_getdents
+		    #endif
+		   ],
+		   [],
+		   [getdents=syscall
+		    AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1)
+		    AC_DEFINE(GETDENTS_STRUCT, linux_dent)
+		    AC_DEFINE(GETDENTS_NEXTDENT, d_reclen)
+		    AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
+		   ])
+    FI_CHECK_EGREP([getdents64 syscall],
+		   [fi_found_sys_getdents64],
+		   [#include <syscall.h>
+		    #ifdef SYS_getdents64
+		    fi_found_sys_getdents64
+		    #endif
+		   ],
+		   [],
+		   [getdents=syscall64
+		    AC_DEFINE(HAVE_GETDENTS64_SYSCALL_H,1)
+		    AC_DEFINE(GETDENTS_STRUCT, linux_dent64)
+		    AC_DEFINE(GETDENTS_NEXTDENT, d_reclen)
+		    AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
+		   ])
+    ;;
+esac
 
 FI_CHECK_EGREP([getdents],
 	       [getdents],
@@ -61,34 +95,15 @@ FI_CHECK_EGREP([getdents],
 		AC_DEFINE(GETDENTS_RETURN_Q, f_dent)
 	       ])
 
-if test "x$getdents" = xnot-found
-then
-  case "$target_os" in
-    linux*)
-      FI_CHECK_EGREP([getdents syscall],
-		     [fi_found_sys_getdents],
-		     [#include <syscall.h>
-		      #ifdef SYS_getdents
-		      fi_found_sys_getdents
-		      #endif
-		     ],
-		     [],
-		     [getdents=syscall
-		      AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1)
-		      AC_DEFINE(GETDENTS_STRUCT, linux_dent)
-		      AC_DEFINE(GETDENTS_NEXTDENT, d_reclen)
-		      AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
-		      ])
-      ;;
-  esac
-fi
-
 case "$getdents" in
     sys_dirent)
 	getdents_decl="#include <sys/dirent.h>"
 	;;
     syscall)
 	getdents_decl="#include \"linux_getdents.c\""
+	;;
+    syscall64)
+	getdents_decl="#include \"linux_getdents64.c\""
 	;;
 esac
 
