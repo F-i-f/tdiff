@@ -49,42 +49,38 @@ AH_TEMPLATE(GETDENTS_RETURN_Q, [Define to the name of the field inside struct GE
 AH_TEMPLATE(GETDENTS_NEXTDENT, [Define to the name of the field in your system's dentry structure that has a jump offeset to get to the next entry.]) dnl '
 AH_TEMPLATE(HAVE_GETDENTS_SYSCALL_H, [Define to 1 if you have SYS_getdents in <syscall.h>])
 
-AC_CACHE_CHECK([for getdents() in libc],[fi_cv_getdents_in_libc], [
-  AC_EGREP_CPP(getdents, [#include <sys/dirent.h>],
-	       fi_cv_getdents_in_libc=yes, fi_cv_getdents_in_libc=no)])
+getdents="not-found"
 
-if test "x$fi_cv_getdents_in_libc" = xyes
+FI_CHECK_EGREP([getdents],
+	       [getdents],
+	       [#include <sys/dirent.h>],
+	       [in libc],
+	       [getdents="sys_dirent"
+		AC_DEFINE(HAVE_SYS_DIRENT_H, 1)
+		AC_DEFINE(GETDENTS_STRUCT, dirent)
+		AC_DEFINE(GETDENTS_RETURN_Q, f_dent)
+	       ])
+
+if test "x$getdents" = xnot-found
 then
-  AC_CACHE_CHECK([for getdents() in sys/dirent.h], [fi_cv_getdents_in_dirent], [
-    AC_EGREP_CPP(getdents, [#include <sys/dirent.h>],
-		 fi_cv_getdents_in_dirent=yes, fi_cv_getdents_in_dirent=no)])
-  if test "x$fi_cv_getdents_in_dirent" = xyes
-  then
-    getdents="sys_dirent"
-    AC_DEFINE(HAVE_SYS_DIRENT_H, 1)
-    AC_DEFINE(GETDENTS_STRUCT, dirent)
-    AC_DEFINE(GETDENTS_RETURN_Q, f_dent)
-  fi
-else
   case "$target_os" in
     linux*)
-      AC_CACHE_CHECK([for getdents syscall], [fi_cv_getdents_syscall], [
-	AC_EGREP_CPP(found_sys_getdents,
-	  [#include <syscall.h>
-	  #ifdef SYS_getdents
-	  found_sys_getdents
-	  #endif
-	  ], fi_cv_getdents_syscall=yes, fi_cv_getdents_syscall=no)])
-      if test "x$fi_cv_getdents_syscall" = xyes
-      then
-	getdents=syscall
-	AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1)
-	AC_DEFINE(GETDENTS_STRUCT, dent)
-	AC_DEFINE(GETDENTS_NEXTDENT, d_reclen)
-	AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
-      fi
+      FI_CHECK_EGREP([getdents syscall],
+		     [fi_found_sys_getdents],
+		     [#include <syscall.h>
+		      #ifdef SYS_getdents
+		      fi_found_sys_getdents
+		      #endif
+		     ],
+		     [],
+		     [getdents=syscall
+		      AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1)
+		      AC_DEFINE(GETDENTS_STRUCT, linux_dent)
+		      AC_DEFINE(GETDENTS_NEXTDENT, d_reclen)
+		      AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
+		      ])
       ;;
-    esac
+  esac
 fi
 
 case "$getdents" in
@@ -92,18 +88,7 @@ case "$getdents" in
 	getdents_decl="#include <sys/dirent.h>"
 	;;
     syscall)
-	getdents_decl="#include <syscall.h>
-	 #include <errno.h>
-	 int getdents(int fd, char* buf, unsigned int count)
-	 {
-	    return syscall(SYS_getdents, fd, buf, count);
-	 }
-	 struct dent {
-	   long           d_ino;
-	   off_t          d_off;
-	   unsigned short d_reclen;
-	   char           *d_name;
-	 };"
+	getdents_decl="#include \"linux_getdents.c\""
 	;;
 esac
 
@@ -252,37 +237,39 @@ FI_LINK_IFELSE([for mallinfo()], [HAVE_MALLINFO],
 				[[mallinfo();]])],
 	       [Define to 1 if your system has mallinfo().])
 
-if test "$getdents"
+if test "x$getdents" != "xnot-found"
 then
-    AC_MSG_CHECKING(for working getdents)
-    AC_RUN_IFELSE([AC_LANG_SOURCE([[
-      #include <sys/types.h>
-      #include <fcntl.h>
-      $getdents_decl
-      int main() {
-	char buf[10000];
-	int fd;
-	int nread;
-	fd = open(".", O_RDONLY);
-	nread = getdents(fd, buf, 10000);
-	return nread<=0;
-      }
-    ]])],[getdents_works=1],[],[AC_MSG_ERROR(cannot test for working getdents() when cross-compiling)])
-    if test "$getdents_works"
-    then
-	AC_MSG_RESULT(yes)
-	case "$getdents" in
-	    libc)
-		AC_DEFINE(HAVE_GETDENTS,1,[Define to 1 if your system had a working getdents() system call.])
-		;;
-	    syscall)
-		AC_DEFINE(HAVE_GETDENTS,1)
-		;;
-	esac
-    else
-	AC_DEFINE(HAVE_GETDENTS,0)
-	AC_MSG_RESULT(no)
-    fi
+  AC_CACHE_CHECK([for working getdents],
+		 [fi_cv_working_getdents],
+		 [fi_saved_CPPFLAGS="$CPPFLAGS"
+		 CPPFLAGS="$CPPFLAGS -I$srcdir"
+		 AC_RUN_IFELSE([AC_LANG_SOURCE([[#include <sys/types.h>
+						  #include <fcntl.h>
+						  $getdents_decl
+						  int main() {
+						    char buf[10000];
+						    int fd;
+						    int nread;
+						    fd = open(".", O_RDONLY);
+						    nread = getdents(fd, buf, 10000);
+						    return nread<=0;
+						  }
+						 ]])
+				],
+				[fi_cv_working_getdents=yes],
+				[fi_cv_working_getdents=no],
+				[fi_cv_working_getdents=cross])
+		 CPPFLAGS="$fi_saved_CPPFLAGS"])
+
+  if test "x$fi_cv_working_getdents" = xcross
+  then
+    AC_MSG_WARN([assuming that getdents() works on cross-compiling target])
+    fi_cv_working_getdents=yes
+  fi
+  if test "x$fi_cv_working_getdents" = xyes
+  then
+    AC_DEFINE(HAVE_GETDENTS,1,[Define to 1 if your system had a working getdents().])
+  fi
 fi
 
 FI_LINK_IFELSE([for lstat()], [HAVE_LSTAT],

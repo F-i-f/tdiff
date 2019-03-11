@@ -44,19 +44,7 @@
 
 #if HAVE_GETDENTS
 #  if HAVE_GETDENTS_SYSCALL_H
-#    include <errno.h>
-#    include <syscall.h>
-     struct dent {
-       long           d_ino;
-       off_t          d_off;
-       unsigned short d_reclen;
-       char           d_name[NAME_MAX+1];
-     };
-     int
-     getdents(int fd, char* buf, unsigned count)
-     {
-       return syscall(SYS_getdents, fd, buf, count);
-     }
+#    include "linux_getdents.c"
 #  elif HAVE_SYS_DIRENT_H
 #    include <sys/dirent.h>
 #  else

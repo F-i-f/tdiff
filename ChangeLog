@@ -1,5 +1,14 @@
 2019-03-10  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac (HAVE_GETDENTS): Use FI_CHECK_EGREP whenever
+	possible.  Use cache and include linux_getdents.c to check working
+	getdents.
+
+	* linux_getdents.c (getdents): Created from snippet in tdiff.c.
+	(struct dent): Renamed to linux_dent.
+
+	* tdiff.c (getdents): Move getdents code to linux_getdents.c.
+
 	* tdiff.c (show_version): Print a feature line (acl, flags,
 	readdir & xattr built-in features) on --version.
 
