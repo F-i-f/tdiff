@@ -1,5 +1,14 @@
 2019-03-11  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (struct option_s, printopts, main): Remove hardlinks.
+	(show_help, main): Remove -e, --hardlinks, -E, --no-hardlinks
+	options.
+
+	* tdiff.zsh (_tdiff): Remove -e, --hardlinks, -E, --no-hardlinks
+	options.
+
+	* tdiff.bash (_tdiff): Remove --hardlinks, --no-hardlinks options.
+
 	* configure.ac (--with-bash-functions-dir): Add new --with option.
 
 	* Makefile.am (BASH_FUNCTIONS_DIR): Define substituted variable.

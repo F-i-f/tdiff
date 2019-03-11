@@ -131,7 +131,6 @@ typedef struct option_s
   unsigned int blocks:1;
   unsigned int contents:1;
   unsigned int nlinks:1;
-  unsigned int hardlinks:1;
   unsigned int major:1;
   unsigned int minor:1;
   unsigned int xattr:1;
@@ -1128,7 +1127,6 @@ show_help(void)
 	 "   -b --blocks    diffs file blocks (for regular files,symlinks and directories)\n"
 	 "   -c --contents  diffs file contents (for regular files and symlinks)\n"
 	 "   -n --nlinks    diffs the (hard) link count \n"
-	 "   -e --hardlinks diffs the hard link targets\n"
 	 "   -j --major     diffs major device numbers (for device files)\n"
 	 "   -k --minor     diffs minor device numbers (for device files)\n"
 #if HAVE_GETXATTR
@@ -1279,7 +1277,6 @@ printopts(const options_t* o)
   POPT(blocks);
   POPT(contents);
   POPT(nlinks);
-  POPT(hardlinks);
   POPT(major);
   POPT(minor);
   POPT(xattr);
@@ -1902,7 +1899,6 @@ main(int argc, char*argv[])
   options.blocks	    = 1;
   options.contents	    = 1;
   options.nlinks	    = 1;
-  options.hardlinks	    = 1;
   options.major		    = 1;
   options.minor		    = 1;
   options.xattr		    = 1;
@@ -1952,8 +1948,6 @@ main(int argc, char*argv[])
 	{ "no-contents",       0, 0, 'C' },
 	{ "nlinks",            0, 0, 'n' },
 	{ "no-nlinks",         0, 0, 'N' },
-	{ "hardlinks",         0, 0, 'e' },
-	{ "no-hardlinks",      0, 0, 'E' },
 	{ "major",             0, 0, 'j' },
 	{ "no-major",          0, 0, 'J' },
 	{ "minor",             0, 0, 'k' },
@@ -1988,7 +1982,7 @@ main(int argc, char*argv[])
 #if HAVE_ST_FLAGS
 	      "fF"
 #endif
-	      "oOgGzZiIrRsSbBcCnNeEjJkK"
+	      "oOgGzZiIrRsSbBcCnNjJkK"
 #if HAVE_GETXATTR
 	      "qQ"
 #endif
@@ -2047,8 +2041,6 @@ main(int argc, char*argv[])
 	case 'J': options.major		  = 0; break;
 	case 'n': options.nlinks	  = 1; break;
 	case 'N': options.nlinks	  = 0; break;
-	case 'e': options.hardlinks	  = 1; break;
-	case 'E': options.hardlinks	  = 0; break;
 	case 'k': options.minor		  = 1; break;
 	case 'K': options.minor		  = 0; break;
 #if HAVE_GETXATTR
@@ -2064,7 +2056,7 @@ main(int argc, char*argv[])
 		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
-		    = options.nlinks = options.hardlinks
+		    = options.nlinks
 		    = options.major = options.minor = options.xattr
 		    = options.acl = 1; break;
 	case 'A': options.dirs = options.type
@@ -2072,7 +2064,7 @@ main(int argc, char*argv[])
 		    = options.group
 		    = options.ctime = options.mtime  = options.atime /* extra for -A */
 		    = options.size  = options.blocks = options.contents
-		    = options.nlinks = options.hardlinks
+		    = options.nlinks
 		    = options.major = options.minor = options.xattr
 		    = options.acl = 0; break;
 	case 'x':

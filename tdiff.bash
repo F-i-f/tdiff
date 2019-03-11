@@ -33,8 +33,6 @@ _tdiff()
       -C|--no-contents|\
       -n|--nlinks|\
       -N|--no-nlinks|\
-      -e|--hardlinks|\
-      -E|--no-hardlinks|\
       -j|--major|\
       -J|--no-major|\
       -k|--minor|\
@@ -80,7 +78,6 @@ _tdiff()
 				 --blocks --no-blocks
 				 --contents --no-contents
 				 --nlinks --no-nlinks
-				 --hardlinks --no-hardlinks
 				 --major --no-major
 				 --minor --no-minor
 				 --exec-always-diff
