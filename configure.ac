@@ -38,6 +38,7 @@ AC_PROG_INSTALL
 
 FI_GIT_REVISION
 
+FI_CHECK_SHELL_FUNCTIONS_DIR([bash],[$datarootdir/bash-completion/completions])
 FI_CHECK_SHELL_FUNCTIONS_DIR([zsh],[$datarootdir/zsh/site-functions])
 
 ### 3) Checking for libraries
