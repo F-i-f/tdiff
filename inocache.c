@@ -18,8 +18,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "inocache.h"
 #include "config.h"
+#include "inocache.h"
 #include "genhash.h"
 #include <stdlib.h>
 

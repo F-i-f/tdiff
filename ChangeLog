@@ -1,4 +1,11 @@
 2019-03-11  Philippe Troin  <phil@fifi.org>
+
+	* inocache_test.c, inocache.c, genhash_test.c, genhash.c: Include
+	config.h first.
+
+	* tdiff.c : Include "config.h" first and don't define _GNU_SOURCE,
+	autoconf takes care of defining it if needed.
+
 	* tdiff.c (get_numeric_arg): Renamed to get_octal_arg. Defaulted
 	to parsing numbers as octal.
 

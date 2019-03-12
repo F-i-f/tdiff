@@ -17,7 +17,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define _GNU_SOURCE 1
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,7 +37,6 @@
 #include <time.h>
 
 #include "tdiff.h"
-#include "config.h"
 #include "utils.h"
 #include "genhash.h"
 #include "inocache.h"
