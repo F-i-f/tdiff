@@ -1,9 +1,11 @@
 2019-03-12  Philippe Troin  <phil@fifi.org>
 
+	* ChangeLog : Spell-checked.
+
 	* tdiff.zsh (args): -v and --verbose may be repeated.
 
 	* tdiff.c (getDirList): Rename GETDENTS_STRUCT to STRUCT_DIRENT.
-	Remove old compat code that was used for Solaris 5.6 wich had a
+	Remove old compat code that was used for Solaris 5.6 which had a
 	different getdents.
 
 	* configure.ac (GETDENTS_RETURN_Q, GETDENTS_NEXTDENT): Removed
@@ -103,7 +105,7 @@
 
 	* tdiff.c (printopts): Dump verbosityLevel and nommap.
 	(VERB_MEM_STATS): Defined.
-	(main): Show memory stats on verbose lovel VERB_MEM_STATS.
+	(main): Show memory stats on verbose above VERB_MEM_STATS.
 	(main): Use line buffering for stdout and stderr to avoid
 	intermingling their outputs.
 
@@ -161,7 +163,7 @@
 	* configure.ac (HAVE_MADVISE): Don't assume that madvise() is
 	broken when cross-compiling, but warn about the assumption.
 
-	* tdiff.c (getDirList): Remove superflous test in readdir()
+	* tdiff.c (getDirList): Remove superfluous test in readdir()
 	version. (FreeBSD 12).
 	(dodiff): Spell-out flag differences by name instead of just
 	giving the hex flags.
@@ -243,9 +245,9 @@
 
 2014-01-28  Philippe Troin  <phil+github-commits@fifi.org>
 
-	* tdiff.c (compareXattrs): Compare Xattrs, reorg missing elements
+	* tdiff.c (compareXattrs): Compare Xattrs, re-org missing elements
 	printing.
-	ACLS support.
+	Acl support.
 
 	* Makefile.am (AM_CFLAGS): Add -Wall.
 
@@ -267,3 +269,18 @@
 	to autoconf 2.59.  Use LFS.
 
 	* inocache.c (ic_hash): Fix 64-bit hashing.
+
+LocalWords:  Troin tdiff zsh args getDirList arg Un
+LocalWords:  DIRENT compat Solaris getdents NEXTDENT inocache genhash dir
+LocalWords:  config autoconf struct printopts hardlinks Makefile FI m4
+LocalWords:  SUBST distclean autom4te libc syscall EGREP
+LocalWords:  getdents64 linux acl readdir xattr mmap stdout
+LocalWords:  cmpFiles dodiff nommap opendir NOATIME fdopendir MEM stderr
+LocalWords:  verbosityLevel utils pmem ifdef reportMissingFile vvv memset
+LocalWords:  compareFileEntries initializer inode DJB2 ic gh UF
+LocalWords:  getAclList EINVAL MacOSX xperror getXattrList compareXattrs
+LocalWords:  xreadlink GETOPT MALLINFO madvise LSTAT IFELSE FreeBSD PROG
+LocalWords:  najor timensec fi atimespec getxattr distcheck INIT
+LocalWords:  ACLOCAL AMFLAGS otherdir phil nlinks timestamps CFLAGS MADV
+LocalWords:  Xattrs newStrList pushStrList compareStrList automake LFS
+LocalWords:  WILLNEED
