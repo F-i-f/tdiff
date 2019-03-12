@@ -691,26 +691,17 @@ strl_t *
 getDirList(const char* path)
 #if HAVE_GETDENTS
 {
-  union dent_u
-  {
-    struct GETDENTS_STRUCT f_dent;
-    char                   f_byte[GETDIRLIST_DENTBUF_SIZE];
-  } dentbuf;
-  union dentptr_u
-  {
-    struct GETDENTS_STRUCT *f_dent;
-    char                   *f_byte;
-  };
+  char dentbuf[GETDIRLIST_DENTBUF_SIZE];
   int fd;
   strl_t *rv = NULL;
   int nread;
   /**/
   fd = open(path, O_RDONLY
 #if HAVE_O_DIRECTORY
-	       |O_DIRECTORY
+		 |O_DIRECTORY
 #endif /* HAVE_O_DIRECTORY */
 #if HAVE_O_NOATIME
-		  |O_NOATIME
+		 |O_NOATIME
 #endif /* HAVE_O_NOATIME */
 	    );
   if (fd<0)
@@ -718,27 +709,22 @@ getDirList(const char* path)
 
   newStrList(&rv);
 
-  while((nread = getdents(fd, (char*)&dentbuf.f_dent,
+  while((nread = getdents(fd, (void*)dentbuf,
 			  GETDIRLIST_DENTBUF_SIZE))>0)
     {
-      union dentptr_u dent;
+      struct STRUCT_DIRENT *dent;
       /**/
-      for (dent.f_byte = dentbuf.f_byte;
-	   dent.GETDENTS_RETURN_Q-dentbuf.GETDENTS_RETURN_Q<nread;
-#ifdef GETDENTS_NEXTDENT
-	  dent.GETDENTS_RETURN_Q += dent.f_dent->GETDENTS_NEXTDENT)
-#else
-	  dent.f_dent++)
-#endif
+      for (dent = (struct STRUCT_DIRENT*) dentbuf;
+	   (char*)dent - dentbuf < nread;
+	   dent = (struct STRUCT_DIRENT*) ( (char*)dent + dent->d_reclen ))
 	{
-	  if (!dent.f_dent->d_name
-	      || (dent.f_dent->d_name[0]=='.'
-		  && (dent.f_dent->d_name[1] == 0
-		      || (dent.f_dent->d_name[1]=='.'
-			  && dent.f_dent->d_name[2]== 0))))
+	  if ( (dent->d_name[0]=='.'
+		&& (dent->d_name[1] == 0
+		    || (dent->d_name[1]=='.'
+			&& dent->d_name[2]== 0))))
 	    continue;
 
-	  pushStrList(rv, dent.f_dent->d_name);
+	  pushStrList(rv, dent->d_name);
 	}
     }
 

@@ -47,9 +47,7 @@ FI_CHECK_SHELL_FUNCTIONS_DIR([zsh],[$datarootdir/zsh/site-functions])
 
 # Getdents
 AH_TEMPLATE(HAVE_SYS_DIRENT_H, [Define if your system has <sys/dirent.h>])
-AH_TEMPLATE(GETDENTS_STRUCT, [Define to the name of your system struct returned by getdents()])
-AH_TEMPLATE(GETDENTS_RETURN_Q, [Define to the name of the field inside struct GETDENTS_STRUCT that points to the next dentry.])
-AH_TEMPLATE(GETDENTS_NEXTDENT, [Define to the name of the field in your system's dentry structure that has a jump offeset to get to the next entry.]) dnl '
+AH_TEMPLATE(STRUCT_DIRENT, [Define to the name of the struct used by getdents()])
 AH_TEMPLATE(HAVE_GETDENTS_SYSCALL_H, [Define to 1 if you have SYS_getdents in <syscall.h>])
 AH_TEMPLATE(HAVE_GETDENTS64_SYSCALL_H, [Define to 1 if you have SYS_getdents64 in <syscall.h>])
 
@@ -67,9 +65,7 @@ case "$target_os" in
 		   [],
 		   [getdents=syscall
 		    AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1)
-		    AC_DEFINE(GETDENTS_STRUCT, linux_dent)
-		    AC_DEFINE(GETDENTS_NEXTDENT, d_reclen)
-		    AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
+		    AC_DEFINE(STRUCT_DIRENT, linux_dent)
 		   ])
     FI_CHECK_EGREP([getdents64 syscall],
 		   [fi_found_sys_getdents64],
@@ -81,9 +77,7 @@ case "$target_os" in
 		   [],
 		   [getdents=syscall64
 		    AC_DEFINE(HAVE_GETDENTS64_SYSCALL_H,1)
-		    AC_DEFINE(GETDENTS_STRUCT, linux_dent64)
-		    AC_DEFINE(GETDENTS_NEXTDENT, d_reclen)
-		    AC_DEFINE(GETDENTS_RETURN_Q, f_byte)
+		    AC_DEFINE(STRUCT_DIRENT, linux_dent64)
 		   ])
     ;;
 esac
@@ -94,8 +88,7 @@ FI_CHECK_EGREP([getdents],
 	       [in libc],
 	       [getdents="sys_dirent"
 		AC_DEFINE(HAVE_SYS_DIRENT_H, 1)
-		AC_DEFINE(GETDENTS_STRUCT, dirent)
-		AC_DEFINE(GETDENTS_RETURN_Q, f_dent)
+		AC_DEFINE(STRUCT_DIRENT, dirent)
 	       ])
 
 case "$getdents" in
