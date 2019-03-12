@@ -1,5 +1,7 @@
 2019-03-12  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.zsh (args): -v and --verbose may be repeated.
+
 	* tdiff.c (getDirList): Rename GETDENTS_STRUCT to STRUCT_DIRENT.
 	Remove old compat code that was used for Solaris 5.6 wich had a
 	different getdents.

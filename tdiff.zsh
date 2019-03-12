@@ -5,8 +5,8 @@
 
 local -a args
 
-args=('-v[increase verbosity level]'
-      '--verbose[increase verbosity level]'
+args=('*-v[increase verbosity level]'
+      '*--verbose[increase verbosity level]'
 
       '-V[show version information]'
       '--version[show version information]'
