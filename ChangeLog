@@ -1,3 +1,8 @@
+2019-03-14  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.c (dropAclXattrs): Also ignore trusted.SGI_ACL_FILE when
+	using Acls.
+
 2019-03-12  Philippe Troin  <phil@fifi.org>
 
 	* ChangeLog : Spell-checked.
@@ -270,10 +275,10 @@
 
 	* inocache.c (ic_hash): Fix 64-bit hashing.
 
-LocalWords:  Troin tdiff zsh args getDirList arg Un
+LocalWords:  Troin tdiff zsh args getDirList arg Un dropAclXattrs SGI
 LocalWords:  DIRENT compat Solaris getdents NEXTDENT inocache genhash dir
 LocalWords:  config autoconf struct printopts hardlinks Makefile FI m4
-LocalWords:  SUBST distclean autom4te libc syscall EGREP
+LocalWords:  SUBST distclean autom4te libc syscall EGREP ChangeLog acls
 LocalWords:  getdents64 linux acl readdir xattr mmap stdout
 LocalWords:  cmpFiles dodiff nommap opendir NOATIME fdopendir MEM stderr
 LocalWords:  verbosityLevel utils pmem ifdef reportMissingFile vvv memset

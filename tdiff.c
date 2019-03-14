@@ -462,7 +462,8 @@ int
 dropAclXattrs(const char *xn)
 {
   return (!strcmp(xn, "system.posix_acl_access")
-	  || !strcmp(xn, "system.posix_acl_default"));
+	  || !strcmp(xn, "system.posix_acl_default")
+	  || !strcmp(xn, "trusted.SGI_ACL_FILE"));
 }
 #endif
 
