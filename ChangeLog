@@ -1,5 +1,8 @@
 2019-03-14  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_check_shell_functions_dir.m4
+	(FI_CHECK_SHELL_FUNCTIONS_DIR): Add missing AC_TR_SH where needed.
+
 	* .gitignore: Ignore /config.fi.frag.make.
 
 	* tdiff.zsh: Renamed to _tdiff.zsh so that it can be installed

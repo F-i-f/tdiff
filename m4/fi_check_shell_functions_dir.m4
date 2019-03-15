@@ -56,17 +56,17 @@
 #     @FI_AUTOMAKE@
 
 AC_DEFUN([FI_CHECK_SHELL_FUNCTIONS_DIR],
-	 [AS_VAR_PUSHDEF([with_shell_fpath],[with_$1[]_fpath])
+	 [AS_VAR_PUSHDEF([with_shell_fpath],[AS_TR_SH([with_$1[]_fpath])])
 	 AS_VAR_SET([with_shell_fpath], [default])
 	 AS_VAR_PUSHDEF([have_shell],[])
-	 AC_ARG_WITH([$1-functions-dir],
-	   AC_HELP_STRING([--with-$1-functions-dir=PATH],
+	 AC_ARG_WITH([AS_TR_SH([$1])-functions-dir],
+	   AC_HELP_STRING([--with-[]AS_TR_SH([$1])-functions-dir=PATH],
 			  [Install $1 completions to PATH])
-AC_HELP_STRING([--without-$1-functions-dir],
+AC_HELP_STRING([--without-[]AS_TR_SH([$1])-functions-dir],
 			  [Do not install $1 completions]),
 	   [AS_VAR_SET([with_shell_fpath],[$withval])])
-	 AS_VAR_PUSHDEF([have_shell],[have_$1])
-	 AC_CHECK_PROG([have_$1],[$1],[yes],[no])
+	 AS_VAR_PUSHDEF([have_shell],[AS_TR_SH([have_$1])])
+	 AC_CHECK_PROG(AS_TR_SH([have_$1]),[$1],[yes],[no])
 	 if test "x[]AS_VAR_GET([with_shell_fpath])" = xdefault
 	 then
 	   if test "x[]AS_VAR_GET([have_shell])" = xyes
