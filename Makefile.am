@@ -19,9 +19,6 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_CFLAGS       = -Wstrict-prototypes -Werror -Wall
 
-BASH_FUNCTIONS_DIR = @BASH_FUNCTIONS_DIR@
-ZSH_FUNCTIONS_DIR  = @ZSH_FUNCTIONS_DIR@
-
 noinst_LIBRARIES   = libtdiff.a
 
 libtdiff_a_SOURCES = genhash.c genhash.h utils.c utils.h inocache.c inocache.h
@@ -39,38 +36,13 @@ inocache_test_LDADD   = libtdiff.a
 genhash_test_SOURCES  = genhash_test.c
 genhash_test_LDADD    = libtdiff.a
 
-EXTRA_DIST = tdiff.bash tdiff.zsh
+bash_FUNCTIONS        = tdiff.bash
+zsh_FUNCTIONS         = _tdiff.zsh
+
+EXTRA_DIST = $(bash_FUNCTIONS) $(zsh_FUNCTIONS)
 
 check: $(noinst_PROGRAMS)
 	./inocache_test
 	./genhash_test
 
-
-install-data-local:
-if INSTALL_BASH_FUNCTIONS
-	$(MKDIR_P) $(DESTDIR)$(BASH_FUNCTIONS_DIR)
-	$(INSTALL_DATA) $(srcdir)/tdiff.bash $(DESTDIR)$(BASH_FUNCTIONS_DIR)/tdiff
-endif
-if INSTALL_ZSH_FUNCTIONS
-	$(MKDIR_P) $(DESTDIR)$(ZSH_FUNCTIONS_DIR)
-	$(INSTALL_DATA) $(srcdir)/tdiff.zsh $(DESTDIR)$(ZSH_FUNCTIONS_DIR)/_tdiff
-endif
-
-uninstall-local:
-if INSTALL_BASH_FUNCTIONS
-	rm -f $(DESTDIR)$(BASH_FUNCTIONS_DIR)/tdiff
-	rmdir $(DESTDIR)$(BASH_FUNCTIONS_DIR) || : Ignoring rmdir failure
-endif
-if INSTALL_ZSH_FUNCTIONS
-	rm -f $(DESTDIR)$(ZSH_FUNCTIONS_DIR)/_tdiff
-	rmdir $(DESTDIR)$(ZSH_FUNCTIONS_DIR) || : Ignoring rmdir failure
-endif
-
-CLEANFILES = *~ */*~
-
-distclean-local:
-	rm -fr autom4te.cache
-
-maintainer-clean-local:
-	rm -f INSTALL Makefile.in aclocal.m4 configure config.h.in
-	rm -fr config.aux
+@FI_AUTOMAKE@

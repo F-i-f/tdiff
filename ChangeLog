@@ -1,5 +1,29 @@
 2019-03-14  Philippe Troin  <phil@fifi.org>
 
+	* .gitignore: Ignore /config.fi.frag.make.
+
+	* tdiff.zsh: Renamed to _tdiff.zsh so that it can be installed
+	with zsh_FUNCTIONS.
+
+	* m4/fi_check_shell_functions_dir.m4
+	(FI_CHECK_SHELL_FUNCTIONS_DIR): Enhance the macro to generate
+	Makefile fragment automatically installing & uninstalling all
+	functions listed in the <shell>_FUNCTIONS Makefile variables.
+
+	* Makefile.am (install-data-local, uninstall-local): Factorize
+	shell function install/uninstall code to the
+	FI_CHECK_SHELL_FUNCTIONS_DIR m4 macro.
+
+	* m4/fi_project.m4 (FI_PROJECT): Use FI_AUTOMAKE_FRAGMENT to
+	define FI_CLEANFILES Makefile variable, and clean-fi-project,
+	distclean-fi-project, maintainer-clean-fi-project targets for
+	cleaning up.
+
+	* Makefile.am (distclean-local, maintainer-clean-local)
+	(CLEANFILES): Move to FI_PROJECT m4 macro.
+
+	* m4/fi_automake_fragment.m4 (FI_AUTOMAKE_FRAGMENT): Created.
+
 	* m4/fi_project.m4 (FI_PROJECT): Pass $1 to AM_INIT_AUTOMAKE, not
 	the nonexistent $3.
 
@@ -282,7 +306,7 @@ LocalWords:  Troin tdiff zsh args getDirList arg Un dropAclXattrs SGI
 LocalWords:  DIRENT compat Solaris getdents NEXTDENT inocache genhash dir
 LocalWords:  config autoconf struct printopts hardlinks Makefile FI m4
 LocalWords:  SUBST distclean autom4te libc syscall EGREP ChangeLog acls
-LocalWords:  getdents64 linux acl readdir xattr mmap stdout
+LocalWords:  getdents64 linux acl readdir xattr mmap stdout gitignore
 LocalWords:  cmpFiles dodiff nommap opendir NOATIME fdopendir MEM stderr
 LocalWords:  verbosityLevel utils pmem ifdef reportMissingFile vvv memset
 LocalWords:  compareFileEntries initializer inode DJB2 ic gh UF
@@ -291,4 +315,4 @@ LocalWords:  xreadlink GETOPT MALLINFO madvise LSTAT IFELSE FreeBSD PROG
 LocalWords:  najor timensec fi atimespec getxattr distcheck INIT
 LocalWords:  ACLOCAL AMFLAGS otherdir phil nlinks timestamps CFLAGS MADV
 LocalWords:  Xattrs newStrList pushStrList compareStrList automake LFS
-LocalWords:  WILLNEED
+LocalWords:  WILLNEED CLEANFILES

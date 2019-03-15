@@ -20,34 +20,40 @@
 # Effect:
 #   Add --with-<shell>-functions-dir / --without-<shell>-functions-dir
 #   options.
+#
 #   Calls AC_CHECK_PROG on <shell>.
-#   If no --with/out-<shell>-functions-dir option is passed, then if <shell>
-#   is detected, then the functions will be installed in
-#   <default-function-path>.
-#   If --with-<shell>-functions-dir is passed, then the functions will be
-#   installed in the path provided.
-#   If --without-<shell>-functions-dir is passed, no functions will be
-#   installed.
-#   Also defines the INSTALL_<SHELL>_FUNCTIONS automake conditional, and
-#   the <SHELL>_FUNCTIONS_PATH Makefile expansion
+#
+#   If no --with/out-<shell>-functions-dir option is passed, then if
+#   <shell> is detected, then a Makefile fragment is added and the
+#   function installation directory will be <default-function-path>.
+#
+#   If --with-<shell>-functions-dir is passed, then a Makefile
+#   fragment is added and the functions will be installed in the path
+#   provided.
+#
+#   If --without-<shell>-functions-dir is passed, no Makefile fragment
+#   will be added and no shell functions will be installed.
+#
+#   The Makefile fragment, when added, will install & uninstall all
+#   the functions listed in <shell>_FUNCTIONS in function path as
+#   described above.
+#   If the <shell>_FUNCTIONS files have a .<shell> extension, it is
+#   removed when the file is installed.
+#   The Makefile fragment also defines defines a
+#   <SHELL>_FUNCTIONS_PATH Makefile variable.
+#   The <shell>_FUNCTIONS files should also added to EXTRA_DIST, as
+#   this canot be done automatically.
+#
+#   The Makefile.am must include the @FI_AUTOMAKE@ macro in a line by
+#   itself, see FI_AUTOMAKE_FRAGMENT().
 #
 # Example:
 #   configure.ac:
-#     FI_CHECK_SHELL_FUNCTIONS_DIR([zsh],[$datarootdir/zsh/site-functions])
+#     FI_CHECK_SHELL_FUNCTIONS_DIR([zsh], [$(datarootdir)/zsh/site-functions])
 #   Makefile.am:
-#     ZSH_FUNCTIONS_DIR = @ZSH_FUNCTIONS_DIR@
-#     EXTRA_DIST = func.zsh
-#     install-data-local:
-#     if INSTALL_ZSH_FUNCTIONS
-#	$(MKDIR_P) $(DESTDIR)$(ZSH_FUNCTIONS_DIR)
-#	$(INSTALL_DATA) $(srcdir)/func.zsh $(DESTDIR)$(ZSH_FUNCTIONS_DIR)/func
-#     endif
-#     uninstall-local:
-#     if INSTALL_ZSH_FUNCTIONS
-#	rm -f $(DESTDIR)$(ZSH_FUNCTIONS_DIR)/func
-#	rmdir $(DESTDIR)$(ZSH_FUNCTIONS_DIR) || : Ignoring rmdir failure
-#     endif
-
+#     zsh_FUNCTIONS = func.zsh
+#     EXTRA_DIST = $(zsh_FUNCTIONS)
+#     @FI_AUTOMAKE@
 
 AC_DEFUN([FI_CHECK_SHELL_FUNCTIONS_DIR],
 	 [AS_VAR_PUSHDEF([with_shell_fpath],[with_$1[]_fpath])
@@ -60,7 +66,7 @@ AC_HELP_STRING([--without-$1-functions-dir],
 			  [Do not install $1 completions]),
 	   [AS_VAR_SET([with_shell_fpath],[$withval])])
 	 AS_VAR_PUSHDEF([have_shell],[have_$1])
-	 AC_CHECK_PROG([have_shell],[$1],[yes],[no])
+	 AC_CHECK_PROG([have_$1],[$1],[yes],[no])
 	 if test "x[]AS_VAR_GET([with_shell_fpath])" = xdefault
 	 then
 	   if test "x[]AS_VAR_GET([have_shell])" = xyes
@@ -76,19 +82,41 @@ AC_HELP_STRING([--without-$1-functions-dir],
 	     ;;
 	   yes)
 	     AS_VAR_SET([shell_functions_dir], [$2])
-	     AC_SUBST(shell_functions_dir)
+	     AC_SUBST(shell_functions_dir) dnl No [] quoting
 	     ;;
 	   *)
-	     AS_VAR_SET([shell_functions_dir], [$with_zsh_fpath])
+	     AS_VAR_SET([shell_functions_dir], [AS_VAR_GET([with_shell_fpath])])
 	     AC_SUBST(shell_functions_dir) dnl No [] quoting
 	     ;;
 	 esac
-	 AS_VAR_PUSHDEF([install_shell_functions],
-			[AS_TR_CPP([INSTALL_$1[]_FUNCTIONS])])
-	 AM_CONDITIONAL(install_shell_functions, dnl No [] quoting
-			[test "x[]AS_VAR_GET([shell_functions_dir])" != x])
-	 AS_VAR_POPDEF([install_shell_functions])
-	 AS_VAR_POPDEF([have_shell])
+	 if test "x[]AS_VAR_GET([shell_functions_dir])" != x
+	 then
+	   FI_AUTOMAKE_FRAGMENT(
+[# Begin FI_CHECK_SHELL_FUNCTIONS_DIR($1) Makefile fragment
+install-data-fi-check-shell-functions-dir-[]AS_TR_SH([$1]): $(AS_TR_SH([$1])_FUNCTIONS)
+	$(MKDIR_P) $(DESTDIR)$(AS_TR_CPP([$1[]_FUNCTIONS_DIR]))
+	@for i in $(AS_TR_SH([$1])_FUNCTIONS); do \
+	  echo "$(INSTALL_DATA) \"$(srcdir)/$$i\"" \
+	    "\"$(DESTDIR)$(AS_TR_CPP([$1[]_FUNCTIONS_DIR]))/$$(echo "$$i" | sed -e 's,^.*/,,' -e 's,\.$1$$,,')\""; \
+	  $(INSTALL_DATA) "$(srcdir)/$$i" \
+			  "$(DESTDIR)$(AS_TR_CPP([$1[]_FUNCTIONS_DIR]))/$$(echo "$$i" | sed -e 's,^.*/,,' -e 's,\.$1$$,,')"; \
+	done
+
+uninstall-data-fi-check-shell-functions-dir-[]AS_TR_SH([$1]):
+	@for i in $(AS_TR_SH([$1])_FUNCTIONS); do \
+	  echo "rm -f \"$(DESTDIR)$(AS_TR_CPP([$1[]_FUNCTIONS_DIR]))/$$(echo "$$i" | sed -e 's,^.*/,,' -e 's,\.$1$$,,')\""; \
+	  rm -f "$(DESTDIR)$(AS_TR_CPP([$1[]_FUNCTIONS_DIR]))/$$(echo "$$i" | sed -e 's,^.*/,,' -e 's,\.$1$$,,')"; \
+	done
+	rmdir $(DESTDIR)$(AS_TR_CPP([$1[]_FUNCTIONS_DIR])) || :
+
+.PHONY: install-data-fi-check-shell-functions-dir-[]AS_TR_SH([$1]) uninstall-data-fi-check-shell-functions-dir-[]AS_TR_SH([$1])
+
+install-data-am: install-data-fi-check-shell-functions-dir-[]AS_TR_SH([$1])
+uninstall-am: uninstall-data-fi-check-shell-functions-dir-[]AS_TR_SH([$1])
+# End FI_CHECK_SHELL_FUNCTIONS_DIR($1) Makefile fragment
+])
+	 fi
 	 AS_VAR_POPDEF([shell_functions_dir])
+	 AS_VAR_POPDEF([have_shell])
 	 AS_VAR_POPDEF([with_shell_fpath])
 ])

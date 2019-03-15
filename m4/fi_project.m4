@@ -27,4 +27,34 @@ AC_DEFUN([FI_PROJECT],
 	 AC_CONFIG_MACRO_DIR([m4])
 	 AM_INIT_AUTOMAKE([-Wall gnu check-news $1])
 	 AM_MAINTAINER_MODE()
+	 FI_AUTOMAKE_FRAGMENT(
+[# Begin FI_PROJECT() Makefile fragment
+FI_CLEANFILES = *~
+
+clean-am: clean-fi-project
+
+clean-fi-project:
+	@for i in '' m4 $(SUBDIRS) $(DIST_SUBDIRS); do       \
+	  echo "cd \"$(srcdir)/$$i\" && rm -f $(FI_CLEANFILES)";    \
+	  (cd "$(srcdir)/$$i" && rm -f $(FI_CLEANFILES)) || exit $$?; \
+	done
+
+.PHONY: clean-fi-project
+
+distclean-am: distclean-fi-project
+
+distclean-fi-project:
+	rm -fr autom4te.cache
+
+.PHONY: distclean-fi-project
+
+maintainer-clean-am: maintainer-clean-fi-project
+
+maintainer-clean-fi-project:
+	rm -f INSTALL Makefile.in aclocal.m4 configure config.h.in
+	rm -fr config.aux
+
+.PHONY: maintainer-clean-fi-project
+#End FI_PROJECT() Makefile fragment
+])
 ])

@@ -14,6 +14,7 @@ stamp-h1
 /autom4te.cache
 /config.aux
 /config.cache
+/config.fi.frag.make
 /config.h
 /config.h.in
 /config.log
