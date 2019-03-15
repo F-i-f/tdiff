@@ -25,6 +25,6 @@
 AC_DEFUN([FI_PROJECT],
 	 [AC_PREREQ([2.69])
 	 AC_CONFIG_MACRO_DIR([m4])
-	 AM_INIT_AUTOMAKE([-Wall gnu check-news $3])
+	 AM_INIT_AUTOMAKE([-Wall gnu check-news $1])
 	 AM_MAINTAINER_MODE()
 ])

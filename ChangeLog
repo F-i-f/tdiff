@@ -1,5 +1,8 @@
 2019-03-14  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_project.m4 (FI_PROJECT): Pass $1 to AM_INIT_AUTOMAKE, not
+	the nonexistent $3.
+
 	* tdiff.c (dropAclXattrs): Also ignore trusted.SGI_ACL_FILE when
 	using Acls.
 
