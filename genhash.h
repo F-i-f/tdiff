@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Prototypes for a generic hash.
-  Copyright (C) 1999, 2014 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -44,7 +44,6 @@ genhash_t* gh_new(hashval_t(*)(const void*),
 		  void (*)(void*));
 int        gh_insert(genhash_t*, void*, void*);
 int        gh_find(const genhash_t*, const void*, void**);
-int        gh_remove(genhash_t*, const void*);
 void       gh_delete(genhash_t* gh);
 void       gh_stats(const genhash_t *gh, const char* name);
 

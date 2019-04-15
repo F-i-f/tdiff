@@ -87,6 +87,12 @@
 # define ST_MTIMENSEC st_mtim
 #endif
 
+#if __GNUC__
+# define ATTRIBUTE_UNUSED __attribute__((unused))
+#else /* ! __GNUC__ */
+# define ATTRIBUTE_UNUSED /**/
+#endif /* ! __GNUC__ */
+
 #define GETSTRLIST_INITIAL_SIZE 8
 #define XATTR_BUF_SIZE		16384
 #define GETDIRLIST_DENTBUF_SIZE 8192
@@ -235,7 +241,7 @@ sortStrList(const strl_t *l)
 void
 freeStrList(strl_t *d)
 {
-  int i;
+  size_t i;
   /**/
   for (i=0; i<d->size; ++i)
     free((char*)d->strings[i]);
@@ -252,7 +258,7 @@ compareStrList(const char *p1, const char* p2,
 				     commonClientData_t*),
 	       commonClientData_t *clientData)
 {
-  int		i1, i2;
+  size_t	i1, i2;
   int		cmpres;
   int		rv	     = XIT_OK;
   int		localerr     = 0;
@@ -426,7 +432,7 @@ compareXattrs(const char* p1, const char* p2,
 #endif
 
   buf1 = getXattr(p1, e1, &sz1);
-  buf2 = getXattr(p2, e1, &sz2);
+  buf2 = getXattr(p2, e2, &sz2);
 
   if (!buf1)
     {
@@ -632,7 +638,7 @@ reportMissingAcl(int which, const char* f, const char* xn, commonClientData_t* c
 }
 
 int
-compareAcls(const char* p1, const char* p2,
+compareAcls(const char* p1, ATTRIBUTE_UNUSED const char* p2,
 	    const char* e1, const char* e2,
 	    commonClientData_t* commonClientData)
 {
@@ -842,7 +848,7 @@ reportMissingFile(int which, const char* d, const char *f, commonClientData_t* c
 
 static int
 compareFileEntries(const char* p1, const char* p2,
-		   const char* e1, const char* e2,
+		   const char* e1, ATTRIBUTE_UNUSED const char* e2,
 		   commonClientData_t* clientData)
 {
   int rv = XIT_OK;
@@ -895,12 +901,12 @@ getFileType(mode_t m)
 static void
 formatTime(char* obuf, size_t obufsize, time_t fsecs, int fnsecs)
 {
-  int written;
+  size_t written;
   struct tm tms;
   /**/
   localtime_r(&fsecs, &tms);
   written = strftime(obuf, obufsize, "%Y-%m-%d %H:%M:%S", &tms);
-  if (fnsecs >= 0 && written >= 0 && written < obufsize)
+  if (fnsecs >= 0 && written < obufsize)
     snprintf(obuf+written, obufsize-written, ".%09d", fnsecs);
 }
 
@@ -923,8 +929,7 @@ reportTimeDiscrepancy(const char* f, const char* whattime,
 
 
 int
-cmpFiles(const options_t *opts,
-	 const char* f1, const struct stat sbuf1,
+cmpFiles(const char* f1, const struct stat sbuf1,
 	 const char* f2, const struct stat sbuf2)
 {
   int fd1, fd2;
@@ -1782,7 +1787,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		      if (!execprocess(&opts->exec_args, p1, p2))
 			localerr = 1;
 		    }
-		  else if (!cmpFiles(opts, p1, sbuf1, p2, sbuf2))
+		  else if (!cmpFiles(p1, sbuf1, p2, sbuf2))
 		    {
 		      printf("%s: %s: contents differ\n",
 			     progname, subpath);

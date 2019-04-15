@@ -29,7 +29,7 @@ ic_hash(const void* vent)
 {
   const char *bytes = (const char*)vent;
   hashval_t hv = 5381;
-  int i;
+  size_t i;
   /**/
 
   for (i=0; i < sizeof(ic_ent_t); ++i)

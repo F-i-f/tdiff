@@ -1,5 +1,20 @@
 2019-04-15  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (cmpFiles): Remove unused parameter opts.
+	(compareXattrs): Use e2.
+	(ATTRIBUTE_UNUSED): Create.
+	(compareFileEntries): Mark e2 as unused parameter.
+	(compareAcls): Mark p2 as unused parameter.
+	(freeStrList): Make i a size_t.
+	(compareStrList): Make i1, i2 size_t.
+	(formatTime): Make written a size_t.
+
+	* inocache.c (ic_hash): Make i a size_t.
+
+	* genhash.c (gh_remove): Remove unimplemented gh_remove().
+
+	* genhash.h (gh_remove): Remove unimplemented gh_remove().
+
 	* Makefile.am (AM_CFLAGS): Remove.
 
 	* configure.ac : Call FI_COMPILER_WARNINGS.

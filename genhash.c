@@ -184,12 +184,6 @@ gh_insert(genhash_t *gh, void* key, void* value)
   return 1;
 }
 
-int
-gh_remove(genhash_t *gh, const void* key)
-{
-  return 0;
-}
-
 hashval_t
 gh_string_hash_old(const void* vstring)
 {
