@@ -17,8 +17,6 @@
 
 ACLOCAL_AMFLAGS = -I m4
 
-AM_CFLAGS       = -Wstrict-prototypes -Werror -Wall
-
 noinst_LIBRARIES   = libtdiff.a
 
 libtdiff_a_SOURCES = genhash.c genhash.h utils.c utils.h inocache.c inocache.h

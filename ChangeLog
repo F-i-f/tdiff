@@ -1,5 +1,11 @@
 2019-04-15  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (AM_CFLAGS): Remove.
+
+	* configure.ac : Call FI_COMPILER_WARNINGS.
+
+	* m4/fi_compiler_warnings.m4 (FI_COMPILER_WARNINGS): Create.
+
 	* m4/fi_project.m4 (FI_PROJECT): Remove .deps directory on clean.
 
 2019-03-14  Philippe Troin  <phil@fifi.org>
