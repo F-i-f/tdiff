@@ -38,6 +38,7 @@ clean-fi-project:
 	  echo "cd \"$(srcdir)/$$i\" && rm -f $(FI_CLEANFILES)";    \
 	  (cd "$(srcdir)/$$i" && rm -f $(FI_CLEANFILES)) || exit $$?; \
 	done
+	rm -fr .deps
 
 .PHONY: clean-fi-project
 

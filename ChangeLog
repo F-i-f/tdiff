@@ -1,3 +1,7 @@
+2019-04-15  Philippe Troin  <phil@fifi.org>
+
+	* m4/fi_project.m4 (FI_PROJECT): Remove .deps directory on clean.
+
 2019-03-14  Philippe Troin  <phil@fifi.org>
 
 	* m4/fi_check_shell_functions_dir.m4
