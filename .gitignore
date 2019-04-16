@@ -1,9 +1,9 @@
-*~
 \#*#
 .#*
-*.o
-*.a
+*~
+*.backup
 
+*.[ao]
 .deps/
 Makefile
 Makefile.in
