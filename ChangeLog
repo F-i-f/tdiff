@@ -1,3 +1,10 @@
+2019-04-18  Philippe Troin  <phil@fifi.org>
+
+	* m4/fi_compiler_warnings.m4 (FI_COMPILER_WARNINGS): Add
+	--enable/disable-compiler-warnings.  Default to enabled only if
+	maintainer-mode is enabled and the GNU C is detected (requires
+	AM_MAINTAINER_MODE and AC_PROG_CC to be called before this macro).
+
 2019-04-15  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.c (cmpFiles): Remove unused parameter opts.

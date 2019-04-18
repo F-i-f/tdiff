@@ -16,12 +16,25 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # Usage:
+#   Should be called after:
+#     AM_MAINTAINER_MODE
+#     AC_PROG_CC
 #   FI_COMPILER_WARNINGS
 # Effect:
 #   Turns on maximum warning level
 
 AC_DEFUN([FI_COMPILER_WARNINGS],
-	 [if test "x$ac_compiler_gnu" = xyes
+	 [AC_ARG_ENABLE([compiler-warnings],
+			AS_HELP_STRING([--enable-compiler-warnings],
+				       [Enable extra compiler warnings if the GNU C Compiler is detected.  Defaults to enabled when maintainer-mode is enabled.])
+AS_HELP_STRING([--disable-compiler-warnings],
+	       [Disable extra compiler warnings unconditionally.]),
+			[fi_enable_compiler_warnings="$enableval"],
+			[fi_enable_compiler_warnings=default])
+	 if test "x$ac_compiler_gnu" = xyes -a \
+		 \( \( "x$fi_enable_compiler_warnings" = xdefault \
+		    -a "x$USE_MAINTAINER_MODE" = xyes \) \
+		 -o "x$fi_enable_compiler_warnings" = xyes \)
 	 then
 	   FI_AUTOMAKE_FRAGMENT([# Added by FI_COMPILER_WARNINGS
 ][AM_CFLAGS += -Wstrict-prototypes -Werror -Wall -Wextra
