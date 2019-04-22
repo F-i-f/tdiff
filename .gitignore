@@ -20,6 +20,9 @@ stamp-h1
 /config.log
 /config.status
 /configure
+/test-suite.log
+/tests/*.log
+/tests/*.trs
 
 /genhash_test
 /inocache_test

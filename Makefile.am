@@ -37,10 +37,10 @@ genhash_test_LDADD    = libtdiff.a
 bash_FUNCTIONS        = tdiff.bash
 zsh_FUNCTIONS         = _tdiff.zsh
 
-EXTRA_DIST = $(bash_FUNCTIONS) $(zsh_FUNCTIONS)
+TEST_EXTENSIONS = .test
+TESTS = tests/inocache.test \
+	tests/genhash.test
 
-check: $(noinst_PROGRAMS)
-	./inocache_test
-	./genhash_test
+EXTRA_DIST = $(bash_FUNCTIONS) $(zsh_FUNCTIONS) $(TESTS)
 
 @FI_AUTOMAKE@
