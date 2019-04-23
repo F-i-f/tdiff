@@ -4,6 +4,9 @@
 *.backup
 
 *.[ao]
+*.gcda
+*.gcno
+*.gcov
 .deps/
 Makefile
 Makefile.in

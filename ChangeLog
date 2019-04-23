@@ -1,5 +1,9 @@
 2019-04-22  Philippe Troin  <phil@fifi.org>
 
+	* .gitignore: Ignore gcov files.
+
+	* m4/fi_project.m4 (FI_PROJECT): Ignore gcov files.
+
 	* .gitattributes: Mark test suite gold files as generated.
 
 	* .gitignore: Ignore new make_sock, and test temporary output.
