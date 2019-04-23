@@ -1,5 +1,9 @@
 2019-04-22  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (dodiff): Fix error when comparing times, a discrepancy
+	happens when either the seconds or nanoseconds differ (used to be
+	both had to differ).
+
 	* tdiff.c (dodiff): Only report that symlink contents when
 	--contents is specified.
 

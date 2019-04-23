@@ -1607,10 +1607,12 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 
       localerr = 1;
     }
-  if (opts->ctime && sbuf1.st_ctime != sbuf2.st_ctime
+  if (opts->ctime
+      && ( sbuf1.st_ctime != sbuf2.st_ctime
 #ifdef ST_CTIMENSEC
-      && sbuf1.ST_CTIMENSEC.tv_nsec != sbuf2.ST_CTIMENSEC.tv_nsec
+	   || sbuf1.ST_CTIMENSEC.tv_nsec != sbuf2.ST_CTIMENSEC.tv_nsec
 #endif
+	   )
       )
     {
       reportTimeDiscrepancy(subpath, "ctime",
@@ -1623,10 +1625,12 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 			    );
       localerr = 1;
     }
-  if (opts->mtime && sbuf1.st_mtime != sbuf2.st_mtime
+  if (opts->mtime
+      && (sbuf1.st_mtime != sbuf2.st_mtime
 #ifdef ST_MTIMENSEC
-      && sbuf1.ST_MTIMENSEC.tv_nsec != sbuf2.ST_MTIMENSEC.tv_nsec
+	  || sbuf1.ST_MTIMENSEC.tv_nsec != sbuf2.ST_MTIMENSEC.tv_nsec
 #endif
+	  )
       )
     {
       reportTimeDiscrepancy(subpath, "mtime",
@@ -1638,10 +1642,12 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 #endif
 			    );
     }
-  if (opts->atime && sbuf1.st_atime != sbuf2.st_atime
+  if (opts->atime
+      && ( sbuf1.st_atime != sbuf2.st_atime
 #ifdef ST_ATIMENSEC
-      && sbuf1.ST_ATIMENSEC.tv_nsec != sbuf2.ST_ATIMENSEC.tv_nsec
+	   || sbuf1.ST_ATIMENSEC.tv_nsec != sbuf2.ST_ATIMENSEC.tv_nsec
 #endif
+	   )
       )
     {
       reportTimeDiscrepancy(subpath, "atime",
