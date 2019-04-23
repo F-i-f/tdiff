@@ -1,5 +1,8 @@
 2019-04-22  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (dodiff): Only report that symlink contents when
+	--contents is specified.
+
 	* tdiff.c (dodiff): Remove useless block.
 
 	* tests/inocache.test, tests/genhash.test: Create.

@@ -1805,19 +1805,19 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	break;
 #if HAVE_S_IFLNK
       case S_IFLNK:
-	{
-	  char *lnk1 = xreadlink(p1);
-	  char *lnk2 = xreadlink(p2);
-	  if (lnk1 && lnk2)
-	    if (strcmp(lnk1, lnk2)!=0)
+	if (opts->contents)
+	  {
+	    char *lnk1 = xreadlink(p1);
+	    char *lnk2 = xreadlink(p2);
+	    if (lnk1 && lnk2 && strcmp(lnk1, lnk2) != 0)
 	      {
 		printf("%s: %s: symbolic links differ\n",
 		       progname, subpath);
 		localerr = 1;
 	      }
-	  if (lnk1) free(lnk1);
-	  if (lnk2) free(lnk2);
-	}
+	    if (lnk1) free(lnk1);
+	    if (lnk2) free(lnk2);
+	  }
 	break;
 #endif /* HAVE_S_IFLNK */
       case S_IFBLK:
