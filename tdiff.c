@@ -1775,36 +1775,33 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	}
 	break;
       case S_IFREG:
-	{
-	  /**/
-	  if (opts->contents)
-	    {
-	      if (content_diff)
-		{
-		  ++ opts->stats.contents_compared;
-		  if (opts->exec)
-		    {
-		      if (!execprocess(&opts->exec_args, p1, p2))
-			localerr = 1;
-		    }
-		  else if (!cmpFiles(p1, sbuf1, p2, sbuf2))
-		    {
-		      printf("%s: %s: contents differ\n",
-			     progname, subpath);
+	if (opts->contents)
+	  {
+	    if (content_diff)
+	      {
+		++ opts->stats.contents_compared;
+		if (opts->exec)
+		  {
+		    if (!execprocess(&opts->exec_args, p1, p2))
 		      localerr = 1;
-		    }
-		}
-	      else
-		{
-		  printf("%s: %s: contents differ\n",
-			 progname, subpath);
-		  localerr = 1;
+		  }
+		else if (!cmpFiles(p1, sbuf1, p2, sbuf2))
+		  {
+		    printf("%s: %s: contents differ\n",
+			   progname, subpath);
+		    localerr = 1;
+		  }
 	      }
-	      if (opts->exec_always)
-		if (!execprocess(&opts->exec_always_args, p1, p2))
-		  localerr=1;
-	    }
-	}
+	    else
+	      {
+		printf("%s: %s: contents differ\n",
+		       progname, subpath);
+		localerr = 1;
+	      }
+	    if (opts->exec_always)
+	      if (!execprocess(&opts->exec_always_args, p1, p2))
+		localerr=1;
+	  }
 	break;
 #if HAVE_S_IFLNK
       case S_IFLNK:

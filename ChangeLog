@@ -1,5 +1,7 @@
 2019-04-22  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (dodiff): Remove useless block.
+
 	* tests/inocache.test, tests/genhash.test: Create.
 
 	* Makefile.am (TESTS): Use instead of defining our own check
