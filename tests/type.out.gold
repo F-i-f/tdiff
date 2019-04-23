@@ -1,0 +1,13 @@
+tdiff: dir-vs-fifo: type: directory fifo
+tdiff: dir-vs-file: type: directory regular-file
+tdiff: dir-vs-symlink: type: directory symbolic-link
+tdiff: fifo-vs-dir: type: fifo directory
+tdiff: fifo-vs-file: type: fifo regular-file
+tdiff: fifo-vs-symlink: type: fifo symbolic-link
+tdiff: file-vs-dir: type: regular-file directory
+tdiff: file-vs-fifo: type: regular-file fifo
+tdiff: file-vs-symlink: type: regular-file symbolic-link
+tdiff: symlink-vs-dir: type: symbolic-link directory
+tdiff: symlink-vs-fifo: type: symbolic-link fifo
+tdiff: symlink-vs-file: type: symbolic-link regular-file
+tdiff exit code=2

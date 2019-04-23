@@ -1,0 +1,71 @@
+#!/bin/sh
+
+set -eu
+
+if [ "x$HAVE_ACLS" != xyes ]
+then
+  exit 77
+fi
+
+setup() {
+  cat > "$1"/acl-f-list <<-'EOD'
+	u:33:r
+	u:34:rw
+	u:35:rwx
+	g:36:r
+	g:37:rw
+	g:38:rwx
+	m:rw
+EOD
+  cat - "$1"/acl-f-list > "$1"/acl-d-list <<-'EOD'
+	d:u:43:--x
+	d:u:44:wx
+	d:u:45:rw
+	d:g:46:w
+	d:g:47:rx
+	d:g:48:rwx
+	d:m:rwx
+EOD
+  for i in $(seq 1 9)
+  do
+    echo "1-$i" > "$1/file$i"
+    echo "2-$i" > "$2/file$i"
+    if [ $i -ne 1 ]
+    then
+      setfacl -M "$1"/acl-f-list "$1/file$i" "$2/file$i"
+    fi
+  done
+  for i in $(seq 1 16)
+  do
+    mkdir "$1/dir$i"
+    mkdir "$2/dir$i"
+    if [ $i -ne 1 ]
+    then
+      setfacl -M "$1"/acl-d-list "$1/dir$i" "$2/dir$i"
+    fi
+  done
+
+  setfacl -n -x u:33 "$1"/file2 "$2"/dir2
+  setfacl -n -m u:34:w "$2"/file3 "$1"/dir3
+  setfacl -n -m u:31:r "$1"/file4 "$1"/dir4
+  setfacl -n -x g:36 "$1"/file5 "$1"/dir5
+  setfacl -n -m g:37:wx "$1"/file6 "$1"/dir6
+  setfacl -n -m g:39:r "$1"/file7 "$1"/dir7
+  setfacl -n -m m:r "$1"/file8 "$1"/dir8
+  setfacl -n -m d:u:43:w "$1"/dir10
+  setfacl -n -x d:u:44 "$1"/dir11
+  setfacl -n -m d:u:42:x "$1"/dir12
+  setfacl -n -m d:g:46:wx "$1"/dir13
+  setfacl -n -x d:g:47 "$1"/dir14
+  setfacl -n -m d:g:49:x "$1"/dir15
+  setfacl -n -m d:m:w "$2"/dir16
+}
+
+acl_filter() {
+  sed -re 's!(: (access|default) acl (user|group):)[^[:space:]]+(: .*)$!\1XX\4!'
+}
+
+tdiff_options="-Al"
+filter=acl_filter
+
+. "$srcdir"/tests/test.lib

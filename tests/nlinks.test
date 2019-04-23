@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  echo "1234" > "$1"/file1
+  ln "$1"/file1 "$1"/file2
+  echo "1234" > "$1"/file3
+  ln "$1"/file3 "$1"/file4
+  echo "1234" > "$1"/file5
+  ln "$1"/file5 "$1"/file6
+
+  echo "12345" > "$2"/file1
+  echo "12345" > "$2"/file2
+  mkdir "$2"/file3
+  mkdir "$2"/file4
+  echo "yes" > "$2"/file5
+  ln "$2"/file5 "$2"/file6
+}
+
+tdiff_options="-An"
+
+. "$srcdir"/tests/test.lib

@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -eu
+
+if [ "x$HAVE_XATTRS" != xyes ]
+then
+  exit 77
+fi
+
+setup() {
+  echo "1" > "$1"/file1
+  setfattr -n user.test -v value1 "$1"/file1
+  echo "2" > "$1"/file2
+  setfattr -n user.test1 -v value1 "$1"/file2
+  setfattr -n user.test2 -v value2 "$1"/file2
+  setfattr -n user.test3 -v value3 "$1"/file2
+  echo "3" > "$1"/file3
+  setfattr -n user.test1 -v value1 "$1"/file3
+  setfattr -n user.test2 -v value2 "$1"/file3
+  setfattr -n user.test3 -v value3 "$1"/file3
+  echo "4" > "$1"/file4
+
+  echo "1" > "$2"/file1
+  setfattr -n user.test -v value1 "$2"/file1
+  mkdir "$2"/file2
+  setfattr -n user.test1a -v value1 "$2"/file2
+  setfattr -n user.test2 -v value2a "$2"/file2
+  setfattr -n user.test3 -v value3 "$2"/file2
+  echo "3" > "$2"/file3
+  setfattr -n user.test1 -v value1 "$2"/file3
+  setfattr -n user.test2 -v value2 "$2"/file3
+  setfattr -n user.test3 -v value3a "$2"/file3
+  mkdir "$2"/file4
+}
+
+tdiff_options="-Aq"
+
+. "$srcdir"/tests/test.lib

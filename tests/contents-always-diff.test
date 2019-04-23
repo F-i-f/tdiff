@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/contents.lib
+
+always_diff_filter() {
+  sed -re 's!^([-+]{3} [^[:space:]]+)[[:space:]]+[0-9]{4}-.*$!\1!'
+}
+
+tdiff_options="-AW"
+filter=always_diff_filter
+
+. "$srcdir"/tests/test.lib

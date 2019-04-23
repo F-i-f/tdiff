@@ -1,0 +1,22 @@
+tdiff: dir10: default acl user:XX: -w- --x
+tdiff: dir11: default acl user:XX: only present in tests/acl.dir2
+tdiff: dir12: default acl user:XX: only present in tests/acl.dir1
+tdiff: dir13: default acl group:XX: -wx -w-
+tdiff: dir14: default acl group:XX: only present in tests/acl.dir2
+tdiff: dir15: default acl group:XX: only present in tests/acl.dir1
+tdiff: dir16: default acl mask:: rwx -w-
+tdiff: dir2: access acl user:XX: only present in tests/acl.dir1
+tdiff: dir3: access acl user:XX: -w- rw-
+tdiff: dir4: access acl user:XX: only present in tests/acl.dir1
+tdiff: dir5: access acl group:XX: only present in tests/acl.dir2
+tdiff: dir6: access acl group:XX: -wx rw-
+tdiff: dir7: access acl group:XX: only present in tests/acl.dir1
+tdiff: dir8: access acl mask:: r-- rw-
+tdiff: file2: access acl user:XX: only present in tests/acl.dir2
+tdiff: file3: access acl user:XX: rw- -w-
+tdiff: file4: access acl user:XX: only present in tests/acl.dir1
+tdiff: file5: access acl group:XX: only present in tests/acl.dir2
+tdiff: file6: access acl group:XX: -wx rw-
+tdiff: file7: access acl group:XX: only present in tests/acl.dir1
+tdiff: file8: access acl mask:: r-- rw-
+tdiff exit code=2

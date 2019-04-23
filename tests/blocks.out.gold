@@ -1,0 +1,3 @@
+tdiff: file3: blocks: X X
+tdiff: file4: blocks: X X
+tdiff exit code=2

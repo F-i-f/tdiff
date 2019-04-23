@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/type.lib
+
+tdiff_options="-At"
+
+. "$srcdir"/tests/test.lib

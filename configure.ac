@@ -36,6 +36,7 @@ AM_PROG_AR
 AC_PROG_RANLIB
 AC_PROG_EGREP
 AC_PROG_INSTALL
+AC_CHECK_PROG([FAKEROOT],[fakeroot],[fakeroot])
 
 FI_GIT_REVISION
 
@@ -295,9 +296,17 @@ FI_LINK_IFELSE([for lstat()], [HAVE_LSTAT],
 
 AC_SEARCH_LIBS([acl_get_file],[acl],[
   AC_DEFINE([HAVE_ACL],1,[Define if your system has ACLs])
-])
+  have_acls=yes
+],[have_acls=no])
 
 ### 9) Check for "system services"
+
+### END: Define automake conditionals
+AM_CONDITIONAL([HAVE_S_IFSOCK], [test x$fi_cv_S_IFSOCK = xyes])
+AC_SUBST([HAVE_S_IFSOCK],[$fi_cv_S_IFSOCK])
+
+AC_SUBST([HAVE_XATTRS],[$fi_cv_getxattr])
+AC_SUBST([HAVE_ACLS],[$have_acls])
 
 ### END: output
 

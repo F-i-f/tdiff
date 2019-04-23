@@ -1,5 +1,25 @@
 2019-04-22  Philippe Troin  <phil@fifi.org>
 
+	* .gitattributes: Mark test suite gold files as generated.
+
+	* .gitignore: Ignore new make_sock, and test temporary output.
+
+	* Makefile.am (make_sock): Create new noninst_PROGRAMS make_sock,
+	only compiled if HAVE_S_IFSOCK.
+	(AM_TESTS_ENVIRONMENT): Create: pass needed environment variables
+	to tests.
+	(TESTS): Add new tests (tests/*.test).
+	(TEST_EXTENSIONS): Define to .test.
+	(EXTRA_DIST): Append test gold output files (tests/*.gold), ($(TESTS)) and test
+	libraries (tests/*.lib).
+
+	* configure.ac (FAKEROOT): Add a check for fakeroot.
+	(HAVE_S_IFSOCK): Create an automake conditional and substitution
+	variable.
+	(HAVE_XATTRS, HAVE_ACLS): Create AC_SUBST for test driver.
+
+	* make_sock.c: Create.
+
 	* tdiff.c (dodiff): Fix error when comparing times, a discrepancy
 	happens when either the seconds or nanoseconds differ (used to be
 	both had to differ).

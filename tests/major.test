@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/fakeroot.lib
+
+setup() {
+  mknod "$1"/file1 b 1 0
+  mknod "$1"/file2 b 2 0
+  mknod "$1"/file3 b 3 0
+  mknod "$1"/file4 b 4 4
+  touch "$1"/file5
+  touch "$1"/file6
+
+  mknod "$2"/file1 b 3 1
+  mknod "$2"/file2 b 2 2
+  mknod "$2"/file3 b 1 3
+  mknod "$2"/file4 c 4 5
+  mkdir "$2"/file5
+  mknod "$2"/file6 b 4 4
+}
+
+tdiff_options="-Aj"
+
+. "$srcdir"/tests/test.lib

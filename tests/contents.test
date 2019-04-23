@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/contents.lib
+
+tdiff_options="-Ac"
+
+. "$srcdir"/tests/test.lib

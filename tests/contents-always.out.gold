@@ -1,0 +1,17 @@
+tdiff: file1: contents differ
+1c1
+< 1234
+---
+> 12345
+tdiff: file2: contents differ
+1c1
+< 123
+---
+> FILE 2
+tdiff: file3: symbolic links differ
+tdiff: file6: contents differ
+1c1
+< 123
+---
+> abc
+tdiff exit code=2

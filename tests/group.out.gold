@@ -1,0 +1,5 @@
+tdiff: dir1: group: 3 0
+tdiff: file1: group: 1 0
+tdiff: file2: group: 0 2
+tdiff: link1: group: 4 0
+tdiff exit code=2

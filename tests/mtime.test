@@ -1,0 +1,26 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  echo "File 1" > "$1"/file1
+  echo "File 2" > "$1"/file2
+  echo "File 3" > "$1"/file3
+  mkdir "$1"/dir1
+
+  sleep 1
+
+  cp -pr "$1"/* "$2"/
+  rm "$1"/file1
+  mkdir "$1"/file1
+  touch "$2"/file2
+}
+
+mtime_filter() {
+  sed -re 's!(: mtime:) \[[^]]+\] \[[^]]+\]$!\1 [XXX] [XXX]!'
+}
+
+tdiff_options="-Ai"
+filter=mtime_filter
+
+. "$srcdir"/tests/test.lib

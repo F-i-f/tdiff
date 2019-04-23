@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/fakeroot.lib
+
+. "$srcdir"/tests/type.lib
+
+make_chardev() {
+  mknod "$1" c 1 1
+}
+
+make_blockdev() {
+  mknod "$1" b 1 1
+}
+
+file_types="$file_types chardev blockdev"
+
+tdiff_options="-At"
+
+. "$srcdir"/tests/test.lib

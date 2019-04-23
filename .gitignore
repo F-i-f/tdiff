@@ -26,5 +26,8 @@ stamp-h1
 
 /genhash_test
 /inocache_test
+/make_sock
 /tdiff
 /tdiff-*.tar.*
+/tests/*.dir[12]
+/tests/*.out

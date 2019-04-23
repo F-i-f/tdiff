@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/mode.lib
+
+tdiff_options="-Am"
+
+. "$srcdir"/tests/test.lib

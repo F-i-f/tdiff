@@ -1,0 +1,21 @@
+tdiff: dir-vs-fifo: type: directory fifo
+tdiff: dir-vs-file: type: directory regular-file
+tdiff: dir-vs-sock: type: directory socket
+tdiff: dir-vs-symlink: type: directory symbolic-link
+tdiff: fifo-vs-dir: type: fifo directory
+tdiff: fifo-vs-file: type: fifo regular-file
+tdiff: fifo-vs-sock: type: fifo socket
+tdiff: fifo-vs-symlink: type: fifo symbolic-link
+tdiff: file-vs-dir: type: regular-file directory
+tdiff: file-vs-fifo: type: regular-file fifo
+tdiff: file-vs-sock: type: regular-file socket
+tdiff: file-vs-symlink: type: regular-file symbolic-link
+tdiff: sock-vs-dir: type: socket directory
+tdiff: sock-vs-fifo: type: socket fifo
+tdiff: sock-vs-file: type: socket regular-file
+tdiff: sock-vs-symlink: type: socket symbolic-link
+tdiff: symlink-vs-dir: type: symbolic-link directory
+tdiff: symlink-vs-fifo: type: symbolic-link fifo
+tdiff: symlink-vs-file: type: symbolic-link regular-file
+tdiff: symlink-vs-sock: type: symbolic-link socket
+tdiff exit code=2

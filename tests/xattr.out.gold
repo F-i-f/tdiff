@@ -1,0 +1,5 @@
+tdiff: file2: xattr user.test1: only present in tests/xattr.dir1
+tdiff: file2: xattr user.test1a: only present in tests/xattr.dir2
+tdiff: file2: xattr user.test2: contents differ
+tdiff: file3: xattr user.test3: contents differ
+tdiff exit code=2

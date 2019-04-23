@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/contents.lib
+
+tdiff_options="-AcX file6 -X file3"
+
+. "$srcdir"/tests/test.lib

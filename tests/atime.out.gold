@@ -1,0 +1,3 @@
+tdiff: dir1/file3: atime: [XXX] [XXX]
+tdiff: file1: atime: [XXX] [XXX]
+tdiff exit code=2

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  echo "1234" > "$1"/file1
+  echo "File 2" > "$1"/file2
+  mkdir "$1"/dir1
+  echo "123456" > "$1"/dir1/file3
+  ln -s "abcd" "$1"/link1
+  ln -s "abcd" "$1"/link2
+  ln -s x "$1"/link3
+  ln -s x "$1"/link4
+
+  echo "12345" > "$2"/file1
+  echo "FILE 2" > "$2"/file2
+  mkdir "$2"/dir1
+  echo "12345" > "$2"/dir1/file3
+  ln -s "abcdef" "$2"/link1
+  ln -s "1234" "$2"/link2
+  echo "123" > "$2"/link3
+  echo "" > "$2"/link4
+}
+
+tdiff_options="-As"
+
+. "$srcdir"/tests/test.lib

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  echo "File 1" > "$1"/file
+  touch "$1"/only-in-first
+  mkdir "$1/sub"
+  echo "File 1a" > "$1"/sub/file
+  touch "$1"/sub/only-in-first
+  touch "$1"/sub/sub
+
+  echo "File 2" > "$2"/file
+  touch "$2"/only-in-second
+  mkdir "$2/sub"
+  echo "File 2a" > "$2"/sub/file
+  mkdir "$2"/sub/only-in-second
+  mkdir "$2"/sub/sub
+}
+
+tdiff_options="-Ad"
+
+. "$srcdir"/tests/test.lib

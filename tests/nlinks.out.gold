@@ -1,0 +1,4 @@
+tdiff: .: nlinks: 2 4
+tdiff: file1: nlinks: 2 1
+tdiff: file2: nlinks: 2 1
+tdiff exit code=2

@@ -1,0 +1,5 @@
+tdiff: dir1/file3: size: 7 6
+tdiff: file1: size: 5 6
+tdiff: link1: size: 4 6
+tdiff: link3: size: 1 4
+tdiff exit code=2

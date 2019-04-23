@@ -1,0 +1,5 @@
+tdiff: file1: contents differ
+tdiff: file2: contents differ
+tdiff: file3: symbolic links differ
+tdiff: file6: contents differ
+tdiff exit code=2

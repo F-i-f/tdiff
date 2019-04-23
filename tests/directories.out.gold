@@ -1,0 +1,5 @@
+tdiff: only-in-first: only present in tests/directories.dir1
+tdiff: only-in-second: only present in tests/directories.dir2
+tdiff: sub/only-in-first: only present in tests/directories.dir1
+tdiff: sub/only-in-second: only present in tests/directories.dir2
+tdiff exit code=0

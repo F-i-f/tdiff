@@ -1,0 +1,35 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/fakeroot.lib
+
+setup() {
+  echo "File 1" > "$1"/file1
+  echo "File 2" > "$1"/file2
+  echo "File 3" > "$1"/file3
+  mkdir "$1"/dir1
+  mkdir "$1"/link1
+  touch "$1"/link2
+
+  echo "File 1a" > "$2"/file1
+  mkdir "$2"/file2
+  echo "File 3a" > "$2"/file3
+  mkdir "$2"/dir1
+  ln -s x "$2"/link1
+  ln -s x "$2"/link2
+
+  chgrp 1 "$1"/file1
+  chgrp 2 "$2"/file2
+  chgrp 3 "$1"/dir1
+  chgrp 4 "$1"/link1
+}
+
+owner_filter() {
+  sed -re 's!(: group:) [^[:space:]]+\(([0-9]+)\) [^[:space:]]+\(([0-9]+)\)$!\1 \2 \3!'
+}
+
+tdiff_options="-Ag"
+filter=owner_filter
+
+. "$srcdir"/tests/test.lib

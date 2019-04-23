@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -eu
+
+if [ "x$HAVE_S_IFSOCK" != xyes ]
+then
+  exit 77
+fi
+
+. "$srcdir"/tests/type.lib
+
+make_sock() {
+  ./make_sock "$1"
+}
+
+file_types="$file_types sock"
+
+tdiff_options="-At"
+
+. "$srcdir"/tests/test.lib
