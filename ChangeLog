@@ -1,5 +1,9 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/atime.test (setup): BSD do not update atime on
+	directories.  Force update the atime for the files we expect
+	change on with touch.
+
 	* configure.ac (HAVE_ST_FLAGS): AC_SUBST().
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): Add HAVE_ST_FLAGS.

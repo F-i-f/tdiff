@@ -9,19 +9,12 @@ setup() {
   echo "File 3" > "$1"/dir1/file3
 
   cp -pr "$1"/* "$2"/
-  rm "$1"/file1
-  mkdir "$1"/file1
 
-  touch -r "$1"/file1 "$2"/file1
   touch -r "$1"/file2 "$2"/file2
   touch -r "$1"/dir1 "$2"/dir1
-  touch -r "$1"/dir1/file3 "$2"/dir1/file3
   touch -r "$1" "$2"
 
-  sleep 1
-
-  ls "$1"/file1 > /dev/null
-  cat "$2"/dir1/file3 > /dev/null
+  touch -t 198001010000 "$1"/file1 "$2"/dir1/file3
 }
 
 atime_filter() {
