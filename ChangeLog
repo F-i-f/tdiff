@@ -1,5 +1,13 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (make_sock_LDADD): Define to $(LIB_FOR_SOCKETS) for
+	Solaris.
+
+	* configure.ac: Call FI_USE_XNET, FI_CHECK_LIB_FOR_SOCKETS.
+
+	* m4/fi_use_xnet.m4, m4/fi_check_lib_for_sockets.m4: Imported from
+	fif's aclocal svn repository.
+
 	* _tdiff.zsh (args): Update -W option documentation.
 
 	* tdiff.c (show_help, main): -W options uses "diff -u" instead of

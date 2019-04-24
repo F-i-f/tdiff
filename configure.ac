@@ -299,6 +299,9 @@ AC_SEARCH_LIBS([acl_get_file],[acl],[
   have_acls=yes
 ],[have_acls=no])
 
+FI_USE_XNET([no])
+FI_CHECK_LIB_FOR_SOCKETS
+
 ### 9) Check for "system services"
 
 ### END: Define automake conditionals

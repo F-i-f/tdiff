@@ -38,6 +38,7 @@ inocache_test_LDADD   = libtdiff.a
 if HAVE_S_IFSOCK
 noinst_PROGRAMS	     += make_sock
 make_sock_SOURCES     = make_sock.c
+make_sock_LDADD       = $(LIB_FOR_SOCKETS)
 endif
 
 bash_FUNCTIONS	      = tdiff.bash
