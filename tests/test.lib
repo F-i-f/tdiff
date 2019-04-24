@@ -35,7 +35,7 @@ sed -e 's!^!  !' "$out"
 if [ -n "${filter-}" ]
 then
   echo 1>&2 "$progname: filtering..."
-  tmpfiles="$(mktemp "tests/$progname.XXXXXXX.tmp")"
+  tmpfiles="$(mktemp "tests/$progname.tmp.XXXXXXXX")"
   cat "$out" > "$tmpfiles"
   "$filter" < "$tmpfiles" > "$out"
   echo 1>&2 "$progname: filter output:"

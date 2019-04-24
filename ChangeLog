@@ -1,5 +1,8 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib (mktemp): mktemp only works if the XXXX template
+	is at the end of the file name on FreeBSD.
+
 	* tests/acl.test: Skip test if we cannot alter ACLs on a test
 	file with pre-check-file.
 
