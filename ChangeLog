@@ -1,5 +1,8 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib: Don't use >& file construct, it's not
+	traditional Bourne.
+
 	* make_sock.c (main): bind() takes a struct sockaddr* on BSDs.
 
 2019-04-22  Philippe Troin  <phil@fifi.org>
