@@ -1,5 +1,11 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* _tdiff.zsh (args): Update -W option documentation.
+
+	* tdiff.c (show_help, main): -W options uses "diff -u" instead of
+	"diff -uN" as -N is not univerally implemented and is useless as
+	we never call diff with less than two existing files.
+
 	* make_sock.c (main): Can't use sun as an identifier, it's a
 	defined constant on Solaris.  Rename sun to saddrun.
 

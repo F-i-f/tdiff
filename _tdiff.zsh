@@ -93,8 +93,8 @@ args=('*-v[increase verbosity level]'
       '-w[execute a command on file pairs]:program: _command_names -e:*\;::program arguments: _normal'
       '--exec-always[execute a command on file pairs]:program: _command_names -e:*\;::program arguments: _normal'
 
-      '-W[executes "diff -uN" for every file pair]'
-      '--exec-always-diff[executes "diff -uN" for every file pair]'
+      '-W[executes "diff -u" for every file pair]'
+      '--exec-always-diff[executes "diff -u" for every file pair]'
 
       '-&[applies an AND mask to file modes]:mask (octal)'
       '--mode-and[applies an AND mask to file modes]:mask (octal)'

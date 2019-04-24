@@ -1146,8 +1146,8 @@ show_help(void)
 	 "                            (if file sizes are equal)\n"
 	 "   -w --exec-always <cmd>;  always executes <cmd> between files\n"
 	 "        <cmd> uses %%1 and %%2 as file from <dir1> and <dir2>\n"
-	 "   -W --exec-always-diff ;  always executes \"diff -uN\" between files\n"
-	 "        equivalent to -w diff -uN %%1 %%2 \\;\n"
+	 "   -W --exec-always-diff ;  always executes \"diff -u\" between files\n"
+	 "        equivalent to -w diff -u %%1 %%2 \\;\n"
 	 "   -| --mode-or <bits>      applies <bits> OR mode before comparison\n"
 	 "   -& --mode-and <bits>     applies <bits> AND mode before comparison\n"
 	 "   -X --exclude <file>      omits <file> from report\n"
@@ -2092,7 +2092,7 @@ main(int argc, char*argv[])
 		}
 	      options.exec_always_args.argv = xmalloc(sizeof(char*)*5);
 	      options.exec_always_args.argv[0] = "diff";
-	      options.exec_always_args.argv[1] = "-uN";
+	      options.exec_always_args.argv[1] = "-u";
 	      options.exec_always_args.argv[2] = NULL;
 	      options.exec_always_args.argv[3] = NULL;
 	      options.exec_always_args.argv[4] = NULL;
