@@ -1,5 +1,7 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_project.m4: Remove .deps on distclean, not on clean.
+
 	* tests/xattr.test (pre_check_file): Create:  verify that setfattr
 	works on the build directory before comitting to the tests.
 

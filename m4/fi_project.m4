@@ -38,14 +38,13 @@ clean-fi-project:
 	  echo "cd \"$(srcdir)/$$i\" && rm -f $(FI_CLEANFILES)";    \
 	  (cd "$(srcdir)/$$i" && rm -f $(FI_CLEANFILES)) || exit $$?; \
 	done
-	rm -fr .deps
 
 .PHONY: clean-fi-project
 
 distclean-am: distclean-fi-project
 
 distclean-fi-project:
-	rm -fr autom4te.cache
+	rm -fr autom4te.cache .deps
 
 .PHONY: distclean-fi-project
 
