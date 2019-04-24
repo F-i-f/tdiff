@@ -1,0 +1,3 @@
+tdiff: file1: flag simmutable only set in tests/flag-schange.dir2
+tdiff: file3: flag simmutable only set in tests/flag-schange.dir1
+tdiff exit code=2

@@ -1,5 +1,16 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac (HAVE_ST_FLAGS): AC_SUBST().
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): Add HAVE_ST_FLAGS.
+	(TESTS): Add tests/flag-*.test.
+	(EXTRA_DIST): Add tests/pre-check-file.lib, tests/flag-*.out.gold.
+
+	* tests/flag-*.test, tests/flag-*.out.gold: Create.
+
+	* tests/test.lib: Run $cleanup_test on both compare directories,
+	if set.
+
 	* tests/test.lib (mktemp): mktemp only works if the XXXX template
 	is at the end of the file name on FreeBSD.
 

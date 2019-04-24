@@ -305,6 +305,7 @@ AC_SEARCH_LIBS([acl_get_file],[acl],[
 AM_CONDITIONAL([HAVE_S_IFSOCK], [test x$fi_cv_S_IFSOCK = xyes])
 AC_SUBST([HAVE_S_IFSOCK],[$fi_cv_S_IFSOCK])
 
+AC_SUBST([HAVE_ST_FLAGS],[$fi_cv_st_flags])
 AC_SUBST([HAVE_XATTRS],[$fi_cv_getxattr])
 AC_SUBST([HAVE_ACLS],[$have_acls])
 

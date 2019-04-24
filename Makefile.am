@@ -45,8 +45,9 @@ zsh_FUNCTIONS	      = _tdiff.zsh
 
 AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      FAKEROOT="$(FAKEROOT)" \
-			      HAVE_ACLS="$(HAVE_ACLS)" \
 			      HAVE_S_IFSOCK="$(HAVE_S_IFSOCK)" \
+			      HAVE_ST_FLAGS="$(HAVE_ST_FLAGS)" \
+			      HAVE_ACLS="$(HAVE_ACLS)" \
 			      HAVE_XATTRS="$(HAVE_XATTRS)" \
 			      ;
 TEST_EXTENSIONS	     = .test
@@ -61,6 +62,22 @@ TESTS = tests/inocache.test		\
 	tests/contents-exec.test	\
 	tests/ctime.test		\
 	tests/directories.test		\
+	tests/flag-archived.test	\
+	tests/flag-hidden.test		\
+	tests/flag-nodump.test		\
+	tests/flag-offline.test		\
+	tests/flag-opaque.test		\
+	tests/flag-readonly.test	\
+	tests/flag-reparse.test		\
+	tests/flag-sappend.test		\
+	tests/flag-schange.test		\
+	tests/flag-sparse.test		\
+	tests/flag-sunlink.test		\
+	tests/flag-system.test		\
+	tests/flag-uappend.test		\
+	tests/flag-uarchive.test	\
+	tests/flag-uimmutable.test	\
+	tests/flag-uunlink.test		\
 	tests/exclude.test		\
 	tests/group.test		\
 	tests/major.test		\
@@ -78,23 +95,42 @@ TESTS = tests/inocache.test		\
 	tests/xattr.test
 
 EXTRA_DIST = $(bash_FUNCTIONS) $(zsh_FUNCTIONS)		\
+	     tests/contents.lib				\
+	     tests/fakeroot.lib				\
+	     tests/mode.lib				\
+	     tests/pre-check-file.lib			\
+	     tests/test.lib				\
+	     tests/type.lib				\
 	     $(TESTS)					\
 	     tests/acl.out.gold				\
 	     tests/atime.out.gold			\
 	     tests/blocks.out.gold			\
-	     tests/contents.lib				\
 	     tests/contents.out.gold			\
 	     tests/contents-always.out.gold		\
 	     tests/contents-always-diff.out.gold	\
 	     tests/contents-exec.out.gold		\
 	     tests/ctime.out.gold			\
 	     tests/exclude.out.gold			\
-	     tests/fakeroot.lib				\
 	     tests/directories.out.gold			\
+	     tests/flag-archived.out.gold		\
+	     tests/flag-hidden.out.gold			\
+	     tests/flag-nodump.out.gold			\
+	     tests/flag-offline.out.gold		\
+	     tests/flag-opaque.out.gold			\
+	     tests/flag-readonly.out.gold		\
+	     tests/flag-reparse.out.gold		\
+	     tests/flag-sappend.out.gold		\
+	     tests/flag-schange.out.gold		\
+	     tests/flag-sparse.out.gold			\
+	     tests/flag-sunlink.out.gold		\
+	     tests/flag-system.out.gold			\
+	     tests/flag-uappend.out.gold		\
+	     tests/flag-uarchive.out.gold		\
+	     tests/flag-uimmutable.out.gold		\
+	     tests/flag-uunlink.out.gold		\
 	     tests/group.out.gold			\
 	     tests/major.out.gold			\
 	     tests/minor.out.gold			\
-	     tests/mode.lib				\
 	     tests/mode.out.gold			\
 	     tests/mode-and.out.gold			\
 	     tests/mode-or.out.gold			\
@@ -102,8 +138,6 @@ EXTRA_DIST = $(bash_FUNCTIONS) $(zsh_FUNCTIONS)		\
 	     tests/nlinks.out.gold			\
 	     tests/owner.out.gold			\
 	     tests/size.out.gold			\
-	     tests/test.lib				\
-	     tests/type.lib				\
 	     tests/type.out.gold			\
 	     tests/type-root.out.gold			\
 	     tests/type-sock.out.gold			\

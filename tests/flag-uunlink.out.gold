@@ -1,0 +1,3 @@
+tdiff: file1: flag uunlink only set in tests/flag-uunlink.dir2
+tdiff: file3: flag uunlink only set in tests/flag-uunlink.dir1
+tdiff exit code=2

@@ -48,6 +48,7 @@ diff "$gold" "$out" || exitcode=$?
 if [ $exitcode -eq 0 ]
 then
   rm -f "$out"
+  "${cleanup_test:-:}" "$dir1" "$dir2" || :
   rm -fr "$dir1" "$dir2"
 fi
 exit $exitcode

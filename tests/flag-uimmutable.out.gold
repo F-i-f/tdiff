@@ -1,0 +1,3 @@
+tdiff: file1: flag uimmutable only set in tests/flag-uimmutable.dir2
+tdiff: file3: flag uimmutable only set in tests/flag-uimmutable.dir1
+tdiff exit code=2
