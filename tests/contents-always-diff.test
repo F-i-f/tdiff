@@ -6,7 +6,8 @@ set -eu
 
 always_diff_filter() {
   sed -re 's!^([-+]{3} [^[:space:]]+)[[:space:]]+[0-9A-Z].*$!\1!' \
-       -e 's!^@@ .* @@$!@@ X @@!'
+      -e 's!^@@ .* @@$!@@ X @@!' \
+      -e '/^No differences encountered$/d'
 }
 
 tdiff_options="-AW"

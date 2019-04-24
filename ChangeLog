@@ -1,5 +1,8 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/contents-always-diff.test (always_diff_filter): Drop "No
+	differences encounted" lines emitted by Solaris diff.
+
 	* tests/type-door.test, tests/type-door.out.gold: Create.
 
 	* make_door.c: Create.
