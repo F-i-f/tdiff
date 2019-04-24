@@ -7,6 +7,12 @@ then
   exit 77
 fi
 
+pre_check_file() {
+  setfacl -m g::- "$@"
+}
+
+. "$srcdir"/tests/pre-check-file.lib
+
 setup() {
   cat > "$1"/acl-f-list <<-'EOD'
 	u:33:r

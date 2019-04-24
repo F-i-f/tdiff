@@ -1,5 +1,10 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/acl.test: Skip test if we cannot alter ACLs on a test
+	file with pre-check-file.
+
+	* tests/pre-check-file.lib: Create.
+
 	* tests/test.lib: Don't use >& file construct, it's not
 	traditional Bourne.
 
