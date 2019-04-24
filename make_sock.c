@@ -46,11 +46,11 @@ main(int argc, char* argv[])
 
   for (i=1; i < argc; ++i) {
     int fd;
-    struct sockaddr_un sun;
+    struct sockaddr_un saddrun;
 
-    if (strlen(argv[i]) >= sizeof(sun.sun_path)) {
+    if (strlen(argv[i]) >= sizeof(saddrun.sun_path)) {
       fprintf(stderr, "%s: %s: path too long, maximum = %u\n",
-	      argv[0], argv[i], (unsigned)sizeof(sun.sun_path));
+	      argv[0], argv[i], (unsigned)sizeof(saddrun.sun_path));
       exitcode = max(exitcode, 1);
       continue;
     }
@@ -62,10 +62,10 @@ main(int argc, char* argv[])
       exitcode = max(exitcode, 2);
       continue;
     }
-    memset(&sun, 0, sizeof(sun));
-    sun.sun_family = AF_UNIX;
-    strncpy((char*)&sun.sun_path, argv[i], sizeof(sun.sun_path)-1);
-    if (bind(fd, (const struct sockaddr*)&sun, sizeof(sun)) != 0) {
+    memset(&saddrun, 0, sizeof(saddrun));
+    saddrun.sun_family = AF_UNIX;
+    strncpy((char*)&saddrun.sun_path, argv[i], sizeof(saddrun.sun_path)-1);
+    if (bind(fd, (const struct sockaddr*)&saddrun, sizeof(saddrun)) != 0) {
       fprintf(stderr, "%s: %s: bind(): %s\n",
 	      argv[0], argv[i], strerror(errno));
       close(fd);
