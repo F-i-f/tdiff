@@ -1,3 +1,7 @@
+2019-04-24  Philippe Troin  <phil@fifi.org>
+
+	* make_sock.c (main): bind() takes a struct sockaddr* on BSDs.
+
 2019-04-22  Philippe Troin  <phil@fifi.org>
 
 	* .gitignore: Ignore gcov files.

@@ -65,7 +65,7 @@ main(int argc, char* argv[])
     memset(&sun, 0, sizeof(sun));
     sun.sun_family = AF_UNIX;
     strncpy((char*)&sun.sun_path, argv[i], sizeof(sun.sun_path)-1);
-    if (bind(fd, &sun, sizeof(sun)) != 0) {
+    if (bind(fd, (const struct sockaddr*)&sun, sizeof(sun)) != 0) {
       fprintf(stderr, "%s: %s: bind(): %s\n",
 	      argv[0], argv[i], strerror(errno));
       close(fd);
