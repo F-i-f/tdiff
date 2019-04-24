@@ -1,5 +1,8 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/group.test (setup): Chgrp all files to GID 0 in case
+	directories have BSD semantics.
+
 	* tests/atime.test (setup): BSD do not update atime on
 	directories.  Force update the atime for the files we expect
 	change on with touch.
