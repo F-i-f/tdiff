@@ -41,11 +41,17 @@ make_sock_SOURCES     = make_sock.c
 make_sock_LDADD       = $(LIB_FOR_SOCKETS)
 endif
 
+if HAVE_S_IFDOOR
+noinst_PROGRAMS	     += make_door
+make_door_SOURCES     = make_door.c
+endif
+
 bash_FUNCTIONS	      = tdiff.bash
 zsh_FUNCTIONS	      = _tdiff.zsh
 
 AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      FAKEROOT="$(FAKEROOT)" \
+			      HAVE_S_IFDOOR="$(HAVE_S_IFDOOR)" \
 			      HAVE_S_IFSOCK="$(HAVE_S_IFSOCK)" \
 			      HAVE_ST_FLAGS="$(HAVE_ST_FLAGS)" \
 			      HAVE_ACLS="$(HAVE_ACLS)" \
@@ -91,6 +97,7 @@ TESTS = tests/inocache.test		\
 	tests/owner.test		\
 	tests/size.test			\
 	tests/type.test			\
+	tests/type-door.test		\
 	tests/type-sock.test		\
 	tests/type-root.test		\
 	tests/xattr.test
@@ -140,6 +147,7 @@ EXTRA_DIST = $(bash_FUNCTIONS) $(zsh_FUNCTIONS)		\
 	     tests/owner.out.gold			\
 	     tests/size.out.gold			\
 	     tests/type.out.gold			\
+	     tests/type-door.out.gold			\
 	     tests/type-root.out.gold			\
 	     tests/type-sock.out.gold			\
 	     tests/xattr.out.gold

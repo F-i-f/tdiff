@@ -308,6 +308,9 @@ FI_CHECK_LIB_FOR_SOCKETS
 AM_CONDITIONAL([HAVE_S_IFSOCK], [test x$fi_cv_S_IFSOCK = xyes])
 AC_SUBST([HAVE_S_IFSOCK],[$fi_cv_S_IFSOCK])
 
+AM_CONDITIONAL([HAVE_S_IFDOOR], [test x$fi_cv_S_IFDOOR = xyes])
+AC_SUBST([HAVE_S_IFDOOR],[$fi_cv_S_IFDOOR])
+
 AC_SUBST([HAVE_ST_FLAGS],[$fi_cv_st_flags])
 AC_SUBST([HAVE_XATTRS],[$fi_cv_getxattr])
 AC_SUBST([HAVE_ACLS],[$have_acls])

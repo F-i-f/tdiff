@@ -1,5 +1,18 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/type-door.test, tests/type-door.out.gold: Create.
+
+	* make_door.c: Create.
+
+	* Makefile.am (make_door): Create new noninst_PROGRAMS make_door,
+	only compiled if HAVE_S_IFDOOR.
+	(TESTS): Add tests/type-door.test
+	(EXTRA_DIST): Add tests/type-door.out.gold
+	(AM_TESTS_ENVIRONMENT): Add HAVE_S_IFDOOR.
+
+	* configure.ac (HAVE_S_IFDOOR): Create an automake conditional and
+	substitution variable.
+
 	* Makefile.am (make_sock_LDADD): Define to $(LIB_FOR_SOCKETS) for
 	Solaris.
 
