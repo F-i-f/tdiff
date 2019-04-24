@@ -5,13 +5,15 @@ set -eu
 setup() {
   echo "1234" > "$1"/file1
   echo "123" > "$1"/file2
-  dd bs=4k count=4 if=/dev/zero of="$1/file3"
+  dd bs=4k count=16 if=/dev/zero of="$1/file3"
   echo "123" > "$1"/file4
 
   echo "12345" > "$2"/file1
   echo "FILE 2" > "$2"/file2
   ln -s x "$2"/file3
   dd bs=4k count=4 if=/dev/zero of="$2/file4"
+
+  sync
 }
 
 blocks_filter() {

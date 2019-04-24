@@ -1,5 +1,9 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/blocks.test (setup): Increase block counts to 16 4k
+	blocks.  Add a sync before returning as Solaris won't update block
+	counts until the files are committed to disk.
+
 	* tests/contents-always-diff.out.gold: Update.
 
 	* tests/contents-always-diff.test (always_diff_filter): Filter the
