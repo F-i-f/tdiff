@@ -1,5 +1,10 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/contents-always-diff.out.gold: Update.
+
+	* tests/contents-always-diff.test (always_diff_filter): Filter the
+	@@ diff output lines which may be different on different OSes.
+
 	* m4/fi_project.m4: Remove .deps on distclean, not on clean.
 
 	* tests/xattr.test (pre_check_file): Create:  verify that setfattr
