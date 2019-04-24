@@ -1,5 +1,8 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/xattr.test (pre_check_file): Create:  verify that setfattr
+	works on the build directory before comitting to the tests.
+
 	* tests/group.test (setup): Chgrp all files to GID 0 in case
 	directories have BSD semantics.
 

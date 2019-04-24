@@ -7,6 +7,12 @@ then
   exit 77
 fi
 
+pre_check_file() {
+  setfattr -n user.test -v value "$@"
+}
+
+. "$srcdir"/tests/pre-check-file.lib
+
 setup() {
   echo "1" > "$1"/file1
   setfattr -n user.test -v value1 "$1"/file1
