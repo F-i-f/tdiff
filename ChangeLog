@@ -1,3 +1,14 @@
+2019-04-25  Philippe Troin  <phil@fifi.org>
+
+	* configure.ac (FI_FORMAT_MAN): Call on tdiff.1 for html & pdf.
+
+	* Makefile.am (dist_man1_MANS): Add tdiff.1.
+	(EXTRA_DIST): Ship tdiff.1.html & tdiff.1.pdf.
+
+	* m4/fi_format_man.m4 (FI_FORMAT_MAN): Imported from wolpd.
+
+	* tdiff.1: Create.
+
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.c (show_help): Fix typography (space after comma).

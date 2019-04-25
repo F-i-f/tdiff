@@ -25,6 +25,7 @@ bin_PROGRAMS	= tdiff
 
 tdiff_SOURCES	= tdiff.c tdiff.h
 tdiff_LDADD	= libtdiff.a
+dist_man1_MANS	= tdiff.1
 
 noinst_PROGRAMS = inocache_test \
 		  genhash_test
@@ -102,7 +103,10 @@ TESTS = tests/inocache.test		\
 	tests/type-root.test		\
 	tests/xattr.test
 
-EXTRA_DIST = $(bash_FUNCTIONS) $(zsh_FUNCTIONS)		\
+EXTRA_DIST = tdiff.1.html				\
+	     tdiff.1.pdf				\
+	     $(bash_FUNCTIONS)				\
+	     $(zsh_FUNCTIONS)				\
 	     tests/contents.lib				\
 	     tests/fakeroot.lib				\
 	     tests/mode.lib				\

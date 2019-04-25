@@ -1,0 +1,480 @@
+.\" tdiff - tree diffs
+.\" tdiff.1 - Manual page
+.\" Copyright (C) 2019 Philippe Troin <phil+github-commits@fifi.org>
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program.  If not, see <http://www.gnu.org/licenses/>.
+.TH TDIFF 1 "April 2019" "Tdiff" "User Commands"
+.SH NAME
+tdiff \- tree diff, list differences between two directory trees, including
+inode attributes
+.SH SYNOPSIS
+.B tdiff
+[\fI\,OPTIONS\/\fR]... \fIDIRECTORY1\fR \fIDIRECTORY2\fR
+.SH DESCRIPTION
+.PP
+List differences between
+.I DIRECTORY1 and
+.I DIRECTORY2
+file trees.  The list of inode
+attributes to be compared can be modified with the various options.
+.PP
+Most single-letter options come in two versions, upper-case and
+lower-case.  The lower-case option enables the check, while the
+upper-case option disables it.  Similarly, most long options have a
+\fB\-\-no\-\fR version to turn off the equivalent check.
+.PP
+When a content difference is detected, the \fBtdiff\fR can optionally
+use and external program to get a more detailed diff.  See the
+\fB\-x\fR, \fB\-\-exec\fR, \fB\-w\fR, \fB\-\-exec\-always\fR,
+\fB\-W\fR, and \fB\-\-exec\-always\-diff\fR options.
+.SH OPTIONS
+.TP
+\fB\-a\fR, \fB\-\-all\fR
+Turn on all checks, except for file times.
+.br
+This is equivalent to
+.B \-dtmogsbcnejkql
+or
+.B \-\-dirs \-\-type \-\-mode \-\-owner \-\-group \-\-size \-\-blocks
+.B \-\-contents \-\-nlinks \-\-major \-\-minor \-\-xattr \-\-acl.
+.br
+This is the default.
+.TP
+\fB\-A\fR, \fB\-\-no\-all\fR
+Turn off all checks, including file times.
+.br
+This is equivalent to
+.B \-DTMOGZIRSBCNEJKQL
+or
+.B \-\-no\-dirs \-\-no\-type \-\-no\-mode \-\-no\-owner \-\-no\-group
+.B \-\-no\-ctime \-\-no\-mtime \-\-no\-atime \-\-no\-size \-\-no\-blocks
+.B \-\-no\-contents \-\-no\-nlinks \-\-no\-major \-\-no\-minor \-\-no\-xattr
+.B \-\-no\-acl.
+.br
+Unless an other option is used after \fB\-A\fR/\fB\-\-no\-all\fR,
+.B tdiff
+will not report anything but will still traverse the file trees.
+.TP
+\fB\-b\fR, \fB\-\-blocks\fR
+Report file \fBb\fRlock count differences for regular files,
+directories and symbolic links (\fI\,st_blocks\fR does not make sense on
+other types of inodes).
+.TP
+\fB\-B\fR, \fB\-\-no\-blocks\fR
+Do not report file \fBb\fRlock count differences.
+.TP
+\fB\-c\fR, \fB\-\-contents\fR
+Report file \fBc\fRontent differences for regular files and symbolic
+links.
+.br
+For regular files, their contents are compared and any discrepancies
+are reported as a content difference.
+.br
+For symbolic links, a difference will be reported if their targets
+differ.
+.br
+See the
+.BR CONTENT\ COMPARISON
+section below for the exact semantics.
+.TP
+\fB\-C\fR, \fB\-\-no\-contents\fR
+Do not report file \fBc\fRontent differences.
+.TP
+\fB\-d\fR, \fB\-\-dirs\fR
+Diff \fBd\fRirectory contents:  report if any file is present in only
+one directory.
+.TP
+\fB\-D\fR, \fB\-\-no\-dirs\fR
+Do not diff \fBd\fRirectory contents:  files only present in a single
+directory are not reported.
+.TP
+\fB\-g\fR, \fB\-\-group\fR
+Report on any differences in file \fBg\fRroup ownership (owner group id).
+.TP
+\fB\-G\fR, \fB\-\-no\-group\fR
+Do not report any differences in file \fBg\fRroup ownership (owner group id).
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Show a short \fBh\fRelp message and exit.
+.TP
+\fB\-i\fR, \fB\-\-mtime\fR
+Report on any differences in the file modification t\fBi\fRme
+(\fI\,st_mtime\/\fR), up to nanosecond resolution if the underlying OS
+reports it.
+.TP
+\fB\-I\fR, \fB\-\-no\-mtime\fR
+Do not report any differences in file modification t\fBi\fRmes
+(\fI\,st_mtime\/\fR).
+.TP
+\fB\-j\fR, \fB\-\-major\fR
+For device files (either block or character), report any differences
+in ma\fBj\fRor device numbers.
+.br
+Note that major numbers will be compared across same or different
+(block or character) device file types.
+.TP
+\fB\-J\fR, \fB\-\-no\-major\fR
+Do not report any differences in major device numbers on device files.
+.TP
+\fB\-k\fR, \fB\-\-minor\fR
+For device files (either block or character), report any differences
+in minor device numbers.
+.br
+Note that minor numbers will be compared across same or different
+(block or character) device file types.
+.TP
+\fB\-K\fR, \fB\-\-no\-minor\fR
+Do not report any differences in minor device numbers on device files.
+.TP
+\fB\-l\fR, \fB\-\-acl\fR
+Report on any differences in file ACLs as defined by
+.BR acl_set_file(3).
+.br
+Any missing or different ACLs between the file pairs are
+reported.  Access, default and mask ACL entries are supported.
+.TP
+\fB\-L\fR, \fB\-\-no\-acl\fR
+Do not report any differences in file ACLs.
+.TP
+\fB\-m\fR, \fB\-\-mode\fR
+Report on any differences in the file access \fBm\fRode.  If set,
+\fB\-\-mode\-or\fR and \fB\-\-mode\-and\fR bitmasks are applied
+.TP
+\fB\-M\fR, \fB\-\-no\-mode\fR
+Do not report any differences in the file access \fBm\fRodes.
+.TP
+\fB\-n\fR, \fB\-\-nlinks\fR
+Report on any differences in file (hard) link counts
+(\fI\,st_\/\fBn\fI\,links\/\fR).
+.TP
+\fB\-N\fR, \fB\-\-no\-nlinks\fR
+Do not report any differences in file (hard) link counts.
+.TP
+\fB\-o\fR, \fB\-\-owner\fR
+Report on any differences in file \fBo\fRwnership (owner user id).
+.TP
+\fB\-O\fR, \fB\-\-no\-owner\fR
+Do not report any differences in file \fBo\fRwnership (owner user id).
+.TP
+\fB\-q\fR, \fB\-\-xattr\fR
+Report on any differences in file extended attributes as defined by
+.BR setxattr(2).
+.br
+Any missing or different extended attributes between the file pairs are
+reported.
+.TP
+\fB\-Q\fR, \fB\-\-no\-xattr\fR
+Do not report any differences in file extended attributes.
+.TP
+\fB\-r\fR, \fB\-\-atime\fR
+Report on any differences in the file access time (\fI\,st_atime\/\fR), up
+to nanosecond resolution if the underlying OS reports it.
+.br
+Since merely reading a file causes the access time to be updated, this
+option is likely to be of limited use.
+.B tdiff
+will not update the file access times when comparing files if compiled
+on an OS with
+.B O_NOATIME
+.BR open(2)
+support.  However commands specified with \fB\-x\fR/\fB\-\-exec\fR,
+\fB\-w\fR/\fB\-\-exec\-always\fR or
+\fB\-W\fR/\fB\-\-exec\-always\-diff\fR may update the access times of
+the files they read.
+.TP
+\fB\-R\fR, \fB\-\-no\-atime\fR
+Do not report any differences in file access times
+(\fI\,st_atime\/\fR).
+.TP
+\fB\-s\fR, \fB\-\-size\fR
+Report file \fBs\fRize differences for regular files and symbolic
+links (\fI\,st_size\fR does not make sense on other types of inodes).
+.TP
+\fB\-S\fR, \fB\-\-no\-size\fR
+Do not report file \fBs\fRize differences.
+.TP
+\fB\-t\fR, \fB\-\-type\fR
+Report file \fBt\fRype differences (files, directories, symbolic links,
+etc.)
+.TP
+\fB\-T\fR, \fB\-\-no\-type\fR
+Do not report file \fBt\fRype differences between the two compared directories.
+Turning off file type comparisons also turns off size
+(\fB\-\-no\-size\fR), block size (\fB\-\-no\-blocks\fR), major
+(\fB\-\-no\-major\fR), minor (\fB\-\-no\-minor\fR) and file contents
+(\fB\-\-no\-contents\fR) comparisons.
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Increase \fBv\fRerbosity, currently reports about the inode cache
+used to avoid comparing hard-linked files more than once.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Show the
+.B tdiff
+\fBv\fRersion information, and compiled-in features then exit.
+.TP
+\fB\-x\fR, \fB\-\-exec\fR \fICOMMAND... \\;\fR
+Uses
+.I COMMAND
+when comparing files whose sizes are the same.
+.I COMMAND
+is a command line terminated by a semi-colon, which must be escaped
+to avoid processing by the shell.
+.br
+In the arguments can appear the
+strings
+.I %1
+and
+.I %2
+which will be replaced by the paths to files in the first
+or second compared directories.
+.I %1
+and
+.I %2
+can only appear once in the command line, and must be full words:
+they cannot appear inside a larger shell word.
+.br
+If the option is specified more than once, the last command defined
+will be used.
+.TP
+\fB\-X\fR, \fB\-\-exclude\fR \fIFILE\fR
+Excludes
+.I FILE
+from processing: any discrepancies on a file or missing file named
+.I FILE
+will not be reported.  Neither will external commands be ran on them.
+If
+.I FILE
+matches the name of a directory, it will not be descended into and any
+sub-directories or files it contains will be completely ignored.
+.br
+This option may be specified more than once, all the files listed will
+be added to the exclusion list.
+.TP
+\fB\-w\fR, \fB\-\-exec\-always\fR \fICOMMAND... \\;\fR
+Always execute
+.I COMMAND
+for any pair of matching regular files found in the trees.
+.I COMMAND
+is defined as for the \fB\-x\fR/\fB\-\-exec\fR options.
+.br
+If the option is specified more than once, the last command defined
+will be used.
+.TP
+\fB\-W\fR, \fB\-\-exec\-always\-diff\fR
+Always execute
+.I diff \-u
+for any pair of matching regular files found in the trees.
+This is a shortcut for:
+.br
+.B tdiff \-\-exec\-always diff \-u %1 %2 \\;
+.br
+The option will supersede whichever command was specified in a
+\fB\-w\fR/\fB\-\-exec\-always\fR option appearing earlier on the option
+list.
+.TP
+\fB\-z\fR, \fB\-\-ctime\fR
+Report on any differences in the file inode change time
+(\fI\,st_ctime\/\fR), up to nanosecond resolution if the underlying OS
+reports it.
+.br
+Since inode change times are automatically set by Unix to the current
+time and cannot be changed afterwards, they will always be reported as
+different for any two file trees, unless in some rare cases (likely
+involving cloning raw file system images).
+.TP
+\fB\-Z\fR, \fB\-\-no\-ctime\fR
+Do not report any differences in file file inode change times
+(\fI\,st_ctime\/\fR).
+.TP
+\fB\-\\|\fR, \fB\-\-mode\-or\fR \fIMASK\fR
+Note that the pipe character must be escaped to prevent it from being
+interpreted by the shell.
+.br
+When comparing file permission bits, perform a binary or between the
+permission bits and
+.I MASK
+before comparing them.
+.br
+.I MASK
+is specified in octal, like with
+.BR chmod(2),
+unless prefixed with \fB0x\fR, in which case it is parsed as hexadecimal.
+.TP
+\fB\-\\&\fR, \fB\-\-mode\-and\fR \fIMASK\fR
+Note that the ampersand character must be escaped to prevent it from being
+interpreted by the shell.
+.br
+When comparing file permission bits, perform a binary and between the
+permission bits and
+.I MASK
+before comparing them.
+.br
+.I MASK
+is specified in octal, like with
+.BR chmod(2),
+unless prefixed with \fB0x\fR, in which case it is parsed as hexadecimal.
+.SH CONTENT COMPARISONS
+.B tdiff
+uses built-in code for file comparisons.  It avoid running an actual
+comparison if the file's sizes (\fI\,st_size\/\fR) are different: the
+files with different sizes will be reported as having different
+contents without even comparing them as the size difference is enough
+to ascertain a content difference.
+.PP
+If either the \fB\-x\fR or \fB\-\-exec\fR options are used, the
+command specified there will be ran instead of the built-in comparison
+and its exit status used to detect a difference (zero exit status
+meaning no difference, and non-zero meaning a difference).  With
+either these options in effect,
+.B tdiff
+will not print any error message if the files are different, the
+command used for \fB\-x\fR/\fB\-\-exec\fR should take care of
+reporting the error.  Note that the command
+.I will not be ran if
+.B tdiff
+.I can find via the file size
+that the files differ by virtue of having different sizes.
+.PP
+If either the \fB\-w\fR, \fB\-\-exec\-always\fR, \fB\-W\fR or
+\fB\-\-exec\-always\-diff\fR options are used, the command specified
+with these options will always be ran for every pair of regular files
+having the same path in both directories, whether or not they have the
+same size.  The internal comparison pass will run and will report if
+the files are different, then the
+\fB\-w\fR/\fB\-\-exec\-always\fR/\fB\-W\fR/\fB\-\-exec\-always\-diff\fR
+command will run.
+.B tdiff
+will record a difference if the
+\fB\-w\fR/\fB\-\-exec\-always\fR/\fB\-W\fR/\fB\-\-exec\-always\-diff\fR
+command returns with non\-zero exit status, even if the internal
+comparison or the \fB\-x\fR/\fB\-\-exec\fR command are successful.
+.PP
+If both \fB\-x\fR/\fB\-\-exec\fR and
+\fB\-w\fR/\fB\-\-exec\-always\fR/\fB\-W\fR/\fB\-\-exec\-always\-diff\fR
+options are used, then the command specified for
+\fB\-x\fR/\fB\-\-exec\fR will be ran if the file sizes of the compared
+files are the same, and the command specified by
+\fB\-w\fR/\fB\-\-exec\-always\fR/\fB\-W\fR/\fB\-\-exec\-always\-diff\fR
+will always run.
+.br
+This means that with options from both groups active, both the
+\fB\-x\fR/\fB\-\-exec\fR and
+\fB\-w\fR/\fB\-\-exec\-always\fR/\fB\-W\fR/\fB\-\-exec\-always\-diff\fR
+commands will be ran for files with the same size.
+.SH EXIT STATUS
+.B tdiff
+exits with status:
+.TP
+0
+if no discrepancies nor errors were encountered.
+.TP
+1
+if there were any problems with arguments or parsing the command line.
+.TP
+2
+if there were any differences reported.
+.TP
+3
+if there was any system error (a file couldn't be read for example).
+.TP
+4
+if there was an internal error.  This should not happen.
+.SH EXAMPLES
+Only report if any files are present in only one directory:
+.RS 4
+.PP
+.B tdiff \-\-no\-all \-\-dirs
+.I directory1 directory2
+.RS -4
+.PP
+Report only ownership differences, ignore any missing files:
+.RS 4
+.PP
+.B tdiff \-\-no\-all \-\-owner \-\-group
+.I directory1 directory2
+.RS -4
+.PP
+Report only group permission bits differences, ignore any missing files:
+.RS 4
+.PP
+.B tdiff \-\-no\-all \-\-mode \-\-mode\-and 70
+.I directory1 directory2
+.RS -2
+.PP
+or:
+.RS 2
+.PP
+.B tdiff \-\-no\-all \-\-mode \-\-mode\-or 7707
+.I directory1 directory2
+.RS -4
+.PP
+Report only sticky bits differences, ignore any missing files:
+.RS 4
+.PP
+.B tdiff \-\-no\-all \-\-mode \-\-mode\-and 1000
+.I directory1 directory2
+.RS -2
+.PP
+or:
+.RS 2
+.PP
+.B tdiff \-\-no\-all \-\-mode \-\-mode\-or 6777
+.I directory1 directory2
+.RS -4
+.PP
+Run
+.B cmp \-l
+on every file of the same size in both trees:
+.RS 4
+.PP
+.B tdiff \-\-no\-all \-\-exec cmp %1 %2 \\;
+.I directory1 directory2
+.RS -4
+.PP
+Run super-diff: diff files with
+.B diff \-u
+and reports any other kind of differences in inode contents except for
+times:
+.RS 4
+.PP
+.B tdiff \-\-exec\-always\-diff
+.I directory1 directory2
+.RS -2
+.PP
+or more shortly:
+.RS 2
+.PP
+.B tdiff \-W
+.I directory1 directory2
+.RS -4
+.SH SEE ALSO
+.BR acl_set_file(1),
+.BR chmod(1),
+.BR diff(1),
+.BR getfacl(1),
+.BR getfattr(1),
+.BR open(2),
+.BR setxattr(2),
+.BR stat(2)
+\"  LocalWords:  tdiff Troin phil MERCHANTABILITY inode fI fR fB dirs
+\"  LocalWords:  DIRECTORY1 DIRECTORY2 fBtdiff fBd fRirectory TP fBh
+\"  LocalWords:  fRelp fBm fRode bitmasks fRodes fBt fRype fBv br acl
+\"  LocalWords:  fRerbosity fRersion dtmogsbcnejkql nlinks xattr fBb
+\"  LocalWords:  DTMOGZIRSBCNEJKQL ctime mtime atime fRlock fIst fBc
+\"  LocalWords:  inodes fRontent fBg fRroup fBi fRme fRmes fBj fRor
+\"  LocalWords:  ACLs fBn fIlinks fBo fRwnership setxattr NOATIME fBs
+\"  LocalWords:  fRize getfacl getfattr fICOMMAND fIFILE fIMASK chmod
+\"  LocalWords:  fB0x directory1 directory2 fIDIRECTORY2 cmp
+\"  LocalWords:  fIDIRECTORY1

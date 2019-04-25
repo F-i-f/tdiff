@@ -37,6 +37,7 @@ AC_PROG_RANLIB
 AC_PROG_EGREP
 AC_PROG_INSTALL
 AC_CHECK_PROG([FAKEROOT],[fakeroot],[fakeroot])
+FI_FORMAT_MAN([tdiff.1], [html pdf])
 
 FI_GIT_REVISION
 
