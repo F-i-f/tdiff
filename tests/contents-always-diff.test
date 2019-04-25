@@ -5,7 +5,7 @@ set -eu
 . "$srcdir"/tests/contents.lib
 
 always_diff_filter() {
-  sed -re 's!^([-+]{3} [^[:space:]]+)[[:space:]]+[0-9A-Z].*$!\1!' \
+  sed -e 's!^\(\([-+]\)\2\2 [^[:space:]][^[:space:]]*\)[[:space:]][[:space:]]*[0-9A-Z].*$!\1!' \
       -e 's!^@@ .* @@$!@@ X @@!' \
       -e '/^No differences encountered$/d'
 }

@@ -18,7 +18,7 @@ setup() {
 }
 
 atime_filter() {
-  sed -re 's!(: atime:) \[[^]]+\] \[[^]]+\]$!\1 [XXX] [XXX]!'
+  sed -e 's!\(: atime:\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
 }
 
 tdiff_options="-Ar"

@@ -17,7 +17,7 @@ setup() {
 }
 
 blocks_filter() {
-  sed -re 's!(: blocks:) [0-9]+ [0-9]+$!\1 X X!'
+  sed -e 's!\(: blocks:\) [0-9][0-9]* [0-9][0-9]*$!\1 X X!'
 }
 
 tdiff_options="-Ab"

@@ -1,5 +1,15 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/owner.test (owner_filter):
+	* tests/mtime.test (mtime_filter):
+	* tests/group.test (owner_filter):
+	* tests/ctime.test (ctime_filter):
+	* tests/contents-always-diff.test (always_diff_filter):
+	* tests/blocks.test (blocks_filter):
+	* tests/atime.test (atime_filter):
+	* tests/acl.test (acl_filter):
+	Can't use sed -r on MacOSX.
+
 	* tests/contents-always-diff.test (always_diff_filter): Drop "No
 	differences encounted" lines emitted by Solaris diff.
 

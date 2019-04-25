@@ -68,7 +68,7 @@ EOD
 }
 
 acl_filter() {
-  sed -re 's!(: (access|default) acl (user|group):)[^[:space:]]+(: .*)$!\1XX\4!'
+  sed -e 's!\(: \(access\|default\) acl \(user\|group\):\)[^[:space:]]\+\(: .*\)$!\1XX\4!'
 }
 
 tdiff_options="-Al"

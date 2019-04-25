@@ -16,7 +16,7 @@ setup() {
 }
 
 ctime_filter() {
-  sed -re 's!(: ctime:) \[[^]]+\] \[[^]]+\]$!\1 [XXX] [XXX]!'
+  sed -e 's!\(: ctime:\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
 }
 
 tdiff_options="-Az"
