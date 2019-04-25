@@ -11,8 +11,8 @@ setup() {
   sleep 1
 
   cp -pr "$1"/* "$2"/
-  rm "$1"/file1
-  mkdir "$1"/file1
+  rm "$2"/file1
+  mkdir "$2"/file1
 }
 
 ctime_filter() {

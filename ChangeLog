@@ -1,5 +1,9 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/ctime.test (setup): Replace file1 with a directory on
+	directory 2 or the ctime change is not guaranteed on
+	non-sub-second time systems (eg. MacOSX).
+
 	* tests/owner.test (owner_filter):
 	* tests/mtime.test (mtime_filter):
 	* tests/group.test (owner_filter):
