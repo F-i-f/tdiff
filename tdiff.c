@@ -1115,7 +1115,7 @@ show_help(void)
 	 "   -i --mtime     diffs mtime (contents modification time)\n"
 	 "   -r --atime     diffs atime (access time)\n"
 	 "   -s --size      diffs file size (for regular files, symlinks)\n"
-	 "   -b --blocks    diffs file blocks (for regular files,symlinks and directories)\n"
+	 "   -b --blocks    diffs file blocks (for regular files, symlinks and directories)\n"
 	 "   -c --contents  diffs file contents (for regular files and symlinks)\n"
 	 "   -n --nlinks    diffs the (hard) link count \n"
 	 "   -j --major     diffs major device numbers (for device files)\n"

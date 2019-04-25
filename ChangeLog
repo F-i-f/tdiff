@@ -1,5 +1,7 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (show_help): Fix typography (space after comma).
+
 	* tests/nlinks.test (nlinks_filter):
 	* tests/mtime.test (mtime_filter):
 	* tests/ctime.out.gold:
