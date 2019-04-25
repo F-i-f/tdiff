@@ -1,4 +1,4 @@
-tdiff: file: mode: 0400 0401 (masked 0400 0401)
-tdiff: sub: mode: 0712 0722 (masked 0712 0722)
-tdiff: sub/file: mode: 0717 0617 (masked 0717 0617)
+tdiff: file: mode: 0400 0401
+tdiff: sub: mode: 0712 0722
+tdiff: sub/file: mode: 0717 0617
 tdiff exit code=2

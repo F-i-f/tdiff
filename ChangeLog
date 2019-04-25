@@ -1,5 +1,13 @@
 2019-04-25  Philippe Troin  <phil@fifi.org>
 
+	* tests/mode.out.gold: Update.
+
+	* tdiff.c (OPT_MODE_OR_DEFAULT, OPT_MODE_AND_DEFAULT): Define.
+	(dodiff): Only show masked values when either --mode-or or
+	--mode-and are used.
+	(main): Use OPT_MODE_OR_DEFAULT and OPT_MODE_AND_DEFAULT when
+	initializing options structure.
+
 	* m4/fi_format_man.m4 (FI_FORMAT_MAN):
 	AC_REQUIRE(FI_FORMAT_MAN_INIT_ONCE), use groff instead of man to
 	format manpage hard copies.

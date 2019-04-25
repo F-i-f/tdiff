@@ -120,6 +120,8 @@ typedef struct dexe_s
   char ** arg2;
 } dexe_t;
 
+#define OPT_MODE_OR_DEFAULT  ((unsigned)0)
+#define OPT_MODE_AND_DEFAULT ((unsigned)~0)
 typedef struct option_s
 {
   unsigned int verbosityLevel:8;
@@ -1478,8 +1480,19 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 
       if (mm1 != mm2)
 	{
-	  printf("%s: %s: mode: %04o %04o (masked %04o %04o)\n",
-		 progname, subpath, rm1, rm2, mm1, mm2);
+	  char buf[32];
+	  /**/
+
+	  if (opts->mode_or != OPT_MODE_OR_DEFAULT
+	      || opts->mode_and != OPT_MODE_AND_DEFAULT) {
+	    snprintf(buf, sizeof(buf), " (masked %04o %04o)",
+		     mm1, mm2);
+	  } else {
+	    buf[0] = '\0';
+	  }
+
+	  printf("%s: %s: mode: %04o %04o%s\n",
+		 progname, subpath, rm1, rm2, buf);
 	  localerr = 1;
 	}
     }
@@ -1901,8 +1914,8 @@ main(int argc, char*argv[])
   options.acl		    = 1;
   /* options.exec           = 0; */
   /* options.exec_always    = 0; */
-  /* options.mode_or        = 0; */
-  options.mode_and	    = ~0;
+  options.mode_or           = OPT_MODE_OR_DEFAULT;
+  options.mode_and	    = OPT_MODE_AND_DEFAULT;
 
   options.exclusions = gh_new(&gh_string_hash, &gh_string_equal, &free, NULL);
 
