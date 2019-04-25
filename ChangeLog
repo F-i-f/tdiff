@@ -1,5 +1,12 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/nlinks.test (nlinks_filter):
+	* tests/mtime.test (mtime_filter):
+	* tests/nlinks.out.gold:
+	* tests/mtime.out.gold:
+	Drop the top-level directory: The link count or mtime may not
+	changed for directories on non-traditional file systems (eg. HFS).
+
 	* tests/ctime.test (setup): Replace file1 with a directory on
 	directory 2 or the ctime change is not guaranteed on
 	non-sub-second time systems (eg. MacOSX).

@@ -1,4 +1,3 @@
-tdiff: .: mtime: [XXX] [XXX]
 tdiff: file1: mtime: [XXX] [XXX]
 tdiff: file2: mtime: [XXX] [XXX]
 tdiff exit code=0

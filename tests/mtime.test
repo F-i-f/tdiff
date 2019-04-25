@@ -17,7 +17,8 @@ setup() {
 }
 
 mtime_filter() {
-  sed -e 's!\(: mtime:\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
+  sed -e '/^tdiff: \.: mtime: /d' \
+      -e 's!\(: mtime:\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
 }
 
 tdiff_options="-Ai"
