@@ -16,28 +16,61 @@
 .\" along with this program.  If not, see <http://www.gnu.org/licenses/>.
 .TH TDIFF 1 "April 2019" "Tdiff" "User Commands"
 .SH NAME
-tdiff \- tree diff, list differences between two directory trees, including
-inode attributes
+tdiff \- tree diff, list differences between various inode attributes (
+.BR stat(2)
+structure) and contents for two directory trees
 .SH SYNOPSIS
 .B tdiff
 [\fI\,OPTIONS\/\fR]... \fIDIRECTORY1\fR \fIDIRECTORY2\fR
 .SH DESCRIPTION
 .PP
 List differences between
-.I DIRECTORY1 and
+.I DIRECTORY1
+and
 .I DIRECTORY2
-file trees.  The list of inode
-attributes to be compared can be modified with the various options.
+file trees, comparing any of the inode attributes, also known as
+.BR stat(2)
+structure.  Inode attributes are:
+.RS 3
+.IP \(bu 3
+file type (regular file, directory, FIFO, socket, etc.)
+.IP \(bu
+file size
+.IP \(bu
+file block count (physical storage size)
+.IP \(bu
+owner uid and gid
+.IP \(bu
+access, modification and inode change times
+.IP \(bu
+extended attributes (if supported)
+.IP \(bu
+ACLs (if supported)
+.IP \(bu
+file system flags (BSD UFS, MacOSX)
+.RS -3
+.PP
+By default,
+.B tdiff
+reports differences in any file contents or attributes except for the
+various file times.  The set of attributes to be checked can be
+altered Which attribute and contents to be check attributes to be
+compared can be modified with the various options.
 .PP
 Most single-letter options come in two versions, upper-case and
-lower-case.  The lower-case option enables the check, while the
-upper-case option disables it.  Similarly, most long options have a
-\fB\-\-no\-\fR version to turn off the equivalent check.
+lower-case.  The lower-case option enables the the attribute check,
+while the upper-case option disables it.  Similarly, most long options
+have a \fB\-\-no\-\fR version to turn off the equivalent check.
 .PP
-When a content difference is detected, the \fBtdiff\fR can optionally
-use and external program to get a more detailed diff.  See the
-\fB\-x\fR, \fB\-\-exec\fR, \fB\-w\fR, \fB\-\-exec\-always\fR,
-\fB\-W\fR, and \fB\-\-exec\-always\-diff\fR options.
+Beyond inode attribute checks,
+.B tdiff
+can check (and will check by default) regular files for contents
+difference.  Optionally,
+.B tdiff
+can use an external program to determine if the files are considered
+to be different.  See the \fB\-x\fR/\fB\-\-exec\fR,
+\fB\-w\fR/\fB\-\-exec\-always\fR, and \fB\-W\fR/\fB\-\-exec\-always\-diff\fR
+options.
 .SH OPTIONS
 .TP
 \fB\-a\fR, \fB\-\-all\fR
@@ -48,6 +81,8 @@ This is equivalent to
 or
 .B \-\-dirs \-\-type \-\-mode \-\-owner \-\-group \-\-size \-\-blocks
 .B \-\-contents \-\-nlinks \-\-major \-\-minor \-\-xattr \-\-acl.
+.br
+Note that the file time options are not touched.
 .br
 This is the default.
 .TP
@@ -79,13 +114,13 @@ Report file \fBc\fRontent differences for regular files and symbolic
 links.
 .br
 For regular files, their contents are compared and any discrepancies
-are reported as a content difference.
+are reported as contents difference.
 .br
 For symbolic links, a difference will be reported if their targets
 differ.
 .br
 See the
-.BR CONTENT\ COMPARISON
+.BR CONTENTS\ COMPARISONS
 section below for the exact semantics.
 .TP
 \fB\-C\fR, \fB\-\-no\-contents\fR
@@ -109,7 +144,7 @@ Do not report any differences in file \fBg\fRroup ownership (owner group id).
 Show a short \fBh\fRelp message and exit.
 .TP
 \fB\-i\fR, \fB\-\-mtime\fR
-Report on any differences in the file modification t\fBi\fRme
+Report on any differences in file modification t\fBi\fRme
 (\fI\,st_mtime\/\fR), up to nanosecond resolution if the underlying OS
 reports it.
 .TP
@@ -139,7 +174,7 @@ Do not report any differences in minor device numbers on device files.
 .TP
 \fB\-l\fR, \fB\-\-acl\fR
 Report on any differences in file ACLs as defined by
-.BR acl_set_file(3).
+.BR acl_set_file(3) .
 .br
 Any missing or different ACLs between the file pairs are
 reported.  Access, default and mask ACL entries are supported.
@@ -148,11 +183,15 @@ reported.  Access, default and mask ACL entries are supported.
 Do not report any differences in file ACLs.
 .TP
 \fB\-m\fR, \fB\-\-mode\fR
-Report on any differences in the file access \fBm\fRode.  If set,
+Report on any differences in file access \fBm\fRode (permission bits as
+set by
+.BR chmod(1) ).
+If set,
 \fB\-\-mode\-or\fR and \fB\-\-mode\-and\fR bitmasks are applied
 .TP
 \fB\-M\fR, \fB\-\-no\-mode\fR
-Do not report any differences in the file access \fBm\fRodes.
+Do not report any differences in file access \fBm\fRodes (permission
+bits).
 .TP
 \fB\-n\fR, \fB\-\-nlinks\fR
 Report on any differences in file (hard) link counts
@@ -169,7 +208,7 @@ Do not report any differences in file \fBo\fRwnership (owner user id).
 .TP
 \fB\-q\fR, \fB\-\-xattr\fR
 Report on any differences in file extended attributes as defined by
-.BR setxattr(2).
+.BR setxattr(2) .
 .br
 Any missing or different extended attributes between the file pairs are
 reported.
@@ -178,7 +217,7 @@ reported.
 Do not report any differences in file extended attributes.
 .TP
 \fB\-r\fR, \fB\-\-atime\fR
-Report on any differences in the file access time (\fI\,st_atime\/\fR), up
+Report on any differences in file access time (\fI\,st_atime\/\fR), up
 to nanosecond resolution if the underlying OS reports it.
 .br
 Since merely reading a file causes the access time to be updated, this
@@ -209,22 +248,60 @@ Report file \fBt\fRype differences (files, directories, symbolic links,
 etc.)
 .TP
 \fB\-T\fR, \fB\-\-no\-type\fR
-Do not report file \fBt\fRype differences between the two compared directories.
-Turning off file type comparisons also turns off size
-(\fB\-\-no\-size\fR), block size (\fB\-\-no\-blocks\fR), major
-(\fB\-\-no\-major\fR), minor (\fB\-\-no\-minor\fR) and file contents
-(\fB\-\-no\-contents\fR) comparisons.
+Do not report file \fBt\fRype differences between the two compared
+directories.
 .TP
 \fB\-v\fR, \fB\-\-verbose\fR
 Increase \fBv\fRerbosity, currently reports about the inode cache
-used to avoid comparing hard-linked files more than once.
+used to avoid comparing hard-linked files more than once.  Four
+cumulative levels of logging verbosity are supported:
+.RS 10
+.TP
+.B -v
+report overall statistics: total number of files scanned, compared,
+etc.
+.TP
+.B -vv
+report if any files are skipped, and for what reason (exclusion,
+already compared, etc.)
+.TP
+.B -vvv
+report internal data structure statistics.
+.TP
+.B -vvvv
+report memory statistics.
+.RS -10
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Show the
 .B tdiff
-\fBv\fRersion information, and compiled-in features then exit.
+\fBv\fRersion information and compiled-in features then exit.
 .TP
-\fB\-x\fR, \fB\-\-exec\fR \fICOMMAND... \\;\fR
+\fB\-w\fR, \fB\-\-exec\-always\fR \fICOMMAND... \\\/;\fR
+Always execute
+.I COMMAND
+for any pair of matching regular files found in the trees.
+.I COMMAND
+is defined as for the \fB\-x\fR/\fB\-\-exec\fR options.
+.br
+If the option is specified more than once, the last command defined
+will be used.
+.TP
+\fB\-W\fR, \fB\-\-exec\-always\-diff\fR
+Always execute
+.I diff \-u
+for any pair of matching regular files found in the trees.
+This is a shortcut for:
+.in +2
+.br
+.B tdiff \-\-exec\-always diff \-u %1 %2 \\;
+.in -2
+.br
+The option will supersede whichever command was specified in a
+\fB\-w\fR/\fB\-\-exec\-always\fR option appearing earlier on the option
+list.
+.TP
+\fB\-x\fR, \fB\-\-exec\fR \fICOMMAND... \\\/;\fR
 Uses
 .I COMMAND
 when comparing files whose sizes are the same.
@@ -242,7 +319,7 @@ or second compared directories.
 .I %1
 and
 .I %2
-can only appear once in the command line, and must be full words:
+can only appear once on the command line, and must be full words:
 they cannot appear inside a larger shell word.
 .br
 If the option is specified more than once, the last command defined
@@ -262,36 +339,14 @@ sub-directories or files it contains will be completely ignored.
 This option may be specified more than once, all the files listed will
 be added to the exclusion list.
 .TP
-\fB\-w\fR, \fB\-\-exec\-always\fR \fICOMMAND... \\;\fR
-Always execute
-.I COMMAND
-for any pair of matching regular files found in the trees.
-.I COMMAND
-is defined as for the \fB\-x\fR/\fB\-\-exec\fR options.
-.br
-If the option is specified more than once, the last command defined
-will be used.
-.TP
-\fB\-W\fR, \fB\-\-exec\-always\-diff\fR
-Always execute
-.I diff \-u
-for any pair of matching regular files found in the trees.
-This is a shortcut for:
-.br
-.B tdiff \-\-exec\-always diff \-u %1 %2 \\;
-.br
-The option will supersede whichever command was specified in a
-\fB\-w\fR/\fB\-\-exec\-always\fR option appearing earlier on the option
-list.
-.TP
 \fB\-z\fR, \fB\-\-ctime\fR
-Report on any differences in the file inode change time
+Report on any differences in file inode change time
 (\fI\,st_ctime\/\fR), up to nanosecond resolution if the underlying OS
 reports it.
 .br
 Since inode change times are automatically set by Unix to the current
 time and cannot be changed afterwards, they will always be reported as
-different for any two file trees, unless in some rare cases (likely
+different for any two file trees, except in rare cases (likely
 involving cloning raw file system images).
 .TP
 \fB\-Z\fR, \fB\-\-no\-ctime\fR
@@ -309,8 +364,8 @@ before comparing them.
 .br
 .I MASK
 is specified in octal, like with
-.BR chmod(2),
-unless prefixed with \fB0x\fR, in which case it is parsed as hexadecimal.
+.BR chmod(2) ,
+unless prefixed with \fI0x\/\fR, in which case it is parsed as hexadecimal.
 .TP
 \fB\-\\&\fR, \fB\-\-mode\-and\fR \fIMASK\fR
 Note that the ampersand character must be escaped to prevent it from being
@@ -323,15 +378,15 @@ before comparing them.
 .br
 .I MASK
 is specified in octal, like with
-.BR chmod(2),
-unless prefixed with \fB0x\fR, in which case it is parsed as hexadecimal.
-.SH CONTENT COMPARISONS
+.BR chmod(2) ,
+unless prefixed with \fI0x\/\fR, in which case it is parsed as hexadecimal.
+.SH CONTENTS COMPARISONS
 .B tdiff
-uses built-in code for file comparisons.  It avoid running an actual
+uses built-in code for file contents comparisons.  It avoid running an actual
 comparison if the file's sizes (\fI\,st_size\/\fR) are different: the
 files with different sizes will be reported as having different
 contents without even comparing them as the size difference is enough
-to ascertain a content difference.
+to ascertain that their contents differ.
 .PP
 If either the \fB\-x\fR or \fB\-\-exec\fR options are used, the
 command specified there will be ran instead of the built-in comparison
@@ -347,12 +402,12 @@ reporting the error.  Note that the command
 .I can find via the file size
 that the files differ by virtue of having different sizes.
 .PP
-If either the \fB\-w\fR, \fB\-\-exec\-always\fR, \fB\-W\fR or
-\fB\-\-exec\-always\-diff\fR options are used, the command specified
-with these options will always be ran for every pair of regular files
-having the same path in both directories, whether or not they have the
-same size.  The internal comparison pass will run and will report if
-the files are different, then the
+If either the \fB\-w\fR/\fB\-\-exec\-always\fR or
+\fB\-W\fR/\fB\-\-exec\-always\-diff\fR options are used, the command
+specified with these options will always be ran for every pair of
+regular files having the same path in both directories, whether or not
+they have the same size.  The internal comparison pass will run and
+will report if the files are different, then the
 \fB\-w\fR/\fB\-\-exec\-always\fR/\fB\-W\fR/\fB\-\-exec\-always\-diff\fR
 command will run.
 .B tdiff
@@ -439,7 +494,7 @@ Run
 on every file of the same size in both trees:
 .RS 4
 .PP
-.B tdiff \-\-no\-all \-\-exec cmp %1 %2 \\;
+.B tdiff \-\-no\-all \-\-exec cmp -l %1 %2 \\\\\/;
 .I directory1 directory2
 .RS -4
 .PP
@@ -459,15 +514,36 @@ or more shortly:
 .B tdiff \-W
 .I directory1 directory2
 .RS -4
+.SH REPORTING BUGS
+Report bugs on the
+.UR https://github.com/F-i-f/tdiff/issues
+GitHub Issues page
+.UE .
+.SH COPYRIGHT
+Copyright (C) 1999, 2008, 2014, 2019 Philippe Troin (
+.UR https://github.com/F-i-f
+F-i-f on GitHub
+.UE ).
+.PP
+.B tdiff
+comes with ABSOLUTELY NO WARRANTY.
+.br
+This is free software, and you are welcome to redistribute it
+under certain conditions.
+.br
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see
+.UR http://www.gnu.org/licenses/
+.UE .
 .SH SEE ALSO
-.BR acl_set_file(1),
-.BR chmod(1),
-.BR diff(1),
-.BR getfacl(1),
-.BR getfattr(1),
-.BR open(2),
-.BR setxattr(2),
-.BR stat(2)
+.BR acl_set_file(1) ,
+.BR chmod(1) ,
+.BR diff(1) ,
+.BR getfacl(1) ,
+.BR getfattr(1) ,
+.BR open(2) ,
+.BR setxattr(2) ,
+.BR stat(2) .
 \"  LocalWords:  tdiff Troin phil MERCHANTABILITY inode fI fR fB dirs
 \"  LocalWords:  DIRECTORY1 DIRECTORY2 fBtdiff fBd fRirectory TP fBh
 \"  LocalWords:  fRelp fBm fRode bitmasks fRodes fBt fRype fBv br acl
@@ -476,5 +552,5 @@ or more shortly:
 \"  LocalWords:  inodes fRontent fBg fRroup fBi fRme fRmes fBj fRor
 \"  LocalWords:  ACLs fBn fIlinks fBo fRwnership setxattr NOATIME fBs
 \"  LocalWords:  fRize getfacl getfattr fICOMMAND fIFILE fIMASK chmod
-\"  LocalWords:  fB0x directory1 directory2 fIDIRECTORY2 cmp
-\"  LocalWords:  fIDIRECTORY1
+\"  LocalWords:  directory1 directory2 fIDIRECTORY2 cmp IP uid
+\"  LocalWords:  fIDIRECTORY1 gid UFS MacOSX vv vvv vvvv fI0x UE

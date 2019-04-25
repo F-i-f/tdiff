@@ -1,5 +1,7 @@
 2019-04-25  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Enhance.
+
 	* tdiff.c (show_help): Document the -vvvv option.
 
 	* tests/mode.out.gold: Update.
