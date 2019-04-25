@@ -1,6 +1,7 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.c (show_help): Fix typography (space after comma).
+	(execprocess): Only assign arguments if they're set.
 
 	* tests/nlinks.test (nlinks_filter):
 	* tests/mtime.test (mtime_filter):

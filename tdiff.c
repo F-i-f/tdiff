@@ -1323,8 +1323,10 @@ execprocess(const dexe_t *dex, const char* p1, const char* p2)
 {
   int status;
   /**/
-  *(dex->arg1) = (char*)p1;
-  *(dex->arg2) = (char*)p2;
+  if (dex->arg1 != NULL)
+    *(dex->arg1) = (char*)p1;
+  if (dex->arg2 != NULL)
+    *(dex->arg2) = (char*)p2;
   fflush(stdin);
   fflush(stdout);
   fflush(stderr);
