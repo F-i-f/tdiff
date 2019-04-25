@@ -22,8 +22,12 @@
 #   The first arguments is the list of manpages to format.
 #   The second argument is the list of groff output devices.
 
+AC_DEFUN([FI_FORMAT_MAN_INIT_ONCE],
+	 [AM_MISSING_PROG([GROFF], [groff])])
+
 AC_DEFUN([FI_FORMAT_MAN],
-[m4_foreach_w([fi_format_man_manpage], [$1],
+[AC_REQUIRE([FI_FORMAT_MAN_INIT_ONCE])
+ m4_foreach_w([fi_format_man_manpage], [$1],
 	      [m4_foreach_w([fi_format_man_device], [$2],
 			    [m4_define([fi_format_man_sed_program],
 				       [m4_if(fi_format_man_device, [pdf],
@@ -34,7 +38,7 @@ AC_DEFUN([FI_FORMAT_MAN],
 			     FI_AUTOMAKE_FRAGMENT(
 [# Rule created by FI_FORMAT_MAN_DEVICE(]fi_format_man_manpage[, ]fi_format_man_device[)
 ]patsubst([fi_format_man_manpage], [^.*/], []).fi_format_man_device: fi_format_man_manpage[
-	-man -T]fi_format_man_device[ ./$< > $][@.new
+	-$(GROFF) -man -T]fi_format_man_device[ ./$< > $][@.new
 	@trap 'rm -f $][@.new $][@.tmp' EXIT; \
 	if test -s $][@.new; \
 	then \

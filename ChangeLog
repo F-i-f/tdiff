@@ -1,5 +1,10 @@
 2019-04-25  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_format_man.m4 (FI_FORMAT_MAN):
+	AC_REQUIRE(FI_FORMAT_MAN_INIT_ONCE), use groff instead of man to
+	format manpage hard copies.
+	(FI_FORMAT_MAN_INIT_ONCE): Call AM_MISSING_PROG(groff).
+
 	* configure.ac (FI_FORMAT_MAN): Call on tdiff.1 for html & pdf.
 
 	* Makefile.am (dist_man1_MANS): Add tdiff.1.
