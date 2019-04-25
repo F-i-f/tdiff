@@ -1,5 +1,14 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/nlinks.test (nlinks_filter):
+	* tests/mtime.test (mtime_filter):
+	* tests/ctime.out.gold:
+	Update for "(top-level)".
+
+	* tdiff.c (reportMissingXattr, reportMissingAcl, dodiff): Use
+	"(top-level)" instead of "." for reporting discrepancies at the
+	top-level item.
+
 	* tests/owner.test (owner_filter):
 	* tests/group.test (owner_filter):
 	Users/groups may not have name and may show up empty.

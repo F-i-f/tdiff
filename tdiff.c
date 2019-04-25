@@ -380,7 +380,7 @@ reportMissingXattr(int which, const char* f, const char* xn, commonClientData_t*
     }
   else
     {
-      subp = ".";
+      subp = "(top-level)";
     }
   printf("%s: %s: xattr %s: only present in %.*s\n",
 	 progname, subp, xn, rootlen, f);
@@ -631,7 +631,7 @@ reportMissingAcl(int which, const char* f, const char* xn, commonClientData_t* c
     }
   else
     {
-      subp = ".";
+      subp = "(top-level)";
     }
   printf("%s: %s: %s acl %s: only present in %.*s\n",
 	 progname, subp, clientData->acldescr, xn, rootlen, f);
@@ -1411,9 +1411,9 @@ dodiff(options_t* opts, const char* p1, const char* p2)
   subpath = p1+opts->root1_length;
   switch(*subpath)
     {
-    case '\0': subpath = "."; break;
-    case '/':  subpath++;     break;
-    default:   abort();       break;
+    case '\0': subpath = "(top-level)"; break;
+    case '/':  subpath++;               break;
+    default:   abort();                 break;
     }
 
   /* Check if we're comparing the same dev/inode pair */

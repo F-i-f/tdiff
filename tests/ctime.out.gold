@@ -1,4 +1,4 @@
-tdiff: .: ctime: [XXX] [XXX]
+tdiff: (top-level): ctime: [XXX] [XXX]
 tdiff: dir1: ctime: [XXX] [XXX]
 tdiff: file1: ctime: [XXX] [XXX]
 tdiff: file2: ctime: [XXX] [XXX]

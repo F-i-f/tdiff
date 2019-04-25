@@ -19,7 +19,7 @@ setup() {
 }
 
 nlinks_filter() {
-  sed -e '/^tdiff: \.: nlinks: /d'
+  sed -e '/^tdiff: (top-level): nlinks: /d'
 }
 
 tdiff_options="-An"
