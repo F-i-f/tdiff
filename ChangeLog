@@ -1,5 +1,9 @@
 2019-04-24  Philippe Troin  <phil@fifi.org>
 
+	* tests/owner.test (owner_filter):
+	* tests/group.test (owner_filter):
+	Users/groups may not have name and may show up empty.
+
 	* tests/nlinks.test (nlinks_filter):
 	* tests/mtime.test (mtime_filter):
 	* tests/nlinks.out.gold:
