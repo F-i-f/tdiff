@@ -1,5 +1,7 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* tests/flag-*.out.gold: Update for tdiff -vv.
+
 	* Makefile.am:
 	* tests/*.test:
 	* tests/*.lib:
