@@ -4,6 +4,6 @@ set -eu
 
 . "$srcdir"/tests/contents.lib
 
-tdiff_options="-Aw diff %1 %2 ;"
+tdiff_options="-Aw echo ALWAYS RUN %1 VS. %2 ;"
 
 . "$srcdir"/tests/test.lib

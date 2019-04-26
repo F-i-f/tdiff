@@ -1428,9 +1428,6 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       if (opts->verbosityLevel >= VERB_SKIPS)
 	fprintf(stderr, "%s: %s: same dev/ino pair, skipping\n",
 	       progname, subpath);
-      if (opts->exec_always && S_ISREG(sbuf1.st_mode))
-	if (!execprocess(&opts->exec_always_args, p1, p2))
-	  rv=XIT_DIFF;
       return rv;
     }
 

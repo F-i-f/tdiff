@@ -1,3 +1,13 @@
+2019-04-26  Philippe Troin  <phil@fifi.org>
+
+	* tests/contents-always2.out.gold: Update.
+
+	* tests/contents-always2.test (tdiff_options): Use echo instead of
+	plain diff.
+
+	* tdiff.c (dodiff): Don't run always exec if we're comparing the
+	same file (same device and inode).
+
 2019-04-25  Philippe Troin  <phil@fifi.org>
 
 	* tests/*.out.gold: Update for tdiff -vv.

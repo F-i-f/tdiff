@@ -1,19 +1,11 @@
 tdiff: file1: contents differ
-1c1
-< 1234
----
-> 12345
+ALWAYS RUN tests/contents-always.dir1/file1 VS. tests/contents-always.dir2/file1
 tdiff: file2: contents differ
-1c1
-< 123
----
-> FILE 2
+ALWAYS RUN tests/contents-always.dir1/file2 VS. tests/contents-always.dir2/file2
 tdiff: file3: symbolic links differ
+ALWAYS RUN tests/contents-always.dir1/file5 VS. tests/contents-always.dir2/file5
 tdiff: file6: contents differ
-1c1
-< 123
----
-> abc
+ALWAYS RUN tests/contents-always.dir1/file6 VS. tests/contents-always.dir2/file6
 tdiff: file7: already compared hard-linked files at file6
 tdiff: file8: already compared hard-linked files at file6
 tdiff: file9: same dev/ino pair, skipping
