@@ -1220,6 +1220,7 @@ get_exec_args(char **argv, int *optind, dexe_t *dex)
       {
 	dex->argv[i] = argv[i];
       }
+  dex->argv[numargs] = NULL;
   return 1;
 }
 

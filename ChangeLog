@@ -1,5 +1,7 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (get_exec_args): Terminate the argument list with NULL.
+
 	* tdiff.1: Add section about hard links.
 
 	* tests/contents-always2.out.gold: Update.
