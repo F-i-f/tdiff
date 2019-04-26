@@ -2,4 +2,8 @@ tdiff: dir1: group: 3 0
 tdiff: file1: group: 1 0
 tdiff: file2: group: 0 2
 tdiff: link1: group: 4 0
+tdiff:            7          inode pairs compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            0          excluded paths
 tdiff exit code=2

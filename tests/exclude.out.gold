@@ -1,4 +1,11 @@
 tdiff: file1: contents differ
 tdiff: file2: contents differ
 tdiff: file7: contents differ
+tdiff: file8: already compared hard-linked files at file7
+tdiff: file9: same dev/ino pair, skipping
+tdiff:            8          inode pairs compared
+tdiff:            2 (25.00%) file pair contents compared
+tdiff:            1 (12.50%) inode pairs skipped as identical
+tdiff:            1 (12.50%) inode pairs skipped as already seen
+tdiff:            2          excluded paths
 tdiff exit code=2

@@ -1,3 +1,7 @@
 tdiff: dir1/file3: atime: [XXX] [XXX]
 tdiff: file1: atime: [XXX] [XXX]
+tdiff:            5          inode pairs compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            0          excluded paths
 tdiff exit code=2

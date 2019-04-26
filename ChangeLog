@@ -1,5 +1,9 @@
 2019-04-25  Philippe Troin  <phil@fifi.org>
 
+	* tests/*.out.gold: Update for tdiff -vv.
+
+	* tests/test.lib: Use tdiff -vv.
+
 	* tests/exclude.out.gold: Update for new messages issues by
 	hard-linking.
 

@@ -10,4 +10,8 @@ tdiff: file-vs-symlink: type: regular-file symbolic-link
 tdiff: symlink-vs-dir: type: symbolic-link directory
 tdiff: symlink-vs-fifo: type: symbolic-link fifo
 tdiff: symlink-vs-file: type: symbolic-link regular-file
+tdiff:           17          inode pairs compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            0          excluded paths
 tdiff exit code=2

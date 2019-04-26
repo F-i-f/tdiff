@@ -3,4 +3,8 @@ tdiff: dir1: ctime: [XXX] [XXX]
 tdiff: file1: ctime: [XXX] [XXX]
 tdiff: file2: ctime: [XXX] [XXX]
 tdiff: file3: ctime: [XXX] [XXX]
+tdiff:            5          inode pairs compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            0          excluded paths
 tdiff exit code=2
