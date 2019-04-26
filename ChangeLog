@@ -1,5 +1,7 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Add section about hard links.
+
 	* tests/contents-always2.out.gold: Update.
 
 	* tests/contents-always2.test (tdiff_options): Use echo instead of

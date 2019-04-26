@@ -379,7 +379,49 @@ before comparing them.
 .I MASK
 is specified in octal, like with
 .BR chmod(2) ,
-unless prefixed with \fI0x\/\fR, in which case it is parsed as hexadecimal.
+unless prefixed with \fI0x\/\fR, in which case it is parsed as
+hexadecimal.
+.SH HARD LINKS
+.B tdiff
+optimizes for hard links in two ways:
+.RS 3
+.IP \(bu 3
+.B tdiff
+will skip examining a pair of files if it has already compared the
+pair's hard links copies.
+.RS 3
+.PP
+For example, if you have \fIfile1\fR hard linked to \fIfile2\fR in
+both \fIDIRECTORY1\fR and \fIDIRECTORY2\/\fR,
+.B tdiff
+will only report any differences for \fIfile1\fR and will skip
+\fIfile2\fR entirely since it's linked to \fIfile1\fR in both examined
+directories, and the list of differences would the same as for the
+already reported \fIfile1\fR case.
+.RS -3
+.IP \(bu 3
+.B tdiff
+will skip examining two hard-linked files.
+.RS 3
+.PP
+For example, if \fIdir1/file\fR is hard linked to \fIdir2/file\/\fR,
+then
+.B tdiff
+will omit examining the file pair entirely since they really are the
+same object and would have no differences at all.
+.RS -6
+.PP
+\fBtdiff\fR's hard link optimization depends on files' inode and
+device numbers to be stable, unique and consistent at least for the
+duration of the
+.B tdiff
+run.  This is generally the case for traditional
+file systems.
+.PP
+.B tdiff
+can optionally show which hard linked files are skipped and for what
+reason when run at the verbosity level 2 or above (\fB-vv\fR or
+\fB--verbose --verbose\fR).
 .SH CONTENTS COMPARISONS
 .B tdiff
 uses built-in code for file contents comparisons.  It avoid running an actual
@@ -552,5 +594,6 @@ along with this program.  If not, see
 \"  LocalWords:  inodes fRontent fBg fRroup fBi fRme fRmes fBj fRor
 \"  LocalWords:  ACLs fBn fIlinks fBo fRwnership setxattr NOATIME fBs
 \"  LocalWords:  fRize getfacl getfattr fICOMMAND fIFILE fIMASK chmod
-\"  LocalWords:  directory1 directory2 fIDIRECTORY2 cmp IP uid
-\"  LocalWords:  fIDIRECTORY1 gid UFS MacOSX vv vvv vvvv fI0x UE
+\"  LocalWords:  directory1 directory2 fIDIRECTORY2 cmp IP uid fIdir1
+\"  LocalWords:  fIDIRECTORY1 gid UFS MacOSX vv vvv vvvv fI0x UE fR's
+\"  LocalWords:  fIfile1 fIfile2 fIdir2 files'
