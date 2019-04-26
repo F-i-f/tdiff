@@ -25,6 +25,8 @@ bin_PROGRAMS	= tdiff
 
 tdiff_SOURCES	= tdiff.c tdiff.h
 tdiff_LDADD	= libtdiff.a
+noinst_HEADERS  = linux_getdents.c \
+		  linux_getdents64.c
 dist_man1_MANS	= tdiff.1
 
 noinst_PROGRAMS = inocache_test \

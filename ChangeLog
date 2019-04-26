@@ -1,5 +1,8 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (noinst_HEADERS): Define for linux_getdents*.c which
+	should be shipped.
+
 	* tdiff.1: Correct style.
 
 	* tdiff.bash: Add copyright header, emacs local variables block.
