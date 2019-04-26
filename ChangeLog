@@ -1,5 +1,10 @@
 2019-04-25  Philippe Troin  <phil@fifi.org>
 
+	* tests/exclude.out.gold: Update for new messages issues by
+	hard-linking.
+
+	* tests/contents.lib (setup): Create some hard-links.
+
 	* tdiff.1: Enhance.
 
 	* tdiff.c (show_help): Document the -vvvv option.

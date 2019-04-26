@@ -1,3 +1,4 @@
 tdiff: file1: contents differ
 tdiff: file2: contents differ
+tdiff: file7: contents differ
 tdiff exit code=2
