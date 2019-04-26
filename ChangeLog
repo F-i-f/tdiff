@@ -1,5 +1,10 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.bash: Add copyright header, emacs local variables block.
+
+	* _tdiff.zsh: Add copyright header.  Emacs local variables block
+	must be at end of file.
+
 	* tests/flag-*.out.gold: Update for tdiff -vv.
 
 	* Makefile.am:
