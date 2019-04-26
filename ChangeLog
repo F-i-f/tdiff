@@ -1,5 +1,7 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Correct style.
+
 	* tdiff.bash: Add copyright header, emacs local variables block.
 
 	* _tdiff.zsh: Add copyright header.  Emacs local variables block

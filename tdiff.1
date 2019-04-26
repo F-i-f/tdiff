@@ -30,7 +30,7 @@ and
 .I DIRECTORY2
 file trees, comparing any of the inode attributes, also known as
 .BR stat(2)
-structure.  Inode attributes are:
+structure members.  Inode attributes are:
 .RS 3
 .IP \(bu 3
 file type (regular file, directory, FIFO, socket, etc.)
@@ -54,13 +54,7 @@ By default,
 .B tdiff
 reports differences in any file contents or attributes except for the
 various file times.  The set of attributes to be checked can be
-altered Which attribute and contents to be check attributes to be
-compared can be modified with the various options.
-.PP
-Most single-letter options come in two versions, upper-case and
-lower-case.  The lower-case option enables the the attribute check,
-while the upper-case option disables it.  Similarly, most long options
-have a \fB\-\-no\-\fR version to turn off the equivalent check.
+modified with the various options.
 .PP
 Beyond inode attribute checks,
 .B tdiff
@@ -72,6 +66,10 @@ to be different.  See the \fB\-x\fR/\fB\-\-exec\fR,
 \fB\-w\fR/\fB\-\-exec\-always\fR, and \fB\-W\fR/\fB\-\-exec\-always\-diff\fR
 options.
 .SH OPTIONS
+Most single-letter options come in two versions, upper-case and
+lower-case.  The lower-case option enables the the attribute check,
+while the upper-case option disables it.  Similarly, most long options
+have a \fB\-\-no\-\fR version to turn off the equivalent check.
 .TP
 \fB\-a\fR, \fB\-\-all\fR
 Turn on all checks, except for file times.
@@ -550,7 +548,7 @@ times:
 .I directory1 directory2
 .RS -2
 .PP
-or more shortly:
+or more tersely:
 .RS 2
 .PP
 .B tdiff \-W
