@@ -11,7 +11,7 @@ pre_check_file() {
   setfacl -m g::- "$@"
 }
 
-. "$srcdir"/tests/pre-check-file.lib
+. "$srcdir"/tests/pre-check-file.lib.sh
 
 setup() {
   cat > "$1"/acl-f-list <<-'EOD'
@@ -74,4 +74,4 @@ acl_filter() {
 tdiff_options="-Al"
 filter=acl_filter
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

@@ -70,6 +70,7 @@ TESTS = tests/inocache.test		\
 	tests/contents-exec.test	\
 	tests/ctime.test		\
 	tests/directories.test		\
+	tests/exclude.test		\
 	tests/flag-archived.test	\
 	tests/flag-hidden.test		\
 	tests/flag-nodump.test		\
@@ -86,7 +87,6 @@ TESTS = tests/inocache.test		\
 	tests/flag-uarchive.test	\
 	tests/flag-uimmutable.test	\
 	tests/flag-uunlink.test		\
-	tests/exclude.test		\
 	tests/group.test		\
 	tests/major.test		\
 	tests/minor.test		\
@@ -107,12 +107,12 @@ EXTRA_DIST = tdiff.1.html				\
 	     tdiff.1.pdf				\
 	     $(bash_FUNCTIONS)				\
 	     $(zsh_FUNCTIONS)				\
-	     tests/contents.lib				\
-	     tests/fakeroot.lib				\
-	     tests/mode.lib				\
-	     tests/pre-check-file.lib			\
-	     tests/test.lib				\
-	     tests/type.lib				\
+	     tests/contents.lib.sh			\
+	     tests/fakeroot.lib.sh			\
+	     tests/mode.lib.sh				\
+	     tests/pre-check-file.lib.sh		\
+	     tests/test.lib.sh				\
+	     tests/type.lib.sh				\
 	     $(TESTS)					\
 	     tests/acl.out.gold				\
 	     tests/atime.out.gold			\

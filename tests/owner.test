@@ -2,7 +2,7 @@
 
 set -eu
 
-. "$srcdir"/tests/fakeroot.lib
+. "$srcdir"/tests/fakeroot.lib.sh
 
 setup() {
   echo "File 1" > "$1"/file1
@@ -32,4 +32,4 @@ owner_filter() {
 tdiff_options="-Ao"
 filter=owner_filter
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

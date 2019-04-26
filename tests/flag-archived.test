@@ -17,7 +17,7 @@ pre_check_file() {
   chflags "$flag" "$@" && chflags "$noflag" "$@"
 }
 
-. "$srcdir"/tests/pre-check-file.lib
+. "$srcdir"/tests/pre-check-file.lib.sh
 
 setup() {
   echo '123' > "$1"/file1
@@ -40,4 +40,4 @@ cleanup_test=cleanup_test
 
 tdiff_options="-Af"
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

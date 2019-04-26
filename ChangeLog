@@ -1,5 +1,10 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am:
+	* tests/*.test:
+	* tests/*.lib:
+	Rename tests/*.lib to tests/*.lib.sh.
+
 	* tdiff.c (get_exec_args): Terminate the argument list with NULL.
 
 	* tdiff.1: Add section about hard links.

@@ -2,7 +2,7 @@
 
 set -eu
 
-. "$srcdir"/tests/fakeroot.lib
+. "$srcdir"/tests/fakeroot.lib.sh
 
 setup() {
   mknod "$1"/file1 b 0 1
@@ -22,4 +22,4 @@ setup() {
 
 tdiff_options="-Ak"
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

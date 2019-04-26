@@ -24,4 +24,4 @@ atime_filter() {
 tdiff_options="-Ar"
 filter=atime_filter
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

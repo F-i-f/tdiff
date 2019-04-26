@@ -24,4 +24,4 @@ mtime_filter() {
 tdiff_options="-Ai"
 filter=mtime_filter
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

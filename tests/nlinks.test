@@ -25,4 +25,4 @@ nlinks_filter() {
 tdiff_options="-An"
 filter=nlinks_filter
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

@@ -2,8 +2,8 @@
 
 set -eu
 
-. "$srcdir"/tests/contents.lib
+. "$srcdir"/tests/contents.lib.sh
 
 tdiff_options="-Aw echo ALWAYS RUN %1 VS. %2 ;"
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

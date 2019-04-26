@@ -2,8 +2,8 @@
 
 set -eu
 
-. "$srcdir"/tests/type.lib
+. "$srcdir"/tests/type.lib.sh
 
 tdiff_options="-At"
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

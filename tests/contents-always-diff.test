@@ -2,7 +2,7 @@
 
 set -eu
 
-. "$srcdir"/tests/contents.lib
+. "$srcdir"/tests/contents.lib.sh
 
 always_diff_filter() {
   sed -e 's!^\(\([-+]\)\2\2 [^[:space:]][^[:space:]]*\)[[:space:]][[:space:]]*[0-9A-Z].*$!\1!' \
@@ -13,4 +13,4 @@ always_diff_filter() {
 tdiff_options="-AW"
 filter=always_diff_filter
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

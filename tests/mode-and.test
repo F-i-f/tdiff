@@ -2,8 +2,8 @@
 
 set -eu
 
-. "$srcdir"/tests/mode.lib
+. "$srcdir"/tests/mode.lib.sh
 
 tdiff_options="-Am& 70"
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

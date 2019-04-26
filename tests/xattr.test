@@ -11,7 +11,7 @@ pre_check_file() {
   setfattr -n user.test -v value "$@"
 }
 
-. "$srcdir"/tests/pre-check-file.lib
+. "$srcdir"/tests/pre-check-file.lib.sh
 
 setup() {
   echo "1" > "$1"/file1
@@ -41,4 +41,4 @@ setup() {
 
 tdiff_options="-Aq"
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

@@ -22,4 +22,4 @@ ctime_filter() {
 tdiff_options="-Az"
 filter=ctime_filter
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

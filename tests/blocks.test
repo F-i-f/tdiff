@@ -23,4 +23,4 @@ blocks_filter() {
 tdiff_options="-Ab"
 filter=blocks_filter
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

@@ -24,4 +24,4 @@ setup() {
 
 tdiff_options="-As"
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh

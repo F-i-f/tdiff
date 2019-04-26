@@ -7,7 +7,7 @@ then
   exit 77
 fi
 
-. "$srcdir"/tests/type.lib
+. "$srcdir"/tests/type.lib.sh
 
 make_sock() {
   ./make_sock "$1"
@@ -17,4 +17,4 @@ file_types="$file_types sock"
 
 tdiff_options="-At"
 
-. "$srcdir"/tests/test.lib
+. "$srcdir"/tests/test.lib.sh
