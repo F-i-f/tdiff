@@ -48,6 +48,8 @@ FI_CHECK_SHELL_FUNCTIONS_DIR([zsh],[$datarootdir/zsh/site-functions])
 
 ### 4) Checking for header files
 
+AC_HEADER_TIOCGWINSZ
+
 # Getdents
 AH_TEMPLATE(HAVE_SYS_DIRENT_H, [Define if your system has <sys/dirent.h>])
 AH_TEMPLATE(STRUCT_DIRENT, [Define to the name of the struct used by getdents()])

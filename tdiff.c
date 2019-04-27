@@ -19,14 +19,16 @@
 
 #include "config.h"
 
+#include <limits.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
 #include <unistd.h>
-
 #include <sys/types.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <dirent.h>
@@ -35,6 +37,10 @@
 #include <pwd.h>
 #include <grp.h>
 #include <time.h>
+
+#ifdef HAVE_TERMIOS_H
+# include <termios.h>
+#endif
 
 #include "tdiff.h"
 #include "utils.h"
@@ -1038,51 +1044,194 @@ cmpFiles(const char* f1, const struct stat sbuf1,
  * Options handling
  */
 
+unsigned
+get_terminal_width(FILE *fd)
+{
+  static const int	 default_terminal_width = 80;
+  int			 fno;
+  char			*width_string;
+  struct winsize	 ws;
+
+  fno = fileno(fd);
+
+  if (! isatty(fno))
+    return default_terminal_width;
+
+  width_string = getenv("WIDTH");
+  if (width_string != NULL)
+    {
+      unsigned width;
+      char *ptr;
+
+      width = strtoul(width_string, &ptr, 0);
+      errno = 0;
+      if (*ptr == '\0' && width > 0 && errno == 0 && width < UINT_MAX )
+	return (unsigned)width;
+    }
+
+  if (ioctl(fileno(fd), TIOCGWINSZ, &ws) != -1)
+    return ws.ws_col;
+
+  return default_terminal_width;
+}
+
+void
+print_list(FILE* fd, unsigned width, const char *header, ...)
+{
+  size_t	 header_length;
+  size_t	 printed_so_far;
+  va_list	 va;
+  const char	*item;
+  size_t	 i;
+
+  header_length = strlen(header);
+
+  va_start(va, header);
+  printed_so_far = 0;
+
+  while ((item = va_arg(va, const char*)))
+    {
+      size_t item_length = strlen(item);
+
+      if (printed_so_far == 0)
+	{
+	  fprintf(fd, "%s%s", header, item);
+	  printed_so_far = header_length + item_length;
+	}
+      else if (printed_so_far + item_length + 2 > width)
+	{
+	  fprintf(fd, ",\n");
+	  for (i=0; i<header_length; ++i)
+	    putc(' ', fd);
+	  fprintf(fd, "%s", item);
+	  printed_so_far = header_length + item_length;
+	}
+      else
+	{
+	  fprintf(fd, ", %s", item);
+	  printed_so_far += item_length + 2;
+	}
+    }
+
+  va_end(va);
+
+  if (printed_so_far != 0)
+    fprintf(fd, ".\n");
+}
+
 void
 show_version(void)
 {
+  unsigned terminal_width = get_terminal_width(stdout);
+
   printf("tdiff version " VERSION
 #ifdef GIT_REVISION
 	 " (git: " GIT_REVISION ")"
 #endif
-	 "\n"
+	 "\n");
 
-	 "Features: acl="
+
+  print_list(stdout, terminal_width,
+	     "Features: ",
 #if HAVE_ACL
-	 "yes"
+	     "acl=yes",
 #else /* ! HAVE_ACL */
-	 "no"
+	     "acl=no",
 #endif /* ! HAVE_ACL */
-
-	 ", flags="
 #if HAVE_ST_FLAGS
-	 "BSD"
+	     "flags=BSD",
 #else /* ! HAVE_ST_FLAGS */
-	 "no"
+	     "flags=no",
 #endif /* ! HAVE_ST_FLAGS */
-
-	 ", readdir="
+#if HAVE_O_NOATIME
+	     "O_NOATIME=yes",
+#else /* ! HAVE_O_NOATIME */
+	     "O_NOATIME=no",
+#endif /* ! HAVE_O_NOATIME */
 #if HAVE_GETDENTS
 #  if HAVE_SYS_DIRENT_H
-	 "getdents(libc)"
+	     "readdir=getdents(libc)",
 #  elif HAVE_GETDENTS64_SYSCALL_H
-	 "getdents64(syscall)"
+	     "readdir=getdents64(syscall)",
 #  elif HAVE_GETDENTS_SYSCALL_H
-	 "getdents(syscall)"
+	     "readdir=getdents(syscall)",
 #  else
 #    error HAVE_GETDENTS is set, but I do not know how to get it !!!
 #  endif
 #else /* ! HAVE_GETDENTS */
-	 "readdir"
+	     "readdir=readdir",
 #endif /* ! HAVE_GETDENTS */
-
-	 ", xattr="
 #if HAVE_GETXATTR
-	 "yes"
+	     "xattr=yes",
 #else /* ! HAVE_GETXATTR */
-	 "no"
+	     "xattr=no",
 #endif /* ! HAVE_GETXATTR */
-	 "\n\n"
+	     NULL);
+
+#if HAVE_ST_FLAGS
+  print_list(stdout, terminal_width,
+	     "Flags: ",
+# if HAVE_UF_NODUMP
+	     "UF_NODUMP (nodump)",
+# endif
+# if HAVE_UF_IMMUTABLE
+	     "UF_IMMUTABLE (uimmutable)",
+# endif
+# if HAVE_UF_APPEND
+	     "UF_APPEND (uappend)",
+# endif
+# if HAVE_UF_OPAQUE
+	     "UF_OPAQUE (opaque)",
+# endif
+# if HAVE_UF_NOUNLINK
+	     "UF_NOUNLINK (uunlink)",
+# endif
+# if HAVE_UF_COMPRESSED
+	     "UF_COMPRESSED (compressed)",
+# endif
+# if HAVE_UF_TRACKED
+	     "UF_TRACKED (tracked)",
+# endif
+# if HAVE_UF_SYSTEM
+	     "UF_SYSTEM (system)",
+# endif
+# if HAVE_UF_SPARSE
+	     "UF_SPARSE (sparse)",
+# endif
+# if HAVE_UF_OFFLINE
+	     "UF_OFFLINE (offline)",
+# endif
+# if HAVE_UF_REPARSE
+	     "UF_REPARSE (reparse)",
+# endif
+# if HAVE_UF_ARCHIVE
+	     "UF_ARCHIVE (uarchive)",
+# endif
+# if HAVE_UF_READONLY
+	     "UF_READONLY (readonly)",
+# endif
+# if HAVE_UF_HIDDEN
+	     "UF_HIDDEN (hidden)",
+# endif
+# if HAVE_SF_ARCHIVED
+	     "SF_ARCHIVED (archived)",
+# endif
+# if HAVE_SF_IMMUTABLE
+	     "SF_IMMUTABLE (simmutable)",
+# endif
+# if HAVE_SF_APPEND
+	     "SF_APPEND (sappend)",
+# endif
+# if HAVE_SF_NOUNLINK
+	     "SF_NOUNLINK (sunlink)",
+# endif
+# if HAVE_SF_SNAPSHOT
+	     "SF_SNAPSHOT (snapshot)",
+# endif
+	     NULL);
+#endif /* HAVE_ST_FLAGS */
+
+  printf("\n"
 	 "Copyright (C) 1999-2019 Philippe Troin <phil+github-commits@fifi.org>.\n"
 	 "Tdiff comes with ABSOLUTELY NO WARRANTY.\n"
 	 "This is free software, and you are welcome to redistribute it\n"
