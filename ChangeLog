@@ -1,5 +1,11 @@
 2019-04-27  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.spec (Version):
+	* configure.ac (AC_INIT):
+	* README.md (Changelog):
+	* NEWS:
+	Update for release 0.7.1.
+
 	* inocache.c (ic_equal): Fix miscomparison in inode cache device
 	numbers.
 

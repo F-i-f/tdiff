@@ -1,5 +1,13 @@
 -*- outline -*-
 
+* Release 0.7.1
+** April 27, 2019.
+
+- Fixed rare bug where files could be skipped (and misreported as
+  having no differences) if two files with the name inode number but
+  with different device numbers were scanned within the second
+  argument's subtree.
+
 * Release 0.7
 ** April 26, 2019.
 

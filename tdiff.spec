@@ -1,5 +1,5 @@
 Name:		tdiff
-Version:	0.7
+Version:	0.7.1
 Release:	1%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
@@ -37,6 +37,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/zsh/site-functions/_tdiff
 
 %changelog
+* Sat Apr 27 2019 Philippe Troin <phil@fifi.org> - 0.7.1-1
+- Upstream updated to 0.7.1.
+
 * Fri Apr 26 2019 Philippe Troin <phil@fifi.org> - 0.7-1
 - Upstream updated to 0.7.
 - Install manpage, more documentation.
