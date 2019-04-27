@@ -38,8 +38,12 @@
 #include <grp.h>
 #include <time.h>
 
-#ifdef HAVE_TERMIOS_H
+#if HAVE_TERMIOS_H
 # include <termios.h>
+#endif
+
+#if HAVE_SYS_TTY_H
+# include <sys/tty.h>
 #endif
 
 #include "tdiff.h"

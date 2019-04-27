@@ -1,5 +1,9 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c: Include sys/tty.h if needed.
+
+	* configure.ac: Add a check for winsize in sys/tty for Solaris.
+
 	* Makefile.am (EXTRA_DIST): Add tdiff.spec.
 
 	* tdiff.spec: Create.

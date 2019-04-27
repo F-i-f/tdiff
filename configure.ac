@@ -178,6 +178,24 @@ then
     AC_MSG_ERROR([Cannot find a definition for major() and minor()])
 fi
 
+# Struct winsize
+AC_CACHE_CHECK([for struct winsize in sys/tty.h], [fi_cv_winsize_sys_tty_h],
+	       [AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+#include <sys/tty.h>
+
+int main()
+{
+  struct winsize ws;
+  return 0;
+}])],
+		   [fi_cv_winsize_sys_tty_h=yes],
+		   [fi_cv_winsize_sys_tty_h=no])])
+if test "x$fi_cv_winsize_sys_tty_h" = xyes
+then
+  AC_DEFINE([HAVE_SYS_TTY_H], [1],
+	    [Define to 1 if struct winsize is in sys/tty.h.])
+fi
+
 ### 5) Checking for typedefs: NONE
 
 ### 6) Checking for macros
