@@ -88,6 +88,11 @@ args=('*-v[increase verbosity level]'
       '-N[do not diff (hard) link count]'
       '--no-nlinks[do not diff (hard) link count]'
 
+      '-e[diff file hard link targets]'
+      '--hardlinks[diff file hard link targets]'
+      '-E[do not diff hard link targets]'
+      '--no-hardlinks[do not diff hard link targets]'
+
       '-j[diff file major device numbers (for device files)]'
       '--major[diff file major device numbers (for device files)]'
       '-J[do not diff major device numbers (for device files)]'

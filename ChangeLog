@@ -50,6 +50,15 @@
 
 2019-04-27  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (struct option_s, printopts, main): Re-add hardlinks.
+	(show_help, main): Re-add -e, --hardlinks, -E, --no-hardlinks
+	options.
+
+	* tdiff.zsh (_tdiff): Re-add -e, --hardlinks, -E, --no-hardlinks
+	options.
+
+	* tdiff.bash (_tdiff): Re-add --hardlinks, --no-hardlinks options.
+
 	* tdiff.spec (Version):
 	* configure.ac (AC_INIT):
 	* README.md (Changelog):
