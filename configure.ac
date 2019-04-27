@@ -70,7 +70,6 @@ case "$target_os" in
 		   [],
 		   [getdents=syscall
 		    AC_DEFINE(HAVE_GETDENTS_SYSCALL_H,1)
-		    AC_DEFINE(STRUCT_DIRENT, linux_dent)
 		   ])
     FI_CHECK_EGREP([getdents64 syscall],
 		   [fi_found_sys_getdents64],
@@ -82,7 +81,6 @@ case "$target_os" in
 		   [],
 		   [getdents=syscall64
 		    AC_DEFINE(HAVE_GETDENTS64_SYSCALL_H,1)
-		    AC_DEFINE(STRUCT_DIRENT, linux_dent64)
 		   ])
     ;;
 esac
@@ -93,18 +91,20 @@ FI_CHECK_EGREP([getdents],
 	       [in libc],
 	       [getdents="sys_dirent"
 		AC_DEFINE(HAVE_SYS_DIRENT_H, 1)
-		AC_DEFINE(STRUCT_DIRENT, dirent)
 	       ])
 
 case "$getdents" in
     sys_dirent)
 	getdents_decl="#include <sys/dirent.h>"
+	AC_DEFINE(STRUCT_DIRENT, dirent)
 	;;
     syscall)
 	getdents_decl="#include \"linux_getdents.c\""
+	AC_DEFINE(STRUCT_DIRENT, linux_dent)
 	;;
     syscall64)
 	getdents_decl="#include \"linux_getdents64.c\""
+	AC_DEFINE(STRUCT_DIRENT, linux_dent64)
 	;;
 esac
 

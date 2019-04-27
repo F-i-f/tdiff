@@ -1,5 +1,9 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac (getdents): Don't AC_DEFINE(STRUCT_DIRENT) until we
+	found out which one to use.  Otherwise, configure tests will have
+	multiple versions defined.
+
 	* tdiff.1: Add a blurb about compiled-in features in --version
 	description.
 
