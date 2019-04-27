@@ -1,5 +1,8 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_git_revision.m4 (FI_GIT_REVISION): Make the git check
+	quiet.
+
 	* tdiff.c: Include sys/tty.h if needed.
 
 	* configure.ac: Add a check for winsize in sys/tty for Solaris.

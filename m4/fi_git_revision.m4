@@ -30,7 +30,7 @@ AC_DEFUN([FI_GIT_REVISION],
 	 if test "x$have_git" = xyes
 	 then
 	   AC_MSG_CHECKING(for git revision)
-	   if git_revision="`git m4_if([$1], [], [describe --tags --long --always], [$1])`"
+	   if git_revision="`git m4_if([$1], [], [describe --tags --long --always], [$1]) 2> /dev/null`"
 	   then
 	     AC_DEFINE_UNQUOTED([GIT_REVISION], ["$git_revision"])
 	     AC_MSG_RESULT([$git_revision])
