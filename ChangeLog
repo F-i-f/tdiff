@@ -1,5 +1,8 @@
 2019-04-27  Philippe Troin  <phil@fifi.org>
 
+	* inocache.c (ic_equal): Fix miscomparison in inode cache device
+	numbers.
+
 	* tdiff.c (show_help): Typos fixed.
 
 2019-04-26  Philippe Troin  <phil@fifi.org>

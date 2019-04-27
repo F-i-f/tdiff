@@ -46,7 +46,7 @@ ic_equal(const void* ve1, const void* ve2)
   const ic_ent_t *e2 = (const ic_ent_t*)ve2;
 
   return e1->ino[0] == e2->ino[0] && e1->ino[1] == e2->ino[1]
-    && e1->dev[0] == e2->dev[0] && e2->dev[1] == e2->dev[1];
+      && e1->dev[0] == e2->dev[0] && e1->dev[1] == e2->dev[1];
 }
 
 inocache_t*
