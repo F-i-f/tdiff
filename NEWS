@@ -1,9 +1,80 @@
 -*- outline -*-
 
-* Release 0.2.99.WIP
+* Release 0.7
+** April 26, 2019.
+
+** New features:
+
+- Bash and Zsh completion functions are now included.
+
+- A manual page is now included.
+
+- New -W --always-exec-diff option.
+
+** User-visible changes:
+
+- The (unimplemented) option -e / --hardlinks has been (temporarily)
+  removed.
+
+- When reporting mode discrepancies (-m / --mode), if no mask is used
+  with --mode-or or --mode-and, then masked values are not shown.
+
+- The -| / --mode-or and -&amp; / --mode-and options now take their
+  arguments as octal (no need to lead them with a zero to force octal
+  parsing).
+
+- The -p / --no-mmap option has been removed.
+
+- Using the -v / --verbose option more than once now increases the
+  logging level.
+
+- The -V / --version option now prints compiled in features (ACLs,
+  xattrs, etc.)
+
+- The command specified in -w / --exec-always is not run anymore if
+  both files to be compared are hard-links of each other.
+
+- Updated BSD / MacOSX flags.
+
+** Bugs fixed:
+
+- Fixed bug where paths could be wrongly displayed (when one of the
+  arguments was / or ../ for example).
+
+- Change the inode cache hash function to DJB2 (performance).
+
+- Times could sometimes be compared incorrectly.
+
+- Compare symbolic links contents only when requested.
+
+- Crash fixed when the command line for -x / --exec or -w /
+  --exec-always did not reference both %1 and %2.
+
+** Internal changes
+
+- Move to Git, git-aware build scripts.
+
+- Open files with O_NOATIME.
+
+- Factorize some autoconf code into macros.
+
+- Fix build errors when cross-compiling.
+
+- Support getdents64 on Linux.
+
+- Portability fixes for FreeBSD 12, MacOSX, Android, Solaris.
+
+- Add test suite.
+
+- Include RPM spec file.
 
 * Release 0.2:
+** January 31, 2014.
 
-** First public release.
+First public release.
 
-** Now includes support for ACLs, extended attributes, and link count.
+Now includes support for ACLs, extended attributes, and link count.
+
+--
+LocalWords:  zsh hardlinks mmap ACLs xattrs MacOSX inode DJB2 NOATIME
+LocalWords:  autoconf getdents64 FreeBSD Solaris

@@ -1,5 +1,13 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1.html:
+	* tdiff.1.pdf:
+	Add.
+
+	* NEWS:
+	* tdiff.1:
+	Update for release 0.7.
+
 	* m4/fi_git_revision.m4 (FI_GIT_REVISION): Make the git check
 	quiet.
 
