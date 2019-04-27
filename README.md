@@ -259,6 +259,8 @@ make install
 
 - Add test suite.
 
+- Include RPM spec file.
+
 ### Release 0.2
 #### January 31, 2014.
 

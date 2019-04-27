@@ -1,5 +1,9 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (EXTRA_DIST): Add tdiff.spec.
+
+	* tdiff.spec: Create.
+
 	* Makefile.am (EXTRA_DIST): Add README.md.
 
 	* README.md: Create.
