@@ -1,5 +1,8 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Add a blurb about compiled-in features in --version
+	description.
+
 	* tdiff.c (get_terminal_width, print_list): Create.
 	(show_version): Use print_list to print features, show O_NOATIME
 	support, list recognized BSD flags.

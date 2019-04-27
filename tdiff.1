@@ -274,6 +274,13 @@ report memory statistics.
 Show the
 .B tdiff
 \fBv\fRersion information and compiled-in features then exit.
+.br
+The compiled-in feature list shows which features
+.B tdiff
+has been compiled with: O_NOATIME, flags, acl, and xattr support, the
+list of supported file system flags, and the
+.BR readdir(2)
+implementation used.
 .TP
 \fB\-w\fR, \fB\-\-exec\-always\fR \fICOMMAND... \\\/;\fR
 Always execute
@@ -594,4 +601,4 @@ along with this program.  If not, see
 \"  LocalWords:  fRize getfacl getfattr fICOMMAND fIFILE fIMASK chmod
 \"  LocalWords:  directory1 directory2 fIDIRECTORY2 cmp IP uid fIdir1
 \"  LocalWords:  fIDIRECTORY1 gid UFS MacOSX vv vvv vvvv fI0x UE fR's
-\"  LocalWords:  fIfile1 fIfile2 fIdir2 files'
+\"  LocalWords:  fIfile1 fIfile2 fIdir2 files' readdir
