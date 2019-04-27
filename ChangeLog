@@ -1,5 +1,11 @@
 2019-04-26  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (EXTRA_DIST): Add README.md.
+
+	* README.md: Create.
+
+	* README: Update to be a documentation index.
+
 	* configure.ac (getdents): Don't AC_DEFINE(STRUCT_DIRENT) until we
 	found out which one to use.  Otherwise, configure tests will have
 	multiple versions defined.

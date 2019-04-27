@@ -1,8 +1,12 @@
-Tdiff is a tool to compare filesystem trees.
+Tdiff - Compare files inode attributes
 
-Compared to diff -r, tdiff is able to report on discrepancies in file
-ownership, modes, acls, extended attributes, block size usage and
-pretty much any other inode attribute you can think of.
+Documentation overview:
 
-Tdiff is also hard-link aware and will skip comparing file pairs which
-it has already seen (in case of hard links or bind mounts).
+* ChangeLog    - Detailed change list
+* INSTALL      - Generic install instructions
+* NEWS         - Release notes
+* README       - This file
+* README.md    - Detailed help file
+* tdiff.1      - Manual page
+* tdiff.1.html - Manual page HTML hard copy
+* tdiff.1.pdf  - Manual page PDF hard copy

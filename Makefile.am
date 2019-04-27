@@ -105,7 +105,8 @@ TESTS = tests/inocache.test		\
 	tests/type-root.test		\
 	tests/xattr.test
 
-EXTRA_DIST = tdiff.1.html				\
+EXTRA_DIST = README.md					\
+	     tdiff.1.html				\
 	     tdiff.1.pdf				\
 	     $(bash_FUNCTIONS)				\
 	     $(zsh_FUNCTIONS)				\
