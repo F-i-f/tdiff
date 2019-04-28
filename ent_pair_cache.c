@@ -20,7 +20,6 @@
 
 #include "config.h"
 #include "ent_pair_cache.h"
-#include "genhash.h"
 
 hashval_t
 epc_hash(const void* vent)

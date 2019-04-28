@@ -50,6 +50,13 @@
 
 2019-04-28  Philippe Troin  <phil@fifi.org>
 
+	* ent_pair_cache.c: Do not include genhash.h, already included in
+	ent_pair_cache.h.
+
+	* utils.h: Do not include tdiff.h.
+
+	* utils.c: Include tdiff.h.
+
 	* configure.ac: Add AC_C_INLINE.
 
 	* ent_pair_cache.c (epc_new, epc_destroy, epc_get, epc_put): Inline.

@@ -19,6 +19,7 @@
 
 #include "config.h"
 #include "utils.h"
+#include "tdiff.h"
 
 #include <stdio.h>
 #include <string.h>

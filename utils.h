@@ -21,7 +21,6 @@
 #define UTILS_H
 
 #include "config.h"
-#include "tdiff.h"
 #include <stdlib.h> /* for size_t */
 
 void* xmalloc(size_t);
