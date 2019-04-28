@@ -50,6 +50,13 @@
 
 2019-04-28  Philippe Troin  <phil@fifi.org>
 
+	* ent_pair_cache.h (struct ent_key_s): Move to ent_key.h.
+	Include config.h.
+
+	* ent_key.h: Create.
+
+	* Makefile.am (libtdiff_a_SOURCES): Add ent_key.h.
+
 	* ent_pair_cache.c: Do not include genhash.h, already included in
 	ent_pair_cache.h.
 

@@ -19,7 +19,8 @@ ACLOCAL_AMFLAGS = -I m4
 
 noinst_LIBRARIES   = libtdiff.a
 
-libtdiff_a_SOURCES		= ent_pair_cache.c	\
+libtdiff_a_SOURCES		= ent_key.h		\
+				  ent_pair_cache.c	\
 				  ent_pair_cache.h	\
 				  genhash.c		\
 				  genhash.h		\

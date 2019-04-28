@@ -21,14 +21,10 @@
 #ifndef ENT_PAIR_CACHE_H
 #define ENT_PAIR_CACHE_H
 
+#include "config.h"
 #include "genhash.h"
+#include "ent_key.h"
 #include <stdlib.h>
-
-typedef struct ent_key_s
-{
-  ino_t ino;
-  dev_t dev;
-} ent_key_t;
 
 typedef struct ent_pair_cache_key_s
 {
