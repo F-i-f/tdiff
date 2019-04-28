@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
-  inocache.h - Cache the inode already looked up so that we don't have to
-	       run tests twice on them.
+  ent_pair_cache.h - Cache the already looked entry pairs up so that
+		     we don't have to run tests twice on them.
   Copyright (C) 1999, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
@@ -18,8 +18,8 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INOCACHE_H
-#define INOCACHE_H
+#ifndef ENT_PAIR_CACHE_H
+#define ENT_PAIR_CACHE_H
 
 #include "genhash.h"
 #include <sys/types.h>
@@ -45,4 +45,4 @@ const char* epc_get(const ent_pair_cache_t*, const ent_pair_cache_key_t*);
 int epc_put(ent_pair_cache_t*, const ent_pair_cache_key_t*, const char*);
 hashval_t epc_hash(const void* vent);
 
-#endif /* INOCACHE_H */
+#endif /* ENT_PAIR_CACHE_H */

@@ -28,7 +28,7 @@ stamp-h1
 /tests/*.trs
 
 /genhash_test
-/inocache_test
+/ent_pair_cache_test
 /make_sock
 /tdiff
 /tdiff-*.tar.*

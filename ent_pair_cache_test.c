@@ -1,6 +1,6 @@
 /*
   tdiff - tree diffs
-  inocache_test.c - Simple tests for inode cache hash function.
+  ent_pair_cache_test.c - Simple tests for the entry pair cache.
   Copyright (C) 1999, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,7 @@
 */
 
 #include "config.h"
-#include "inocache.h"
+#include "ent_pair_cache.h"
 #include "utils.h"
 #include <stdio.h>
 #include <sys/stat.h>

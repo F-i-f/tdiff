@@ -19,38 +19,43 @@ ACLOCAL_AMFLAGS = -I m4
 
 noinst_LIBRARIES   = libtdiff.a
 
-libtdiff_a_SOURCES = genhash.c genhash.h utils.c utils.h inocache.c inocache.h
+libtdiff_a_SOURCES		= ent_pair_cache.c	\
+				  ent_pair_cache.h	\
+				  genhash.c		\
+				  genhash.h		\
+				  utils.c		\
+				  utils.h
 
-bin_PROGRAMS	= tdiff
+bin_PROGRAMS			= tdiff
 
-tdiff_SOURCES	= tdiff.c tdiff.h
-tdiff_LDADD	= libtdiff.a
-noinst_HEADERS  = linux_getdents.c \
-		  linux_getdents64.c
-dist_man1_MANS	= tdiff.1
+tdiff_SOURCES			= tdiff.c tdiff.h
+tdiff_LDADD			= libtdiff.a
+noinst_HEADERS			= linux_getdents.c	\
+				  linux_getdents64.c
+dist_man1_MANS			= tdiff.1
 
-noinst_PROGRAMS = inocache_test \
-		  genhash_test
+noinst_PROGRAMS			= ent_pair_cache_test	\
+				  genhash_test
 
-genhash_test_SOURCES  = genhash_test.c
-genhash_test_LDADD    = libtdiff.a
+genhash_test_SOURCES		= genhash_test.c
+genhash_test_LDADD		= libtdiff.a
 
-inocache_test_SOURCES = inocache_test.c
-inocache_test_LDADD   = libtdiff.a
+ent_pair_cache_test_SOURCES	= ent_pair_cache_test.c
+ent_pair_cache_test_LDADD	= libtdiff.a
 
 if HAVE_S_IFSOCK
-noinst_PROGRAMS	     += make_sock
-make_sock_SOURCES     = make_sock.c
-make_sock_LDADD       = $(LIB_FOR_SOCKETS)
+noinst_PROGRAMS		       += make_sock
+make_sock_SOURCES		= make_sock.c
+make_sock_LDADD			= $(LIB_FOR_SOCKETS)
 endif
 
 if HAVE_S_IFDOOR
-noinst_PROGRAMS	     += make_door
-make_door_SOURCES     = make_door.c
+noinst_PROGRAMS		       += make_door
+make_door_SOURCES		= make_door.c
 endif
 
-bash_FUNCTIONS	      = tdiff.bash
-zsh_FUNCTIONS	      = _tdiff.zsh
+bash_FUNCTIONS			= tdiff.bash
+zsh_FUNCTIONS			= _tdiff.zsh
 
 AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      FAKEROOT="$(FAKEROOT)" \
@@ -61,7 +66,7 @@ AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      HAVE_XATTRS="$(HAVE_XATTRS)" \
 			      ;
 TEST_EXTENSIONS	     = .test
-TESTS = tests/inocache.test		\
+TESTS = tests/ent_pair_cache.test	\
 	tests/genhash.test		\
 	tests/acl.test			\
 	tests/atime.test		\

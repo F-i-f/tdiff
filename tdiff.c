@@ -49,7 +49,7 @@
 #include "tdiff.h"
 #include "utils.h"
 #include "genhash.h"
-#include "inocache.h"
+#include "ent_pair_cache.h"
 
 #if HAVE_GETDENTS
 #  if HAVE_SYS_DIRENT_H

@@ -50,6 +50,13 @@
 
 2019-04-28  Philippe Troin  <phil@fifi.org>
 
+	* .gitignore:
+	* Makefile.am:
+	* inocache*:
+	* tdiff.c:
+	* tests/inocache.test:
+	Rename inocache* to ent_pair_cache*.
+
 	* inocache.[ch]:
 	* inocache_test.c:
 	* tdiff.c:
