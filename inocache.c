@@ -25,14 +25,14 @@
 
 /* DJB2 hash */
 hashval_t
-ic_hash(const void* vent)
+epc_hash(const void* vent)
 {
   const char *bytes = (const char*)vent;
   hashval_t hv = 5381;
   size_t i;
   /**/
 
-  for (i=0; i < sizeof(ic_ent_t); ++i)
+  for (i=0; i < sizeof(ent_pair_cache_key_t); ++i)
     hv = (( hv << 5 ) + hv) + bytes[i]; /* hv * 33 + bytes[i] */
 
   return hv;
@@ -42,26 +42,26 @@ static
 int
 ic_equal(const void* ve1, const void* ve2)
 {
-  const ic_ent_t *e1 = (const ic_ent_t*)ve1;
-  const ic_ent_t *e2 = (const ic_ent_t*)ve2;
+  const ent_pair_cache_key_t *e1 = (const ent_pair_cache_key_t*)ve1;
+  const ent_pair_cache_key_t *e2 = (const ent_pair_cache_key_t*)ve2;
 
-  return e1->ino[0] == e2->ino[0] && e1->ino[1] == e2->ino[1]
-      && e1->dev[0] == e2->dev[0] && e1->dev[1] == e2->dev[1];
+  return e1->ent1.ino == e2->ent1.ino && e1->ent2.ino == e2->ent2.ino
+      && e1->ent1.dev == e2->ent1.dev && e1->ent2.dev == e2->ent2.dev;
 }
 
-inocache_t*
-ic_new(void)
+ent_pair_cache_t*
+epc_new(void)
 {
-  return gh_new(&ic_hash, &ic_equal, &free, &free);
+  return gh_new(&epc_hash, &ic_equal, &free, &free);
 }
 
 void
-ic_delete(inocache_t* ic)
+epc_destroy(ent_pair_cache_t* ic)
 {
   gh_delete(ic);
 }
 const char*
-ic_get(const inocache_t* ic, const ic_ent_t *ent)
+epc_get(const ent_pair_cache_t* ic, const ent_pair_cache_key_t *ent)
 {
   void* rv;
   if (gh_find(ic, ent, &rv))
@@ -70,7 +70,7 @@ ic_get(const inocache_t* ic, const ic_ent_t *ent)
     return NULL;
 }
 
-int ic_put(inocache_t* ic, const ic_ent_t* ent, const char* str)
+int epc_put(ent_pair_cache_t* ic, const ent_pair_cache_key_t* ent, const char* str)
 {
   return gh_insert(ic, (void*)ent, (void*)str);
 }

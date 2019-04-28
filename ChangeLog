@@ -48,6 +48,18 @@
 	* tests/mode.lib.sh (cleanup_test): Create, chmod'ing directories
 	back to at least u+rwx to ensure deletion.
 
+2019-04-28  Philippe Troin  <phil@fifi.org>
+
+	* inocache.[ch]:
+	* inocache_test.c:
+	* tdiff.c:
+	(struct ic_ent_s): Rename to struct ent_pair_cache_key_s, use ent_key_t.
+	(inocache_t): Rename to ent_pair_cache_t.
+	(ic_delete): Rename to epc_destroy.
+	(ic_*): Rename to epc_*e.
+
+	* inocache.h (struct ent_key_s): Create.
+
 2019-04-27  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.c (struct option_s, printopts, main): Re-add hardlinks.

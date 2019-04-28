@@ -25,10 +25,10 @@
 
 int main(int argc, char* argv[])
 {
-  int i;
-  struct stat sbuf1;
-  struct stat sbuf2;
-  ic_ent_t ice;
+  int			i;
+  struct stat		sbuf1;
+  struct stat		sbuf2;
+  ent_pair_cache_key_t	ice;
   /**/
 
   setprogname(argv[0]);
@@ -51,20 +51,20 @@ int main(int argc, char* argv[])
 	  perror(argv[i+1]);
 	  continue;
 	}
-      ice.ino[0] = sbuf1.st_ino;
-      ice.dev[0] = sbuf1.st_dev;
-      ice.ino[1] = sbuf2.st_ino;
-      ice.dev[1] = sbuf2.st_dev;
+      ice.ent1.ino = sbuf1.st_ino;
+      ice.ent1.dev = sbuf1.st_dev;
+      ice.ent2.ino = sbuf2.st_ino;
+      ice.ent2.dev = sbuf2.st_dev;
       printf("%s: dev=%0*lX ino=%0*lX\n"
 	     "%s: dev=%0*lX ino=%0*lX\n"
 	     "    hash=%0*lX\n",
 	     argv[i],
-	     SIZEOF_DEV_T*2, (long)ice.dev[0],
-	     SIZEOF_INO_T*2, (long)ice.ino[0],
+	     SIZEOF_DEV_T*2, (long)ice.ent1.dev,
+	     SIZEOF_INO_T*2, (long)ice.ent1.ino,
 	     argv[i+1],
-	     SIZEOF_DEV_T*2, (long)ice.dev[1],
-	     SIZEOF_INO_T*2, (long)ice.ino[1],
-	     SIZEOF_VOID_P*2, (long)ic_hash(&ice));
+	     SIZEOF_DEV_T*2, (long)ice.ent2.dev,
+	     SIZEOF_INO_T*2, (long)ice.ent2.ino,
+	     SIZEOF_VOID_P*2, (long)epc_hash(&ice));
     }
   return 0;
 }

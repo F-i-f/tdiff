@@ -118,59 +118,59 @@ typedef long long counter_t;
 
 typedef struct strl_s
 {
-  size_t size;
-  size_t avail;
-  const char **strings;
+  size_t	size;
+  size_t	avail;
+  const char ** strings;
 } strl_t;
 
 typedef struct dexe_s
 {
-  char ** argv;
-  char ** arg1;
-  char ** arg2;
+  char **	argv;
+  char **	arg1;
+  char **	arg2;
 } dexe_t;
 
 #define OPT_MODE_OR_DEFAULT  ((unsigned)0)
 #define OPT_MODE_AND_DEFAULT ((unsigned)~0)
 typedef struct option_s
 {
-  unsigned int verbosityLevel:8;
-  unsigned int dirs:1;
-  unsigned int type:1;
-  unsigned int mode:1;
-  unsigned int flags:1;
-  unsigned int owner:1;
-  unsigned int group:1;
-  unsigned int ctime:1;
-  unsigned int mtime:1;
-  unsigned int atime:1;
-  unsigned int size:1;
-  unsigned int blocks:1;
-  unsigned int contents:1;
-  unsigned int nlinks:1;
-  unsigned int hardlinks:1;
-  unsigned int major:1;
-  unsigned int minor:1;
-  unsigned int xattr:1;
-  unsigned int acl:1;
-  unsigned int exec:1;
-  unsigned int exec_always:1;
-  unsigned int mode_or;
-  unsigned int mode_and;
-  genhash_t*   exclusions;
-  dexe_t exec_args;
-  dexe_t exec_always_args;
-  size_t root1_length;
-  size_t root2_length;
-  inocache_t *inocache;
+  unsigned int		 verbosityLevel:8;
+  unsigned int		 dirs:1;
+  unsigned int		 type:1;
+  unsigned int		 mode:1;
+  unsigned int		 flags:1;
+  unsigned int		 owner:1;
+  unsigned int		 group:1;
+  unsigned int		 ctime:1;
+  unsigned int		 mtime:1;
+  unsigned int		 atime:1;
+  unsigned int		 size:1;
+  unsigned int		 blocks:1;
+  unsigned int		 contents:1;
+  unsigned int		 nlinks:1;
+  unsigned int		 hardlinks:1;
+  unsigned int		 major:1;
+  unsigned int		 minor:1;
+  unsigned int		 xattr:1;
+  unsigned int		 acl:1;
+  unsigned int		 exec:1;
+  unsigned int		 exec_always:1;
+  unsigned int		 mode_or;
+  unsigned int		 mode_and;
+  genhash_t*		 exclusions;
+  dexe_t		 exec_args;
+  dexe_t		 exec_always_args;
+  size_t		 root1_length;
+  size_t		 root2_length;
+  ent_pair_cache_t	*inocache;
   struct
   {
-    counter_t singles;
-    counter_t compared;
-    counter_t contents_compared;
-    counter_t excluded;
-    counter_t skipped_same;
-    counter_t skipped_cache;
+    counter_t	singles;
+    counter_t	compared;
+    counter_t	contents_compared;
+    counter_t	excluded;
+    counter_t	skipped_same;
+    counter_t	skipped_cache;
   } stats;
 
 } options_t;
@@ -1559,14 +1559,14 @@ xreadlink(const char* path)
 int
 dodiff(options_t* opts, const char* p1, const char* p2)
 {
-  struct stat sbuf1;
-  struct stat sbuf2;
-  ic_ent_t *ice;
-  char *icepath;
-  int rv = XIT_OK;
-  int localerr = 0;
-  const char *subpath;
-  int content_diff = 1;
+  struct stat			sbuf1;
+  struct stat			sbuf2;
+  ent_pair_cache_key_t *	ice;
+  char *			icepath;
+  int				rv	     = XIT_OK;
+  int				localerr     = 0;
+  const char *			subpath;
+  int				content_diff = 1;
   /**/
 
   ++ opts->stats.compared;
@@ -1604,20 +1604,20 @@ dodiff(options_t* opts, const char* p1, const char* p2)
     }
 
   /* Check if we have compared these two guys before */
-  ice = xmalloc(sizeof(ic_ent_t));
+  ice = xmalloc(sizeof(ent_pair_cache_key_t));
   memset(ice, 0, sizeof(*ice));
-  ice->ino[0] = sbuf1.st_ino;
-  ice->dev[0] = sbuf1.st_dev;
-  ice->ino[1] = sbuf2.st_ino;
-  ice->dev[1] = sbuf2.st_dev;
+  ice->ent1.ino = sbuf1.st_ino;
+  ice->ent1.dev = sbuf1.st_dev;
+  ice->ent2.ino = sbuf2.st_ino;
+  ice->ent2.dev = sbuf2.st_dev;
   icepath = xstrdup(subpath);
-  if (! ic_put(opts->inocache, ice, icepath))
+  if (! epc_put(opts->inocache, ice, icepath))
     {
       ++ opts->stats.skipped_cache;
       if (opts->verbosityLevel >= VERB_SKIPS)
 	{
 	  const char* ptr;
-	  ptr = ic_get(opts->inocache, ice);
+	  ptr = epc_get(opts->inocache, ice);
 	  fprintf(stderr, "%s: %s: already compared hard-linked files at %s\n",
 		 progname, icepath, ptr);
 	}
@@ -2363,7 +2363,7 @@ main(int argc, char*argv[])
   while (argv[1][options.root2_length-1] == '/' && options.root2_length>1)
     argv[1][--options.root2_length] = 0;
 
-  options.inocache = ic_new();
+  options.inocache = epc_new();
 
   rv = dodiff(&options, argv[0], argv[1]);
 
@@ -2420,7 +2420,7 @@ main(int argc, char*argv[])
       fprintf(stderr, "%s: end\n", progname);
     }
 
-  ic_delete(options.inocache);
+  epc_destroy(options.inocache);
 
   if ( options.verbosityLevel >= VERB_MEM_STATS)
     {
