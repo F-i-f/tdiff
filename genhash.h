@@ -21,6 +21,7 @@
 #define GENHASH_H
 
 #include "config.h"
+#include <sys/types.h>
 
 /* Generic hash types */
 typedef struct genhash_s genhash_t;
@@ -49,6 +50,7 @@ void       gh_stats(const genhash_t *gh, const char* name);
 
 /* Hash and equality functions for strings, identify */
 hashval_t gh_string_hash(const void*);
+hashval_t gh_binary_hash(const void*, size_t);
 hashval_t gh_identity_hash(const void*);
 int gh_string_equal(const void*, const void*);
 int gh_identity_equal(const void*, const void*);

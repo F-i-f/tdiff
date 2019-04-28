@@ -21,56 +21,19 @@
 #include "config.h"
 #include "ent_pair_cache.h"
 #include "genhash.h"
-#include <stdlib.h>
 
-/* DJB2 hash */
 hashval_t
 epc_hash(const void* vent)
 {
-  const char *bytes = (const char*)vent;
-  hashval_t hv = 5381;
-  size_t i;
-  /**/
-
-  for (i=0; i < sizeof(ent_pair_cache_key_t); ++i)
-    hv = (( hv << 5 ) + hv) + bytes[i]; /* hv * 33 + bytes[i] */
-
-  return hv;
+  return gh_binary_hash(vent, sizeof(ent_pair_cache_key_t));
 }
 
-static
 int
-ic_equal(const void* ve1, const void* ve2)
+epc_equal(const void* ve1, const void* ve2)
 {
   const ent_pair_cache_key_t *e1 = (const ent_pair_cache_key_t*)ve1;
   const ent_pair_cache_key_t *e2 = (const ent_pair_cache_key_t*)ve2;
 
   return e1->ent1.ino == e2->ent1.ino && e1->ent2.ino == e2->ent2.ino
       && e1->ent1.dev == e2->ent1.dev && e1->ent2.dev == e2->ent2.dev;
-}
-
-ent_pair_cache_t*
-epc_new(void)
-{
-  return gh_new(&epc_hash, &ic_equal, &free, &free);
-}
-
-void
-epc_destroy(ent_pair_cache_t* ic)
-{
-  gh_delete(ic);
-}
-const char*
-epc_get(const ent_pair_cache_t* ic, const ent_pair_cache_key_t *ent)
-{
-  void* rv;
-  if (gh_find(ic, ent, &rv))
-    return (const char*)rv;
-  else
-    return NULL;
-}
-
-int epc_put(ent_pair_cache_t* ic, const ent_pair_cache_key_t* ent, const char* str)
-{
-  return gh_insert(ic, (void*)ent, (void*)str);
 }

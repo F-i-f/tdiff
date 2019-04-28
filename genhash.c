@@ -202,7 +202,7 @@ gh_string_hash_old(const void* vstring)
   return val;
 }
 
-/* DJB2 hash */
+/* DJB2 hash, string version */
 hashval_t
 gh_string_hash(const void* vstr)
 {
@@ -214,6 +214,21 @@ gh_string_hash(const void* vstr)
     val = ((val << 5) + val) + c; /* val * 33 + c */
 
   return val;
+}
+
+/* DJB2 hash, binary version with length */
+hashval_t
+gh_binary_hash(const void* vent, size_t n_bytes)
+{
+  const char *bytes = (const char*)vent;
+  hashval_t hv = 5381;
+  size_t i;
+  /**/
+
+  for (i=0; i < n_bytes; ++i)
+    hv = (( hv << 5 ) + hv) + bytes[i]; /* hv * 33 + bytes[i] */
+
+  return hv;
 }
 
 hashval_t

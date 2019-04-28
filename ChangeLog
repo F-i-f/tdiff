@@ -50,6 +50,18 @@
 
 2019-04-28  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac: Add AC_C_INLINE.
+
+	* ent_pair_cache.c (epc_new, epc_destroy, epc_get, epc_put): Inline.
+	(epc_hash): Use gh_binary_hash.
+	(ic_equal): Rename to epc_equal.
+
+	* ent_pair_cache.h (epc_new, epc_destroy, epc_get, epc_put): Inline.
+
+	* genhash.c (gh_binary_hash): Add.
+
+	* genhash.h: Add gh_binary_hash.
+
 	* .gitignore:
 	* Makefile.am:
 	* inocache*:

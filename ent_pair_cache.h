@@ -22,7 +22,7 @@
 #define ENT_PAIR_CACHE_H
 
 #include "genhash.h"
-#include <sys/types.h>
+#include <stdlib.h>
 
 typedef struct ent_key_s
 {
@@ -39,10 +39,34 @@ typedef struct ent_pair_cache_key_s
 struct genhash_s;
 typedef struct genhash_s ent_pair_cache_t;
 
-ent_pair_cache_t* epc_new(void);
-void epc_destroy(ent_pair_cache_t*);
-const char* epc_get(const ent_pair_cache_t*, const ent_pair_cache_key_t*);
-int epc_put(ent_pair_cache_t*, const ent_pair_cache_key_t*, const char*);
 hashval_t epc_hash(const void* vent);
+int       epc_equal(const void* ve1, const void* ve2);
+
+static inline ent_pair_cache_t*
+epc_new(void)
+{
+  return gh_new(&epc_hash, &epc_equal, &free, &free);
+}
+
+static inline void
+epc_destroy(ent_pair_cache_t* ic)
+{
+  gh_delete(ic);
+}
+static inline const char*
+epc_get(const ent_pair_cache_t* ic, const ent_pair_cache_key_t *ent)
+{
+  void* rv;
+  if (gh_find(ic, ent, &rv))
+    return (const char*)rv;
+  else
+    return NULL;
+}
+
+static inline int
+epc_put(ent_pair_cache_t* ic, const ent_pair_cache_key_t* ent, const char* str)
+{
+  return gh_insert(ic, (void*)ent, (void*)str);
+}
 
 #endif /* ENT_PAIR_CACHE_H */

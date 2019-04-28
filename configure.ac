@@ -240,6 +240,7 @@ fi
 FI_CHECK_IDENTIFIER([getxattr], [#include <attr/xattr.h>], [in <attr/xattr.h>])
 
 ### 7) Checking for compiler characteristics
+AC_C_INLINE
 AC_CHECK_SIZEOF(short)
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
