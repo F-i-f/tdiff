@@ -1,5 +1,7 @@
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (print_list): Fix off-by-one that causes overflow.
+
 	* tests/mode.lib.sh (cleanup_test): Create, chmod'ing directories
 	back to at least u+rwx to ensure deletion.
 

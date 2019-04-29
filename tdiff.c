@@ -1102,7 +1102,9 @@ print_list(FILE* fd, unsigned width, const char *header, ...)
 	  fprintf(fd, "%s%s", header, item);
 	  printed_so_far = header_length + item_length;
 	}
-      else if (printed_so_far + item_length + 2 > width)
+      else if (printed_so_far + item_length + 3 > width)
+	// 2 for ", " and 1 more for the trailing "," or "." that will
+	// be added later.
 	{
 	  fprintf(fd, ",\n");
 	  for (i=0; i<header_length; ++i)
