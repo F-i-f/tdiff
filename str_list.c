@@ -33,16 +33,28 @@ str_list_new_size(str_list_t **l, size_t sz)
   rv = xmalloc(sizeof(str_list_t));
   rv->size = 0;
   rv->avail = sz;
-  rv->strings = xmalloc(sizeof(const char*)*rv->avail);
+  if (rv->avail > 0)
+    rv->strings = xmalloc(sizeof(const char*)*rv->avail);
+  else
+    rv->strings = 0;
 
   *l =rv;
+}
+
+static inline void
+str_list_grow(str_list_t *l)
+{
+  if (l->size == l->avail)
+    {
+      l->avail = l->avail ? l->avail*2 : 1;
+      l->strings = xrealloc(l->strings, l->avail*sizeof(const char*));
+    }
 }
 
 void
 str_list_push(str_list_t *l, const char* s)
 {
-  if (l->size == l->avail)
-    l->strings = xrealloc(l->strings, (l->avail*=2)*sizeof(const char*));
+  str_list_grow(l);
   l->strings[l->size++] = xstrdup(s);
 }
 
@@ -52,8 +64,7 @@ str_list_push_length(str_list_t *l, const char* s, size_t sz)
   char *buf;
   /**/
 
-  if (l->size == l->avail)
-    l->strings = xrealloc(l->strings, (l->avail*=2)*sizeof(const char*));
+  str_list_grow(l);
   buf = xmalloc(sz);
   memcpy(buf, s, sz);
   l->strings[l->size++] = buf;

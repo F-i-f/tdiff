@@ -22,6 +22,11 @@
 
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
+	* str_list.c (str_list_new_size): Handle zero-sized lists.
+	(str_list_push, str_list_push_length): Factorize code to grow list
+	in str_list_grow().
+	(str_list_grow): Create, allow zero-sized lists.
+
 	* str_list.h (str_list_new_size): Add.
 	(str_list_new): Inline and implement with str_list_new_size.
 
