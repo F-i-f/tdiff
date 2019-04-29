@@ -125,10 +125,13 @@ str_list_compare(const char *p1, const char* p2,
 	}
       else if (!(cmpres = strcmp(ct1->strings[i1], ct2->strings[i2])))
 	{
-	  int nrv;
-	  /**/
-	  nrv = compareEntries(p1, p2, ct1->strings[i1], ct2->strings[i2], clientData);
-	  if (nrv>rv) rv = nrv;
+	  if (compareEntries != NULL)
+	    {
+	      int nrv;
+	      /**/
+	      nrv = compareEntries(p1, p2, ct1->strings[i1], ct2->strings[i2], clientData);
+	      if (nrv>rv) rv = nrv;
+	    }
 	  i1++;
 	  i2++;
 	}

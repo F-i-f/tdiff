@@ -22,6 +22,22 @@
 
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (struct option_s): Add hardlinks1, hardlinks2, empty_str_list.
+	(reportMissingHardLink): Create.
+	(dodiff): Handle hard links: report any differences in hard link
+	sets and construct the hard link sets.
+	(main): Create, report on and destroy the hard links caches.
+	(main): Free options.empty_str_list if created by reportMissingHardLink.
+
+	* str_list.c (str_list_compare): Allow compareEntries to be NULL
+	and skip the compare.
+
+	* hard_links_cache.h: Create.
+
+	* hard_links_cache.c: Create.
+
+	* Makefile.am (libtdiff_a_SOURCES): Add hard_links_cache.[ch].
+
 	* tdiff.c (reportMissingXattr, reportMissingAcl): Factorize common
 	code to reportMissing().
 	(reportMissing): Create.

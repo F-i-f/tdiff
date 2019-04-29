@@ -46,11 +46,6 @@
 # include <sys/tty.h>
 #endif
 
-#include "tdiff.h"
-#include "str_list.h"
-#include "utils.h"
-#include "ent_pair_cache.h"
-
 #if HAVE_GETDENTS
 #  if HAVE_SYS_DIRENT_H
 #    include <sys/dirent.h>
@@ -86,6 +81,12 @@
 #if HAVE_ACL
 #include <sys/acl.h>
 #endif
+
+#include "tdiff.h"
+#include "str_list.h"
+#include "utils.h"
+#include "ent_pair_cache.h"
+#include "hard_links_cache.h"
 
 #if HAVE_ST_XTIMESPEC
 # define ST_ATIMENSEC st_atimespec
@@ -155,6 +156,9 @@ typedef struct option_s
   size_t		 root1_length;
   size_t		 root2_length;
   ent_pair_cache_t	*inocache;
+  hard_links_cache_t    *hardlinks1;
+  hard_links_cache_t    *hardlinks2;
+  str_list_t            *empty_str_list;
   struct
   {
     counter_t	singles;
@@ -767,6 +771,23 @@ compareFileEntries(const char* p1, const char* p2,
       free(np2);
     }
   return rv;
+}
+
+/*
+ * Hard links comparisons
+ */
+static void
+reportMissingHardLink(int which, const char* d, const char *f, str_list_client_data_t* clientData)
+{
+  static const char prefix[] = "hard link to ";
+  size_t	 buf_len;
+  char		*buf;
+
+  buf_len = sizeof(prefix)-1+strlen(f)+1;
+  buf = xmalloc(buf_len);
+  snprintf(buf, buf_len, "%s%s", prefix, f);
+  reportMissing(which, d, buf, clientData);
+  free(buf);
 }
 
 /*
@@ -1500,6 +1521,60 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       free(ice);
       free(icepath);
       return rv;
+    }
+
+  /* Hard links handling */
+  if (opts->hardlinks)
+    {
+      int			 store1, store2;
+      hard_links_cache_key_t	 k1, k2;
+      hard_links_cache_val_t	*v1 = NULL, *v2 = NULL;
+
+      k1.dev = sbuf1.st_dev;
+      k1.ino = sbuf1.st_ino;
+      if (sbuf1.st_nlink > 1 && ((sbuf1.st_mode)&S_IFMT) != S_IFDIR)
+	{
+	  v1 = hc_get(opts->hardlinks1, &k1);
+	  store1 = 1;
+	}
+      else
+	store1 = 0;
+
+      k2.dev = sbuf2.st_dev;
+      k2.ino = sbuf2.st_ino;
+      if (sbuf2.st_nlink > 1 && ((sbuf2.st_mode)&S_IFMT) != S_IFDIR)
+	{
+	  v2 = hc_get(opts->hardlinks2, &k2);
+	  store2 = 1;
+	}
+      else
+	store2 = 0;
+
+      if (v1 != NULL || v2 != NULL)
+	{
+	  str_list_client_data_t	clientData;
+	  int				nrv;
+
+	  if ((v1 == NULL || v2 == NULL) && opts->empty_str_list == NULL)
+	    str_list_new_size(&opts->empty_str_list, 0);
+
+	  clientData.opts = opts;
+	  nrv = str_list_compare(p1, p2,
+				 v1 != NULL ? v1 : opts->empty_str_list,
+				 v2 != NULL ? v2 : opts->empty_str_list,
+				 &reportMissingHardLink,
+				 NULL,
+				 &clientData);
+	  if (nrv != 0)
+	    localerr = 1;
+
+	}
+
+      if (store1)
+	hc_add_hard_link(opts->hardlinks1, &k1, v1, subpath);
+
+      if (store2)
+	hc_add_hard_link(opts->hardlinks2, &k2, v2, subpath);
     }
 
   /* Generic perms, owner, etc... */
@@ -2241,12 +2316,20 @@ main(int argc, char*argv[])
 
   options.inocache = epc_new();
 
+  if (options.hardlinks)
+    {
+      options.hardlinks1 = hc_new();
+      options.hardlinks2 = hc_new();
+    }
+
   rv = dodiff(&options, argv[0], argv[1]);
 
   if (options.exec)
     free(options.exec_args.argv);
   if (options.exec_always)
     free(options.exec_always_args.argv);
+  if (options.empty_str_list != NULL)
+    str_list_destroy(options.empty_str_list);
   gh_delete(options.exclusions);
 
   if (options.verbosityLevel >= VERB_STATS)
@@ -2286,6 +2369,17 @@ main(int argc, char*argv[])
       fprintf(stderr, "%s: inode cache statistics:\n", progname);
       gh_stats(options.inocache, "inode cache");
       fprintf(stderr, "%s: end\n", progname);
+
+      if (options.hardlinks)
+	{
+	  fprintf(stderr, "%s: hard links cache 1 statistics:\n", progname);
+	  gh_stats(options.hardlinks1, "hard links cache 1");
+	  fprintf(stderr, "%s: end\n", progname);
+
+	  fprintf(stderr, "%s: hard links cache 2 statistics:\n", progname);
+	  gh_stats(options.hardlinks2, "hard links cache 2");
+	  fprintf(stderr, "%s: end\n", progname);
+	}
     }
 
   if ( options.verbosityLevel >= VERB_MEM_STATS)
@@ -2298,6 +2392,11 @@ main(int argc, char*argv[])
 
   epc_destroy(options.inocache);
 
+  if (options.hardlinks)
+    {
+      hc_destroy(options.hardlinks1);
+      hc_destroy(options.hardlinks2);
+    }
   if ( options.verbosityLevel >= VERB_MEM_STATS)
     {
       fprintf(stderr, "%s: memory stats before exit:\n", progname);
