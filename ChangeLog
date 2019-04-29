@@ -22,6 +22,13 @@
 
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (libtdiff_a_SOURCES): Add str_list.[ch].
+
+	* str_list.[ch]: Create.
+
+	* tdiff.c: Move strList functions to str_list.[ch] and rename to
+	str_list_.
+
 	* Makefile.am (TESTS): Add error.test.
 	(EXTRA_DIST): Add error.out.gold.
 

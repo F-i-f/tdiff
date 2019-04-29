@@ -24,6 +24,8 @@ libtdiff_a_SOURCES		= ent_key.h		\
 				  ent_pair_cache.h	\
 				  genhash.c		\
 				  genhash.h		\
+				  str_list.c		\
+				  str_list.h		\
 				  utils.c		\
 				  utils.h
 

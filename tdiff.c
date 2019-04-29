@@ -47,8 +47,8 @@
 #endif
 
 #include "tdiff.h"
+#include "str_list.h"
 #include "utils.h"
-#include "genhash.h"
 #include "ent_pair_cache.h"
 
 #if HAVE_GETDENTS
@@ -103,7 +103,6 @@
 # define ATTRIBUTE_UNUSED /**/
 #endif /* ! __GNUC__ */
 
-#define GETSTRLIST_INITIAL_SIZE 8
 #define XATTR_BUF_SIZE		16384
 #define GETDIRLIST_DENTBUF_SIZE 8192
 #define XREADLINK_BUF_SIZE	1024
@@ -115,13 +114,6 @@
 #define VERB_MEM_STATS  4
 
 typedef long long counter_t;
-
-typedef struct strl_s
-{
-  size_t	size;
-  size_t	avail;
-  const char ** strings;
-} strl_t;
 
 typedef struct dexe_s
 {
@@ -175,8 +167,13 @@ typedef struct option_s
 
 } options_t;
 
-strl_t *getDirList(const char* path);
-void freeStrlist(strl_t *d);
+typedef struct str_list_client_data_s
+{
+  options_t *opts;
+} str_list_client_data_t;
+
+
+str_list_t *getDirList(const char* path);
 int get_exec_args(char**, int*, dexe_t*);
 int dodiff(options_t* opts, const char* p1, const char* p2);
 char* pconcat(const char* p1, const char* p2);
@@ -199,133 +196,14 @@ xperror(const char* msg, const char *filename)
 /*
  * String list handling
  */
-typedef struct commonClientData_s
-{
-  options_t *opts;
-} commonClientData_t;
-
-void
-newStrList(strl_t **l)
-{
-  strl_t* rv;
-  /**/
-  *l = NULL;
-  rv = xmalloc(sizeof(strl_t));
-  rv->size = 0;
-  rv->avail = GETSTRLIST_INITIAL_SIZE;
-  rv->strings = xmalloc(sizeof(const char*)*rv->avail);
-
-  *l =rv;
-}
-
-void
-pushStrList(strl_t *l, const char* s)
-{
-  if (l->size == l->avail)
-    l->strings = xrealloc(l->strings, (l->avail*=2)*sizeof(const char*));
-  l->strings[l->size++] = xstrdup(s);
-}
-
-void
-pushStrListSized(strl_t *l, const char* s, size_t sz)
-{
-  char *buf;
-  /**/
-
-  if (l->size == l->avail)
-    l->strings = xrealloc(l->strings, (l->avail*=2)*sizeof(const char*));
-  buf = xmalloc(sz);
-  memcpy(buf, s, sz);
-  l->strings[l->size++] = buf;
-}
-
-int strpcmp(const char** s1, const char** s2)
-{
-  return (strcmp(*s1, *s2));
-}
-
-void
-sortStrList(const strl_t *l)
-{
-  qsort(l->strings, l->size, sizeof(char*),
-	(int(*)(const void*, const void*))strpcmp);
-}
-
-void
-freeStrList(strl_t *d)
-{
-  size_t i;
-  /**/
-  for (i=0; i<d->size; ++i)
-    free((char*)d->strings[i]);
-  free(d->strings);
-  free(d);
-}
-
-int
-compareStrList(const char *p1, const char* p2,
-	       const strl_t *ct1, const strl_t *ct2,
-	       void (*reportMissing)(int, const char*, const char*, commonClientData_t*),
-	       int (*compareEntries)(const char* p1, const char* p2,
-				     const char* e1, const char* e2,
-				     commonClientData_t*),
-	       commonClientData_t *clientData)
-{
-  size_t	i1, i2;
-  int		cmpres;
-  int		rv	     = XIT_OK;
-  int		localerr     = 0;
-  /**/
-  sortStrList(ct1);
-  sortStrList(ct2);
-
-  for (i1 = i2 = 0; i1 < ct1->size || i2 < ct2->size; )
-    {
-      if (i1 == ct1->size)
-	{
-	  reportMissing(2, p2, ct2->strings[i2], clientData);
-	  i2++;
-	}
-      else if (i2 == ct2->size)
-	{
-	  reportMissing(1, p1, ct1->strings[i1], clientData);
-	  i1++;
-	}
-      else if (!(cmpres = strcmp(ct1->strings[i1], ct2->strings[i2])))
-	{
-	  int nrv;
-	  /**/
-	  nrv = compareEntries(p1, p2, ct1->strings[i1], ct2->strings[i2], clientData);
-	  if (nrv>rv) rv = nrv;
-	  i1++;
-	  i2++;
-	}
-      else if (cmpres<0)
-	{
-	  reportMissing(1, p1, ct1->strings[i1], clientData);
-	  i1++;
-	}
-      else /* cmpres>0 */
-	{
-	  reportMissing(2, p2, ct2->strings[i2], clientData);
-	  i2++;
-	}
-
-    }
-
-  if (localerr && XIT_DIFF>rv) rv = XIT_DIFF;
-
-  return rv;
-}
-
 /*
  * Xattrs comparisons
  */
 #if HAVE_GETXATTR
-strl_t*
+str_list_t*
 getXattrList(const char* path)
 {
-  strl_t *rv;
+  str_list_t *rv;
   char *buf;
   size_t bufSize = XATTR_BUF_SIZE;
   ssize_t rSize;
@@ -341,7 +219,7 @@ getXattrList(const char* path)
     switch(errno)
       {
       case ENOTSUP:
-	newStrList(&rv);
+	str_list_new(&rv);
 	return rv;
       case ERANGE:
 	free(buf);
@@ -353,18 +231,18 @@ getXattrList(const char* path)
 	return NULL;
       }
 
-  newStrList(&rv);
+  str_list_new(&rv);
   for (p = buf, p_e = buf+rSize;
        p < p_e && *p;
        p += strlen(p)+1)
-    pushStrList(rv, p);
+    str_list_push(rv, p);
 
   free(buf);
   return rv;
 }
 
 static void
-reportMissingXattr(int which, const char* f, const char* xn, commonClientData_t* clientData)
+reportMissingXattr(int which, const char* f, const char* xn, str_list_client_data_t* clientData)
 {
   const char*	subp;
   int		rootlen;
@@ -432,7 +310,7 @@ getXattr(const char* p, const char* name, size_t *retSize)
 int
 compareXattrs(const char* p1, const char* p2,
 	      const char* e1, const char* e2,
-	      commonClientData_t* clientData)
+	      str_list_client_data_t* clientData)
 {
   int rv = XIT_OK;
   size_t sz1 = 0;
@@ -491,14 +369,14 @@ dropAclXattrs(const char *xn)
  * ACL comparisons
  */
 #if HAVE_ACL
-strl_t *
+str_list_t *
 getAclList(const char* path, acl_type_t acltype)
 {
   acl_t acl = acl_get_file(path , acltype);
   ssize_t acllen;
   char *acls;
   char *p;
-  strl_t *rv;
+  str_list_t *rv;
   /**/
 
   if (acl == NULL)
@@ -506,7 +384,7 @@ getAclList(const char* path, acl_type_t acltype)
       {
       case ENOTSUP:
       case EINVAL:
-	newStrList(&rv);
+	str_list_new(&rv);
 	return rv;
       default:
 	xperror("cannot get ACL, acl_get_file()", path);
@@ -521,7 +399,7 @@ getAclList(const char* path, acl_type_t acltype)
       return NULL;
     }
 
-  newStrList(&rv);
+  str_list_new(&rv);
 
   const char* beg_user = acls;
   enum {
@@ -574,7 +452,7 @@ getAclList(const char* path, acl_type_t acltype)
 	    if (strcmp(buf, "user:")
 		&& strcmp(buf, "group:")
 		&& strcmp(buf, "other:"))
-	      pushStrListSized(rv, buf, p-beg_user+2);
+	      str_list_push_length(rv, buf, p-beg_user+2);
 	  }
 	state += 1;
 	break;
@@ -615,12 +493,12 @@ getAclList(const char* path, acl_type_t acltype)
 
 typedef struct aclCompareClientData_s
 {
-  commonClientData_t	cmn;
-  const char*		acldescr;
+  str_list_client_data_t	cmn;
+  const char*			acldescr;
 } aclCompareClientData_t;
 
 void
-reportMissingAcl(int which, const char* f, const char* xn, commonClientData_t* commonClientData)
+reportMissingAcl(int which, const char* f, const char* xn, str_list_client_data_t* commonClientData)
 {
   aclCompareClientData_t*	clientData = (aclCompareClientData_t*)commonClientData;
   const char*			subp;
@@ -654,7 +532,7 @@ reportMissingAcl(int which, const char* f, const char* xn, commonClientData_t* c
 int
 compareAcls(const char* p1, ATTRIBUTE_UNUSED const char* p2,
 	    const char* e1, const char* e2,
-	    commonClientData_t* commonClientData)
+	    str_list_client_data_t* commonClientData)
 {
   aclCompareClientData_t* clientData = (aclCompareClientData_t*)commonClientData;
   int rv = XIT_OK;
@@ -679,8 +557,8 @@ int
 diffacl(options_t* opts, const char* p1, const char* p2,
 	acl_type_t acltype, const char* acldescr)
 {
-  strl_t *acl1 = getAclList(p1, acltype);
-  strl_t *acl2 = getAclList(p2, acltype);
+  str_list_t *acl1 = getAclList(p1, acltype);
+  str_list_t *acl2 = getAclList(p2, acltype);
   int rv;
   /**/
 
@@ -691,17 +569,17 @@ diffacl(options_t* opts, const char* p1, const char* p2,
       clientData.cmn.opts = opts;
       clientData.acldescr = acldescr;
 
-      rv = compareStrList(p1, p2,
-			  acl1, acl2,
-			  reportMissingAcl,
-			  compareAcls,
-			  (commonClientData_t*)&clientData);
+      rv = str_list_compare(p1, p2,
+			    acl1, acl2,
+			    reportMissingAcl,
+			    compareAcls,
+			    (str_list_client_data_t*)&clientData);
     }
   else
     rv = XIT_SYS;
 
-  if (acl1) freeStrList(acl1);
-  if (acl2) freeStrList(acl2);
+  if (acl1) str_list_destroy(acl1);
+  if (acl2) str_list_destroy(acl2);
 
   return rv;
 }
@@ -711,13 +589,13 @@ diffacl(options_t* opts, const char* p1, const char* p2,
 /*
  * Directory comparisons
  */
-strl_t *
+str_list_t *
 getDirList(const char* path)
 #if HAVE_GETDENTS
 {
   char		dentbuf[GETDIRLIST_DENTBUF_SIZE];
   int		fd;
-  strl_t *	rv = NULL;
+  str_list_t *	rv = NULL;
   int		nread;
   /**/
 
@@ -732,7 +610,7 @@ getDirList(const char* path)
   if (fd<0)
     goto err;
 
-  newStrList(&rv);
+  str_list_new(&rv);
 
   while((nread = getdents(fd, (void*)dentbuf,
 			  GETDIRLIST_DENTBUF_SIZE))>0)
@@ -749,13 +627,13 @@ getDirList(const char* path)
 			&& dent->d_name[2]== 0))))
 	    continue;
 
-	  pushStrList(rv, dent->d_name);
+	  str_list_push(rv, dent->d_name);
 	}
     }
 
   if (nread<0 || close(fd)<0)
     {
-      freeStrList(rv);
+      str_list_destroy(rv);
       rv = NULL;
       goto err;
     }
@@ -773,7 +651,7 @@ getDirList(const char* path)
 #endif /* HAVE_FDOPENDIR */
   DIR		*dir;
   struct dirent *dent;
-  strl_t	*rv = NULL;
+  str_list_t	*rv = NULL;
   /**/
 
 #if HAVE_FDOPENDIR
@@ -800,7 +678,7 @@ getDirList(const char* path)
     goto err;
 #endif /* ! HAVE_FDOPENDIR */
 
-  newStrList(&rv);
+  str_list_new(&rv);
 
   while ((dent = readdir(dir)))
     {
@@ -810,12 +688,12 @@ getDirList(const char* path)
 		  && dent->d_name[2]== 0)))
 	continue;
 
-      pushStrList(rv, dent->d_name);
+      str_list_push(rv, dent->d_name);
     }
 
   if (closedir(dir))
     {
-      freeStrList(rv);
+      str_list_destroy(rv);
       rv = NULL;
       goto err;
     }
@@ -829,7 +707,7 @@ getDirList(const char* path)
 #endif
 
 static void
-reportMissingFile(int which, const char* d, const char *f, commonClientData_t* clientData)
+reportMissingFile(int which, const char* d, const char *f, str_list_client_data_t* clientData)
 {
   if ( ! clientData->opts->dirs )
     return;
@@ -875,7 +753,7 @@ reportMissingFile(int which, const char* d, const char *f, commonClientData_t* c
 static int
 compareFileEntries(const char* p1, const char* p2,
 		   const char* e1, ATTRIBUTE_UNUSED const char* e2,
-		   commonClientData_t* clientData)
+		   str_list_client_data_t* clientData)
 {
   int rv = XIT_OK;
   /**/
@@ -1884,20 +1762,20 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 #if HAVE_GETXATTR
   if (opts->xattr)
     {
-      strl_t *xl1 = getXattrList(p1);
-      strl_t *xl2 = getXattrList(p2);
-      int nrv;
+      str_list_t		*xl1 = getXattrList(p1);
+      str_list_t		*xl2 = getXattrList(p2);
+      int			 nrv;
       /**/
 
       if (xl1 && xl2)
 	{
-	  commonClientData_t clientData;
+	  str_list_client_data_t clientData;
 	  clientData.opts = opts;
-	  nrv = compareStrList(p1, p2,
-			       xl1, xl2,
-			       reportMissingXattr,
-			       compareXattrs,
-			       &clientData);
+	  nrv = str_list_compare(p1, p2,
+				 xl1, xl2,
+				 reportMissingXattr,
+				 compareXattrs,
+				 &clientData);
 	}
       else
 	nrv = XIT_SYS;
@@ -1905,8 +1783,8 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       if (nrv > rv)
 	rv = nrv;
 
-      if (xl1) freeStrList(xl1);
-      if (xl2) freeStrList(xl2);
+      if (xl1) str_list_destroy(xl1);
+      if (xl2) str_list_destroy(xl2);
     }
 #endif
 
@@ -1953,8 +1831,8 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       {
       case S_IFDIR:
 	{
-	  strl_t *ct1, *ct2;
-	  int nrv;
+	  str_list_t			*ct1, *ct2;
+	  int				 nrv;
 	  /**/
 
 	  ct1 = getDirList(p1);
@@ -1962,14 +1840,14 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 
 	  if (ct1 && ct2)
 	    {
-	      commonClientData_t clientData;
+	      str_list_client_data_t	 clientData;
 
 	      clientData.opts = opts;
-	      nrv = compareStrList(p1, p2,
-				   ct1, ct2,
-				   reportMissingFile,
-				   compareFileEntries,
-				   &clientData);
+	      nrv = str_list_compare(p1, p2,
+				     ct1, ct2,
+				     reportMissingFile,
+				     compareFileEntries,
+				     &clientData);
 	    }
 	  else
 	    nrv = XIT_SYS;
@@ -1977,8 +1855,8 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	  if (nrv > rv)
 	    rv = nrv;
 
-	  if (ct1) freeStrList(ct1);
-	  if (ct2) freeStrList(ct2);
+	  if (ct1) str_list_destroy(ct1);
+	  if (ct2) str_list_destroy(ct2);
 	}
 	break;
       case S_IFREG:
