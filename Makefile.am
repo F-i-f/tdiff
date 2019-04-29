@@ -72,6 +72,7 @@ TESTS = tests/inocache.test		\
 	tests/contents-exec.test	\
 	tests/ctime.test		\
 	tests/directories.test		\
+	tests/error.test		\
 	tests/exclude.test		\
 	tests/flag-archived.test	\
 	tests/flag-hidden.test		\
@@ -126,6 +127,7 @@ EXTRA_DIST = README.md					\
 	     tests/contents-always-diff.out.gold	\
 	     tests/contents-exec.out.gold		\
 	     tests/ctime.out.gold			\
+	     tests/error.out.gold			\
 	     tests/exclude.out.gold			\
 	     tests/directories.out.gold			\
 	     tests/flag-archived.out.gold		\

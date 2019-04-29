@@ -1,5 +1,23 @@
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (TESTS): Add error.test.
+	(EXTRA_DIST): Add error.out.gold.
+
+	* tests/error.test: Create.
+
+	* tests/error.out.gold: Create.
+
+	* tdiff.c (diffacl): Delay initializing clientData until it's
+	actually needed.
+	(getDirList): When an error occurs, always return NULL.
+	(dodiff): Only diff xattrs if both sides haven't returned an error
+	getting xattrs, and otherwise mark the error status as XIT_SYS.
+	(dodiff): Only free xattr lists if they have been created.
+	(dodiff): Only diff directory contents if both sides haven't
+	returned an error getting xattrs, and otherwise mark the error
+	status as XIT_SYS.
+	(dodiff): Only free directory lists if they have been created.
+
 	* tests/test.lib.sh: Run cleanup_test, if it exists, before wiping
 	the directories at test start.
 

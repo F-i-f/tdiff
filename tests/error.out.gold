@@ -1,0 +1,11 @@
+tdiff: dir1: mode: 0000 0775
+tdiff: tests/error.dir1/dir1: cannot get directory listing, getdents(): Permission denied (errno=13)
+tdiff: dir2: mode: 0775 0000
+tdiff: tests/error.dir2/dir2: cannot get directory listing, getdents(): Permission denied (errno=13)
+tdiff:            5          inode pairs compared
+tdiff:            1 (20.00%) file pair contents compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            0          unmatched paths
+tdiff:            0          excluded paths
+tdiff exit code=3

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  mkdir "$1"/dir1
+  echo file1 > "$1"/dir1/file1
+  mkdir "$1"/dir2
+  echo file2 > "$1"/dir2/file2
+  mkdir "$1"/dir3
+  echo file3 > "$1"/dir3/file3
+
+  cp -pr "$1"/* "$2"/
+  chmod 0 "$1"/dir1 "$2"/dir2
+}
+
+cleanup_test() {
+  chmod -R u+rwx "$1" "$2"
+}
+cleanup_test=cleanup_test
+
+tdiff_options="-a"
+
+. "$srcdir"/tests/test.lib.sh
