@@ -194,8 +194,40 @@ xperror(const char* msg, const char *filename)
 }
 
 /*
- * String list handling
+ * Common printing
  */
+static void
+reportMissing(int which, const char* f, const char* what, str_list_client_data_t* clientData)
+{
+  const char*	subp;
+  int		rootlen;
+  /**/
+
+  switch(which)
+    {
+    case 1:
+      subp = f+(rootlen = clientData->opts->root1_length);
+      break;
+    case 2:
+      subp = f+(rootlen = clientData->opts->root2_length);
+      break;
+    default:
+      abort();
+    }
+  if (*subp)
+    {
+      if (*subp != '/')
+	abort();
+      ++subp;
+    }
+  else
+    {
+      subp = "(top-level)";
+    }
+  printf("%s: %s: %s: only present in %.*s\n",
+	 progname, subp, what, rootlen, f);
+}
+
 /*
  * Xattrs comparisons
  */
@@ -244,38 +276,20 @@ getXattrList(const char* path)
 static void
 reportMissingXattr(int which, const char* f, const char* xn, str_list_client_data_t* clientData)
 {
-  const char*	subp;
-  int		rootlen;
-  /**/
+  static const char prefix[] = "xattr ";
+  size_t	 buf_len;
+  char		*buf;
 
 #if HAVE_ACL
   if (dropAclXattrs(xn))
     return;
 #endif
 
-  switch(which)
-    {
-    case 1:
-      subp = f+(rootlen = clientData->opts->root1_length);
-      break;
-    case 2:
-      subp = f+(rootlen = clientData->opts->root2_length);
-      break;
-    default:
-      abort();
-    }
-  if (*subp)
-    {
-      if (*subp != '/')
-	abort();
-      ++subp;
-    }
-  else
-    {
-      subp = "(top-level)";
-    }
-  printf("%s: %s: xattr %s: only present in %.*s\n",
-	 progname, subp, xn, rootlen, f);
+  buf_len = sizeof(prefix)-1+strlen(xn)+1;
+  buf = xmalloc(buf_len);
+  snprintf(buf, buf_len, "%s%s", prefix, xn);
+  reportMissing(which, f, buf, clientData);
+  free(buf);
 }
 
 void*
@@ -500,33 +514,17 @@ typedef struct aclCompareClientData_s
 void
 reportMissingAcl(int which, const char* f, const char* xn, str_list_client_data_t* commonClientData)
 {
-  aclCompareClientData_t*	clientData = (aclCompareClientData_t*)commonClientData;
-  const char*			subp;
-  int				rootlen;
+  aclCompareClientData_t*	 clientData = (aclCompareClientData_t*)commonClientData;
+  static const char infix[]		    = " acl ";
+  size_t			 buf_len;
+  char				*buf;
   /**/
-  switch(which)
-    {
-    case 1:
-      subp = f+(rootlen = clientData->cmn.opts->root1_length);
-      break;
-    case 2:
-      subp = f+(rootlen = clientData->cmn.opts->root2_length);
-      break;
-    default:
-      abort();
-    }
-  if (*subp)
-    {
-      if (*subp != '/')
-	abort();
-      ++subp;
-    }
-  else
-    {
-      subp = "(top-level)";
-    }
-  printf("%s: %s: %s acl %s: only present in %.*s\n",
-	 progname, subp, clientData->acldescr, xn, rootlen, f);
+
+  buf_len = strlen(clientData->acldescr)+sizeof(infix)-1+strlen(xn)+1;
+  buf = xmalloc(buf_len);
+  snprintf(buf, buf_len, "%s%s%s", clientData->acldescr, infix, xn);
+  reportMissing(which, f, buf, &clientData->cmn);
+  free(buf);
 }
 
 int

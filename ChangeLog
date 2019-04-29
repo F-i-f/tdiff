@@ -22,6 +22,10 @@
 
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (reportMissingXattr, reportMissingAcl): Factorize common
+	code to reportMissing().
+	(reportMissing): Create.
+
 	* str_list.c (str_list_new_size): Handle zero-sized lists.
 	(str_list_push, str_list_push_length): Factorize code to grow list
 	in str_list_grow().
