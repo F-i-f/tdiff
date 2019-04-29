@@ -32,7 +32,14 @@ typedef struct str_list_s
 
 struct str_list_client_data_s;
 
-void str_list_new(str_list_t **l);
+#define STR_LIST_NEW_INITIAL_SIZE 8
+
+void str_list_new_size(str_list_t **l, size_t);
+static inline
+void str_list_new(str_list_t **l)
+{
+  str_list_new_size(l, STR_LIST_NEW_INITIAL_SIZE);
+}
 void str_list_destroy(str_list_t *d);
 void str_list_push(str_list_t *l, const char* s);
 void str_list_push_length(str_list_t *l, const char* s, size_t sz);

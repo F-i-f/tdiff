@@ -22,6 +22,11 @@
 
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
+	* str_list.h (str_list_new_size): Add.
+	(str_list_new): Inline and implement with str_list_new_size.
+
+	* str_list.c (str_list_new_size): Add.
+
 	* Makefile.am (libtdiff_a_SOURCES): Add str_list.[ch].
 
 	* str_list.[ch]: Create.

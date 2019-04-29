@@ -24,18 +24,15 @@
 #include "tdiff.h"
 #include "utils.h"
 
-
-#define STR_LIST_NEW_INITIAL_SIZE 8
-
 void
-str_list_new(str_list_t **l)
+str_list_new_size(str_list_t **l, size_t sz)
 {
   str_list_t* rv;
   /**/
   *l = NULL;
   rv = xmalloc(sizeof(str_list_t));
   rv->size = 0;
-  rv->avail = STR_LIST_NEW_INITIAL_SIZE;
+  rv->avail = sz;
   rv->strings = xmalloc(sizeof(const char*)*rv->avail);
 
   *l =rv;
