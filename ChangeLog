@@ -1,5 +1,8 @@
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib.sh: Run cleanup_test, if it exists, before wiping
+	the directories at test start.
+
 	* tdiff.c (print_list): Fix off-by-one that causes overflow.
 
 	* tests/mode.lib.sh (cleanup_test): Create, chmod'ing directories

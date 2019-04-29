@@ -19,6 +19,7 @@ clean() {
 trap clean EXIT TERM QUIT HUP INT
 
 echo 1>&2 "$progname: set-up..."
+"${cleanup_test:-:}" "$dir1" "$dir2" > /dev/null 2>&1 || :
 rm -fr "$dir1" "$dir2"
 mkdir "$dir1" "$dir2"
 setup "$dir1" "$dir2"
