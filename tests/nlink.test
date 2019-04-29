@@ -18,11 +18,11 @@ setup() {
   ln "$2"/file5 "$2"/file6
 }
 
-nlinks_filter() {
-  sed -e '/^tdiff: (top-level): nlinks: /d'
+nlink_filter() {
+  sed -e '/^tdiff: (top-level): nlink: /d'
 }
 
 tdiff_options="-An"
-filter=nlinks_filter
+filter=nlink_filter
 
 . "$srcdir"/tests/test.lib.sh

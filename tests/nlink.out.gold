@@ -1,5 +1,5 @@
-tdiff: file1: nlinks: 2 1
-tdiff: file2: nlinks: 2 1
+tdiff: file1: nlink: 2 1
+tdiff: file2: nlink: 2 1
 tdiff: file6: already compared hard-linked files at file5
 tdiff:            7          inode pairs compared
 tdiff:            0 ( 0.00%) inode pairs skipped as identical

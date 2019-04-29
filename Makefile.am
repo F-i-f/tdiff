@@ -107,7 +107,7 @@ TESTS = tests/ent_pair_cache.test	\
 	tests/mode-and.test		\
 	tests/mode-or.test		\
 	tests/mtime.test		\
-	tests/nlinks.test		\
+	tests/nlink.test		\
 	tests/owner.test		\
 	tests/size.test			\
 	tests/type.test			\
@@ -163,7 +163,7 @@ EXTRA_DIST = README.md					\
 	     tests/mode-and.out.gold			\
 	     tests/mode-or.out.gold			\
 	     tests/mtime.out.gold			\
-	     tests/nlinks.out.gold			\
+	     tests/nlink.out.gold			\
 	     tests/owner.out.gold			\
 	     tests/size.out.gold			\
 	     tests/type.out.gold			\

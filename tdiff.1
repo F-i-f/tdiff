@@ -78,7 +78,7 @@ This is equivalent to
 .B \-dtmogsbcnejkql
 or
 .B \-\-dirs \-\-type \-\-mode \-\-owner \-\-group \-\-size \-\-blocks
-.B \-\-contents \-\-nlinks \-\-major \-\-minor \-\-xattr \-\-acl.
+.B \-\-contents \-\-nlink \-\-major \-\-minor \-\-xattr \-\-acl.
 .br
 Note that the file time options are not touched.
 .br
@@ -92,7 +92,7 @@ This is equivalent to
 or
 .B \-\-no\-dirs \-\-no\-type \-\-no\-mode \-\-no\-owner \-\-no\-group
 .B \-\-no\-ctime \-\-no\-mtime \-\-no\-atime \-\-no\-size \-\-no\-blocks
-.B \-\-no\-contents \-\-no\-nlinks \-\-no\-major \-\-no\-minor \-\-no\-xattr
+.B \-\-no\-contents \-\-no\-nlink \-\-no\-major \-\-no\-minor \-\-no\-xattr
 .B \-\-no\-acl.
 .br
 Unless an other option is used after \fB\-A\fR/\fB\-\-no\-all\fR,
@@ -191,11 +191,11 @@ If set,
 Do not report any differences in file access \fBm\fRodes (permission
 bits).
 .TP
-\fB\-n\fR, \fB\-\-nlinks\fR
+\fB\-n\fR, \fB\-\-nlink\fR
 Report on any differences in file (hard) link counts
 (\fI\,st_\/\fBn\fI\,links\/\fR).
 .TP
-\fB\-N\fR, \fB\-\-no\-nlinks\fR
+\fB\-N\fR, \fB\-\-no\-nlink\fR
 Do not report any differences in file (hard) link counts.
 .TP
 \fB\-o\fR, \fB\-\-owner\fR
@@ -594,7 +594,7 @@ along with this program.  If not, see
 \"  LocalWords:  tdiff Troin phil MERCHANTABILITY inode fI fR fB dirs
 \"  LocalWords:  DIRECTORY1 DIRECTORY2 fBtdiff fBd fRirectory TP fBh
 \"  LocalWords:  fRelp fBm fRode bitmasks fRodes fBt fRype fBv br acl
-\"  LocalWords:  fRerbosity fRersion dtmogsbcnejkql nlinks xattr fBb
+\"  LocalWords:  fRerbosity fRersion dtmogsbcnejkql nlink xattr fBb
 \"  LocalWords:  DTMOGZIRSBCNEJKQL ctime mtime atime fRlock fIst fBc
 \"  LocalWords:  inodes fRontent fBg fRroup fBi fRme fRmes fBj fRor
 \"  LocalWords:  ACLs fBn fIlinks fBo fRwnership setxattr NOATIME fBs

@@ -22,6 +22,20 @@
 
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
+	* tests/nlinks.out.gold, tests/nlinks.test: Rename to
+	test/nlink.*, rename nlinks to nlink.
+
+	* tdiff.c (struct option_s, show_help, printopts, dodiff, main):
+	Rename nlinks to nlink.
+
+	* tdiff.bash (_tdiff): Rename nlinks to nlink.
+
+	* tdiff.1: Rename nlinks to nlink.
+
+	* _tdiff.zsh (args): Rename nlinks to nlink.
+
+	* Makefile.am (TESTS, EXTRA_DIST): Rename nlinks to nlink.
+
 	* tdiff.c (struct option_s): Add hardlinks1, hardlinks2, empty_str_list.
 	(reportMissingHardLink): Create.
 	(dodiff): Handle hard links: report any differences in hard link

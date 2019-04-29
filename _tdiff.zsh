@@ -84,9 +84,9 @@ args=('*-v[increase verbosity level]'
       '--no-contents[do not diff contents (for regular files and symbolic links)]'
 
       '-n[diff file (hard) link count]'
-      '--nlinks[diff file (hard) link count]'
+      '--nlink[diff file (hard) link count]'
       '-N[do not diff (hard) link count]'
-      '--no-nlinks[do not diff (hard) link count]'
+      '--no-nlink[do not diff (hard) link count]'
 
       '-e[diff file hard link targets]'
       '--hardlinks[diff file hard link targets]'

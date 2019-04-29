@@ -46,8 +46,8 @@ _tdiff()
       -B|--no-blocks|\
       -c|--contents|\
       -C|--no-contents|\
-      -n|--nlinks|\
-      -N|--no-nlinks|\
+      -n|--nlink|\
+      -N|--no-nlink|\
       -e|--hardlinks|\
       -E|--no-hardlinks|\
       -j|--major|\
@@ -94,7 +94,7 @@ _tdiff()
 				 --size --no-size
 				 --blocks --no-blocks
 				 --contents --no-contents
-				 --nlinks --no-nlinks
+				 --nlink --no-nlink
 				 --hardlinks --no-hardlinks
 				 --major --no-major
 				 --minor --no-minor

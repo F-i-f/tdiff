@@ -140,7 +140,7 @@ typedef struct option_s
   unsigned int		 size:1;
   unsigned int		 blocks:1;
   unsigned int		 contents:1;
-  unsigned int		 nlinks:1;
+  unsigned int		 nlink:1;
   unsigned int		 hardlinks:1;
   unsigned int		 major:1;
   unsigned int		 minor:1;
@@ -1186,7 +1186,7 @@ show_help(void)
 	 "   -s --size      diffs file size (for regular files, symlinks)\n"
 	 "   -b --blocks    diffs file blocks (for regular files, symlinks & directories)\n"
 	 "   -c --contents  diffs file contents (for regular files and symlinks)\n"
-	 "   -n --nlinks    diffs the (hard) link count \n"
+	 "   -n --nlink     diffs the (hard) link count\n"
 	 "   -e --hardlinks diffs the hard link targets\n"
 	 "   -j --major     diffs major device numbers (for device files)\n"
 	 "   -k --minor     diffs minor device numbers (for device files)\n"
@@ -1338,7 +1338,7 @@ printopts(const options_t* o)
   POPT(size);
   POPT(blocks);
   POPT(contents);
-  POPT(nlinks);
+  POPT(nlink);
   POPT(hardlinks);
   POPT(major);
   POPT(minor);
@@ -1823,9 +1823,9 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	}
     }
 
-  if (opts->nlinks && sbuf1.st_nlink != sbuf2.st_nlink)
+  if (opts->nlink && sbuf1.st_nlink != sbuf2.st_nlink)
     {
-      printf("%s: %s: nlinks: %ld %ld\n",
+      printf("%s: %s: nlink: %ld %ld\n",
 	     progname,
 	     subpath,
 	     (long)sbuf1.st_nlink, (long)sbuf2.st_nlink);
@@ -2044,7 +2044,7 @@ main(int argc, char*argv[])
   options.size		    = 1;
   options.blocks	    = 1;
   options.contents	    = 1;
-  options.nlinks	    = 1;
+  options.nlink		    = 1;
   options.hardlinks	    = 1;
   options.major		    = 1;
   options.minor		    = 1;
@@ -2093,8 +2093,8 @@ main(int argc, char*argv[])
 	{ "no-blocks",         0, 0, 'B' },
 	{ "contents",          0, 0, 'c' },
 	{ "no-contents",       0, 0, 'C' },
-	{ "nlinks",            0, 0, 'n' },
-	{ "no-nlinks",         0, 0, 'N' },
+	{ "nlink",             0, 0, 'n' },
+	{ "no-nlink",          0, 0, 'N' },
 	{ "hardlinks",         0, 0, 'e' },
 	{ "no-hardlinks",      0, 0, 'E' },
 	{ "major",             0, 0, 'j' },
@@ -2188,8 +2188,8 @@ main(int argc, char*argv[])
 	case 'C': options.contents	  = 0; break;
 	case 'j': options.major		  = 1; break;
 	case 'J': options.major		  = 0; break;
-	case 'n': options.nlinks	  = 1; break;
-	case 'N': options.nlinks	  = 0; break;
+	case 'n': options.nlink		  = 1; break;
+	case 'N': options.nlink		  = 0; break;
 	case 'e': options.hardlinks	  = 1; break;
 	case 'E': options.hardlinks	  = 0; break;
 	case 'k': options.minor		  = 1; break;
@@ -2207,7 +2207,7 @@ main(int argc, char*argv[])
 		    = options.group
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
-		    = options.nlinks = options.hardlinks
+		    = options.nlink = options.hardlinks
 		    = options.major = options.minor = options.xattr
 		    = options.acl = 1; break;
 	case 'A': options.dirs = options.type
@@ -2215,7 +2215,7 @@ main(int argc, char*argv[])
 		    = options.group
 		    = options.ctime = options.mtime  = options.atime /* extra for -A */
 		    = options.size  = options.blocks = options.contents
-		    = options.nlinks = options.hardlinks
+		    = options.nlink = options.hardlinks
 		    = options.major = options.minor = options.xattr
 		    = options.acl = 0; break;
 	case 'x':
