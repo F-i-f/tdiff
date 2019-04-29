@@ -18,5 +18,9 @@ setup() {
   mkdir "$2"/sub/file
   chmod 617 "$2"/sub/file
   touch "$2"/sub/only-in-second
-
 }
+
+cleanup_test() {
+  chmod -R u+rwx "$1" "$2"
+}
+cleanup_test=cleanup_test

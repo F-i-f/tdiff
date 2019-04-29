@@ -1,3 +1,8 @@
+2019-04-29  Philippe Troin  <phil@fifi.org>
+
+	* tests/mode.lib.sh (cleanup_test): Create, chmod'ing directories
+	back to at least u+rwx to ensure deletion.
+
 2019-04-27  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.spec (Version):
