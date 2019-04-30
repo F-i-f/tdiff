@@ -1,5 +1,8 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib.sh: Allow the tdiff command to be overriden with
+	the TDIFF environment variable to run eg. valgrind.
+
 	* tdiff.spec (Version):
 	* configure.ac (AC_INIT):
 	* README.md (Changelog):

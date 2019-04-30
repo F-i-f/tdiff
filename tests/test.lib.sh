@@ -27,7 +27,7 @@ setup "$dir1" "$dir2"
 echo 1>&2 "$progname: tdiff..."
 (
   exitcode=0
-  ./tdiff -vv $tdiff_options "$dir1" "$dir2" || exitcode=$?
+  ${TDIFF:-./tdiff} -vv $tdiff_options "$dir1" "$dir2" || exitcode=$?
   echo "tdiff exit code=$exitcode"
 ) > "$out" 2>&1
 echo 1>&2 "$progname: tdiff output:"
