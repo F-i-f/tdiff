@@ -1,5 +1,9 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Document --hardlinks option.
+
+	* README.md: Document hard link sets feature.
+
 	* tdiff.1: Document the -f/--flags options.
 
 	* tdiff.1: Bump version to 0.8.

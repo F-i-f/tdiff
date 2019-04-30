@@ -43,6 +43,8 @@ owner uid and gid,
 .IP \(bu
 access, modification and inode change times,
 .IP \(bu
+the set of hard links a file has,
+.IP \(bu
 extended attributes (if supported),
 .IP \(bu
 ACLs (if supported),
@@ -148,11 +150,36 @@ This is on by default.
 Do not diff \fBd\fRirectory contents:  files only present in a single
 directory are not reported.
 .TP
+\fB\-e\fR, \fB\-\-hardlinks\fR
+Report any differences in the set of hard links a file may be linked
+to.
+.br
+For example if in a directory two files are hard linked together while
+in the other directory, their are not,
+.B tdiff
+will report that the files are hard links only in the first directory.
+.br
+.B tdiff
+will only report the differences once per set of hard links: if in a
+directory \fBf1\fR, \fBf2\fR and \fBf3\fR are hard links while in the
+other \fBf1\fR and \fBf2\fR are hard links while \fBf3\fR exists but
+is not a hard link,
+.B tdiff
+will report that \fBf1\fR is only linked to \fBf3\fR in the first
+directory but will not report the same information for \fBf2\fR
+because \fBf1\fR and \fBf2\fR are part of the same set of hard linked
+files.
+.br
+This is on by default.
+.TP
+\fB\-E\fR, \fB\-\-no\-hardlinks\fR
+Will not report any differences in hard links sets.
+.TP
 \fB\-f\fR, \fB\-\-flags\fR
 Diff file system \fBf\fRlags, as found in the
 .BR stat(2)
 .I st_flags
-structure member.  This is only supported on BSD and MacOS.
+structure member.  This is only supported on BSD and MacOSX.
 .br
 .B tdiff --version
 will list which file system flags
@@ -682,11 +709,13 @@ along with this program.  If not, see
 \"  LocalWords:  tdiff Troin phil MERCHANTABILITY inode fI fR fB dirs
 \"  LocalWords:  DIRECTORY1 DIRECTORY2 fBtdiff fBd fRirectory TP fBh
 \"  LocalWords:  fRelp fBm fRode bitmasks fRodes fBt fRype fBv br acl
-\"  LocalWords:  fRerbosity fRersion dtmogsbcnejkql nlink xattr fBb
-\"  LocalWords:  DTMOGZIRSBCNEJKQL ctime mtime atime fRlock fIst fBc
+\"  LocalWords:  fRerbosity fRersion nlink xattr fBb
+\"  LocalWords:  ctime mtime atime fRlock fIst fBc
 \"  LocalWords:  inodes fRontent fBg fRroup fBi fRme fRmes fBj fRor
 \"  LocalWords:  ACLs fBn fIlinks fBo fRwnership setxattr NOATIME fBs
 \"  LocalWords:  fRize getfacl getfattr fICOMMAND fIFILE fIMASK chmod
 \"  LocalWords:  directory1 directory2 fIDIRECTORY2 cmp IP uid fIdir1
 \"  LocalWords:  fIDIRECTORY1 gid UFS MacOSX vv vvv vvvv fI0x UE fR's
-\"  LocalWords:  fIfile1 fIfile2 fIdir2 files' readdir
+\"  LocalWords:  fIfile1 fIfile2 fIdir2 files' readdir eg hardlinks
+\"  LocalWords:  dtmfogsbcnejkql DTMFOGZIRSBCNEJKQL fBf1 fBf2 fBf3
+\"  LocalWords:  fBf fRlags
