@@ -1,5 +1,11 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.spec (Version):
+	* configure.ac (AC_INIT):
+	* README.md (Changelog):
+	* NEWS:
+	Update for release 0.7.2.
+
 	* tests/error.out.gold: Update for the error rephrasing.
 
 	* tests/error.test (readdir_filter): Create, substitute getdents

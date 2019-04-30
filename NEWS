@@ -1,5 +1,12 @@
 -*- outline -*-
 
+* Release 0.7.2
+** April 30, 2019.
+
+- Fix crash when an unreadable directory is encountered.
+- Fix regression failures on odd systems.
+- Fix display overflow in --version.
+
 * Release 0.7.1
 ** April 27, 2019.
 
