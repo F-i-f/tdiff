@@ -35,9 +35,12 @@ AC_DEFUN([FI_FORMAT_MAN],
 					      m4_if(fi_format_man_device, [html],
 						    ['/<!-- CreationDate:/d'],
 						    []))])
+			     m4_define([fi_format_man_make_target],
+				       [patsubst([fi_format_man_manpage], [^.*/], []).fi_format_man_device])
 			     FI_AUTOMAKE_FRAGMENT(
 [# Rule created by FI_FORMAT_MAN_DEVICE(]fi_format_man_manpage[, ]fi_format_man_device[)
-]patsubst([fi_format_man_manpage], [^.*/], []).fi_format_man_device: fi_format_man_manpage[
+.PRECIOUS: fi_format_man_make_target
+fi_format_man_make_target: ]fi_format_man_manpage[
 	-$(GROFF) -man -T]fi_format_man_device[ ./$< > $][@.new
 	@trap 'rm -f $][@.new $][@.tmp' EXIT; \
 	if test -s $][@.new; \
@@ -57,13 +60,14 @@ AC_DEFUN([FI_FORMAT_MAN],
 	  fi; \
 	fi
 
-all-am: ]patsubst([fi_format_man_manpage], [^.*/], []).fi_format_man_device[
+all-am: fi_format_man_make_target
 
-maintainer-clean-am: maintainer-clean-fi-format-man-]patsubst([fi_format_man_manpage], [^.*/], []).fi_format_man_device[
+maintainer-clean-am: maintainer-clean-fi-format-man-][fi_format_man_make_target
 
-.PHONY: maintainer-clean-fi-format-man-]patsubst([fi_format_man_manpage], [^.*/], []).fi_format_man_device[
-maintainer-clean-fi-format-man-]patsubst([fi_format_man_manpage], [^.*/], []).fi_format_man_device[:
-	rm -f ]patsubst([fi_format_man_manpage], [^.*/], []).fi_format_man_device[
+.PHONY: maintainer-clean-fi-format-man-][fi_format_man_make_target
+maintainer-clean-fi-format-man-][fi_format_man_make_target:
+	rm -f fi_format_man_make_target
 
+# End of FI_FORMAT_MAN_DEVICE(]fi_format_man_manpage[, ]fi_format_man_device[)
 ])])])
 ])

@@ -1,5 +1,8 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_format_man.m4 (FI_FORMAT_MAN): Mark the generated file as
+	.PRECIOUS. Use a m4 macro for the target name.
+
 	* tests/test.lib.sh: Allow the tdiff command to be overriden with
 	the TDIFF environment variable to run eg. valgrind.
 
