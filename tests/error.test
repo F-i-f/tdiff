@@ -9,6 +9,7 @@ setup() {
   echo file2 > "$1"/dir2/file2
   mkdir "$1"/dir3
   echo file3 > "$1"/dir3/file3
+  chmod 700 "$1"/dir[123]
 
   cp -pr "$1"/* "$2"/
   chmod 0 "$1"/dir1 "$2"/dir2

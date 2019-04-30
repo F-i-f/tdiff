@@ -1,3 +1,11 @@
+2019-04-30  Philippe Troin  <phil@fifi.org>
+
+	* tests/error.out.gold: Update for forced directory mode.
+
+	* tests/error.test (setup): Force the subdirectories mode as they
+	get in the error output and can vary depending on the running
+	user's umask.
+
 2019-04-29  Philippe Troin  <phil@fifi.org>
 
 	* Makefile.am (TESTS): Add error.test.
