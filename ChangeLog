@@ -1,5 +1,9 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* README.md:
+	* tdiff.1:
+	Add examples.
+
 	* m4/fi_format_man.m4 (FI_FORMAT_MAN): Mark the generated file as
 	.PRECIOUS. Use a m4 macro for the target name.
 

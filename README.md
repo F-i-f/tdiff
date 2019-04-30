@@ -28,6 +28,26 @@ download the manual page as:
 
 ## Examples
 
+Check that the two file trees rooted at _directory1_ and _directory2_
+are exactly the same, including symbolic link targets if any,
+permissions, hard disk block usage, owner, groups, and if supported,
+flags, ACLs and extended attributes:
+
+```shell
+tdiff directory1 directory2
+```
+
+&nbsp;
+
+Same as previous example, but also check that the file modification
+times are the same:
+
+```shell
+tdiff -i directory1 directory2
+```
+
+&nbsp;
+
 Only report if any files are present in only one directory:
 
 ```shell
@@ -295,5 +315,5 @@ make install
  -->
 <!--  LocalWords:  xattrs DJB2 NOATIME getdents64 FreeBSD Solaris
  -->
-<!--  LocalWords:  Troin Changelog
+<!--  LocalWords:  Troin Changelog directory1 directory2
  -->

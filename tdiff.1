@@ -494,6 +494,27 @@ if there was any system error (a file couldn't be read for example).
 4
 if there was an internal error.  This should not happen.
 .SH EXAMPLES
+Check that the two file trees rooted at
+.I directory1
+and
+.I directory2
+are exactly the same, including symbolic link targets if any,
+permissions, hard disk block usage, owner, groups, and if supported,
+flags, ACLs and extended attributes:
+.RS 4
+.PP
+.B tdiff
+.I directory1 directory2
+.RS -4
+.PP
+Same as previous example, but also check that the file modification
+times are the same:
+.RS 4
+.PP
+.B tdiff -i
+.I directory1 directory2
+.RS -4
+.PP
 Only report if any files are present in only one directory:
 .RS 4
 .PP
