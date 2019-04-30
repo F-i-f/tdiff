@@ -1,5 +1,12 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (TESTS, EXTRA_DIST): Rename group tests to gid.
+	Rename owner tests to uid.
+
+	* tests/group.*: Rename to tests/gid.*.
+
+	* tests/owner.*: Rename to tests/uid.*.
+
 	* README.md:
 	* _tdiff.zsh:
 	* tdiff.1:

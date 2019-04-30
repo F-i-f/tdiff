@@ -100,7 +100,7 @@ TESTS = tests/ent_pair_cache.test	\
 	tests/flag-uarchive.test	\
 	tests/flag-uimmutable.test	\
 	tests/flag-uunlink.test		\
-	tests/group.test		\
+	tests/gid.test			\
 	tests/hardlinks.test		\
 	tests/major.test		\
 	tests/minor.test		\
@@ -109,12 +109,12 @@ TESTS = tests/ent_pair_cache.test	\
 	tests/mode-or.test		\
 	tests/mtime.test		\
 	tests/nlink.test		\
-	tests/owner.test		\
 	tests/size.test			\
 	tests/type.test			\
 	tests/type-door.test		\
 	tests/type-sock.test		\
 	tests/type-root.test		\
+	tests/uid.test			\
 	tests/xattr.test
 
 EXTRA_DIST = README.md					\
@@ -157,7 +157,7 @@ EXTRA_DIST = README.md					\
 	     tests/flag-uarchive.out.gold		\
 	     tests/flag-uimmutable.out.gold		\
 	     tests/flag-uunlink.out.gold		\
-	     tests/group.out.gold			\
+	     tests/gid.out.gold				\
 	     tests/hardlinks.out.gold			\
 	     tests/major.out.gold			\
 	     tests/minor.out.gold			\
@@ -166,12 +166,12 @@ EXTRA_DIST = README.md					\
 	     tests/mode-or.out.gold			\
 	     tests/mtime.out.gold			\
 	     tests/nlink.out.gold			\
-	     tests/owner.out.gold			\
 	     tests/size.out.gold			\
 	     tests/type.out.gold			\
 	     tests/type-door.out.gold			\
 	     tests/type-root.out.gold			\
 	     tests/type-sock.out.gold			\
+	     tests/uid.out.gold				\
 	     tests/xattr.out.gold
 
 @FI_AUTOMAKE@
