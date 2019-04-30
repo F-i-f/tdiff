@@ -2,6 +2,11 @@
 
 set -eu
 
+if [ "$(id -u)" -eq 0 ]
+then
+  exit 77
+fi
+
 setup() {
   mkdir "$1"/dir1
   echo file1 > "$1"/dir1/file1

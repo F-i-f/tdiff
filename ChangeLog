@@ -1,5 +1,7 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tests/error.test: Skip when running as root.
+
 	* tests/error.out.gold: Update for forced directory mode.
 
 	* tests/error.test (setup): Force the subdirectories mode as they
