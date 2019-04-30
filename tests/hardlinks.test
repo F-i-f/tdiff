@@ -1,0 +1,31 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  echo "foo" > "$1"/file1a
+  mkdir "$1"/dir1
+  ln "$1"/file1a "$1"/dir1/file1b
+  cp -p "$1"/file1a "$1"/file2a
+  mkdir "$1"/dir2
+  ln "$1"/file2a "$1"/dir2/file2b
+
+  cp -p "$1"/file1a "$2"/file1a
+  ln "$2"/file1a "$2"/file2a
+  mkdir "$2"/dir1
+  cp -p "$1"/file1a "$2"/dir1/file1b
+  mkdir "$2"/dir2
+  ln "$2"/dir1/file1b "$2"/dir2/file2b
+
+  echo "bar" > "$1"/file3
+  ln "$1"/file3 "$1"/file3a
+  ln "$1"/file3 "$1"/file3b
+
+  cp "$1"/file3 "$2"/file3
+  ln "$2"/file3 "$2"/file3b
+  ln "$2"/file3 "$2"/file3c
+}
+
+tdiff_options="-Aed"
+
+. "$srcdir"/tests/test.lib.sh

@@ -101,6 +101,7 @@ TESTS = tests/ent_pair_cache.test	\
 	tests/flag-uimmutable.test	\
 	tests/flag-uunlink.test		\
 	tests/group.test		\
+	tests/hardlinks.test		\
 	tests/major.test		\
 	tests/minor.test		\
 	tests/mode.test			\
@@ -157,6 +158,7 @@ EXTRA_DIST = README.md					\
 	     tests/flag-uimmutable.out.gold		\
 	     tests/flag-uunlink.out.gold		\
 	     tests/group.out.gold			\
+	     tests/hardlinks.out.gold			\
 	     tests/major.out.gold			\
 	     tests/minor.out.gold			\
 	     tests/mode.out.gold			\

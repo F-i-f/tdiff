@@ -1,0 +1,13 @@
+tdiff: dir2/file2b: hard link to dir1/file1b: only present in tests/hardlinks.dir2
+tdiff: file1a: hard link to dir1/file1b: only present in tests/hardlinks.dir1
+tdiff: file2a: hard link to dir2/file2b: only present in tests/hardlinks.dir1
+tdiff: file2a: hard link to file1a: only present in tests/hardlinks.dir2
+tdiff: file3a: only present in tests/hardlinks.dir1
+tdiff: file3b: already compared hard-linked files at file3
+tdiff: file3c: only present in tests/hardlinks.dir2
+tdiff:            9          inode pairs compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            1 (11.11%) inode pairs skipped as already seen
+tdiff:            2          unmatched paths
+tdiff:            0          excluded paths
+tdiff exit code=0

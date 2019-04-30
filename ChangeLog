@@ -1,5 +1,12 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tests/hardlinks.out.gold:
+	* tests/hardlinks.test:
+	Create.
+
+	* Makefile.am (TESTS): Add hardlinks.test.
+	(EXTRA_DIST): Add hardlinks.out.gold.
+
 	* README.md:
 	* tdiff.1:
 	Add examples.
