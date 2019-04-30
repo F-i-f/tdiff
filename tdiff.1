@@ -85,7 +85,7 @@ off the equivalent check (eg. \fB\-\-no\-mtime\fR).
 Turn on all checks, except for file times.
 .br
 This is equivalent to
-.B \-dtmogsbcnejkql
+.B \-dtmfogsbcnejkql
 or
 .B \-\-dirs \-\-type \-\-mode \-\-owner \-\-group \-\-size \-\-blocks
 .B \-\-contents \-\-nlink \-\-major \-\-minor \-\-xattr \-\-acl.
@@ -98,7 +98,7 @@ This is the default.
 Turn off all checks, including file times.
 .br
 This is equivalent to
-.B \-DTMOGZIRSBCNEJKQL
+.B \-DTMFOGZIRSBCNEJKQL
 or
 .B \-\-no\-dirs \-\-no\-type \-\-no\-mode \-\-no\-owner \-\-no\-group
 .B \-\-no\-ctime \-\-no\-mtime \-\-no\-atime \-\-no\-size \-\-no\-blocks
@@ -147,6 +147,27 @@ This is on by default.
 \fB\-D\fR, \fB\-\-no\-dirs\fR
 Do not diff \fBd\fRirectory contents:  files only present in a single
 directory are not reported.
+.TP
+\fB\-f\fR, \fB\-\-flags\fR
+Diff file system \fBf\fRlags, as found in the
+.BR stat(2)
+.I st_flags
+structure member.  This is only supported on BSD and MacOS.
+.br
+.B tdiff --version
+will list which file system flags
+.B tdiff
+has been compiled with, but
+.B tdiff
+will report even differences in other unknown flags, but will do so
+numerically instead of listing the actual flag name.
+.br
+This is on by default if your system's
+.BR stat(2)
+structure has \fIst_flags\fR.
+.TP
+\fB\-F\fR, \fB\-\-no\-flags\fR
+Do not diff file system \fBf\fRlags.
 .TP
 \fB\-g\fR, \fB\-\-group\fR
 Report on any differences in file \fBg\fRroup ownership (owner group id).
