@@ -1,7 +1,7 @@
-tdiff: dir1: owner: 3 0
-tdiff: file1: owner: 1 0
-tdiff: file2: owner: 0 2
-tdiff: link1: owner: 4 0
+tdiff: dir1: uid: 3 0
+tdiff: file1: uid: 1 0
+tdiff: file2: uid: 0 2
+tdiff: link1: uid: 4 0
 tdiff:            6          inode pairs compared
 tdiff:            0 ( 0.00%) inode pairs skipped as identical
 tdiff:            0 ( 0.00%) inode pairs skipped as already seen

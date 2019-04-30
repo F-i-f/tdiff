@@ -9,7 +9,7 @@ Compare two file trees, showing any differences in their:
 
 * file size,
 * file block count (physical storage size),
-* owner uid and gid,
+* owner user and group ids (uid & gid),
 * access, modification and inode change times,
 * hard links sets,
 * extended attributes (if supported),
@@ -31,8 +31,8 @@ download the manual page as:
 
 Check that the two file trees rooted at _directory1_ and _directory2_
 are exactly the same, including symbolic link targets if any,
-permissions, hard disk block usage, owner, groups, and if supported,
-flags, ACLs and extended attributes:
+permissions, hard disk block usage, owner user or group ids, and if
+supported, flags, ACLs and extended attributes:
 
 ```shell
 tdiff directory1 directory2
@@ -57,10 +57,11 @@ tdiff --no-all --dirs directory1 directory2
 
 &nbsp;
 
-Report only ownership differences, ignore any missing files:
+Report only ownership (user or group id) differences, ignore any
+missing files:
 
 ```shell
-tdiff --no-all --owner --group directory1 directory2
+tdiff --no-all --uid --gid directory1 directory2
 ```
 
 &nbsp;

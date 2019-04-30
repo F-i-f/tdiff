@@ -30,10 +30,10 @@ _tdiff()
       -T|--no-type|\
       -m|--mode|\
       -M|--no-mode|\
-      -o|--owner|\
-      -O|--no-owner|\
-      -g|--group|\
-      -G|--no-group|\
+      -u|--uid|\
+      -u|--no-uid|\
+      -g|--gid|\
+      -G|--no-gid|\
       -z|--ctime|\
       -Z|--no-ctime|\
       -i|--mtime|\
@@ -86,8 +86,8 @@ _tdiff()
 				 --dirs --no-dirs
 				 --type --no-type
 				 --mode --no-mode
-				 --owner --no-owner
-				 --group --no-group
+				 --uid --no-uid
+				 --gid --no-gid
 				 --ctime --no-ctime
 				 --mtime --no-mtime
 				 --atime --no-atime

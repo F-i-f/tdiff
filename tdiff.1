@@ -87,9 +87,9 @@ off the equivalent check (eg. \fB\-\-no\-mtime\fR).
 Turn on all checks, except for file times.
 .br
 This is equivalent to
-.B \-dtmfogsbcnejkql
+.B \-dtmfugsbcnejkql
 or
-.B \-\-dirs \-\-type \-\-mode \-\-owner \-\-group \-\-size \-\-blocks
+.B \-\-dirs \-\-type \-\-mode \-\-uid \-\-gid \-\-size \-\-blocks
 .B \-\-contents \-\-nlink \-\-major \-\-minor \-\-xattr \-\-acl.
 .br
 Note that the file time options are not touched.
@@ -100,9 +100,9 @@ This is the default.
 Turn off all checks, including file times.
 .br
 This is equivalent to
-.B \-DTMFOGZIRSBCNEJKQL
+.B \-DTMFUGZIRSBCNEJKQL
 or
-.B \-\-no\-dirs \-\-no\-type \-\-no\-mode \-\-no\-owner \-\-no\-group
+.B \-\-no\-dirs \-\-no\-type \-\-no\-mode \-\-no\-uid \-\-no\-gid
 .B \-\-no\-ctime \-\-no\-mtime \-\-no\-atime \-\-no\-size \-\-no\-blocks
 .B \-\-no\-contents \-\-no\-nlink \-\-no\-major \-\-no\-minor \-\-no\-xattr
 .B \-\-no\-acl.
@@ -196,12 +196,13 @@ structure has \fIst_flags\fR.
 \fB\-F\fR, \fB\-\-no\-flags\fR
 Do not diff file system \fBf\fRlags.
 .TP
-\fB\-g\fR, \fB\-\-group\fR
-Report on any differences in file \fBg\fRroup ownership (owner group id).
+\fB\-g\fR, \fB\-\-gid\fR
+Report on any differences in file \fBg\fRroup ownership (owner group
+id, \fIst_gid\/\fR).
 .br
 This is on by default.
 .TP
-\fB\-G\fR, \fB\-\-no\-group\fR
+\fB\-G\fR, \fB\-\-no\-gid\fR
 Do not report any differences in file \fBg\fRroup ownership (owner group id).
 .TP
 \fB\-h\fR, \fB\-\-help\fR
@@ -276,14 +277,6 @@ This is on by default.
 \fB\-N\fR, \fB\-\-no\-nlink\fR
 Do not report any differences in file (hard) link counts.
 .TP
-\fB\-o\fR, \fB\-\-owner\fR
-Report on any differences in file \fBo\fRwnership (owner user id).
-.br
-This is on by default.
-.TP
-\fB\-O\fR, \fB\-\-no\-owner\fR
-Do not report any differences in file \fBo\fRwnership (owner user id).
-.TP
 \fB\-q\fR, \fB\-\-xattr\fR
 Report on any differences in file extended attributes as defined by
 .BR setxattr(2) .
@@ -336,6 +329,16 @@ This is on by default.
 \fB\-T\fR, \fB\-\-no\-type\fR
 Do not report file \fBt\fRype differences between the two compared
 directories.
+.TP
+\fB\-u\fR, \fB\-\-uid\fR
+Report on any differences in file \fBu\fRser ownership (owner user id,
+\fIst_uid\/\fR).
+.br
+This is on by default.
+.TP
+\fB\-u\fR, \fB\-\-no\-uid\fR
+Do not report any differences in file \fBu\fRser ownership (owner user
+id).
 .TP
 \fB\-v\fR, \fB\-\-verbose\fR
 Increase \fBv\fRerbosity, currently reports about the inode cache
@@ -593,8 +596,8 @@ Check that the two file trees rooted at
 and
 .I directory2
 are exactly the same, including symbolic link targets if any,
-permissions, hard disk block usage, owner, groups, and if supported,
-flags, ACLs and extended attributes:
+permissions, hard disk block usage, owner user and group ids, and if
+supported, flags, ACLs and extended attributes:
 .RS 4
 .PP
 .B tdiff
@@ -616,10 +619,11 @@ Only report if any files are present in only one directory:
 .I directory1 directory2
 .RS -4
 .PP
-Report only ownership differences, ignore any missing files:
+Report only ownership (user or group id) differences, ignore any
+missing files:
 .RS 4
 .PP
-.B tdiff \-\-no\-all \-\-owner \-\-group
+.B tdiff \-\-no\-all \-\-uid \-\-gid
 .I directory1 directory2
 .RS -4
 .PP
@@ -709,13 +713,13 @@ along with this program.  If not, see
 \"  LocalWords:  tdiff Troin phil MERCHANTABILITY inode fI fR fB dirs
 \"  LocalWords:  DIRECTORY1 DIRECTORY2 fBtdiff fBd fRirectory TP fBh
 \"  LocalWords:  fRelp fBm fRode bitmasks fRodes fBt fRype fBv br acl
-\"  LocalWords:  fRerbosity fRersion nlink xattr fBb
-\"  LocalWords:  ctime mtime atime fRlock fIst fBc
+\"  LocalWords:  fRerbosity fRersion nlink xattr fBb dtmfugsbcnejkql
+\"  LocalWords:  ctime mtime atime fRlock fIst fBc DTMFUGZIRSBCNEJKQL
 \"  LocalWords:  inodes fRontent fBg fRroup fBi fRme fRmes fBj fRor
-\"  LocalWords:  ACLs fBn fIlinks fBo fRwnership setxattr NOATIME fBs
+\"  LocalWords:  ACLs fBn fIlinks fBo setxattr NOATIME fBs fBu fRser
 \"  LocalWords:  fRize getfacl getfattr fICOMMAND fIFILE fIMASK chmod
 \"  LocalWords:  directory1 directory2 fIDIRECTORY2 cmp IP uid fIdir1
 \"  LocalWords:  fIDIRECTORY1 gid UFS MacOSX vv vvv vvvv fI0x UE fR's
 \"  LocalWords:  fIfile1 fIfile2 fIdir2 files' readdir eg hardlinks
-\"  LocalWords:  dtmfogsbcnejkql DTMFOGZIRSBCNEJKQL fBf1 fBf2 fBf3
+\"  LocalWords:  fBf1 fBf2 fBf3
 \"  LocalWords:  fBf fRlags

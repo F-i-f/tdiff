@@ -132,8 +132,8 @@ typedef struct option_s
   unsigned int		 type:1;
   unsigned int		 mode:1;
   unsigned int		 flags:1;
-  unsigned int		 owner:1;
-  unsigned int		 group:1;
+  unsigned int		 uid:1;
+  unsigned int		 gid:1;
   unsigned int		 ctime:1;
   unsigned int		 mtime:1;
   unsigned int		 atime:1;
@@ -1178,8 +1178,8 @@ show_help(void)
 #if HAVE_ST_FLAGS
 	 "   -f --flags     diffs flags (4.4BSD)\n"
 #endif
-	 "   -o --owner     diffs file owner\n"
-	 "   -g --group     diffs file group\n"
+	 "   -u --uid       diffs file user id\n"
+	 "   -g --gid       diffs file group id\n"
 	 "   -z --ctime     diffs ctime (inode modification time)\n"
 	 "   -i --mtime     diffs mtime (contents modification time)\n"
 	 "   -r --atime     diffs atime (access time)\n"
@@ -1330,8 +1330,8 @@ printopts(const options_t* o)
   POPT(dirs);
   POPT(type);
   POPT(mode);
-  POPT(owner);
-  POPT(group);
+  POPT(uid);
+  POPT(gid);
   POPT(ctime);
   POPT(mtime);
   POPT(atime);
@@ -1577,7 +1577,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	hc_add_hard_link(opts->hardlinks2, &k2, v2, subpath);
     }
 
-  /* Generic perms, owner, etc... */
+  /* Generic perms, uid, etc... */
   if (opts->mode)
     {
       int rm1, rm2;
@@ -1705,7 +1705,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	}
     }
 #endif /* HAVE_ST_FLAGS */
-  if (opts->owner && sbuf1.st_uid != sbuf2.st_uid)
+  if (opts->uid && sbuf1.st_uid != sbuf2.st_uid)
     {
       const struct passwd* pw;
       char *pn1=NULL, *pn2=NULL;
@@ -1713,7 +1713,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       if ((pw = getpwuid(sbuf1.st_uid))) pn1 = xstrdup(pw->pw_name);
       if ((pw = getpwuid(sbuf2.st_uid))) pn2 = xstrdup(pw->pw_name);
 
-      printf("%s: %s: owner: %s(%ld) %s(%ld)\n",
+      printf("%s: %s: uid: %s(%ld) %s(%ld)\n",
 	     progname,
 	     subpath,
 	     pn1 ? pn1 : "", (long)sbuf1.st_uid,
@@ -1724,7 +1724,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 
       localerr = 1;
     }
-  if (opts->group && sbuf1.st_gid != sbuf2.st_gid)
+  if (opts->gid && sbuf1.st_gid != sbuf2.st_gid)
     {
       const struct group* gr;
       char *gn1=NULL, *gn2=NULL;
@@ -1732,7 +1732,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       if ((gr = getgrgid(sbuf1.st_gid))) gn1 = xstrdup(gr->gr_name);
       if ((gr = getgrgid(sbuf2.st_gid))) gn2 = xstrdup(gr->gr_name);
 
-      printf("%s: %s: group: %s(%ld) %s(%ld)\n",
+      printf("%s: %s: gid: %s(%ld) %s(%ld)\n",
 	     progname,
 	     subpath,
 	     gn1 ? gn1 : "", (long)sbuf1.st_gid,
@@ -2036,8 +2036,8 @@ main(int argc, char*argv[])
   options.type		    = 1;
   options.mode		    = 1;
   options.flags		    = 1;
-  options.owner		    = 1;
-  options.group		    = 1;
+  options.uid		    = 1;
+  options.gid		    = 1;
   /* options.ctime	    = 0 ; */
   /* options.mtime	    = 0 ; */
   /* options.atime	    = 0 ; */
@@ -2077,10 +2077,10 @@ main(int argc, char*argv[])
 	{ "flags",             0, 0, 'f' },
 	{ "no-flags",          0, 0, 'F' },
 #endif
-	{ "owner",             0, 0, 'o' },
-	{ "no-owner",          0, 0, 'O' },
-	{ "group",             0, 0, 'g' },
-	{ "no-group",          0, 0, 'G' },
+	{ "uid",               0, 0, 'u' },
+	{ "no-uid",            0, 0, 'U' },
+	{ "gid",               0, 0, 'g' },
+	{ "no-gid",            0, 0, 'G' },
 	{ "ctime",             0, 0, 'z' },
 	{ "no-ctime",          0, 0, 'Z' },
 	{ "mtime",             0, 0, 'i' },
@@ -2131,7 +2131,7 @@ main(int argc, char*argv[])
 #if HAVE_ST_FLAGS
 	      "fF"
 #endif
-	      "oOgGzZiIrRsSbBcCnNeEjJkK"
+	      "uUgGzZiIrRsSbBcCnNeEjJkK"
 #if HAVE_GETXATTR
 	      "qQ"
 #endif
@@ -2170,10 +2170,10 @@ main(int argc, char*argv[])
 	case 'f': options.flags           = 1; break;
 	case 'F': options.flags           = 0; break;
 #endif
-	case 'o': options.owner		  = 1; break;
-	case 'O': options.owner		  = 0; break;
-	case 'g': options.group		  = 1; break;
-	case 'G': options.group		  = 0; break;
+	case 'u': options.uid		  = 1; break;
+	case 'U': options.uid		  = 0; break;
+	case 'g': options.gid		  = 1; break;
+	case 'G': options.gid		  = 0; break;
 	case 'z': options.ctime		  = 1; break;
 	case 'Z': options.ctime		  = 0; break;
 	case 'i': options.mtime		  = 1; break;
@@ -2203,16 +2203,16 @@ main(int argc, char*argv[])
 	case 'L': options.acl		  = 0; break;
 #endif
 	case 'a': options.dirs = options.type
-		    = options.mode = options.flags = options.owner
-		    = options.group
+		    = options.mode = options.flags = options.uid
+		    = options.gid
 		    /* = options.ctime = options.mtime  = options.atime */
 		    = options.size  = options.blocks = options.contents
 		    = options.nlink = options.hardlinks
 		    = options.major = options.minor = options.xattr
 		    = options.acl = 1; break;
 	case 'A': options.dirs = options.type
-		    = options.mode = options.flags = options.owner
-		    = options.group
+		    = options.mode = options.flags = options.uid
+		    = options.gid
 		    = options.ctime = options.mtime  = options.atime /* extra for -A */
 		    = options.size  = options.blocks = options.contents
 		    = options.nlink = options.hardlinks
