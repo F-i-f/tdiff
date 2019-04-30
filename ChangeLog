@@ -1,5 +1,11 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tests/error.out.gold: Update for the error rephrasing.
+
+	* tests/error.test (readdir_filter): Create, substitute getdents
+	with readdir in output, and remove the exact error code as it may
+	differ from system to system.
+
 	* tests/error.test: Skip when running as root.
 
 	* tests/error.out.gold: Update for forced directory mode.

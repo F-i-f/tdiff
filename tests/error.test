@@ -20,6 +20,12 @@ setup() {
   chmod 0 "$1"/dir1 "$2"/dir2
 }
 
+readdir_filter() {
+  sed -e 's!listing, getdents():!listing, readdir():!' \
+      -e 's!listing, readdir(): ..* (errno=[0-9][0-9]*)$!listing, readdir(): error!'
+}
+filter=readdir_filter
+
 cleanup_test() {
   chmod -R u+rwx "$1" "$2"
 }
