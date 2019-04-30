@@ -14,7 +14,7 @@
 .\"
 .\" You should have received a copy of the GNU General Public License
 .\" along with this program.  If not, see <http://www.gnu.org/licenses/>.
-.TH TDIFF 1 "April 2019" "tdiff 0.7" "User Commands"
+.TH TDIFF 1 "April 2019" "tdiff 0.8" "User Commands"
 .SH NAME
 tdiff \- tree diff, list differences between various inode attributes (
 .BR stat(2)
@@ -33,21 +33,21 @@ file trees, comparing any of the inode attributes, also known as
 structure members.  Inode attributes are:
 .RS 3
 .IP \(bu 3
-file type (regular file, directory, FIFO, socket, etc.)
+file type (regular file, directory, FIFO, socket, etc.),
 .IP \(bu
-file size
+file size,
 .IP \(bu
-file block count (physical storage size)
+file block count (physical storage size),
 .IP \(bu
-owner uid and gid
+owner uid and gid,
 .IP \(bu
-access, modification and inode change times
+access, modification and inode change times,
 .IP \(bu
-extended attributes (if supported)
+extended attributes (if supported),
 .IP \(bu
-ACLs (if supported)
+ACLs (if supported),
 .IP \(bu
-file system flags (BSD UFS, MacOSX)
+file system flags (BSD UFS, MacOSX).
 .RS -3
 .PP
 By default,
@@ -68,8 +68,18 @@ options.
 .SH OPTIONS
 Most single-letter options come in two versions, upper-case and
 lower-case.  The lower-case option enables the the attribute check,
-while the upper-case option disables it.  Similarly, most long options
-have a \fB\-\-no\-\fR version to turn off the equivalent check.
+while the upper-case option disables it.
+.PP
+The long options are named after the
+.BR stat(2)
+structure names: for example,
+.B \-\-mtime
+is used to check the
+.I st_mtime
+.BR stat(2)
+structure member, which is the file modification times.  Similarly to
+short options, most long options have a \fB\-\-no\-\fR version to turn
+off the equivalent check (eg. \fB\-\-no\-mtime\fR).
 .TP
 \fB\-a\fR, \fB\-\-all\fR
 Turn on all checks, except for file times.
@@ -103,6 +113,8 @@ will not report anything but will still traverse the file trees.
 Report file \fBb\fRlock count differences for regular files,
 directories and symbolic links (\fI\,st_blocks\fR does not make sense on
 other types of inodes).
+.br
+This is on by default.
 .TP
 \fB\-B\fR, \fB\-\-no\-blocks\fR
 Do not report file \fBb\fRlock count differences.
@@ -120,6 +132,8 @@ differ.
 See the
 .BR CONTENTS\ COMPARISONS
 section below for the exact semantics.
+.br
+This is on by default.
 .TP
 \fB\-C\fR, \fB\-\-no\-contents\fR
 Do not report file \fBc\fRontent differences.
@@ -127,6 +141,8 @@ Do not report file \fBc\fRontent differences.
 \fB\-d\fR, \fB\-\-dirs\fR
 Diff \fBd\fRirectory contents:  report if any file is present in only
 one directory.
+.br
+This is on by default.
 .TP
 \fB\-D\fR, \fB\-\-no\-dirs\fR
 Do not diff \fBd\fRirectory contents:  files only present in a single
@@ -134,6 +150,8 @@ directory are not reported.
 .TP
 \fB\-g\fR, \fB\-\-group\fR
 Report on any differences in file \fBg\fRroup ownership (owner group id).
+.br
+This is on by default.
 .TP
 \fB\-G\fR, \fB\-\-no\-group\fR
 Do not report any differences in file \fBg\fRroup ownership (owner group id).
@@ -149,6 +167,8 @@ reports it.
 \fB\-I\fR, \fB\-\-no\-mtime\fR
 Do not report any differences in file modification t\fBi\fRmes
 (\fI\,st_mtime\/\fR).
+.br
+This is on by default.
 .TP
 \fB\-j\fR, \fB\-\-major\fR
 For device files (either block or character), report any differences
@@ -156,6 +176,8 @@ in ma\fBj\fRor device numbers.
 .br
 Note that major numbers will be compared across same or different
 (block or character) device file types.
+.br
+This is on by default.
 .TP
 \fB\-J\fR, \fB\-\-no\-major\fR
 Do not report any differences in major device numbers on device files.
@@ -166,6 +188,8 @@ in minor device numbers.
 .br
 Note that minor numbers will be compared across same or different
 (block or character) device file types.
+.br
+This is on by default.
 .TP
 \fB\-K\fR, \fB\-\-no\-minor\fR
 Do not report any differences in minor device numbers on device files.
@@ -176,6 +200,8 @@ Report on any differences in file ACLs as defined by
 .br
 Any missing or different ACLs between the file pairs are
 reported.  Access, default and mask ACL entries are supported.
+.br
+This is on by default if ACLs are supported by the system.
 .TP
 \fB\-L\fR, \fB\-\-no\-acl\fR
 Do not report any differences in file ACLs.
@@ -185,7 +211,9 @@ Report on any differences in file access \fBm\fRode (permission bits as
 set by
 .BR chmod(1) ).
 If set,
-\fB\-\-mode\-or\fR and \fB\-\-mode\-and\fR bitmasks are applied
+\fB\-\-mode\-or\fR and \fB\-\-mode\-and\fR bitmasks are applied.
+.br
+This is on by default.
 .TP
 \fB\-M\fR, \fB\-\-no\-mode\fR
 Do not report any differences in file access \fBm\fRodes (permission
@@ -194,12 +222,16 @@ bits).
 \fB\-n\fR, \fB\-\-nlink\fR
 Report on any differences in file (hard) link counts
 (\fI\,st_\/\fBn\fI\,links\/\fR).
+.br
+This is on by default.
 .TP
 \fB\-N\fR, \fB\-\-no\-nlink\fR
 Do not report any differences in file (hard) link counts.
 .TP
 \fB\-o\fR, \fB\-\-owner\fR
 Report on any differences in file \fBo\fRwnership (owner user id).
+.br
+This is on by default.
 .TP
 \fB\-O\fR, \fB\-\-no\-owner\fR
 Do not report any differences in file \fBo\fRwnership (owner user id).
@@ -210,6 +242,8 @@ Report on any differences in file extended attributes as defined by
 .br
 Any missing or different extended attributes between the file pairs are
 reported.
+.br
+This is on by default if extended attributes are supported by the system.
 .TP
 \fB\-Q\fR, \fB\-\-no\-xattr\fR
 Do not report any differences in file extended attributes.
@@ -233,10 +267,14 @@ the files they read.
 \fB\-R\fR, \fB\-\-no\-atime\fR
 Do not report any differences in file access times
 (\fI\,st_atime\/\fR).
+.br
+This is on by default.
 .TP
 \fB\-s\fR, \fB\-\-size\fR
 Report file \fBs\fRize differences for regular files and symbolic
 links (\fI\,st_size\fR does not make sense on other types of inodes).
+.br
+This is on by default.
 .TP
 \fB\-S\fR, \fB\-\-no\-size\fR
 Do not report file \fBs\fRize differences.
@@ -244,6 +282,8 @@ Do not report file \fBs\fRize differences.
 \fB\-t\fR, \fB\-\-type\fR
 Report file \fBt\fRype differences (files, directories, symbolic links,
 etc.)
+.br
+This is on by default.
 .TP
 \fB\-T\fR, \fB\-\-no\-type\fR
 Do not report file \fBt\fRype differences between the two compared
@@ -273,14 +313,18 @@ report memory statistics.
 \fB\-V\fR, \fB\-\-version\fR
 Show the
 .B tdiff
-\fBv\fRersion information and compiled-in features then exit.
+\fBv\fRersion information, compiled-in features and flags (if any)
+then exit.
 .br
 The compiled-in feature list shows which features
 .B tdiff
-has been compiled with: O_NOATIME, flags, acl, and xattr support, the
-list of supported file system flags, and the
+has been compiled with: O_NOATIME, flags, acl, and xattr support, and
+the
 .BR readdir(2)
 implementation used.
+.br
+If flags support is compiled in, the list of recognized flags will be
+listed as well.
 .TP
 \fB\-w\fR, \fB\-\-exec\-always\fR \fICOMMAND... \\\/;\fR
 Always execute
@@ -357,6 +401,8 @@ involving cloning raw file system images).
 \fB\-Z\fR, \fB\-\-no\-ctime\fR
 Do not report any differences in file file inode change times
 (\fI\,st_ctime\/\fR).
+.br
+This is on by default.
 .TP
 \fB\-\\|\fR, \fB\-\-mode\-or\fR \fIMASK\fR
 Note that the pipe character must be escaped to prevent it from being

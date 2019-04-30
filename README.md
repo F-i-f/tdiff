@@ -7,13 +7,13 @@ Compare files inode attributes
 
 Compare two file trees, showing any differences in their:
 
-* file size
-* file block count (physical storage size)
-* owner uid and gid
-* access, modification and inode change times
-* extended attributes (if supported)
-* ACLs (if supported)
-* file system flags (BSD UFS, MacOSX)
+* file size,
+* file block count (physical storage size),
+* owner uid and gid,
+* access, modification and inode change times,
+* extended attributes (if supported),
+* ACLs (if supported),
+* file system flags (BSD UFS, MacOSX).
 
 ## Documentation
 

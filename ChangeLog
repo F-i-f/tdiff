@@ -1,5 +1,12 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Bump version to 0.8.
+	Typographic fixes.
+	Explain long options naming.
+	Show which checks are active by default.
+
+	* README.md: Typographic fixes.
+
 	* tests/hardlinks.out.gold:
 	* tests/hardlinks.test:
 	Create.
