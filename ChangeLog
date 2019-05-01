@@ -1,5 +1,29 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset-alltimes.out.gold:
+	* tests/preset-amtimes.out.gold:
+	Drop entry3 atime entry.
+
+	* tests/preset.lib.sh (toplevel_atime_filter): Rename to
+	preset_atime_filter and filter out entry3's atime: on systems
+	without nanosecond resolution entry3 (which is linked to entry2)
+	will have been read a first time when compared as entry2, and the
+	atime will update and won't be reported as different for entry3,
+	causing a failure.
+	(preset_reset): Create: The atimes need to be reset in the past
+	for systems that don't have both NO_ATIME and nanosecond time
+	resolution: in their case the multiple tdiff passes will reset the
+	atimes at the same time during the comparison stage.
+	(reset): Define to preset_reset.
+	(setup): Add sleeps in between the directory 1 and 2 creations,
+	and after we're done, which will delay the reset by a second.
+	Otherwise preset_reset will set the [ma]times in the past, but the
+	ctimes will be the same as the directory2 files.
+
+	* tests/preset-alltimes.test (alltimes_filter):
+	* tests/preset-amtimes.test (amtimes_filter):
+	toplevel_atime_filter -> preset_atime_filter.
+
 	* tdiff.c: HAVE_ST_XTIMESPEC -> HAVE_ST_ATIMESPEC.  Fixes breakage
 	on systems have have st_xtimespec.
 

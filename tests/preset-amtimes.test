@@ -15,7 +15,7 @@ tdiff_long_options2="--preset 8"
 amtimes_filter() {
   xtime_filter '[am]time' \
     | preset_filter \
-    | toplevel_atime_filter
+    | preset_atime_filter
 }
 filter=amtimes_filter
 

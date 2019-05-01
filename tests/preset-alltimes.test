@@ -15,7 +15,7 @@ tdiff_long_options2="--preset 9"
 alltimes_filter() {
   xtime_filter '[amc]time' \
     | preset_filter \
-    | toplevel_atime_filter
+    | preset_atime_filter
 }
 filter=alltimes_filter
 

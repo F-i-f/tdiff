@@ -2,6 +2,11 @@
 
 set -eu
 
+preset_reset() {
+  touch -t 198001010000 "$1/dir1" "$1"/entry1 "$1"/entry2 "$1"/entry4
+}
+reset=preset_reset
+
 setup() {
   echo "File 1" > "$1"/entry1
   chmod 600 "$1"/entry1
@@ -11,6 +16,8 @@ setup() {
   mkdir "$1"/dir1
   touch "$1"/dir1/missing
 
+  sleep 1
+
   mkdir "$2"/entry1
   chmod 700 "$2"/entry1
   echo foo > "$2"/entry2
@@ -18,6 +25,8 @@ setup() {
   dd bs=64k count=4 if=/dev/zero of="$2"/entry4
   mkdir "$2"/dir1
   touch "$2"/missing
+
+  sleep 1
 
   # On Solaris block counts aren't updated until they're on storage.
   sync
@@ -30,6 +39,7 @@ preset_filter() {
       -e 's!^\(tdiff: entry4: blocks:\) [0-9][0-9]* [0-9][0-9]*!\1 XX XX!'
 }
 
-toplevel_atime_filter() {
-  sed -e '/^tdiff: (top-level): atime: /d'
+preset_atime_filter() {
+  sed -e '/^tdiff: (top-level): atime: /d' \
+      -e '/^tdiff: entry3: atime: /d'
 }

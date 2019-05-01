@@ -18,7 +18,6 @@ tdiff: entry2: nlink: 2 1
 tdiff: entry3: hard link to entry2: only present in tests/preset-alltimes.dir1
 tdiff: entry3: ctime: [XXX] [XXX]
 tdiff: entry3: mtime: [XXX] [XXX]
-tdiff: entry3: atime: [XXX] [XXX]
 tdiff: entry3: nlink: 2 1
 tdiff: entry4: ctime: [XXX] [XXX]
 tdiff: entry4: mtime: [XXX] [XXX]
