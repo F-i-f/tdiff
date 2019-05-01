@@ -10,6 +10,10 @@ tdiff_options3="-4"
 tdiff_long_options="--preset hardlinks"
 tdiff_long_options2="--preset 4"
 
-filter=preset_hardlinks_filter
+hardlinks_filter() {
+  preset_xid_filter \
+    | preset_hardlinks_filter
+}
+filter=hardlinks_filter
 
 . "$srcdir"/tests/test.lib.sh

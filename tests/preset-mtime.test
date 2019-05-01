@@ -11,9 +11,10 @@ tdiff_long_options="--preset mtime"
 tdiff_long_options2="--preset 7"
 
 mtime_filter() {
-  preset_hardlinks_filter \
-  | preset_size_filter \
-  | xtime_filter mtime
+  preset_xid_filter \
+    | preset_hardlinks_filter \
+    | preset_size_filter \
+    | xtime_filter mtime
 }
 filter=mtime_filter
 

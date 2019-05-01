@@ -10,4 +10,6 @@ tdiff_options3="-3"
 tdiff_long_options="--preset owner"
 tdiff_long_options2="--preset 3"
 
+filter=preset_xid_filter
+
 . "$srcdir"/tests/test.lib.sh

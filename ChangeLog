@@ -1,5 +1,29 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset-root-*.out.gold:
+	* tests/preset-root-*.test:
+	Create.
+
+	* tests/preset-owner.test (filter): Use preset_xid_filter.
+
+	* tests/preset-notimes.test (contents_filter):
+	* tests/preset-mtime.test (mtime_filter):
+	* tests/preset-contents.test (contents_filter):
+	* tests/preset-amtimes.test (amtimes_filter):
+	* tests/preset-alltimes.test (alltimes_filter):
+	Add preset_xid_filter to filter chain.
+
+	* tests/preset-hardlinks.test (hardlinks_filter): Define.
+	(filter): Use hardlinks_filter.
+
+	* tests/preset.lib.sh (setup): When running with root, change uid
+	and gid for a few files, add device files.
+	(preset_xid_filter): Create, whether to filter or not depends on
+	having root.
+
+	* Makefile.am (TESTS): Add tests/preset-root-*.test.
+	(EXTRA_DIST): Add tests/preset-root-*.out.gold.
+
 	* tdiff.1: Change --major/--minor description noting that the
 	comparison only works on device files of the same type.
 

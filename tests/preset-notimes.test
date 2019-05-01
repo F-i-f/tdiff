@@ -11,7 +11,8 @@ tdiff_long_options="--preset notimes"
 tdiff_long_options2="--preset 6"
 
 contents_filter() {
-  preset_hardlinks_filter \
+  preset_xid_filter \
+    | preset_hardlinks_filter \
     | preset_size_filter
 }
 filter=contents_filter

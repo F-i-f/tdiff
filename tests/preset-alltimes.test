@@ -11,7 +11,8 @@ tdiff_long_options="--preset alltimes"
 tdiff_long_options2="--preset 9"
 
 alltimes_filter() {
-  preset_hardlinks_filter \
+  preset_xid_filter \
+    | preset_hardlinks_filter \
     | preset_size_filter \
     | xtime_filter '[amc]time' \
     | preset_atime_filter

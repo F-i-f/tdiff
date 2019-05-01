@@ -72,60 +72,70 @@ AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      HAVE_XATTRS="$(HAVE_XATTRS)" \
 			      ;
 TEST_EXTENSIONS	     = .test
-TESTS = tests/ent_pair_cache.test	\
-	tests/genhash.test		\
-	tests/acl.test			\
-	tests/atime.test		\
-	tests/blocks.test		\
-	tests/contents.test		\
-	tests/contents-always.test	\
-	tests/contents-always-diff.test	\
-	tests/contents-exec.test	\
-	tests/ctime.test		\
-	tests/directories.test		\
-	tests/error.test		\
-	tests/exclude.test		\
-	tests/flag-archived.test	\
-	tests/flag-hidden.test		\
-	tests/flag-nodump.test		\
-	tests/flag-offline.test		\
-	tests/flag-opaque.test		\
-	tests/flag-readonly.test	\
-	tests/flag-reparse.test		\
-	tests/flag-sappend.test		\
-	tests/flag-schange.test		\
-	tests/flag-sparse.test		\
-	tests/flag-sunlink.test		\
-	tests/flag-system.test		\
-	tests/flag-uappend.test		\
-	tests/flag-uarchive.test	\
-	tests/flag-uimmutable.test	\
-	tests/flag-uunlink.test		\
-	tests/gid.test			\
-	tests/hardlinks.test		\
-	tests/major.test		\
-	tests/minor.test		\
-	tests/mode.test			\
-	tests/mode-and.test		\
-	tests/mode-or.test		\
-	tests/mtime.test		\
-	tests/nlink.test		\
-	tests/preset-alltimes.test	\
-	tests/preset-amtimes.test	\
-	tests/preset-contents.test	\
-	tests/preset-hardlinks.test	\
-	tests/preset-missing.test	\
-	tests/preset-mode.test		\
-	tests/preset-mtime.test		\
-	tests/preset-none.test		\
-	tests/preset-notimes.test	\
-	tests/preset-owner.test		\
-	tests/size.test			\
-	tests/type.test			\
-	tests/type-door.test		\
-	tests/type-sock.test		\
-	tests/type-root.test		\
-	tests/uid.test			\
+TESTS = tests/ent_pair_cache.test		\
+	tests/genhash.test			\
+	tests/acl.test				\
+	tests/atime.test			\
+	tests/blocks.test			\
+	tests/contents.test			\
+	tests/contents-always.test		\
+	tests/contents-always-diff.test		\
+	tests/contents-exec.test		\
+	tests/ctime.test			\
+	tests/directories.test			\
+	tests/error.test			\
+	tests/exclude.test			\
+	tests/flag-archived.test		\
+	tests/flag-hidden.test			\
+	tests/flag-nodump.test			\
+	tests/flag-offline.test			\
+	tests/flag-opaque.test			\
+	tests/flag-readonly.test		\
+	tests/flag-reparse.test			\
+	tests/flag-sappend.test			\
+	tests/flag-schange.test			\
+	tests/flag-sparse.test			\
+	tests/flag-sunlink.test			\
+	tests/flag-system.test			\
+	tests/flag-uappend.test			\
+	tests/flag-uarchive.test		\
+	tests/flag-uimmutable.test		\
+	tests/flag-uunlink.test			\
+	tests/gid.test				\
+	tests/hardlinks.test			\
+	tests/major.test			\
+	tests/minor.test			\
+	tests/mode.test				\
+	tests/mode-and.test			\
+	tests/mode-or.test			\
+	tests/mtime.test			\
+	tests/nlink.test			\
+	tests/preset-alltimes.test		\
+	tests/preset-amtimes.test		\
+	tests/preset-contents.test		\
+	tests/preset-hardlinks.test		\
+	tests/preset-missing.test		\
+	tests/preset-mode.test			\
+	tests/preset-mtime.test			\
+	tests/preset-none.test			\
+	tests/preset-notimes.test		\
+	tests/preset-owner.test			\
+	tests/preset-root-alltimes.test		\
+	tests/preset-root-amtimes.test		\
+	tests/preset-root-contents.test		\
+	tests/preset-root-hardlinks.test	\
+	tests/preset-root-missing.test		\
+	tests/preset-root-mode.test		\
+	tests/preset-root-mtime.test		\
+	tests/preset-root-none.test		\
+	tests/preset-root-notimes.test		\
+	tests/preset-root-owner.test		\
+	tests/size.test				\
+	tests/type.test				\
+	tests/type-door.test			\
+	tests/type-sock.test			\
+	tests/type-root.test			\
+	tests/uid.test				\
 	tests/xattr.test
 
 EXTRA_DIST = README.md					\
@@ -188,6 +198,16 @@ EXTRA_DIST = README.md					\
 	     tests/preset-none.out.gold			\
 	     tests/preset-notimes.out.gold		\
 	     tests/preset-owner.out.gold		\
+	     tests/preset-root-alltimes.out.gold	\
+	     tests/preset-root-amtimes.out.gold		\
+	     tests/preset-root-contents.out.gold	\
+	     tests/preset-root-hardlinks.out.gold	\
+	     tests/preset-root-missing.out.gold		\
+	     tests/preset-root-mode.out.gold		\
+	     tests/preset-root-mtime.out.gold		\
+	     tests/preset-root-none.out.gold		\
+	     tests/preset-root-notimes.out.gold		\
+	     tests/preset-root-owner.out.gold		\
 	     tests/size.out.gold			\
 	     tests/type.out.gold			\
 	     tests/type-door.out.gold			\

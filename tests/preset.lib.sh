@@ -2,6 +2,15 @@
 
 set -eu
 
+with_root=0
+
+case "$(basename "$0" .test)" in
+  *-root-*)
+    . "$srcdir"/tests/fakeroot.lib.sh
+    with_root=1
+    ;;
+esac
+
 preset_reset() {
   touch -t 198001010000 "$1/dir1" "$1"/entry1 "$1"/entry2 "$1"/entry4
 }
@@ -13,6 +22,14 @@ setup() {
   echo foo > "$1"/entry2
   ln "$1"/entry2 "$1"/entry3
   echo bar > "$1"/entry4
+  if [ $with_root -ne 0 ]
+  then
+    chown 1 "$1"/entry4
+    chgrp 1 "$1"/entry4
+    mknod "$1"/node1 c 4 5
+    mknod "$1"/node2 c 7 8
+    mknod "$1"/node3 b 17 18
+  fi
   mkdir "$1"/dir1
   touch "$1"/dir1/missing
 
@@ -23,6 +40,14 @@ setup() {
   echo foo > "$2"/entry2
   echo foo > "$2"/entry3
   dd bs=64k count=4 if=/dev/zero of="$2"/entry4
+  if [ $with_root -ne 0 ]
+  then
+    chown 2 "$2"/entry4
+    chgrp 2 "$2"/entry4
+    mknod "$2"/node1 b 2 3
+    mknod "$2"/node2 c 7 9
+    mknod "$2"/node3 b 16 18
+  fi
   mkdir "$2"/dir1
   touch "$2"/missing
 
@@ -31,6 +56,17 @@ setup() {
   # On Solaris block counts aren't updated until they're on storage.
   sync
 }
+
+if [ $with_root -ne 0 ]
+then
+  preset_xid_filter() {
+    xid_filter '[ug]id'
+  }
+else
+  preset_xid_filter() {
+    cat
+  }
+fi
 
 preset_hardlinks_filter() {
   # Hard link counts are wierd for directories on HFS.
