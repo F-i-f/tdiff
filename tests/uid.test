@@ -29,8 +29,8 @@ uid_filter() {
   sed -e 's!\(: uid:\) [^[:space:]]*(\([0-9][0-9]*\)) [^[:space:]]*(\([0-9][0-9]*\))$!\1 \2 \3!'
 }
 
-tdiff_options="-Au"
-tdiff_long_options="--no-all --uid"
+tdiff_options="-0u"
+tdiff_long_options="--preset none --uid"
 filter=uid_filter
 
 . "$srcdir"/tests/test.lib.sh

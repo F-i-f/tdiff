@@ -4,7 +4,7 @@ set -eu
 
 . "$srcdir"/tests/mode.lib.sh
 
-tdiff_options="-Am& 70"
-tdiff_long_options="--no-all --mode --mode-and 0x38"
+tdiff_options="-0m& 70"
+tdiff_long_options="--preset none --mode --mode-and 0x38"
 
 . "$srcdir"/tests/test.lib.sh

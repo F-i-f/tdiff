@@ -39,7 +39,7 @@ setup() {
   mkdir "$2"/file4
 }
 
-tdiff_options="-Aq"
-tdiff_long_options="--no-all --xattr"
+tdiff_options="-0q"
+tdiff_long_options="--preset none --xattr"
 
 . "$srcdir"/tests/test.lib.sh

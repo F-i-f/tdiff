@@ -4,7 +4,7 @@ set -eu
 
 . "$srcdir"/tests/type.lib.sh
 
-tdiff_options="-At"
-tdiff_long_options="--no-all --type"
+tdiff_options="-0t"
+tdiff_long_options="--preset none --type"
 
 . "$srcdir"/tests/test.lib.sh

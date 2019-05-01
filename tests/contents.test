@@ -4,7 +4,7 @@ set -eu
 
 . "$srcdir"/tests/contents.lib.sh
 
-tdiff_options="-Ac"
-tdiff_long_options="--no-all --contents"
+tdiff_options="-0c"
+tdiff_long_options="--preset none --contents"
 
 . "$srcdir"/tests/test.lib.sh

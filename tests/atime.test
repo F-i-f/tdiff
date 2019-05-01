@@ -21,8 +21,8 @@ atime_filter() {
   sed -e 's!\(: atime:\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
 }
 
-tdiff_options="-Ar"
-tdiff_long_options="--no-all --atime"
+tdiff_options="-0r"
+tdiff_long_options="--preset none --atime"
 filter=atime_filter
 
 . "$srcdir"/tests/test.lib.sh

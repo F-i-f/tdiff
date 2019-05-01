@@ -18,7 +18,7 @@ setup() {
   mkdir "$2"/sub/sub
 }
 
-tdiff_options="-Ad"
-tdiff_long_options="--no-all --dirs"
+tdiff_options="-0d"
+tdiff_long_options="--preset none --dirs"
 
 . "$srcdir"/tests/test.lib.sh

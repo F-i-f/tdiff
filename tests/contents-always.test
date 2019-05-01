@@ -4,7 +4,7 @@ set -eu
 
 . "$srcdir"/tests/contents.lib.sh
 
-tdiff_options="-Aw echo ALWAYS RUN %1 VS. %2 ;"
-tdiff_long_options="--no-all --exec-always echo ALWAYS RUN %1 VS. %2 ;"
+tdiff_options="-0w echo ALWAYS RUN %1 VS. %2 ;"
+tdiff_long_options="--preset none --exec-always echo ALWAYS RUN %1 VS. %2 ;"
 
 . "$srcdir"/tests/test.lib.sh

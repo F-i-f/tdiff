@@ -71,8 +71,8 @@ acl_filter() {
   sed -e 's!\(: \(access\|default\) acl \(user\|group\):\)[^[:space:]]\+\(: .*\)$!\1XX\4!'
 }
 
-tdiff_options="-Al"
-tdiff_long_options="--no-all --acl"
+tdiff_options="-0l"
+tdiff_long_options="--preset none --acl"
 filter=acl_filter
 
 . "$srcdir"/tests/test.lib.sh

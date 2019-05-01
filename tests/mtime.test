@@ -21,8 +21,8 @@ mtime_filter() {
       -e 's!\(: mtime:\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
 }
 
-tdiff_options="-Ai"
-tdiff_long_options="--no-all --mtime"
+tdiff_options="-0i"
+tdiff_long_options="--preset none --mtime"
 filter=mtime_filter
 
 . "$srcdir"/tests/test.lib.sh

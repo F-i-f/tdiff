@@ -20,7 +20,7 @@ setup() {
   mknod "$2"/file6 b 4 4
 }
 
-tdiff_options="-Ak"
-tdiff_long_options="--no-all --minor"
+tdiff_options="-0k"
+tdiff_long_options="--preset none --minor"
 
 . "$srcdir"/tests/test.lib.sh

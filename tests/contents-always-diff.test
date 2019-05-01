@@ -10,8 +10,8 @@ always_diff_filter() {
       -e '/^No differences encountered$/d'
 }
 
-tdiff_options="-AW"
-tdiff_long_options="--no-all --exec-always-diff"
+tdiff_options="-0W"
+tdiff_long_options="--preset none --exec-always-diff"
 filter=always_diff_filter
 
 . "$srcdir"/tests/test.lib.sh

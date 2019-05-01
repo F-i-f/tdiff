@@ -1,5 +1,7 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tests/*.test:  Use presets instead of --all/--no-all.
+
 	* tdiff.c (show_help): Remove -a/--all, -A/--no-all. Add
 	-[p0-9]/--preset.
 	(applyPresets): Create.

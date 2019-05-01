@@ -22,7 +22,7 @@ setup() {
   echo "" > "$2"/link4
 }
 
-tdiff_options="-As"
-tdiff_long_options="--no-all --size"
+tdiff_options="-0s"
+tdiff_long_options="--preset none --size"
 
 . "$srcdir"/tests/test.lib.sh

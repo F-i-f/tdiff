@@ -4,7 +4,7 @@ set -eu
 
 . "$srcdir"/tests/contents.lib.sh
 
-tdiff_options="-AcX file6 -X file3"
-tdiff_long_options="--no-all --contents --exclude file6 --exclude file3"
+tdiff_options="-0cX file6 -X file3"
+tdiff_long_options="--preset none --contents --exclude file6 --exclude file3"
 
 . "$srcdir"/tests/test.lib.sh

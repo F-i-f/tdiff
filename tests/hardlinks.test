@@ -26,7 +26,7 @@ setup() {
   ln "$2"/file3 "$2"/file3c
 }
 
-tdiff_options="-Aed"
-tdiff_long_options="--no-all --hardlinks --dirs"
+tdiff_options="-0ed"
+tdiff_long_options="--preset none --hardlinks --dirs"
 
 . "$srcdir"/tests/test.lib.sh

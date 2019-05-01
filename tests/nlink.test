@@ -22,8 +22,8 @@ nlink_filter() {
   sed -e '/^tdiff: (top-level): nlink: /d'
 }
 
-tdiff_options="-An"
-tdiff_long_options="--no-all --nlink"
+tdiff_options="-0n"
+tdiff_long_options="--preset none --nlink"
 filter=nlink_filter
 
 . "$srcdir"/tests/test.lib.sh

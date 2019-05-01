@@ -20,8 +20,8 @@ blocks_filter() {
   sed -e 's!\(: blocks:\) [0-9][0-9]* [0-9][0-9]*$!\1 X X!'
 }
 
-tdiff_options="-Ab"
-tdiff_long_options="--no-all --blocks"
+tdiff_options="-0b"
+tdiff_long_options="--preset none --blocks"
 filter=blocks_filter
 
 . "$srcdir"/tests/test.lib.sh
