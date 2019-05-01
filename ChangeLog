@@ -1,5 +1,9 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/filters.lib.sh (nlink_filter):
+	* tests/nlink.test (nlink_filter):
+	Move from filters.lib.sh back to nlink.test.
+
 	* tests/preset-alltimes.out.gold:
 	* tests/preset-amtimes.out.gold:
 	* tests/preset-contents.out.gold:
