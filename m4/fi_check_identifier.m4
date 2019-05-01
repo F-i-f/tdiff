@@ -1,5 +1,5 @@
 #  fi-autoconf-macros - A collection of autoconf macros
-#  fi_check_define
+#  fi_check_identifier
 #  Copyright (C) 1999, 2006, 2008, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 #
 #  This program is free software; you can redistribute it and/or modify

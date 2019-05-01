@@ -33,7 +33,7 @@ AC_DEFUN([FI_CHECK_EGREP],
 	 AS_IF([test "x[]AS_VAR_GET([fi_cachevar])" = xyes],
 	       [m4_if([$5], [],
 		      [AS_VAR_PUSHDEF([fi_vardef], [AS_TR_CPP(HAVE_[]$1)])
-		      AC_DEFINE([fi_vardef], [1], [Define ]fi_vardef[ to 1 if $1 is defined]m4_if([$4], [], [], [$4]))
+		      AC_DEFINE([fi_vardef], [1], [Define ]fi_vardef[ to 1 if $1 is defined]m4_if([$4], [], [], [ $4]))
 		      AS_VAR_POPDEF([fi_vardef])],
 		      [$5])],
 	       [m4_if([$6], [], [:], [$6])])

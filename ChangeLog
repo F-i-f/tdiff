@@ -1,5 +1,9 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_check_identifier.m4: Correct header.
+
+	* m4/fi_check_egrep.m4 (FI_CHECK_EGREP): Fix whitespace error.
+
 	* tests/atime.test (setup): Move the resetting of the directories'
 	atimes to atime_reset.
 	(atime_reset): Create.
