@@ -1175,21 +1175,21 @@ show_help(void)
 	 "                  (if unset, then size, blocks, major, minor and contents\n"
 	 "                   are not checked either)\n"
 	 "   -m --mode      diffs file modes (permissions)\n"
-#if HAVE_ST_FLAGS
-	 "   -f --flags     diffs flags (4.4BSD)\n"
-#endif
 	 "   -u --uid       diffs file user id\n"
 	 "   -g --gid       diffs file group id\n"
+	 "   -n --nlink     diffs the (hard) link count\n"
+	 "   -e --hardlinks diffs the hard link targets\n"
 	 "   -z --ctime     diffs ctime (inode modification time)\n"
 	 "   -i --mtime     diffs mtime (contents modification time)\n"
 	 "   -r --atime     diffs atime (access time)\n"
 	 "   -s --size      diffs file size (for regular files, symlinks)\n"
 	 "   -b --blocks    diffs file blocks (for regular files, symlinks & directories)\n"
 	 "   -c --contents  diffs file contents (for regular files and symlinks)\n"
-	 "   -n --nlink     diffs the (hard) link count\n"
-	 "   -e --hardlinks diffs the hard link targets\n"
 	 "   -j --major     diffs major device numbers (for device files)\n"
 	 "   -k --minor     diffs minor device numbers (for device files)\n"
+#if HAVE_ST_FLAGS
+	 "   -f --flags     diffs flags (4.4BSD)\n"
+#endif
 #if HAVE_GETXATTR
 	 "   -q --xattr     diffs file extended attributes\n"
 #endif
@@ -1198,33 +1198,160 @@ show_help(void)
 #endif
 	 "  Each of these options can be negated with an uppercase (short option)\n"
 	 "  or with --no-option (eg -M --no-mode for not diffing modes)\n"
-	 "   -a --all      equivalent to -dtm"
+	 " Presets (cumulative, -2 implies -1, etc.):\n"
+	 "   -0 -p|--preset 0|none       No checks are made.         (-DTMUGNEZIRSBCJK"
+#if HAVE_ST_FLAGS
+	 "F"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
+#endif
+#if HAVE_ACL
+	 "L"
+#endif
+	 ")\n"
+	 "   -1 -p|--preset 1|missing    Missing files are reported. (-dtMUGNEZIRSBCJK"
+#if HAVE_ST_FLAGS
+	 "F"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
+#endif
+#if HAVE_ACL
+	 "L"
+#endif
+	 ")\n"
+	 "   -2 -p|--preset 2|mode       Add modes.                  (-dtmUGNEZIRSBCJK"
+#if HAVE_ST_FLAGS
+	 "F"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
+#endif
+#if HAVE_ACL
+	 "L"
+#endif
+	 ")\n"
+	 "   -3 -p|--preset 3|owner      Add uid/gid ownership"
+#if HAVE_ACL
+	 ", ACLs."
+#else
+	 ".      "
+#endif
+	 "(-dtmugNEZIRSBCJK"
+#if HAVE_ST_FLAGS
+	 "F"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
+#endif
+#if HAVE_ACL
+	 "l"
+#endif
+	 ")\n"
+	 "   -4 -p|--preset 4|hardlinks  Add hardlinks.              (-dtmugneZIRSBCJK"
+#if HAVE_ST_FLAGS
+	 "F"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
+#endif
+#if HAVE_ACL
+	 "l"
+#endif
+	 ")\n"
+	 "   -5 -p|--preset 5|contents   Add size, contents, blocks,\n"
+	 "                               major and minor.            (-dtmugneZIRsbcjk"
+#if HAVE_ST_FLAGS
+	 "F"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
+#endif
+#if HAVE_ACL
+	 "l"
+#endif
+	 ")\n"
+	 "   -6 -p|--preset 6|notimes    "
+#if HAVE_ST_FLAGS || HAVE_GETXATTR
+	 "Add %-23s (-dtmugneZIRsbcjk"
+# if HAVE_ST_FLAGS
+	 "f"
+# endif
+# if HAVE_GETXATTR
+	 "q"
+# endif
+# if HAVE_ACL
+	 "l"
+# endif
+	 ")"
+#else /* ! HAVE_ST_FLAGS && ! HAVE_GETXATTR */
+	 "Same as preset 5 or contents."
+#endif
+	 "\n"
+	 "   -7 -p|--preset 7|mtime      Add mtime.                  (-dtmugneZiRsbcjk"
 #if HAVE_ST_FLAGS
 	 "f"
 #endif
-	 "ogsbcnejk"
 #if HAVE_GETXATTR
 	 "q"
 #endif
 #if HAVE_ACL
 	 "l"
 #endif
-	 " (sets all but times)\n"
-	 "   -A --no-all   clears all flags (will not report anything)\n"
+	 ")\n"
+	 "   -8 -p|--preset 8|amtimes    Add atime.                  (-dtmugneZirsbcjk"
+#if HAVE_ST_FLAGS
+	 "f"
+#endif
+#if HAVE_GETXATTR
+	 "q"
+#endif
+#if HAVE_ACL
+	 "l"
+#endif
+	 ")\n"
+	 "   -9 -p|--preset 9|alltimes   Add ctime.                  (-dtmugnezirsbcjk"
+#if HAVE_ST_FLAGS
+	 "f"
+#endif
+#if HAVE_GETXATTR
+	 "q"
+#endif
+#if HAVE_ACL
+	 "l"
+#endif
+	 ")\n"
 	 " Miscellania:\n"
 	 "   -x --exec <cmd> \\;         executes <cmd> between files if they are similar\n"
 	 "                              (if file sizes are equal)\n"
 	 "   -w --exec-always <cmd> \\;  always executes <cmd> between files\n"
-	 "        <cmd> uses %%1 and %%2 as placeholders for files from <dir1> and <dir2>\n"
+	 "                              <cmd> uses %%1 and %%2 as placeholders for files\n"
+	 "                              from <dir1> and <dir2>.\n"
 	 "   -W --exec-always-diff \\;   always executes \"diff -u\" between files\n"
-	 "        equivalent to -w diff -u %%1 %%2 \\;\n"
+	 "                              equivalent to -w diff -u %%1 %%2 \\;\n"
 	 "   -| --mode-or <bits>        applies <bits> OR mode before comparison\n"
 	 "   -& --mode-and <bits>       applies <bits> AND mode before comparison\n"
 	 "   -X --exclude <file>        omits <file> from report\n"
 #if ! HAVE_GETOPT_LONG
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
 #endif
-	 ,progname, progname);
+	 ,progname, progname
+#if HAVE_ST_FLAGS || HAVE_GETXATTR
+	 ,
+	 ""
+# if HAVE_ST_FLAGS
+	 "flags"
+# endif
+# if HAVE_GETXATTR
+#   if HAVE_ST_FLAGS
+	 ", "
+#   endif
+	 "xattrs"
+# endif
+	 "."
+#endif
+	 );
 }
 
 int
@@ -2007,6 +2134,21 @@ dodiff(options_t* opts, const char* p1, const char* p2)
   return rv;
 }
 
+static void
+applyPresets(options_t* opts, int presetLevel)
+{
+  opts->dirs	   = opts->type                     = presetLevel >= 1;
+  opts->mode					    = presetLevel >= 2;
+  opts->uid	   = opts->gid       = opts->acl    = presetLevel >= 3;
+  opts->nlink	   = opts->hardlinks                = presetLevel >= 4;
+  opts->size	   = opts->blocks    =
+    opts->contents = opts->major     = opts->minor  = presetLevel >= 5;
+  opts->flags      = opts->xattr                    = presetLevel >= 6;
+  opts->mtime                                       = presetLevel >= 7;
+  opts->atime                                       = presetLevel >= 8;
+  opts->ctime                                       = presetLevel >= 9;
+}
+
 int
 main(int argc, char*argv[])
 {
@@ -2031,27 +2173,8 @@ main(int argc, char*argv[])
 
   memset(&options, 0, sizeof(options));
 
-  /* options.verbosityLevel = 0; */
-  options.dirs		    = 1;
-  options.type		    = 1;
-  options.mode		    = 1;
-  options.flags		    = 1;
-  options.uid		    = 1;
-  options.gid		    = 1;
-  /* options.ctime	    = 0 ; */
-  /* options.mtime	    = 0 ; */
-  /* options.atime	    = 0 ; */
-  options.size		    = 1;
-  options.blocks	    = 1;
-  options.contents	    = 1;
-  options.nlink		    = 1;
-  options.hardlinks	    = 1;
-  options.major		    = 1;
-  options.minor		    = 1;
-  options.xattr		    = 1;
-  options.acl		    = 1;
-  /* options.exec           = 0; */
-  /* options.exec_always    = 0; */
+  applyPresets(&options, 6);
+
   options.mode_or           = OPT_MODE_OR_DEFAULT;
   options.mode_and	    = OPT_MODE_AND_DEFAULT;
 
@@ -2073,14 +2196,14 @@ main(int argc, char*argv[])
 	{ "no-type",           0, 0, 'T' },
 	{ "mode",              0, 0, 'm' },
 	{ "no-mode",           0, 0, 'M' },
-#if HAVE_ST_FLAGS
-	{ "flags",             0, 0, 'f' },
-	{ "no-flags",          0, 0, 'F' },
-#endif
 	{ "uid",               0, 0, 'u' },
 	{ "no-uid",            0, 0, 'U' },
 	{ "gid",               0, 0, 'g' },
 	{ "no-gid",            0, 0, 'G' },
+	{ "nlink",             0, 0, 'n' },
+	{ "no-nlink",          0, 0, 'N' },
+	{ "hardlinks",         0, 0, 'e' },
+	{ "no-hardlinks",      0, 0, 'E' },
 	{ "ctime",             0, 0, 'z' },
 	{ "no-ctime",          0, 0, 'Z' },
 	{ "mtime",             0, 0, 'i' },
@@ -2093,14 +2216,14 @@ main(int argc, char*argv[])
 	{ "no-blocks",         0, 0, 'B' },
 	{ "contents",          0, 0, 'c' },
 	{ "no-contents",       0, 0, 'C' },
-	{ "nlink",             0, 0, 'n' },
-	{ "no-nlink",          0, 0, 'N' },
-	{ "hardlinks",         0, 0, 'e' },
-	{ "no-hardlinks",      0, 0, 'E' },
 	{ "major",             0, 0, 'j' },
 	{ "no-major",          0, 0, 'J' },
 	{ "minor",             0, 0, 'k' },
 	{ "no-minor",          0, 0, 'K' },
+#if HAVE_ST_FLAGS
+	{ "flags",             0, 0, 'f' },
+	{ "no-flags",          0, 0, 'F' },
+#endif
 #if HAVE_GETXATTR
 	{ "xattr",             0, 0, 'q' },
 	{ "no-xattr",          0, 0, 'Q' },
@@ -2109,9 +2232,7 @@ main(int argc, char*argv[])
 	{ "acl",               0, 0, 'l' },
 	{ "no-acl",            0, 0, 'L' },
 #endif
-	{ "all",               0, 0, 'a' },
-	{ "nothing",           0, 0, 'A' },
-	{ "no-all",            0, 0, 'A' },
+	{ "preset",            1, 0, 'p' },
 	{ "exec",              0, 0, 'x' },
 	{ "exec-always",       0, 0, 'w' },
 	{ "exec-always-diff",  0, 0, 'W' },
@@ -2128,17 +2249,17 @@ main(int argc, char*argv[])
 	     getopt
 #endif
 	     (argc, argv, "vVhdDtTmM"
+	      "uUgGnNeEzZiIrRsSbBcCjJkK"
 #if HAVE_ST_FLAGS
 	      "fF"
 #endif
-	      "uUgGzZiIrRsSbBcCnNeEjJkK"
 #if HAVE_GETXATTR
 	      "qQ"
 #endif
 #if HAVE_ACL
 	      "lL"
 #endif
-	      "xwWaA|:&:X:"
+	      "0123456789p:xwW|:&:X:"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -2166,14 +2287,14 @@ main(int argc, char*argv[])
 	case 'T': options.type		  = 0; break;
 	case 'm': options.mode		  = 1; break;
 	case 'M': options.mode		  = 0; break;
-#if HAVE_ST_FLAGS
-	case 'f': options.flags           = 1; break;
-	case 'F': options.flags           = 0; break;
-#endif
 	case 'u': options.uid		  = 1; break;
 	case 'U': options.uid		  = 0; break;
 	case 'g': options.gid		  = 1; break;
 	case 'G': options.gid		  = 0; break;
+	case 'n': options.nlink		  = 1; break;
+	case 'N': options.nlink		  = 0; break;
+	case 'e': options.hardlinks	  = 1; break;
+	case 'E': options.hardlinks	  = 0; break;
 	case 'z': options.ctime		  = 1; break;
 	case 'Z': options.ctime		  = 0; break;
 	case 'i': options.mtime		  = 1; break;
@@ -2188,12 +2309,12 @@ main(int argc, char*argv[])
 	case 'C': options.contents	  = 0; break;
 	case 'j': options.major		  = 1; break;
 	case 'J': options.major		  = 0; break;
-	case 'n': options.nlink		  = 1; break;
-	case 'N': options.nlink		  = 0; break;
-	case 'e': options.hardlinks	  = 1; break;
-	case 'E': options.hardlinks	  = 0; break;
 	case 'k': options.minor		  = 1; break;
 	case 'K': options.minor		  = 0; break;
+#if HAVE_ST_FLAGS
+	case 'f': options.flags           = 1; break;
+	case 'F': options.flags           = 0; break;
+#endif
 #if HAVE_GETXATTR
 	case 'q': options.xattr		  = 1; break;
 	case 'Q': options.xattr		  = 0; break;
@@ -2202,22 +2323,63 @@ main(int argc, char*argv[])
 	case 'l': options.acl		  = 1; break;
 	case 'L': options.acl		  = 0; break;
 #endif
-	case 'a': options.dirs = options.type
-		    = options.mode = options.flags = options.uid
-		    = options.gid
-		    /* = options.ctime = options.mtime  = options.atime */
-		    = options.size  = options.blocks = options.contents
-		    = options.nlink = options.hardlinks
-		    = options.major = options.minor = options.xattr
-		    = options.acl = 1; break;
-	case 'A': options.dirs = options.type
-		    = options.mode = options.flags = options.uid
-		    = options.gid
-		    = options.ctime = options.mtime  = options.atime /* extra for -A */
-		    = options.size  = options.blocks = options.contents
-		    = options.nlink = options.hardlinks
-		    = options.major = options.minor = options.xattr
-		    = options.acl = 0; break;
+	case '0':
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+	case '8':
+	case '9':
+	  applyPresets(&options, optcode - '0');
+	  break;
+	case 'p':
+	  if (optarg[0] >= '0' && optarg[0] <= '9' && optarg[1] == '\0')
+	    applyPresets(&options, optarg[0] - '0');
+	  else
+	    {
+	      static const struct {
+		const char * const name;
+		unsigned char level;
+		unsigned char minreq;
+	      } presetNames[] = {
+				 { "alltimes",  9, 2},
+				 { "amtimes",   8, 2},
+				 { "contents",  5, 1},
+				 { "hardlinks", 4, 1},
+				 { "mode",      2, 2},
+				 { "missing",   1, 2},
+				 { "mtime",     7, 2},
+				 { "none",      0, 3},
+				 { "notimes",   6, 3},
+				 { "owner",     3, 1}
+	      };
+	      size_t i;
+	      size_t optlen = strlen(optarg);
+	      size_t presetlen;
+	      int found = 0;
+
+	      for (i=0; i < sizeof(presetNames)/sizeof(presetNames[0]); ++i)
+		{
+		  presetlen = strlen(presetNames[i].name);
+		  if (optlen <= presetlen
+		      && optlen >= presetNames[i].minreq
+		      && memcmp(optarg, presetNames[i].name, optlen) == 0)
+		    {
+		      applyPresets(&options, presetNames[i].level);
+		      found = 1;
+		      break;
+		    }
+		}
+	      if (!found)
+		{
+		  fprintf(stderr, "%s: unknown preset \"%s\"\n", progname, optarg);
+		  end_after_options = EAO_error;
+		}
+	    }
+	  break;
 	case 'x':
 	  if (options.exec)
 	    {

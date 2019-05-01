@@ -1,5 +1,10 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (show_help): Remove -a/--all, -A/--no-all. Add
+	-[p0-9]/--preset.
+	(applyPresets): Create.
+	(main): Remove -a/--all, -A/--no-all. Add -[p0-9]/--preset.
+
 	* Makefile.am (CLEANFILES): Add tests/*.tmp.* tests/*.out
 	tests/*~
 
