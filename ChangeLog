@@ -1,6 +1,11 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
-	* tests/test.lib.sh (xtime_filter):
+	* tests/gid.test (gid_filter):
+	* tests/uid.test (uid_filter):
+	Use xid_filter.
+
+	* tests/test.lib.sh (xid_filter): Create.
+
 	* tests/filters.lib.sh (xtime_filter):
 	Move from filters.lib.sh to test.lib.sh.
 	Remove tests/filters.lib.sh.
