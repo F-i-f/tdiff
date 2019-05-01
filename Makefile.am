@@ -110,6 +110,16 @@ TESTS = tests/ent_pair_cache.test	\
 	tests/mode-or.test		\
 	tests/mtime.test		\
 	tests/nlink.test		\
+	tests/preset-alltimes.test	\
+	tests/preset-amtimes.test	\
+	tests/preset-contents.test	\
+	tests/preset-hardlinks.test	\
+	tests/preset-missing.test	\
+	tests/preset-mode.test		\
+	tests/preset-mtime.test		\
+	tests/preset-none.test		\
+	tests/preset-notimes.test	\
+	tests/preset-owner.test		\
 	tests/size.test			\
 	tests/type.test			\
 	tests/type-door.test		\
@@ -129,6 +139,7 @@ EXTRA_DIST = README.md					\
 	     tests/filters.lib.sh			\
 	     tests/mode.lib.sh				\
 	     tests/pre-check-file.lib.sh		\
+	     tests/preset.lib.sh			\
 	     tests/test.lib.sh				\
 	     tests/type.lib.sh				\
 	     $(TESTS)					\
@@ -168,6 +179,16 @@ EXTRA_DIST = README.md					\
 	     tests/mode-or.out.gold			\
 	     tests/mtime.out.gold			\
 	     tests/nlink.out.gold			\
+	     tests/preset-alltimes.out.gold		\
+	     tests/preset-amtimes.out.gold		\
+	     tests/preset-contents.out.gold		\
+	     tests/preset-hardlinks.out.gold		\
+	     tests/preset-missing.out.gold		\
+	     tests/preset-mode.out.gold			\
+	     tests/preset-mtime.out.gold		\
+	     tests/preset-none.out.gold			\
+	     tests/preset-notimes.out.gold		\
+	     tests/preset-owner.out.gold		\
 	     tests/size.out.gold			\
 	     tests/type.out.gold			\
 	     tests/type-door.out.gold			\

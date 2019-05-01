@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/preset.lib.sh
+
+tdiff_options="-p owner"
+tdiff_options2="-p 3"
+tdiff_options3="-3"
+tdiff_long_options="--preset owner"
+tdiff_long_options2="--preset 3"
+
+. "$srcdir"/tests/test.lib.sh

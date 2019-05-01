@@ -1,0 +1,32 @@
+tdiff: (top-level): mtime: [XXX] [XXX]
+tdiff: (top-level): nlink: 3 4
+tdiff: dir1: mtime: [XXX] [XXX]
+tdiff: dir1: atime: [XXX] [XXX]
+tdiff: dir1/missing: only present in tests/preset-amtimes.dir1
+tdiff: entry1: mode: 0700 0600
+tdiff: entry1: mtime: [XXX] [XXX]
+tdiff: entry1: atime: [XXX] [XXX]
+tdiff: entry1: blocks: 8 0
+tdiff: entry1: size: 7 6
+tdiff: entry1: nlink: 1 2
+tdiff: entry1: type: regular-file directory
+tdiff: entry2: mtime: [XXX] [XXX]
+tdiff: entry2: atime: [XXX] [XXX]
+tdiff: entry2: nlink: 2 1
+tdiff: entry3: hard link to entry2: only present in tests/preset-amtimes.dir1
+tdiff: entry3: mtime: [XXX] [XXX]
+tdiff: entry3: atime: [XXX] [XXX]
+tdiff: entry3: nlink: 2 1
+tdiff: entry4: mtime: [XXX] [XXX]
+tdiff: entry4: atime: [XXX] [XXX]
+tdiff: entry4: blocks: 8 512
+tdiff: entry4: size: 4 262144
+tdiff: entry4: contents differ
+tdiff: missing: only present in tests/preset-amtimes.dir2
+tdiff:            6          inode pairs compared
+tdiff:            2 (33.33%) file pair contents compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            2          unmatched paths
+tdiff:            0          excluded paths
+tdiff exit code=2

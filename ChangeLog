@@ -1,3 +1,12 @@
+2019-05-01  Philippe Troin  <phil@fifi.org>
+
+	* tests/preset.lib.sh:
+	* tests/preset-*.test:
+	Create.
+
+	* Makefile.am (TESTS): Add tests/preset-*.test.
+	(EXTRA_DIST): Add tests/preset.lib.sh, tests/preset-*.out.gold.
+
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
 	* Makefile.am (EXTRA_DIST): Add tests/filters.lib.sh.

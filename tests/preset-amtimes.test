@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/preset.lib.sh
+
+tdiff_options="-p amtimes"
+tdiff_options2="-p 8"
+tdiff_options3="-8"
+tdiff_long_options="--preset amtimes"
+tdiff_long_options2="--preset 8"
+
+. "$srcdir"/tests/filters.lib.sh
+
+amtimes_filter() {
+  xtime_filter '[am]time'
+}
+filter=amtimes_filter
+
+. "$srcdir"/tests/test.lib.sh

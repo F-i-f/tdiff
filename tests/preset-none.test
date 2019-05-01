@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/preset.lib.sh
+
+tdiff_options="-p none"
+tdiff_options2="-p 0"
+tdiff_options3="-0"
+tdiff_long_options="--preset none"
+tdiff_long_options2="--preset 0"
+
+. "$srcdir"/tests/test.lib.sh

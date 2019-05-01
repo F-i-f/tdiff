@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/preset.lib.sh
+
+tdiff_options="-p mtime"
+tdiff_options2="-p 7"
+tdiff_options3="-7"
+tdiff_long_options="--preset mtime"
+tdiff_long_options2="--preset 7"
+
+. "$srcdir"/tests/filters.lib.sh
+
+mtime_filter() {
+  xtime_filter mtime
+}
+filter=mtime_filter
+
+. "$srcdir"/tests/test.lib.sh

@@ -1,0 +1,10 @@
+tdiff: dir1/missing: only present in tests/preset-mode.dir1
+tdiff: entry1: mode: 0700 0600
+tdiff: entry1: type: regular-file directory
+tdiff: missing: only present in tests/preset-mode.dir2
+tdiff:            6          inode pairs compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            2          unmatched paths
+tdiff:            0          excluded paths
+tdiff exit code=2

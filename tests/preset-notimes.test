@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -eu
+
+. "$srcdir"/tests/preset.lib.sh
+
+tdiff_options="-p notimes"
+tdiff_options2="-p 6"
+tdiff_options3="-6"
+tdiff_long_options="--preset notimes"
+tdiff_long_options2="--preset 6"
+
+. "$srcdir"/tests/test.lib.sh
