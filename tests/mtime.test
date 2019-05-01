@@ -16,9 +16,11 @@ setup() {
   touch "$2"/file2
 }
 
+. "$srcdir"/tests/filters.lib.sh
+
 mtime_filter() {
-  sed -e '/^tdiff: (top-level): mtime: /d' \
-      -e 's!\(: mtime:\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
+  xtime_filter mtime \
+  | sed -e '/^tdiff: (top-level): mtime: /d'
 }
 
 tdiff_options="-0i"

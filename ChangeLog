@@ -1,5 +1,14 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (EXTRA_DIST): Add tests/filters.lib.sh.
+
+	* tests/filters.lib.sh: Created.
+
+	* tests/[cam]time.test ([cam]time_filter): Move & generalize to
+	tests/filters.lib.sh's xtime_filter.
+
+	* tests/nlink.test (nlink_filter): Move to tests/filters.lib.sh.
+
 	* tests/mode-and.test:
 	* tests/mode-or.test:
 	(tdiff_options2, tdiff_long_options2): Use alternate option forms.

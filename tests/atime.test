@@ -17,8 +17,10 @@ setup() {
   touch -t 198001010000 "$1"/file1 "$2"/dir1/file3
 }
 
+. "$srcdir"/tests/filters.lib.sh
+
 atime_filter() {
-  sed -e 's!\(: atime:\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
+  xtime_filter atime
 }
 
 tdiff_options="-0r"

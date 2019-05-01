@@ -15,8 +15,10 @@ setup() {
   mkdir "$2"/file1
 }
 
+. "$srcdir"/tests/filters.lib.sh
+
 ctime_filter() {
-  sed -e 's!\(: ctime:\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
+  xtime_filter ctime
 }
 
 tdiff_options="-0z"
