@@ -1,5 +1,5 @@
 tdiff: dir1/missing: only present in tests/preset-owner.dir1
-tdiff: entry1: mode: 0700 0600
+tdiff: entry1: mode: 0600 0700
 tdiff: entry1: type: regular-file directory
 tdiff: missing: only present in tests/preset-owner.dir2
 tdiff:            6          inode pairs compared

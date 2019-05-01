@@ -1,5 +1,33 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset-alltimes.out.gold:
+	* tests/preset-amtimes.out.gold:
+	* tests/preset-contents.out.gold:
+	* tests/preset-hardlinks.out.gold:
+	* tests/preset-mode.out.gold:
+	* tests/preset-mtime.out.gold:
+	* tests/preset-notimes.out.gold:
+	* tests/preset-owner.out.gold:
+	Update for FreeBSD, Solaris and the changes to filtering.
+
+	* tests/preset-alltimes.test:
+	* tests/preset-amtimes.test:
+	* tests/preset-contents.test:
+	* tests/preset-mtime.test:
+	* tests/preset-notimes.test:
+	Filter by entry1_filter and optionally toplevel_atime_filter.
+
+	* tests/preset.lib.sh (entry1_filter): Create: Filter out the
+	directory vs. file blocks and size comparison.  The exact block
+	count and size may be the same (and not part of the diff) or be
+	different on different file systems.
+	(toplevel_atime_filter): Create: Filter out the atime on the
+	top-level directory.  They will be the same on Linux with the
+	various default nodiratime mount options by default, but will be
+	different on traditional Unix.
+	(setup): Switch permissions around on entry1, now 700 for dir and
+	600 for file.  Sync after writes for Solaris Bug.
+
 	* tests/preset.lib.sh:
 	* tests/preset-*.test:
 	Create.

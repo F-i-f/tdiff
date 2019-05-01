@@ -1,5 +1,5 @@
 tdiff: dir1/missing: only present in tests/preset-hardlinks.dir1
-tdiff: entry1: mode: 0700 0600
+tdiff: entry1: mode: 0600 0700
 tdiff: entry1: nlink: 1 2
 tdiff: entry1: type: regular-file directory
 tdiff: entry2: nlink: 2 1

@@ -1,14 +1,12 @@
 tdiff: (top-level): nlink: 3 4
 tdiff: dir1/missing: only present in tests/preset-contents.dir1
-tdiff: entry1: mode: 0700 0600
-tdiff: entry1: blocks: 8 0
-tdiff: entry1: size: 7 6
+tdiff: entry1: mode: 0600 0700
 tdiff: entry1: nlink: 1 2
 tdiff: entry1: type: regular-file directory
 tdiff: entry2: nlink: 2 1
 tdiff: entry3: hard link to entry2: only present in tests/preset-contents.dir1
 tdiff: entry3: nlink: 2 1
-tdiff: entry4: blocks: 8 512
+tdiff: entry4: blocks: XX XX
 tdiff: entry4: size: 4 262144
 tdiff: entry4: contents differ
 tdiff: missing: only present in tests/preset-contents.dir2

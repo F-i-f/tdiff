@@ -13,6 +13,7 @@ setup() {
   ln -s x "$2"/file3
   dd bs=4k count=4 if=/dev/zero of="$2/file4"
 
+  # On Solaris block counts aren't updated until they're on storage.
   sync
 }
 

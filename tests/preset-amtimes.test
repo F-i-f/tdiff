@@ -13,7 +13,9 @@ tdiff_long_options2="--preset 8"
 . "$srcdir"/tests/filters.lib.sh
 
 amtimes_filter() {
-  xtime_filter '[am]time'
+  xtime_filter '[am]time' \
+    | preset_filter \
+    | toplevel_atime_filter
 }
 filter=amtimes_filter
 
