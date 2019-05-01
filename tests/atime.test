@@ -22,6 +22,7 @@ atime_filter() {
 }
 
 tdiff_options="-Ar"
+tdiff_long_options="--no-all --atime"
 filter=atime_filter
 
 . "$srcdir"/tests/test.lib.sh

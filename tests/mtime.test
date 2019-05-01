@@ -22,6 +22,7 @@ mtime_filter() {
 }
 
 tdiff_options="-Ai"
+tdiff_long_options="--no-all --mtime"
 filter=mtime_filter
 
 . "$srcdir"/tests/test.lib.sh

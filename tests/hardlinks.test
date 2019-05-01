@@ -27,5 +27,6 @@ setup() {
 }
 
 tdiff_options="-Aed"
+tdiff_long_options="--no-all --hardlinks --dirs"
 
 . "$srcdir"/tests/test.lib.sh

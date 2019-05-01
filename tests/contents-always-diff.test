@@ -11,6 +11,7 @@ always_diff_filter() {
 }
 
 tdiff_options="-AW"
+tdiff_long_options="--no-all --exec-always-diff"
 filter=always_diff_filter
 
 . "$srcdir"/tests/test.lib.sh

@@ -20,6 +20,7 @@ ctime_filter() {
 }
 
 tdiff_options="-Az"
+tdiff_long_options="--no-all --ctime"
 filter=ctime_filter
 
 . "$srcdir"/tests/test.lib.sh

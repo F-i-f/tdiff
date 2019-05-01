@@ -33,6 +33,7 @@ gid_filter() {
 }
 
 tdiff_options="-Ag"
+tdiff_long_options="--no-all --gid"
 filter=gid_filter
 
 . "$srcdir"/tests/test.lib.sh

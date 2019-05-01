@@ -39,5 +39,6 @@ cleanup_test() {
 cleanup_test=cleanup_test
 
 tdiff_options="-Af"
+tdiff_long_options="--no-all --flags"
 
 . "$srcdir"/tests/test.lib.sh

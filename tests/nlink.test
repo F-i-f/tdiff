@@ -23,6 +23,7 @@ nlink_filter() {
 }
 
 tdiff_options="-An"
+tdiff_long_options="--no-all --nlink"
 filter=nlink_filter
 
 . "$srcdir"/tests/test.lib.sh

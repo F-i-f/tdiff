@@ -72,6 +72,7 @@ acl_filter() {
 }
 
 tdiff_options="-Al"
+tdiff_long_options="--no-all --acl"
 filter=acl_filter
 
 . "$srcdir"/tests/test.lib.sh

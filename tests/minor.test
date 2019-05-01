@@ -21,5 +21,6 @@ setup() {
 }
 
 tdiff_options="-Ak"
+tdiff_long_options="--no-all --minor"
 
 . "$srcdir"/tests/test.lib.sh

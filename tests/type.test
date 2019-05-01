@@ -5,5 +5,6 @@ set -eu
 . "$srcdir"/tests/type.lib.sh
 
 tdiff_options="-At"
+tdiff_long_options="--no-all --type"
 
 . "$srcdir"/tests/test.lib.sh

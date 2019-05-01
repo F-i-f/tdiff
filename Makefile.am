@@ -67,6 +67,7 @@ AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      HAVE_S_IFDOOR="$(HAVE_S_IFDOOR)" \
 			      HAVE_S_IFSOCK="$(HAVE_S_IFSOCK)" \
 			      HAVE_ST_FLAGS="$(HAVE_ST_FLAGS)" \
+			      HAVE_GETOPT_LONG="$(HAVE_GETOPT_LONG)" \
 			      HAVE_ACLS="$(HAVE_ACLS)" \
 			      HAVE_XATTRS="$(HAVE_XATTRS)" \
 			      ;

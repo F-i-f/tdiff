@@ -21,6 +21,7 @@ blocks_filter() {
 }
 
 tdiff_options="-Ab"
+tdiff_long_options="--no-all --blocks"
 filter=blocks_filter
 
 . "$srcdir"/tests/test.lib.sh

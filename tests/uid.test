@@ -30,6 +30,7 @@ uid_filter() {
 }
 
 tdiff_options="-Au"
+tdiff_long_options="--no-all --uid"
 filter=uid_filter
 
 . "$srcdir"/tests/test.lib.sh

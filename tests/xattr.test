@@ -40,5 +40,6 @@ setup() {
 }
 
 tdiff_options="-Aq"
+tdiff_long_options="--no-all --xattr"
 
 . "$srcdir"/tests/test.lib.sh

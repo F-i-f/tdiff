@@ -8,10 +8,10 @@ dir2="tests/$progname.dir2"
 out="tests/$progname.out"
 gold="$srcdir/tests/$progname.out.gold"
 
-tmpfiles=""
+tmpfile=""
 clean() {
   exitcode=$?
-  rm -f "$tmpfiles"
+  rm -f "$tmpfile"
   trap - EXIT
   exit $exitcode
 }
@@ -24,31 +24,50 @@ rm -fr "$dir1" "$dir2"
 mkdir "$dir1" "$dir2"
 setup "$dir1" "$dir2"
 
-echo 1>&2 "$progname: tdiff..."
-(
-  exitcode=0
-  ${TDIFF:-./tdiff} -vv $tdiff_options "$dir1" "$dir2" || exitcode=$?
-  echo "tdiff exit code=$exitcode"
-) > "$out" 2>&1
-echo 1>&2 "$progname: tdiff output:"
-sed -e 's!^!  !' "$out"
+run_test()
+{
+  what="$1"
+  shift
 
-if [ -n "${filter-}" ]
-then
-  echo 1>&2 "$progname: filtering..."
-  tmpfiles="$(mktemp "tests/$progname.tmp.XXXXXXXX")"
-  cat "$out" > "$tmpfiles"
-  "$filter" < "$tmpfiles" > "$out"
-  echo 1>&2 "$progname: filter output:"
+  echo 1>&2 "$progname: tdiff $what..."
+  (
+    exitcode=0
+    ${TDIFF:-./tdiff} -vv "$@" "$dir1" "$dir2" || exitcode=$?
+    echo "tdiff exit code=$exitcode"
+  ) > "$out" 2>&1
+  echo 1>&2 "$progname: tdiff output:"
   sed -e 's!^!  !' "$out"
+
+  if [ -n "${filter-}" ]
+  then
+    echo 1>&2 "$progname: filtering..."
+    tmpfile="$(mktemp "tests/$progname.tmp.XXXXXXXX")"
+    cat "$out" > "$tmpfile"
+    "$filter" < "$tmpfile" > "$out"
+    rm -f "$tmpfile"
+    echo 1>&2 "$progname: filter output:"
+    sed -e 's!^!  !' "$out"
+  fi
+
+  echo 1>&2 "$progname: diff $what"
+  exitcode=0
+  diff "$gold" "$out" || exitcode=$?
+  if [ $exitcode -eq 0 ]
+  then
+    rm -f "$out"
+  else
+    exit $exitcode
+  fi
+}
+
+run_test "(short options)" $tdiff_options
+if [ "x$HAVE_GETOPT_LONG" != xno ]
+then
+  run_test "(long options)"  $tdiff_long_options
 fi
 
-echo 1>&2 "$progname: diff"
-exitcode=0
-diff "$gold" "$out" || exitcode=$?
 if [ $exitcode -eq 0 ]
 then
-  rm -f "$out"
   "${cleanup_test:-:}" "$dir1" "$dir2" || :
   rm -fr "$dir1" "$dir2"
 fi

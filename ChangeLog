@@ -1,5 +1,15 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tests/*.test: Add tdiff_long_options.
+
+	* tests/test.lib.sh (run_test): Factorize code.
+	Run tests twice, once with short options, the second time with
+	long options if HAVE_GETOPT_LONG.
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): Pass HAVE_GETOPT_LONG.
+
+	* configure.ac: AC_SUBST(HAVE_GETOPT_LONG).
+
 	* Makefile.am (TESTS, EXTRA_DIST): Rename group tests to gid.
 	Rename owner tests to uid.
 

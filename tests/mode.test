@@ -5,5 +5,6 @@ set -eu
 . "$srcdir"/tests/mode.lib.sh
 
 tdiff_options="-Am"
+tdiff_long_options="--no-all --mode"
 
 . "$srcdir"/tests/test.lib.sh
