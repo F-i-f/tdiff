@@ -1,5 +1,12 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib.sh (xtime_filter):
+	* tests/filters.lib.sh (xtime_filter):
+	Move from filters.lib.sh to test.lib.sh.
+	Remove tests/filters.lib.sh.
+
+	* Makefile.am (EXTRA_DIST): Remove tests/filters.lib.sh.
+
 	* tests/filters.lib.sh (nlink_filter):
 	* tests/nlink.test (nlink_filter):
 	Move from filters.lib.sh back to nlink.test.

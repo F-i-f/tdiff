@@ -136,7 +136,6 @@ EXTRA_DIST = README.md					\
 	     $(zsh_FUNCTIONS)				\
 	     tests/contents.lib.sh			\
 	     tests/fakeroot.lib.sh			\
-	     tests/filters.lib.sh			\
 	     tests/mode.lib.sh				\
 	     tests/pre-check-file.lib.sh		\
 	     tests/preset.lib.sh			\

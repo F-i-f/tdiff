@@ -21,8 +21,6 @@ setup() {
   touch -t 198001010000 "$1"/file1 "$2"/dir1/file3
 }
 
-. "$srcdir"/tests/filters.lib.sh
-
 atime_filter() {
   xtime_filter atime
 }

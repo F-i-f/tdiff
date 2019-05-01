@@ -2,6 +2,12 @@
 
 set -eu
 
+# Filters
+xtime_filter() {
+  sed -e 's!\(: '"$1"':\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
+}
+
+# Main program
 progname="$(basename "$0" .test)"
 dir1="tests/$progname.dir1"
 dir2="tests/$progname.dir2"

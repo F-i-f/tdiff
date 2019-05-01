@@ -10,8 +10,6 @@ tdiff_options3="-8"
 tdiff_long_options="--preset amtimes"
 tdiff_long_options2="--preset 8"
 
-. "$srcdir"/tests/filters.lib.sh
-
 amtimes_filter() {
   preset_hardlinks_filter \
     | preset_size_filter \

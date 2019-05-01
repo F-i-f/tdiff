@@ -10,8 +10,6 @@ tdiff_options3="-7"
 tdiff_long_options="--preset mtime"
 tdiff_long_options2="--preset 7"
 
-. "$srcdir"/tests/filters.lib.sh
-
 mtime_filter() {
   preset_hardlinks_filter \
   | preset_size_filter \

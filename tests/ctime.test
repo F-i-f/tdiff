@@ -15,8 +15,6 @@ setup() {
   mkdir "$2"/file1
 }
 
-. "$srcdir"/tests/filters.lib.sh
-
 ctime_filter() {
   xtime_filter ctime
 }

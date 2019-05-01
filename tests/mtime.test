@@ -16,8 +16,6 @@ setup() {
   touch "$2"/file2
 }
 
-. "$srcdir"/tests/filters.lib.sh
-
 mtime_filter() {
   xtime_filter mtime \
   | sed -e '/^tdiff: (top-level): mtime: /d'

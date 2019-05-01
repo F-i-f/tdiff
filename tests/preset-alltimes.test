@@ -10,8 +10,6 @@ tdiff_options3="-9"
 tdiff_long_options="--preset alltimes"
 tdiff_long_options2="--preset 9"
 
-. "$srcdir"/tests/filters.lib.sh
-
 alltimes_filter() {
   preset_hardlinks_filter \
     | preset_size_filter \
