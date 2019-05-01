@@ -223,8 +223,8 @@ This is on by default.
 For device files (either block or character), report any differences
 in ma\fBj\fRor device numbers.
 .br
-Note that major numbers will be compared across same or different
-(block or character) device file types.
+Note that major numbers will only be compared if both device files are
+of the same type (block or character).
 .br
 This is on by default.
 .TP
@@ -235,8 +235,8 @@ Do not report any differences in major device numbers on device files.
 For device files (either block or character), report any differences
 in minor device numbers.
 .br
-Note that minor numbers will be compared across same or different
-(block or character) device file types.
+Note that minor numbers will only be compared if both device files are
+of the same type (block or character).
 .br
 This is on by default.
 .TP

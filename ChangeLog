@@ -1,5 +1,8 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Change --major/--minor description noting that the
+	comparison only works on device files of the same type.
+
 	* tests/gid.test (gid_filter):
 	* tests/uid.test (uid_filter):
 	Use xid_filter.
