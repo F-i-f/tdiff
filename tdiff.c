@@ -88,7 +88,7 @@
 #include "ent_pair_cache.h"
 #include "hard_links_cache.h"
 
-#if HAVE_ST_XTIMESPEC
+#if HAVE_ST_ATIMESPEC
 # define ST_ATIMENSEC st_atimespec
 # define ST_CTIMENSEC st_ctimespec
 # define ST_MTIMENSEC st_mtimespec

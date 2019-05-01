@@ -1,5 +1,13 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c: HAVE_ST_XTIMESPEC -> HAVE_ST_ATIMESPEC.  Fixes breakage
+	on systems have have st_xtimespec.
+
+	* configure.ac (HAVE_RANDOM): Provide header comment string.
+	(HAVE_ST_XTIMESPEC): This was replaced by HAVE_ST_ATIMESPEC when
+	we used the_CHECK_IDENTIFIER() macro.
+	(HAVE_ST_TIMENSEC): Typo in header comment string.
+
 	* m4/fi_check_identifier.m4: Correct header.
 
 	* m4/fi_check_egrep.m4 (FI_CHECK_EGREP): Fix whitespace error.

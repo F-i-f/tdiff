@@ -114,7 +114,8 @@ AC_CACHE_CHECK([for random in stdlib.h], fi_cv_have_random, [
 	       fi_cv_have_random=no)])
 if test "x$fi_cv_have_random" = xyes
 then
-  AC_DEFINE(HAVE_RANDOM,1,[FIXME])
+  AC_DEFINE(HAVE_RANDOM,1,
+	    [Define HAVE_RANDOM to 1 if random() is declared in <stdlib.h>])
 fi
 
 # Major / minor
@@ -213,7 +214,6 @@ FI_CHECK_DEFINES([S_IFLNK S_IFIFO S_IFSOCK S_IFDOOR S_IFWHT \
 		 [in <sys/stat.h>])
 
 ### 6) Checking for structures:
-AH_TEMPLATE([HAVE_ST_XTIMESPEC],[Define to 1 if your struct stat has the st_Xtimespec fields])
 FI_CHECK_IDENTIFIERS([st_atimespec st_flags],
 		     [#include <sys/stat.h>],
 		     [in <sys/stat.h>])
@@ -234,7 +234,7 @@ int main()
 if test "x$fi_cv_have_st_timensec" = xyes
 then
   AC_DEFINE([HAVE_ST_TIMENSEC], [1],
-	    [Define to 1 if your system provides nanosecond timestamps (st_atimensec,, st_ctimensec, st_mtimensec)])
+	    [Define to 1 if your system provides nanosecond timestamps (st_atimensec, st_ctimensec, st_mtimensec)])
 fi
 
 FI_CHECK_IDENTIFIER([getxattr], [#include <attr/xattr.h>], [in <attr/xattr.h>])
