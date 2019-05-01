@@ -1,4 +1,3 @@
-tdiff: (top-level): nlink: 3 4
 tdiff: dir1/missing: only present in tests/preset-contents.dir1
 tdiff: entry1: mode: 0600 0700
 tdiff: entry1: nlink: 1 2

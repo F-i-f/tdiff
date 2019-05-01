@@ -2,6 +2,28 @@
 
 	* tests/preset-alltimes.out.gold:
 	* tests/preset-amtimes.out.gold:
+	* tests/preset-contents.out.gold:
+	* tests/preset-mtime.out.gold:
+	* tests/preset-notimes.out.gold:
+	Remove (top-level) nlink for preset_hardlinks_filter.
+
+	* tests/preset-alltimes.test (alltimes_filter):
+	* tests/preset-amtimes.test (amtimes_filter):
+	* tests/preset-contents.test (contents_filter):
+	* tests/preset-mtime.test (mtime_filter):
+	* tests/preset-notimes.test (contents_filter):
+	preset_filter -> preset_hardlinks_filter.
+	Add preset_hardlinks_filter.
+
+	* tests/preset-hardlinks.test (filter): Use
+	preset_hardlinks_filter instead of nlink_filter.
+
+	* tests/preset.lib.sh (preset_filter): Rename to preset_size_filter.
+	(preset_hardlinks_filter): Create, needed for HFS which does weird
+	things with hard link counts.
+
+	* tests/preset-alltimes.out.gold:
+	* tests/preset-amtimes.out.gold:
 	Drop entry3 atime entry.
 
 	* tests/preset.lib.sh (toplevel_atime_filter): Rename to

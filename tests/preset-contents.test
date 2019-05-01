@@ -10,6 +10,10 @@ tdiff_options3="-5"
 tdiff_long_options="--preset contents"
 tdiff_long_options2="--preset 5"
 
-filter=preset_filter
+contents_filter() {
+  preset_hardlinks_filter \
+    | preset_size_filter
+}
+filter=contents_filter
 
 . "$srcdir"/tests/test.lib.sh

@@ -1,5 +1,4 @@
 tdiff: (top-level): mtime: [XXX] [XXX]
-tdiff: (top-level): nlink: 3 4
 tdiff: dir1: mtime: [XXX] [XXX]
 tdiff: dir1: atime: [XXX] [XXX]
 tdiff: dir1/missing: only present in tests/preset-amtimes.dir1

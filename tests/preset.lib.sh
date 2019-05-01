@@ -32,8 +32,14 @@ setup() {
   sync
 }
 
-preset_filter() {
- #$ Combining both sed statements fails on FreeBSD 12.0p3
+preset_hardlinks_filter() {
+  # Hard link counts are wierd for directories on HFS.
+  sed -e '/^tdiff: (top-level): nlink: /d' \
+      -e '/^tdiff: dir1: nlink: /d'
+}
+
+preset_size_filter() {
+  #$ Combining both sed statements fails on FreeBSD 12.0p3
   sed -e '/^tdiff: entry1: blocks: /d' \
       -e '/^tdiff: entry1: size: /d' \
       -e 's!^\(tdiff: entry4: blocks:\) [0-9][0-9]* [0-9][0-9]*!\1 XX XX!'

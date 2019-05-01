@@ -13,8 +13,9 @@ tdiff_long_options2="--preset 9"
 . "$srcdir"/tests/filters.lib.sh
 
 alltimes_filter() {
-  xtime_filter '[amc]time' \
-    | preset_filter \
+  preset_hardlinks_filter \
+    | preset_size_filter \
+    | xtime_filter '[amc]time' \
     | preset_atime_filter
 }
 filter=alltimes_filter

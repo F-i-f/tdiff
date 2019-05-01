@@ -3,7 +3,6 @@
 set -eu
 
 . "$srcdir"/tests/preset.lib.sh
-. "$srcdir"/tests/filters.lib.sh
 
 tdiff_options="-p hardlinks"
 tdiff_options2="-p 4"
@@ -11,6 +10,6 @@ tdiff_options3="-4"
 tdiff_long_options="--preset hardlinks"
 tdiff_long_options2="--preset 4"
 
-filter=nlink_filter
+filter=preset_hardlinks_filter
 
 . "$srcdir"/tests/test.lib.sh
