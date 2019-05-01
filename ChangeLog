@@ -1,5 +1,7 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_project.m4 (FI_PROJECT): Add .*~ to FI_CLEANFILES.
+
 	* tests/*.test: Add tdiff_long_options.
 
 	* tests/test.lib.sh (run_test): Factorize code.

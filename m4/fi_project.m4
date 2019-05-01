@@ -29,7 +29,7 @@ AC_DEFUN([FI_PROJECT],
 	 AM_MAINTAINER_MODE()
 	 FI_AUTOMAKE_FRAGMENT(
 [# Begin FI_PROJECT() Makefile fragment
-FI_CLEANFILES = *~ *.gcda *.gcno *.gcov
+FI_CLEANFILES = .*~ *~ *.gcda *.gcno *.gcov
 
 clean-am: clean-fi-project
 
