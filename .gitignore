@@ -34,3 +34,4 @@ stamp-h1
 /tdiff-*.tar.*
 /tests/*.dir[12]
 /tests/*.out
+/tests/*.tmp.*
