@@ -61,9 +61,22 @@ run_test()
 }
 
 run_test "(short options)" $tdiff_options
+if [ "${tdiff_options2-}" != "" ]
+then
+  run_test "(short options #2)" $tdiff_options2
+fi
+if [ "${tdiff_options3-}" != "" ]
+then
+  run_test "(short options #3)" $tdiff_options3
+fi
+
 if [ "x$HAVE_GETOPT_LONG" != xno ]
 then
   run_test "(long options)"  $tdiff_long_options
+  if [ "${tdiff_long_options2-}" != "" ]
+  then
+    run_test "(long options #2)"  $tdiff_long_options2
+  fi
 fi
 
 if [ $exitcode -eq 0 ]

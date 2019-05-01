@@ -1,5 +1,12 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* tests/mode-and.test:
+	* tests/mode-or.test:
+	(tdiff_options2, tdiff_long_options2): Use alternate option forms.
+
+	* tests/test.lib.sh: Allow up to 3 short option runs and 2 long
+	option runs.
+
 	* tests/*.test:  Use presets instead of --all/--no-all.
 
 	* tdiff.c (show_help): Remove -a/--all, -A/--no-all. Add
