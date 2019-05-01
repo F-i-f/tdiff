@@ -29,6 +29,8 @@ run_test()
   what="$1"
   shift
 
+  "${reset:-:}" "$dir1" "$dir2"
+
   echo 1>&2 "$progname: tdiff $what..."
   (
     exitcode=0

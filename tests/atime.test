@@ -2,6 +2,12 @@
 
 set -eu
 
+atime_reset() {
+  touch -r "$1"/dir1 "$2"/dir1
+  touch -r "$1" "$2"
+}
+reset=atime_reset
+
 setup() {
   echo "File 1" > "$1"/file1
   echo "File 2" > "$1"/file2
@@ -11,8 +17,6 @@ setup() {
   cp -pr "$1"/* "$2"/
 
   touch -r "$1"/file2 "$2"/file2
-  touch -r "$1"/dir1 "$2"/dir1
-  touch -r "$1" "$2"
 
   touch -t 198001010000 "$1"/file1 "$2"/dir1/file3
 }

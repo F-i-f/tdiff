@@ -1,5 +1,13 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/atime.test (setup): Move the resetting of the directories'
+	atimes to atime_reset.
+	(atime_reset): Create.
+	(reset): Define to atime_reset.
+
+	* tests/test.lib.sh (run_test): Run a reset function, if defined,
+	before each run.
+
 	* tests/preset-alltimes.out.gold:
 	* tests/preset-amtimes.out.gold:
 	* tests/preset-contents.out.gold:
