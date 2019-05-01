@@ -1,5 +1,8 @@
 2019-04-30  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (CLEANFILES): Add tests/*.tmp.* tests/*.out
+	tests/*~
+
 	* m4/fi_project.m4 (FI_PROJECT): Add .*~ to FI_CLEANFILES.
 
 	* tests/*.test: Add tdiff_long_options.

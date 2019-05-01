@@ -175,4 +175,6 @@ EXTRA_DIST = README.md					\
 	     tests/uid.out.gold				\
 	     tests/xattr.out.gold
 
+CLEANFILES = tests/*.tmp.* tests/*.out tests/*~
+
 @FI_AUTOMAKE@
