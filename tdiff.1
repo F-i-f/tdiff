@@ -477,6 +477,29 @@ modification time (\fB\-z\fR/\fB\-\-ctime\fR) that is off.
 will compare all available attributes, turning all toggles on.
 .SS Other Miscellaneous Options
 .TP
+\fB\-a\fR, \fB\-\-mode\-and\fR \fIMASK\fR
+When comparing file permission bits, perform a binary \fBa\fRnd
+between the permission bits and
+.I MASK
+before comparing them.
+.br
+.I MASK
+is specified in octal, like with
+.BR chmod(2) ,
+unless prefixed with \fI0x\/\fR, in which case it is parsed as
+hexadecimal.
+.TP
+\fB\-o\fR, \fB\-\-mode\-or\fR \fIMASK\fR
+When comparing file permission bits, perform a binary \fBo\fRr between
+the permission bits and
+.I MASK
+before comparing them.
+.br
+.I MASK
+is specified in octal, like with
+.BR chmod(2) ,
+unless prefixed with \fI0x\/\fR, in which case it is parsed as hexadecimal.
+.TP
 \fB\-w\fR, \fB\-\-exec\-always\fR \fICOMMAND... \\\/;\fR
 Always execute
 .I COMMAND
@@ -544,29 +567,6 @@ sub-directories or files it contains will be completely ignored.
 .br
 This option may be specified more than once, all the files listed will
 be added to the exclusion list.
-.TP
-\fB\-o\fR, \fB\-\-mode\-or\fR \fIMASK\fR
-When comparing file permission bits, perform a binary \fBo\fRr between
-the permission bits and
-.I MASK
-before comparing them.
-.br
-.I MASK
-is specified in octal, like with
-.BR chmod(2) ,
-unless prefixed with \fI0x\/\fR, in which case it is parsed as hexadecimal.
-.TP
-\fB\-a\fR, \fB\-\-mode\-and\fR \fIMASK\fR
-When comparing file permission bits, perform a binary \fBa\fRnd
-between the permission bits and
-.I MASK
-before comparing them.
-.br
-.I MASK
-is specified in octal, like with
-.BR chmod(2) ,
-unless prefixed with \fI0x\/\fR, in which case it is parsed as
-hexadecimal.
 .SH HARD LINKS
 .B tdiff
 optimizes for hard links in two ways:

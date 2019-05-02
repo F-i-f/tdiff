@@ -131,25 +131,25 @@ typedef struct option_s
   unsigned int		 dirs:1;
   unsigned int		 type:1;
   unsigned int		 mode:1;
-  unsigned int		 flags:1;
   unsigned int		 uid:1;
   unsigned int		 gid:1;
+  unsigned int		 nlink:1;
+  unsigned int		 hardlinks:1;
   unsigned int		 ctime:1;
   unsigned int		 mtime:1;
   unsigned int		 atime:1;
   unsigned int		 size:1;
   unsigned int		 blocks:1;
   unsigned int		 contents:1;
-  unsigned int		 nlink:1;
-  unsigned int		 hardlinks:1;
   unsigned int		 major:1;
   unsigned int		 minor:1;
   unsigned int		 xattr:1;
+  unsigned int		 flags:1;
   unsigned int		 acl:1;
+  unsigned int		 mode_and;
+  unsigned int		 mode_or;
   unsigned int		 exec:1;
   unsigned int		 exec_always:1;
-  unsigned int		 mode_or;
-  unsigned int		 mode_and;
   genhash_t*		 exclusions;
   dexe_t		 exec_args;
   dexe_t		 exec_always_args;
@@ -1195,11 +1195,11 @@ show_help(void)
 #if HAVE_ST_FLAGS
 	 "   -f --flags     diffs flags (4.4BSD)\n"
 #endif
-#if HAVE_GETXATTR
-	 "   -q --xattr     diffs file extended attributes\n"
-#endif
 #if HAVE_ACL
 	 "   -l --acl       diffs file ACLs\n"
+#endif
+#if HAVE_GETXATTR
+	 "   -q --xattr     diffs file extended attributes\n"
 #endif
 	 "  Each of these options can be negated with an uppercase (short option)\n"
 	 "  or with --no-option (eg -M --no-mode for not diffing modes)\n"
@@ -1208,33 +1208,33 @@ show_help(void)
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
-#if HAVE_GETXATTR
-	 "Q"
-#endif
 #if HAVE_ACL
 	 "L"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
 #endif
 	 ")\n"
 	 "   -1 -p|--preset 1|missing    Missing files are reported. (-dtMUGNEZIRSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
-#if HAVE_GETXATTR
-	 "Q"
-#endif
 #if HAVE_ACL
 	 "L"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
 #endif
 	 ")\n"
 	 "   -2 -p|--preset 2|mode       Add modes.                  (-dtmUGNEZIRSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
-#if HAVE_GETXATTR
-	 "Q"
-#endif
 #if HAVE_ACL
 	 "L"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
 #endif
 	 ")\n"
 	 "   -3 -p|--preset 3|owner      Add uid/gid ownership"
@@ -1247,22 +1247,22 @@ show_help(void)
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
-#if HAVE_GETXATTR
-	 "Q"
-#endif
 #if HAVE_ACL
 	 "l"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
 #endif
 	 ")\n"
 	 "   -4 -p|--preset 4|hardlinks  Add hardlinks.              (-dtmugneZIRSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
-#if HAVE_GETXATTR
-	 "Q"
-#endif
 #if HAVE_ACL
 	 "l"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
 #endif
 	 ")\n"
 	 "   -5 -p|--preset 5|contents   Add size, contents, blocks,\n"
@@ -1270,11 +1270,11 @@ show_help(void)
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
-#if HAVE_GETXATTR
-	 "Q"
-#endif
 #if HAVE_ACL
 	 "l"
+#endif
+#if HAVE_GETXATTR
+	 "Q"
 #endif
 	 ")\n"
 	 "   -6 -p|--preset 6|notimes    "
@@ -1283,11 +1283,11 @@ show_help(void)
 # if HAVE_ST_FLAGS
 	 "f"
 # endif
-# if HAVE_GETXATTR
-	 "q"
-# endif
 # if HAVE_ACL
 	 "l"
+# endif
+# if HAVE_GETXATTR
+	 "q"
 # endif
 	 ")"
 #else /* ! HAVE_ST_FLAGS && ! HAVE_GETXATTR */
@@ -1298,45 +1298,45 @@ show_help(void)
 #if HAVE_ST_FLAGS
 	 "f"
 #endif
-#if HAVE_GETXATTR
-	 "q"
-#endif
 #if HAVE_ACL
 	 "l"
+#endif
+#if HAVE_GETXATTR
+	 "q"
 #endif
 	 ")\n"
 	 "   -8 -p|--preset 8|amtimes    Add atime.                  (-dtmugneZirsbcjk"
 #if HAVE_ST_FLAGS
 	 "f"
 #endif
-#if HAVE_GETXATTR
-	 "q"
-#endif
 #if HAVE_ACL
 	 "l"
+#endif
+#if HAVE_GETXATTR
+	 "q"
 #endif
 	 ")\n"
 	 "   -9 -p|--preset 9|alltimes   Add ctime.                  (-dtmugnezirsbcjk"
 #if HAVE_ST_FLAGS
 	 "f"
 #endif
-#if HAVE_GETXATTR
-	 "q"
-#endif
 #if HAVE_ACL
 	 "l"
 #endif
+#if HAVE_GETXATTR
+	 "q"
+#endif
 	 ")\n"
 	 " Miscellania:\n"
-	 "   -x --exec <cmd> \\;         executes <cmd> between files if they are similar\n"
-	 "                              (if file sizes are equal)\n"
-	 "   -w --exec-always <cmd> \\;  always executes <cmd> between files\n"
+	 "   -a --mode-and <bits>       applies <bits> AND mode before comparison\n"
+	 "   -o --mode-or <bits>        applies <bits> OR mode before comparison\n"
+	 "   -w --exec-always <cmd> \\;  always executes <cmd> for every regular file pair\n"
 	 "                              <cmd> uses %%1 and %%2 as placeholders for files\n"
 	 "                              from <dir1> and <dir2>.\n"
-	 "   -W --exec-always-diff \\;   always executes \"diff -u\" between files\n"
-	 "                              equivalent to -w diff -u %%1 %%2 \\;\n"
-	 "   -o --mode-or <bits>        applies <bits> OR mode before comparison\n"
-	 "   -a --mode-and <bits>       applies <bits> AND mode before comparison\n"
+	 "   -W --exec-always-diff \\;   always executes \"diff -u\" for every reg. file pair\n"
+	 "                              equivalent to: -w diff -u %%1 %%2 \\;\n"
+	 "   -x --exec <cmd> \\;         executes <cmd> for every reg. file pair having the\n"
+	 "                              same size to determine if their contents are equal\n"
 	 "   -X --exclude <file>        omits <file> from report\n"
 #if ! HAVE_GETOPT_LONG
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
@@ -1471,35 +1471,24 @@ printopts(const options_t* o)
   POPT(mode);
   POPT(uid);
   POPT(gid);
+  POPT(nlink);
+  POPT(hardlinks);
   POPT(ctime);
   POPT(mtime);
   POPT(atime);
   POPT(size);
   POPT(blocks);
   POPT(contents);
-  POPT(nlink);
-  POPT(hardlinks);
   POPT(major);
   POPT(minor);
-  POPT(xattr);
+  POPT(flags);
   POPT(acl);
-  POPT(exec);
-  POPT(exec_always);
-#undef POPT
-  printf("mode OR = %04o\n", o->mode_or);
+  POPT(xattr);
   printf("mode AND = %04o\n", o->mode_and);
-  if (o->exec)
-    {
-      char **c = o->exec_args.argv;
-      /**/
-
-      if (o->exec_args.arg1) *(o->exec_args.arg1) = "<arg1>";
-      if (o->exec_args.arg2) *(o->exec_args.arg2) = "<arg2>";
-      printf("Exec cmd line:");
-      while(*c)
-	printf(" <%s>", *c++);
-      printf("\n");
-    }
+  printf("mode OR = %04o\n", o->mode_or);
+  POPT(exec_always);
+  POPT(exec);
+#undef POPT
   if (o->exec_always)
     {
       char **c = o->exec_always_args.argv;
@@ -1508,6 +1497,18 @@ printopts(const options_t* o)
       if (o->exec_always_args.arg1) *(o->exec_always_args.arg1) = "<arg1>";
       if (o->exec_always_args.arg2) *(o->exec_always_args.arg2) = "<arg2>";
       printf("Exec always cmd line:");
+      while(*c)
+	printf(" <%s>", *c++);
+      printf("\n");
+    }
+  if (o->exec)
+    {
+      char **c = o->exec_args.argv;
+      /**/
+
+      if (o->exec_args.arg1) *(o->exec_args.arg1) = "<arg1>";
+      if (o->exec_args.arg2) *(o->exec_args.arg2) = "<arg2>";
+      printf("Exec cmd line:");
       while(*c)
 	printf(" <%s>", *c++);
       printf("\n");
@@ -2236,21 +2237,21 @@ main(int argc, char*argv[])
 	{ "flags",             0, 0, 'f' },
 	{ "no-flags",          0, 0, 'F' },
 #endif
+#if HAVE_ACL
+	{ "acl",               0, 0, 'l' },
+	{ "no-acl",            0, 0, 'L' },
+#endif
 #if HAVE_GETXATTR
 	{ "xattr",             0, 0, 'q' },
 	{ "no-xattr",          0, 0, 'Q' },
 #endif
-#if HAVE_GETXATTR
-	{ "acl",               0, 0, 'l' },
-	{ "no-acl",            0, 0, 'L' },
-#endif
 	{ "preset",            1, 0, 'p' },
+	{ "mode-and",          1, 0, 'a' },
+	{ "mode-or",           1, 0, 'o' },
 	{ "exec",              0, 0, 'x' },
+	{ "exclude",           1, 0, 'X' },
 	{ "exec-always",       0, 0, 'w' },
 	{ "exec-always-diff",  0, 0, 'W' },
-	{ "exclude",           1, 0, 'X' },
-	{ "mode-or",           1, 0, 'o' },
-	{ "mode-and",          1, 0, 'a' },
 	{ 0,                   0, 0, 0}
       };
 #endif /* HAVE_GETOPT_LONG */
@@ -2265,13 +2266,13 @@ main(int argc, char*argv[])
 #if HAVE_ST_FLAGS
 	      "fF"
 #endif
-#if HAVE_GETXATTR
-	      "qQ"
-#endif
 #if HAVE_ACL
 	      "lL"
 #endif
-	      "0123456789p:xwWo:a:X:"
+#if HAVE_GETXATTR
+	      "qQ"
+#endif
+	      "0123456789p:a:o:wWxX:"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -2327,13 +2328,13 @@ main(int argc, char*argv[])
 	case 'f': options.flags           = 1; break;
 	case 'F': options.flags           = 0; break;
 #endif
-#if HAVE_GETXATTR
-	case 'q': options.xattr		  = 1; break;
-	case 'Q': options.xattr		  = 0; break;
-#endif
 #if HAVE_ACL
 	case 'l': options.acl		  = 1; break;
 	case 'L': options.acl		  = 0; break;
+#endif
+#if HAVE_GETXATTR
+	case 'q': options.xattr		  = 1; break;
+	case 'Q': options.xattr		  = 0; break;
 #endif
 	case '0':
 	case '1':
@@ -2372,13 +2373,11 @@ main(int argc, char*argv[])
 	      };
 	      size_t i;
 	      size_t optlen = strlen(optarg);
-	      size_t presetlen;
 	      int found = 0;
 
 	      for (i=0; i < sizeof(presetNames)/sizeof(presetNames[0]); ++i)
 		{
-		  presetlen = strlen(presetNames[i].name);
-		  if (optlen <= presetlen
+		  if (optlen <= strlen(presetNames[i].name)
 		      && optlen >= presetNames[i].minreq
 		      && memcmp(optarg, presetNames[i].name, optlen) == 0)
 		    {
@@ -2394,14 +2393,12 @@ main(int argc, char*argv[])
 		}
 	    }
 	  break;
-	case 'x':
-	  if (options.exec)
-	    {
-	      fprintf(stderr, "%s: -x specified twice, only the last command line will run\n", progname);
-	    }
-	  if (get_exec_args(argv, &optind, &options.exec_args))
-	    options.contents = options.exec = 1;
-	  else
+	case 'a':
+	  if (!get_octal_arg(optarg, &options.mode_and))
+	    end_after_options = EAO_error;
+	  break;
+	case 'o':
+	  if (!get_octal_arg(optarg, &options.mode_or))
 	    end_after_options = EAO_error;
 	  break;
 	case 'w':
@@ -2434,12 +2431,14 @@ main(int argc, char*argv[])
 	      options.contents = options.exec_always = 1;
 	    }
 	  break;
-	case 'o':
-	  if (!get_octal_arg(optarg, &options.mode_or))
-	    end_after_options = EAO_error;
-	  break;
-	case 'a':
-	  if (!get_octal_arg(optarg, &options.mode_and))
+	case 'x':
+	  if (options.exec)
+	    {
+	      fprintf(stderr, "%s: -x specified twice, only the last command line will run\n", progname);
+	    }
+	  if (get_exec_args(argv, &optind, &options.exec_args))
+	    options.contents = options.exec = 1;
+	  else
 	    end_after_options = EAO_error;
 	  break;
 	case 'X':

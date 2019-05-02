@@ -1,5 +1,14 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (main): Long options for --acl/--noacl were added to long options
+	structure on wrong feature macro.
+
+	* tdiff.1:
+	* _tdiff.zsh (args):
+	* tdiff.bash (_tdiff):
+	* tdiff.c (struct option_s, show_help, printopts, main):
+	Reorder options consistently.
+
 	* tests/mode-and.test (tdiff_options):
 	* tests/mode-or.test (tdiff_options):
 	* tdiff.bash (_tdiff):

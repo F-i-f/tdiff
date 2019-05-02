@@ -76,16 +76,16 @@ _tdiff()
 				   9 alltimes all' -- "$cur" ) )
 	return
 	;;
-      -x|--exec|\
-      -w|--exec-always)
-	words=(words[0] "$cur")
-	cword=1
-	_command
-	return
-	;;
       -a|--mode-and|\
       -o|--mode-or)
 	COMPREPLY=()
+	return
+	;;
+      -w|--exec-always)
+      -x|--exec|\
+	words=(words[0] "$cur")
+	cword=1
+	_command
 	return
 	;;
       -X|--exclude)
@@ -117,11 +117,11 @@ _tdiff()
 				 --flags --no-flags
 				 --xattr --no-xattr
 				 --preset
-				 --exec
-				 --exec-always
-				 --exec-always-diff
 				 --mode-and
 				 --mode-or
+				 --exec-always
+				 --exec-always-diff
+				 --exec
 				 --exclude
 				 ' -- "$cur" ) )
 	return

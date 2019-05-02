@@ -124,18 +124,19 @@ args=('*'{-v,--verbose}'[increase verbosity level]'
       '-8[preset: add atime.  All but ctime.]'
       '-9[preset: add ctime.  Everything.]'
 
-      + '(exec)'
-      {-x,--exec}'[execute a command to check if files are similar]:program: _command_names -e:*\;::program arguments: _normal'
+      + '(mode-and)'
+      {-a,--mode-and}'[applies an AND mask to file modes]:mask (octal)'
+
+      + '(mode-or)'
+      {-o,--mode-or}'[applies an OR mask to file modes]:mask (octal)'
 
       + '(exec-always)'
       {-w,--exec-always}'[execute a command on file pairs]:program: _command_names -e:*\;::program arguments: _normal'
       {-W,--exec-always-diff}'[executes "diff -u" for every file pair]'
 
-      + '(mode-or)'
-      {-o,--mode-or}'[applies an OR mask to file modes]:mask (octal)'
+      + '(exec)'
+      {-x,--exec}'[execute a command to check if files are similar]:program: _command_names -e:*\;::program arguments: _normal'
 
-      + '(mode-and)'
-      {-a,--mode-and}'[applies an AND mask to file modes]:mask (octal)'
      )
 
 local tdiff_out="$(tdiff --help)"
@@ -150,21 +151,21 @@ then
 	)
 fi
 
-if [[ -n ${(M)tdiff_out:+--xattr} ]]
-then
-  has_xattr=yes
-  args+=( + '(xattr)'
-	  {-q,--xattr}'[diff file extended attributes]'
-	  {-Q,--no-xattr}'[do not diff extended attributes]'
-	)
-fi
-
 if [[ -n ${(M)tdiff_out:+--acl} ]]
 then
   has_acl=yes
   args+=( + '(acl)'
 	  {-l,--acl}'[diff file ACLs (access control lists)]'
 	  {-L,--no-acl}'[do not diff ACLs (access control lists)]'
+	)
+fi
+
+if [[ -n ${(M)tdiff_out:+--xattr} ]]
+then
+  has_xattr=yes
+  args+=( + '(xattr)'
+	  {-q,--xattr}'[diff file extended attributes]'
+	  {-Q,--no-xattr}'[do not diff extended attributes]'
 	)
 fi
 
