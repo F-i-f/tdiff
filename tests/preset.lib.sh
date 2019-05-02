@@ -67,7 +67,7 @@ setup() {
   mkdir "$1"/dir1
   touch "$1"/dir1/missing
 
-  sleep 1
+  sleep_if_coarse_time 1
 
   mkdir "$2"/entry1
   chmod 700 "$2"/entry1
@@ -85,7 +85,7 @@ setup() {
   mkdir "$2"/dir1
   touch "$2"/missing
 
-  sleep 1
+  sleep_if_coarse_time 1
 
   # On Solaris block counts aren't updated until they're on storage.
   sync

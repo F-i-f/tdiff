@@ -1,5 +1,19 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset.lib.sh (setup):
+	* tests/mtime.test (setup):
+	* tests/ctime.test (setup):
+	Use sleep_if_coarse_time instead of sleep.
+
+	* tests/test.lib.sh (sleep_if_coarse_time): Create, only sleep if
+	we don't have nanosecond time resolution.
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): Pass
+	HAVE_NANOSECOND_TIME_RESOLUTION down to environment.
+
+	* configure.ac: AC_SUBST(HAVE_NANOSECOND_TIME_RESOLUTION) for
+	regressions.
+
 	* tdiff.spec (files): Ship %{_docdir} instead of individual %doc
 	files.
 

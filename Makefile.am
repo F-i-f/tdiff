@@ -74,6 +74,7 @@ AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      HAVE_GETOPT_LONG="$(HAVE_GETOPT_LONG)" \
 			      HAVE_ACLS="$(HAVE_ACLS)" \
 			      HAVE_XATTRS="$(HAVE_XATTRS)" \
+			      HAVE_NANOSECOND_TIME_RESOLUTION="$(HAVE_NANOSECOND_TIME_RESOLUTION)" \
 			      ;
 TEST_EXTENSIONS	     = .test
 TESTS = tests/ent_pair_cache.test		\

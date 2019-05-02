@@ -2,6 +2,14 @@
 
 set -eu
 
+# Utilities
+sleep_if_coarse_time() {
+  if [ "x$HAVE_NANOSECOND_TIME_RESOLUTION" != xyes ]
+  then
+    sleep "$@"
+  fi
+}
+
 # Filters
 acl_filter() {
   sed -e 's!\(: \(access\|default\) acl \(user\|group\):\)[^[:space:]]\+\(: .*\)$!\1XX\4!'
