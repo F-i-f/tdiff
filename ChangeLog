@@ -1,5 +1,9 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/contents-diff.test (tdiff_options): Drop -c.
+	(tdiff_long_options): Drop --contents.
+	--exec turns on -c/--contents, no need to specify it.
+
 	* tests/preset-flags-*.out.gold:
 	* tests/preset-flags-*.test:
 	Create.
