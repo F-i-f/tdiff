@@ -1,5 +1,14 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1:
+	* tests/preset-*alltimes.out.gold:
+	* tests/atime.test (atime_filter):
+	* tdiff.c (struct option_s, show_help, printopts, dodiff, main):
+	* tdiff.bash (_tdiff):
+	* _tdiff.zsh (args):
+	Rename -r/-R (--atime) to -y/-Y to free up the -r option.
+	Reorder time-related option lists.
+
 	* tdiff.c (main): Long options for --acl/--noacl were added to long options
 	structure on wrong feature macro.
 

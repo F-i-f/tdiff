@@ -38,12 +38,12 @@ _tdiff()
       -N|--no-nlink|\
       -e|--hardlinks|\
       -E|--no-hardlinks|\
-      -z|--ctime|\
-      -Z|--no-ctime|\
       -i|--mtime|\
       -I|--no-mtime|\
-      -r|--atime|\
-      -R|--no-atime|\
+      -y|--atime|\
+      -Y|--no-atime|\
+      -z|--ctime|\
+      -Z|--no-ctime|\
       -s|--size|\
       -S|--no-size|\
       -b|--blocks|\
@@ -105,9 +105,9 @@ _tdiff()
 				 --gid --no-gid
 				 --nlink --no-nlink
 				 --hardlinks --no-hardlinks
-				 --ctime --no-ctime
 				 --mtime --no-mtime
 				 --atime --no-atime
+				 --ctime --no-ctime
 				 --size --no-size
 				 --blocks --no-blocks
 				 --contents --no-contents

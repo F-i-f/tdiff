@@ -135,9 +135,9 @@ typedef struct option_s
   unsigned int		 gid:1;
   unsigned int		 nlink:1;
   unsigned int		 hardlinks:1;
-  unsigned int		 ctime:1;
   unsigned int		 mtime:1;
   unsigned int		 atime:1;
+  unsigned int		 ctime:1;
   unsigned int		 size:1;
   unsigned int		 blocks:1;
   unsigned int		 contents:1;
@@ -1184,9 +1184,9 @@ show_help(void)
 	 "   -g --gid       diffs file group id\n"
 	 "   -n --nlink     diffs the (hard) link count\n"
 	 "   -e --hardlinks diffs the hard link targets\n"
-	 "   -z --ctime     diffs ctime (inode modification time)\n"
 	 "   -i --mtime     diffs mtime (contents modification time)\n"
-	 "   -r --atime     diffs atime (access time)\n"
+	 "   -y --atime     diffs atime (access time)\n"
+	 "   -z --ctime     diffs ctime (inode modification time)\n"
 	 "   -s --size      diffs file size (for regular files, symlinks)\n"
 	 "   -b --blocks    diffs file blocks (for regular files, symlinks & directories)\n"
 	 "   -c --contents  diffs file contents (for regular files and symlinks)\n"
@@ -1204,7 +1204,7 @@ show_help(void)
 	 "  Each of these options can be negated with an uppercase (short option)\n"
 	 "  or with --no-option (eg -M --no-mode for not diffing modes)\n"
 	 " Presets (cumulative, -2 implies -1, etc.):\n"
-	 "   -0 -p|--preset 0|none       No checks are made.         (-DTMUGNEZIRSBCJK"
+	 "   -0 -p|--preset 0|none       No checks are made.         (-DTMUGNEIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
@@ -1215,7 +1215,7 @@ show_help(void)
 	 "Q"
 #endif
 	 ")\n"
-	 "   -1 -p|--preset 1|missing    Missing files are reported. (-dtMUGNEZIRSBCJK"
+	 "   -1 -p|--preset 1|missing    Missing files are reported. (-dtMUGNEIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
@@ -1226,7 +1226,7 @@ show_help(void)
 	 "Q"
 #endif
 	 ")\n"
-	 "   -2 -p|--preset 2|mode       Add modes.                  (-dtmUGNEZIRSBCJK"
+	 "   -2 -p|--preset 2|mode       Add modes.                  (-dtmUGNEIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
@@ -1243,7 +1243,7 @@ show_help(void)
 #else
 	 ".      "
 #endif
-	 "(-dtmugNEZIRSBCJK"
+	 "(-dtmugNEIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
@@ -1254,7 +1254,7 @@ show_help(void)
 	 "Q"
 #endif
 	 ")\n"
-	 "   -4 -p|--preset 4|hardlinks  Add hardlinks.              (-dtmugneZIRSBCJK"
+	 "   -4 -p|--preset 4|hardlinks  Add hardlinks.              (-dtmugneIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
@@ -1266,7 +1266,7 @@ show_help(void)
 #endif
 	 ")\n"
 	 "   -5 -p|--preset 5|contents   Add size, contents, blocks,\n"
-	 "                               major and minor.            (-dtmugneZIRsbcjk"
+	 "                               major and minor.            (-dtmugneIYZsbcjk"
 #if HAVE_ST_FLAGS
 	 "F"
 #endif
@@ -1279,7 +1279,7 @@ show_help(void)
 	 ")\n"
 	 "   -6 -p|--preset 6|notimes    "
 #if HAVE_ST_FLAGS || HAVE_GETXATTR
-	 "Add %-13s (default) (-dtmugneZIRsbcjk"
+	 "Add %-13s (default) (-dtmugneIYZsbcjk"
 # if HAVE_ST_FLAGS
 	 "f"
 # endif
@@ -1294,7 +1294,7 @@ show_help(void)
 	 "Same as preset 5 or contents."
 #endif
 	 "\n"
-	 "   -7 -p|--preset 7|mtime      Add mtime.                  (-dtmugneZiRsbcjk"
+	 "   -7 -p|--preset 7|mtime      Add mtime.                  (-dtmugneiYZsbcjk"
 #if HAVE_ST_FLAGS
 	 "f"
 #endif
@@ -1305,7 +1305,7 @@ show_help(void)
 	 "q"
 #endif
 	 ")\n"
-	 "   -8 -p|--preset 8|amtimes    Add atime.                  (-dtmugneZirsbcjk"
+	 "   -8 -p|--preset 8|amtimes    Add atime.                  (-dtmugneiyZsbcjk"
 #if HAVE_ST_FLAGS
 	 "f"
 #endif
@@ -1316,7 +1316,7 @@ show_help(void)
 	 "q"
 #endif
 	 ")\n"
-	 "   -9 -p|--preset 9|alltimes   Add ctime.                  (-dtmugnezirsbcjk"
+	 "   -9 -p|--preset 9|alltimes   Add ctime.                  (-dtmugneiyzsbcjk"
 #if HAVE_ST_FLAGS
 	 "f"
 #endif
@@ -1473,9 +1473,9 @@ printopts(const options_t* o)
   POPT(gid);
   POPT(nlink);
   POPT(hardlinks);
-  POPT(ctime);
   POPT(mtime);
   POPT(atime);
+  POPT(ctime);
   POPT(size);
   POPT(blocks);
   POPT(contents);
@@ -1883,24 +1883,6 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 
       localerr = 1;
     }
-  if (opts->ctime
-      && ( sbuf1.st_ctime != sbuf2.st_ctime
-#ifdef ST_CTIMENSEC
-	   || sbuf1.ST_CTIMENSEC.tv_nsec != sbuf2.ST_CTIMENSEC.tv_nsec
-#endif
-	   )
-      )
-    {
-      reportTimeDiscrepancy(subpath, "ctime",
-			    sbuf1.st_ctime, sbuf2.st_ctime,
-#ifdef ST_CTIMENSEC
-			    sbuf1.ST_CTIMENSEC.tv_nsec, sbuf2.ST_CTIMENSEC.tv_nsec
-#else
-			    -1, -1
-#endif
-			    );
-      localerr = 1;
-    }
   if (opts->mtime
       && (sbuf1.st_mtime != sbuf2.st_mtime
 #ifdef ST_MTIMENSEC
@@ -1930,6 +1912,24 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 			    sbuf1.st_atime, sbuf2.st_atime,
 #ifdef ST_CTIMENSEC
 			    sbuf1.ST_ATIMENSEC.tv_nsec, sbuf2.ST_ATIMENSEC.tv_nsec
+#else
+			    -1, -1
+#endif
+			    );
+      localerr = 1;
+    }
+  if (opts->ctime
+      && ( sbuf1.st_ctime != sbuf2.st_ctime
+#ifdef ST_CTIMENSEC
+	   || sbuf1.ST_CTIMENSEC.tv_nsec != sbuf2.ST_CTIMENSEC.tv_nsec
+#endif
+	   )
+      )
+    {
+      reportTimeDiscrepancy(subpath, "ctime",
+			    sbuf1.st_ctime, sbuf2.st_ctime,
+#ifdef ST_CTIMENSEC
+			    sbuf1.ST_CTIMENSEC.tv_nsec, sbuf2.ST_CTIMENSEC.tv_nsec
 #else
 			    -1, -1
 #endif
@@ -2217,12 +2217,12 @@ main(int argc, char*argv[])
 	{ "no-nlink",          0, 0, 'N' },
 	{ "hardlinks",         0, 0, 'e' },
 	{ "no-hardlinks",      0, 0, 'E' },
-	{ "ctime",             0, 0, 'z' },
-	{ "no-ctime",          0, 0, 'Z' },
 	{ "mtime",             0, 0, 'i' },
 	{ "no-mtime",          0, 0, 'I' },
-	{ "atime",             0, 0, 'r' },
-	{ "no-atime",          0, 0, 'R' },
+	{ "atime",             0, 0, 'y' },
+	{ "no-atime",          0, 0, 'Y' },
+	{ "ctime",             0, 0, 'z' },
+	{ "no-ctime",          0, 0, 'Z' },
 	{ "size",              0, 0, 's' },
 	{ "no-size",           0, 0, 'S' },
 	{ "blocks",            0, 0, 'b' },
@@ -2262,7 +2262,7 @@ main(int argc, char*argv[])
 	     getopt
 #endif
 	     (argc, argv, "vVhdDtTmM"
-	      "uUgGnNeEzZiIrRsSbBcCjJkK"
+	      "uUgGnNeEiIyYzZsSbBcCjJkK"
 #if HAVE_ST_FLAGS
 	      "fF"
 #endif
@@ -2308,12 +2308,12 @@ main(int argc, char*argv[])
 	case 'N': options.nlink		  = 0; break;
 	case 'e': options.hardlinks	  = 1; break;
 	case 'E': options.hardlinks	  = 0; break;
-	case 'z': options.ctime		  = 1; break;
-	case 'Z': options.ctime		  = 0; break;
 	case 'i': options.mtime		  = 1; break;
 	case 'I': options.mtime		  = 0; break;
-	case 'r': options.atime		  = 1; break;
-	case 'R': options.atime		  = 0; break;
+	case 'y': options.atime		  = 1; break;
+	case 'Y': options.atime		  = 0; break;
+	case 'z': options.ctime		  = 1; break;
+	case 'Z': options.ctime		  = 0; break;
 	case 's': options.size		  = 1; break;
 	case 'S': options.size		  = 0; break;
 	case 'b': options.blocks	  = 1; break;

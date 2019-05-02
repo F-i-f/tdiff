@@ -56,17 +56,17 @@ args=('*'{-v,--verbose}'[increase verbosity level]'
       {-e,--hardlinks}'[diff file hard link targets]'
       {-E,--no-hardlinks}'[do not diff hard link targets]'
 
-      + '(ctime)'
-      {-z,--ctime}'[diff file ctime (inode modification time)]'
-      {-Z,--no-ctime}'[do not diff ctime (inode modification time)]'
-
       + '(mtime)'
       {-i,--mtime}'[diff file mtime (contents modification time)]'
       {-I,--no-mtime}'[do not diff mtime (contents modification time)]'
 
       + '(atime)'
-      {-r,--atime}'[diff file atime (access time)]'
-      {-R,--no-atime}'[do not diff atime (access time)]'
+      {-y,--atime}'[diff file atime (access time)]'
+      {-Y,--no-atime}'[do not diff atime (access time)]'
+
+      + '(ctime)'
+      {-z,--ctime}'[diff file ctime (inode modification time)]'
+      {-Z,--no-ctime}'[do not diff ctime (inode modification time)]'
 
       + '(size)'
       {-s,--size}'[diff file size (for regular files and symbolic links)]'

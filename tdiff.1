@@ -301,28 +301,6 @@ This is on by default if extended attributes are supported by the system.
 \fB\-Q\fR, \fB\-\-no\-xattr\fR
 Do not report any differences in file extended attributes.
 .TP
-\fB\-r\fR, \fB\-\-atime\fR
-Report on any differences in file access time (\fI\,st_atime\/\fR), up
-to nanosecond resolution if the underlying OS reports it.
-.br
-Since merely reading a file causes the access time to be updated, this
-option is likely to be of limited use.
-.B tdiff
-will not update the file access times when comparing files if compiled
-on an OS with
-.B O_NOATIME
-.BR open(2)
-support.  However commands specified with \fB\-x\fR/\fB\-\-exec\fR,
-\fB\-w\fR/\fB\-\-exec\-always\fR or
-\fB\-W\fR/\fB\-\-exec\-always\-diff\fR may update the access times of
-the files they read.
-.TP
-\fB\-R\fR, \fB\-\-no\-atime\fR
-Do not report any differences in file access times
-(\fI\,st_atime\/\fR).
-.br
-This is on by default.
-.TP
 \fB\-s\fR, \fB\-\-size\fR
 Report file \fBs\fRize differences for regular files and symbolic
 links (\fI\,st_size\fR does not make sense on other types of inodes).
@@ -351,6 +329,28 @@ This is on by default.
 \fB\-U\fR, \fB\-\-no\-uid\fR
 Do not report any differences in file \fBu\fRser ownership (owner user
 id).
+.TP
+\fB\-y\fR, \fB\-\-atime\fR
+Report on any differences in file access time (\fI\,st_atime\/\fR), up
+to nanosecond resolution if the underlying OS reports it.
+.br
+Since merely reading a file causes the access time to be updated, this
+option is likely to be of limited use.
+.B tdiff
+will not update the file access times when comparing files if compiled
+on an OS with
+.B O_NOATIME
+.BR open(2)
+support.  However commands specified with \fB\-x\fR/\fB\-\-exec\fR,
+\fB\-w\fR/\fB\-\-exec\-always\fR or
+\fB\-W\fR/\fB\-\-exec\-always\-diff\fR may update the access times of
+the files they read.
+.TP
+\fB\-Y\fR, \fB\-\-no\-atime\fR
+Do not report any differences in file access times
+(\fI\,st_atime\/\fR).
+.br
+This is on by default.
 .TP
 \fB\-z\fR, \fB\-\-ctime\fR
 Report on any differences in file inode change time
@@ -448,7 +448,7 @@ will also compare, if supported, flags (\fB\-f\fR/\fB\-\-flags\fR) and
 extended attributes (\fB\-q\fR/\fB\-\-xattr\fR). All the other toggles
 are set to their inactive (\fB\-\-no\-\fR) state.  This corresponds to
 a state where all toggles are on except the three times
-(\fB\-r\fR/\fB\-\-atime\fR, \fB\-i\fR/\fB\-\-mtime\fR and
+(\fB\-y\fR/\fB\-\-atime\fR, \fB\-i\fR/\fB\-\-mtime\fR and
 \fB\-z\fR/\fB\-\-ctime\fR) that are off.
 .br
 If your system does not support either flags or extended attributes,
@@ -461,14 +461,14 @@ In addition to the comparisons enabled at preset level \fI6\/\fR,
 .B tdiff
 will also compare file modification times
 (\fB\-i\fR/\fB\-\-mtime\fR). This corresponds to a state where all
-toggles are on except the file access time (\fB\-r\fR/\fB\-\-atime\fR)
+toggles are on except the file access time (\fB\-y\fR/\fB\-\-atime\fR)
 and the inode modification time (\fB\-z\fR/\fB\-\-ctime\fR) that are
 off.
 .TP
 \fB\-8\fR, \fB\-p\fR|\fB\-\-preset\fR \fI8\/\fR|\fI\,amtimes\fR
 In addition to the comparisons enabled at preset level \fI7\/\fR,
 .B tdiff
-will also compare file access times (\fB\-r\fR/\fB\-\-atime\fR). This
+will also compare file access times (\fB\-y\fR/\fB\-\-atime\fR). This
 corresponds to a state where all toggles are on except the inode
 modification time (\fB\-z\fR/\fB\-\-ctime\fR) that is off.
 .TP
@@ -821,4 +821,4 @@ along with this program.  If not, see
 \"  LocalWords:  fIfile1 fIfile2 fIdir2 files' readdir eg hardlinks
 \"  LocalWords:  fBf1 fBf2 fBf3 fIamtimes fIam fImissing fImiss fId
 \"  LocalWords:  fBf fRlags fIdefault fI9 fI8 fI7 fI6 notimes fI0 fI1
-\"  LocalWords:  fI2 fI3 fI4 fI5 amtimes alltimes Wi ns
+\"  LocalWords:  fI2 fI3 fI4 fI5 amtimes alltimes Wi ns fBa fRnd fRr

@@ -25,7 +25,7 @@ atime_filter() {
   xtime_filter atime
 }
 
-tdiff_options="-0r"
+tdiff_options="-0y"
 tdiff_long_options="--preset none --atime"
 filter=atime_filter
 
