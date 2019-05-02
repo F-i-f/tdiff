@@ -2,16 +2,7 @@
 
 set -eu
 
-if [ "x$HAVE_ACLS" != xyes ]
-then
-  exit 77
-fi
-
-pre_check_file() {
-  setfacl -m g::- "$@"
-}
-
-. "$srcdir"/tests/pre-check-file.lib.sh
+. "$srcdir"/tests/require-acl.lib.sh
 
 setup() {
   cat > "$1"/acl-f-list <<-'EOD'
@@ -65,10 +56,6 @@ EOD
   setfacl -n -x d:g:47 "$1"/dir14
   setfacl -n -m d:g:49:x "$1"/dir15
   setfacl -n -m d:m:w "$2"/dir16
-}
-
-acl_filter() {
-  sed -e 's!\(: \(access\|default\) acl \(user\|group\):\)[^[:space:]]\+\(: .*\)$!\1XX\4!'
 }
 
 tdiff_options="-0l"

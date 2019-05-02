@@ -3,6 +3,10 @@
 set -eu
 
 # Filters
+acl_filter() {
+  sed -e 's!\(: \(access\|default\) acl \(user\|group\):\)[^[:space:]]\+\(: .*\)$!\1XX\4!'
+}
+
 xid_filter() {
   sed -e 's!\(: '"$1"':\) [^[:space:]]*(\([0-9][0-9]*\)) [^[:space:]]*(\([0-9][0-9]*\))$!\1 \2 \3!'
 }

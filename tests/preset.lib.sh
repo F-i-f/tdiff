@@ -2,9 +2,14 @@
 
 set -eu
 
+with_acl=0
 with_root=0
 
 case "$(basename "$0" .test)" in
+  *-acl-*)
+    . "$srcdir"/tests/require-acl.lib.sh
+    with_acl=1
+    ;;
   *-root-*)
     . "$srcdir"/tests/fakeroot.lib.sh
     with_root=1
@@ -22,6 +27,10 @@ setup() {
   echo foo > "$1"/entry2
   ln "$1"/entry2 "$1"/entry3
   echo bar > "$1"/entry4
+  if [ $with_acl -ne 0 ]
+  then
+    setfacl -m u:3:r "$1"/entry4
+  fi
   if [ $with_root -ne 0 ]
   then
     chown 1 "$1"/entry4
@@ -56,6 +65,17 @@ setup() {
   # On Solaris block counts aren't updated until they're on storage.
   sync
 }
+
+if [ $with_acl -ne 0 ]
+then
+  preset_acl_filter() {
+    acl_filter
+  }
+else
+  preset_acl_filter() {
+    cat
+  }
+fi
 
 if [ $with_root -ne 0 ]
 then

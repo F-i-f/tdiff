@@ -12,6 +12,7 @@ tdiff_long_options2="--preset 8"
 
 amtimes_filter() {
   preset_xid_filter \
+    | preset_acl_filter \
     | preset_hardlinks_filter \
     | preset_size_filter \
     | xtime_filter '[am]time' \

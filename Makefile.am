@@ -120,6 +120,16 @@ TESTS = tests/ent_pair_cache.test		\
 	tests/preset-none.test			\
 	tests/preset-notimes.test		\
 	tests/preset-owner.test			\
+	tests/preset-acl-alltimes.test		\
+	tests/preset-acl-amtimes.test		\
+	tests/preset-acl-contents.test		\
+	tests/preset-acl-hardlinks.test		\
+	tests/preset-acl-missing.test		\
+	tests/preset-acl-mode.test		\
+	tests/preset-acl-mtime.test		\
+	tests/preset-acl-none.test		\
+	tests/preset-acl-notimes.test		\
+	tests/preset-acl-owner.test		\
 	tests/preset-root-alltimes.test		\
 	tests/preset-root-amtimes.test		\
 	tests/preset-root-contents.test		\
@@ -149,6 +159,7 @@ EXTRA_DIST = README.md					\
 	     tests/mode.lib.sh				\
 	     tests/pre-check-file.lib.sh		\
 	     tests/preset.lib.sh			\
+	     tests/require-acl.lib.sh			\
 	     tests/test.lib.sh				\
 	     tests/type.lib.sh				\
 	     $(TESTS)					\
@@ -198,6 +209,16 @@ EXTRA_DIST = README.md					\
 	     tests/preset-none.out.gold			\
 	     tests/preset-notimes.out.gold		\
 	     tests/preset-owner.out.gold		\
+	     tests/preset-acl-alltimes.out.gold		\
+	     tests/preset-acl-amtimes.out.gold		\
+	     tests/preset-acl-contents.out.gold		\
+	     tests/preset-acl-hardlinks.out.gold	\
+	     tests/preset-acl-missing.out.gold		\
+	     tests/preset-acl-mode.out.gold		\
+	     tests/preset-acl-mtime.out.gold		\
+	     tests/preset-acl-none.out.gold		\
+	     tests/preset-acl-notimes.out.gold		\
+	     tests/preset-acl-owner.out.gold		\
 	     tests/preset-root-alltimes.out.gold	\
 	     tests/preset-root-amtimes.out.gold		\
 	     tests/preset-root-contents.out.gold	\

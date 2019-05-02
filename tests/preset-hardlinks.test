@@ -12,6 +12,7 @@ tdiff_long_options2="--preset 4"
 
 hardlinks_filter() {
   preset_xid_filter \
+    | preset_acl_filter \
     | preset_hardlinks_filter
 }
 filter=hardlinks_filter

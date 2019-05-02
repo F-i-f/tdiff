@@ -1,5 +1,38 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset-acl-*.out.gold:
+	* tests/preset-acl-*.test:
+	Create.
+
+	* Makefile.am (TESTS): Add tests/preset-acl-*.test.
+	(EXTRA_DIST): Add tests/preset-acl-*.out.gold,
+	tests/require-acl.lib.sh.
+
+	* tests/preset-notimes.test (contents_filter):
+	* tests/preset-mtime.test (mtime_filter):
+	* tests/preset-hardlinks.test (hardlinks_filter):
+	* tests/preset-contents.test (contents_filter):
+	* tests/preset-amtimes.test (amtimes_filter):
+	* tests/preset-alltimes.test (alltimes_filter):
+	Add preset_acl_filter to filter chain.
+
+	* tests/preset-owner.test (owner_filter): Create with
+	preset_xid_filter and preset_acl_filter.
+
+	* tests/preset.lib.sh (setup): When acl are available, modify a
+	file acl.
+	(preset_acl_filter): Create, whether to filter or not depends on
+	having acl support.
+
+	* tests/acl.test (acl_filter): Move to test.lib.sh.
+	(preset_acl_filter): Create, whether to filter or not depends on
+	having root.
+
+	* tests/require-acl.lib.sh: Create.
+
+	* tests/acl.test: Factorize the code for verifying ACLs are
+	supported in require-acl.lib.sh.
+
 	* tests/preset-root-*.out.gold:
 	* tests/preset-root-*.test:
 	Create.
