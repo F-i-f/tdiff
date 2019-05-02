@@ -122,36 +122,8 @@ is used to check the
 .I st_mtime
 .BR stat(2)
 structure member, which is the file modification times.  Similarly to
-short options, most long options have a \fB\-\-no\-\fR version to turn
-off the equivalent check (eg. \fB\-\-no\-mtime\fR).
-.TP
-\fB\-a\fR, \fB\-\-all\fR
-Turn on all checks, except for file times.
-.br
-This is equivalent to
-.B \-dtmfugsbcnejkql
-or
-.B \-\-dirs \-\-type \-\-mode \-\-uid \-\-gid \-\-size \-\-blocks
-.B \-\-contents \-\-nlink \-\-major \-\-minor \-\-xattr \-\-acl.
-.br
-Note that the file time options are not touched.
-.br
-This is the default.
-.TP
-\fB\-A\fR, \fB\-\-no\-all\fR
-Turn off all checks, including file times.
-.br
-This is equivalent to
-.B \-DTMFUGZIRSBCNEJKQL
-or
-.B \-\-no\-dirs \-\-no\-type \-\-no\-mode \-\-no\-uid \-\-no\-gid
-.B \-\-no\-ctime \-\-no\-mtime \-\-no\-atime \-\-no\-size \-\-no\-blocks
-.B \-\-no\-contents \-\-no\-nlink \-\-no\-major \-\-no\-minor \-\-no\-xattr
-.B \-\-no\-acl.
-.br
-Unless an other option is used after \fB\-A\fR/\fB\-\-no\-all\fR,
-.B tdiff
-will not report anything but will still traverse the file trees.
+short toggle options, long toggle options have a \fB\-\-no\-\fR
+version to turn off the equivalent check (eg. \fB\-\-no\-mtime\fR).
 .TP
 \fB\-b\fR, \fB\-\-blocks\fR
 Report file \fBb\fRlock count differences for regular files,
@@ -375,7 +347,7 @@ Report on any differences in file \fBu\fRser ownership (owner user id,
 .br
 This is on by default.
 .TP
-\fB\-u\fR, \fB\-\-no\-uid\fR
+\fB\-U\fR, \fB\-\-no\-uid\fR
 Do not report any differences in file \fBu\fRser ownership (owner user
 id).
 .TP
@@ -394,6 +366,114 @@ Do not report any differences in file file inode change times
 (\fI\,st_ctime\/\fR).
 .br
 This is on by default.
+.SS Preset Options
+The preset single letter options are either a numeric preset level
+from 0 to 9, or
+.B \-p
+followed by a preset name or level.  Presets can also be toggled by
+the
+.B \-\-preset
+long option followed by either a numeric preset level or a preset
+name.
+.br
+Preset names can be shortened to their smallest unambiguous prefix.
+For example, \fB\-\-preset\fR \fIamtimes\/\fR can be shortened to
+\fIam\/\fR, \fImissing\fR to \fImiss\/\fR, \fIdefault\fR to \fId\/\fR,
+etc.
+.PP
+The presets are cumulative, preset level \fI9\fR is a super-set of
+preset level \fI8\/\fR, itself a super-set of level \fI7\fR and so on.
+.PP
+The default preset level when
+.B tdiff
+starts parsing its options is preset
+\fI6\/\fR/\fI\,notimes\/\fR/\fI\,default\/\fR.
+.TP
+\fB\-0\fR, \fB\-p\fR|\fB\-\-preset\fR \fI0\/\fR|\fI\,none\fR
+Do not check anything.  All the toggles are set to their inactive
+(\fB\-\-no\-\fR) state.
+.br
+If only this preset is active (it is provided last on the command line
+for example),
+.B tdiff
+will not report anything but will still traverse the file trees.  This
+is only useful to reset \fBtdiff\fR's set of comparisons to the empty
+set and add exactly which fields should be compared with further
+toggle options.
+.TP
+\fB\-1\fR, \fB\-p\fR|\fB\-\-preset\fR \fI1\/\fR|\fI\,missing\/\fR|\fI\,type\fR
+Report missing files and different file types.
+.br
+.B tdiff
+will only emit messages for either files missing in either directory
+(\fB\-d\fR/\fB\-\-dirs\fR) or if they are of different file types
+(\fB\-t\fR/\fB\-\-type\fR).  All the other toggles are set to their
+inactive (\fB\-\-no\-\fR) state.
+.TP
+\fB\-2\fR, \fB\-p\fR|\fB\-\-preset\fR \fI2\/\fR|\fI\,mode\fR
+In addition to the comparisons enabled at preset level \fI1\/\fR,
+.B tdiff
+will also enable file mode comparisons (\fB\-m\fR/\fB\-\-mode\fR). All
+the other toggles are set to their inactive (\fB\-\-no\-\fR) state.
+.TP
+\fB\-3\fR, \fB\-p\fR|\fB\-\-preset\fR \fI3\/\fR|\fI\,owner\fR
+In addition to the comparisons enabled at preset level \fI2\/\fR,
+.B tdiff
+will also enable user id (\fB\-u\fR/\fB\-\-uid\fR), group id
+(\fB\-g\fR/\fB\-\-gid\fR) and, if supported, Access Control Lists
+(\fB\-l\fR/\fB\-\-acl\fR) comparisons. All
+the other toggles are set to their inactive (\fB\-\-no\-\fR) state.
+.TP
+\fB\-4\fR, \fB\-p\fR|\fB\-\-preset\fR \fI4\/\fR|\fI\,hardlinks\fR
+In addition to the comparisons enabled at preset level \fI3\/\fR,
+.B tdiff
+will also enable link count (\fB\-n\fR/\fB\-\-nlink\fR) and hard link
+targets (\fB\-e\fR/\fB\-\-hardlinks\fR) comparisons. All
+the other toggles are set to their inactive (\fB\-\-no\-\fR) state.
+.TP
+\fB\-5\fR, \fB\-p\fR|\fB\-\-preset\fR \fI5\/\fR|\fI\,contents\fR
+In addition to the comparisons enabled at preset level \fI4\/\fR,
+.B tdiff
+will also compare file contents (\fB\-c\fR/\fB\-\-contents\fR), size
+(\fB\-s\fR/\fB\-\-size\fR), block usage (\fB\-b\fR/\fB\-\-blocks\fR),
+and for device files, major (\fB\-j\fR/\fB\-\-major\fR) and minor
+(\fB\-k\fR/\fB\-\-minor\fR) device numbers. All
+the other toggles are set to their inactive (\fB\-\-no\-\fR) state.
+.TP
+\fB\-6\fR, \fB\-p\fR|\fB\-\-preset\fR \fI6\/\fR|\fI\,notimes\/\fR|\fI\,default\fR
+In addition to the comparisons enabled at preset level \fI5\/\fR,
+.B tdiff
+will also compare, if supported, flags (\fB\-f\fR/\fB\-\-flags\fR) and
+extended attributes (\fB\-q\fR/\fB\-\-xattr\fR). All the other toggles
+are set to their inactive (\fB\-\-no\-\fR) state.  This corresponds to
+a state where all toggles are on except the three times
+(\fB\-r\fR/\fB\-\-atime\fR, \fB\-i\fR/\fB\-\-mtime\fR and
+\fB\-z\fR/\fB\-\-ctime\fR) that are off.
+.br
+If your system does not support either flags or extended attributes,
+then preset level \fI6\fR is equivalent to preset level \fI5\/\fR.
+.br
+This is the default preset level.
+.TP
+\fB\-7\fR, \fB\-p\fR|\fB\-\-preset\fR \fI7\/\fR|\fI\,mtime\fR
+In addition to the comparisons enabled at preset level \fI6\/\fR,
+.B tdiff
+will also compare file modification times
+(\fB\-i\fR/\fB\-\-mtime\fR). This corresponds to a state where all
+toggles are on except the file access time (\fB\-r\fR/\fB\-\-atime\fR)
+and the inode modification time (\fB\-z\fR/\fB\-\-ctime\fR) that are
+off.
+.TP
+\fB\-8\fR, \fB\-p\fR|\fB\-\-preset\fR \fI8\/\fR|\fI\,amtimes\fR
+In addition to the comparisons enabled at preset level \fI7\/\fR,
+.B tdiff
+will also compare file access times (\fB\-r\fR/\fB\-\-atime\fR). This
+corresponds to a state where all toggles are on except the inode
+modification time (\fB\-z\fR/\fB\-\-ctime\fR) that is off.
+.TP
+\fB\-9\fR, \fB\-p\fR|\fB\-\-preset\fR \fI9\/\fR|\fI\,alltimes\fR|\fI\,all\fR
+.B tdiff
+will compare all available attributes, turning all toggles on.
 .SS Other Miscellaneous Options
 .TP
 \fB\-w\fR, \fB\-\-exec\-always\fR \fICOMMAND... \\\/;\fR
@@ -624,7 +704,7 @@ times are the same:
 Only report if any files are present in only one directory:
 .RS 4
 .PP
-.B tdiff \-\-no\-all \-\-dirs
+.B tdiff \-0 \-\-dirs
 .I directory1 directory2
 .RS -4
 .PP
@@ -632,35 +712,35 @@ Report only ownership (user or group id) differences, ignore any
 missing files:
 .RS 4
 .PP
-.B tdiff \-\-no\-all \-\-uid \-\-gid
+.B tdiff \-0 \-\-uid \-\-gid
 .I directory1 directory2
 .RS -4
 .PP
 Report only group permission bits differences, ignore any missing files:
 .RS 4
 .PP
-.B tdiff \-\-no\-all \-\-mode \-\-mode\-and 70
+.B tdiff \-0 \-\-mode \-\-mode\-and 70
 .I directory1 directory2
 .RS -2
 .PP
 or:
 .RS 2
 .PP
-.B tdiff \-\-no\-all \-\-mode \-\-mode\-or 7707
+.B tdiff \-0 \-\-mode \-\-mode\-or 7707
 .I directory1 directory2
 .RS -4
 .PP
 Report only sticky bits differences, ignore any missing files:
 .RS 4
 .PP
-.B tdiff \-\-no\-all \-\-mode \-\-mode\-and 1000
+.B tdiff \-0 \-\-mode \-\-mode\-and 1000
 .I directory1 directory2
 .RS -2
 .PP
 or:
 .RS 2
 .PP
-.B tdiff \-\-no\-all \-\-mode \-\-mode\-or 6777
+.B tdiff \-0 \-\-mode \-\-mode\-or 6777
 .I directory1 directory2
 .RS -4
 .PP
@@ -669,7 +749,7 @@ Run
 on every file of the same size in both trees:
 .RS 4
 .PP
-.B tdiff \-\-no\-all \-\-exec cmp -l %1 %2 \\\\\/;
+.B tdiff \-0 \-\-exec cmp -l %1 %2 \\\\\/;
 .I directory1 directory2
 .RS -4
 .PP
@@ -687,6 +767,20 @@ or more tersely:
 .RS 2
 .PP
 .B tdiff \-W
+.I directory1 directory2
+.RS -4
+.PP
+Same with file modification times:
+.RS 4
+.PP
+.B tdiff \-W \-\-preset mtime
+.I directory1 directory2
+.RS -2
+.PP
+or also:
+.RS 2
+.PP
+.B tdiff \-Wi
 .I directory1 directory2
 .RS -4
 .SH REPORTING BUGS
@@ -730,5 +824,6 @@ along with this program.  If not, see
 \"  LocalWords:  directory1 directory2 fIDIRECTORY2 cmp IP uid fIdir1
 \"  LocalWords:  fIDIRECTORY1 gid UFS MacOSX vv vvv vvvv fI0x UE fR's
 \"  LocalWords:  fIfile1 fIfile2 fIdir2 files' readdir eg hardlinks
-\"  LocalWords:  fBf1 fBf2 fBf3
-\"  LocalWords:  fBf fRlags
+\"  LocalWords:  fBf1 fBf2 fBf3 fIamtimes fIam fImissing fImiss fId
+\"  LocalWords:  fBf fRlags fIdefault fI9 fI8 fI7 fI6 notimes fI0 fI1
+\"  LocalWords:  fI2 fI3 fI4 fI5 amtimes alltimes Wi

@@ -52,7 +52,7 @@ tdiff -i directory1 directory2
 Only report if any files are present in only one directory:
 
 ```shell
-tdiff --no-all --dirs directory1 directory2
+tdiff -0 --dirs directory1 directory2
 ```
 
 &nbsp;
@@ -61,7 +61,7 @@ Report only ownership (user or group id) differences, ignore any
 missing files:
 
 ```shell
-tdiff --no-all --uid --gid directory1 directory2
+tdiff -0 --uid --gid directory1 directory2
 ```
 
 &nbsp;
@@ -69,12 +69,12 @@ tdiff --no-all --uid --gid directory1 directory2
 Report only group permission bits differences, ignore any missing files:
 
 ```shell
-tdiff --no-all --mode --mode-and 70 directory1 directory2
+tdiff -0 --mode --mode-and 70 directory1 directory2
 ```
 or:
 
 ```shell
-tdiff --no-all --mode --mode-or 7707 directory1 directory2
+tdiff -0 --mode --mode-or 7707 directory1 directory2
 ```
 
 &nbsp;
@@ -82,12 +82,12 @@ tdiff --no-all --mode --mode-or 7707 directory1 directory2
 Report only sticky bits differences, ignore any missing files:
 
 ```shell
-tdiff --no-all --mode --mode-and 1000 directory1 directory2
+tdiff -0 --mode --mode-and 1000 directory1 directory2
 ```
 or:
 
 ```shell
-tdiff --no-all --mode --mode-or 6777 directory1 directory2
+tdiff -0 --mode --mode-or 6777 directory1 directory2
 ```
 
 &nbsp;
@@ -95,7 +95,7 @@ tdiff --no-all --mode --mode-or 6777 directory1 directory2
 Run `cmp -l` on every file of the same size in both trees:
 
 ```shell
-tdiff --no-all --exec cmp -l %1 %2 \; directory1 directory2
+tdiff -0 --exec cmp -l %1 %2 \; directory1 directory2
 ```
 
 &nbsp;
@@ -107,10 +107,24 @@ times:
 tdiff --exec-always-diff directory1 directory2
 ```
 
-or more shortly:
+or more tersely:
 
 ```shell
 tdiff -W directory1 directory2
+```
+
+&nbsp;
+
+Same with file modification times:
+
+```shell
+tdiff -W --preset mtime directory1 directory2
+```
+
+or also:
+
+```shell
+tdiff -Wi directory1 directory2
 ```
 
 ## License

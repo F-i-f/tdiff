@@ -1,5 +1,9 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* README.md:
+	* tdiff.1:
+	Add presets.  Remove -a/--all/-A/--no-all.
+
 	* tests/preset-missing.test (tdiff_options):
 	* tests/preset-notimes.test (tdiff_options):
 	* tests/preset-alltimes.test (tdiff_options):
