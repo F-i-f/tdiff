@@ -1274,7 +1274,7 @@ show_help(void)
 	 ")\n"
 	 "   -6 -p|--preset 6|notimes    "
 #if HAVE_ST_FLAGS || HAVE_GETXATTR
-	 "Add %-23s (-dtmugneZIRsbcjk"
+	 "Add %-13s (default) (-dtmugneZIRsbcjk"
 # if HAVE_ST_FLAGS
 	 "f"
 # endif
@@ -2348,13 +2348,15 @@ main(int argc, char*argv[])
 				 { "alltimes",  9, 2},
 				 { "amtimes",   8, 2},
 				 { "contents",  5, 1},
+				 { "default",   6, 1},
 				 { "hardlinks", 4, 1},
 				 { "mode",      2, 2},
 				 { "missing",   1, 2},
 				 { "mtime",     7, 2},
 				 { "none",      0, 3},
 				 { "notimes",   6, 3},
-				 { "owner",     3, 1}
+				 { "owner",     3, 1},
+				 { "type",      1, 1}
 	      };
 	      size_t i;
 	      size_t optlen = strlen(optarg);

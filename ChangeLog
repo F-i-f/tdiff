@@ -1,5 +1,9 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (show_help): Show preset 6 as the default.
+	(main): Add aliases to preset names: default aliased to notimes,
+	type aliased to missing.
+
 	* tdiff.1: Shuffle the manpage around 3 option subsections
 	(standard, toggles, miscellaneous).
 
