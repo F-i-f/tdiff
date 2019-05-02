@@ -30,11 +30,11 @@ rm -rf $RPM_BUILD_ROOT
 %make_install
 
 %files
-%doc ChangeLog NEWS README README.md
 %{_bindir}/tdiff
 %{_mandir}/man1/tdiff.1.gz
 %{_datadir}/bash-completion/completions/tdiff
 %{_datadir}/zsh/site-functions/_tdiff
+%{_docdir}
 
 %changelog
 * Tue Apr 30 2019 Philippe Troin <phil@fifi.org> - 0.7.2-1

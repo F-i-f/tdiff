@@ -1,5 +1,11 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.spec (files): Ship %{_docdir} instead of individual %doc
+	files.
+
+	* Makefile.am (EXTRA_DIST): Move README.md to dist_doc_DATA.
+	(dist_doc_DATA): Define with README, README.md, NEWS.
+
 	* _tdiff.zsh:
 	* tdiff.bash (_tdiff):
 	Add presets.  Remove -a/--all/-A/--no-all.

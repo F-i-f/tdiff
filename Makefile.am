@@ -62,6 +62,10 @@ endif
 bash_FUNCTIONS			= tdiff.bash
 zsh_FUNCTIONS			= _tdiff.zsh
 
+dist_doc_DATA			= README \
+				  README.md \
+				  NEWS
+
 AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      FAKEROOT="$(FAKEROOT)" \
 			      HAVE_S_IFDOOR="$(HAVE_S_IFDOOR)" \
@@ -168,8 +172,7 @@ TESTS = tests/ent_pair_cache.test		\
 	tests/uid.test				\
 	tests/xattr.test
 
-EXTRA_DIST = README.md					\
-	     tdiff.spec					\
+EXTRA_DIST = tdiff.spec					\
 	     tdiff.1.html				\
 	     tdiff.1.pdf				\
 	     $(bash_FUNCTIONS)				\
