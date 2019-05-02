@@ -19,107 +19,123 @@
 
 local -a args
 
-args=('*-v[increase verbosity level]'
-      '*--verbose[increase verbosity level]'
+args=('*'{-v,--verbose}'[increase verbosity level]'
+      {-V,--version}'[show version information]'
+      {-h,--help}'[show terse help message]'
 
-      '-V[show version information]'
-      '--version[show version information]'
+      '*'{-X,--exclude}'[exclude file]:file:_files'
 
-      '-h[show terse help message]'
-      '--help[show terse help message]'
+      '1:first directory:_files'
+      '2:second directory:_files'
 
-      '-d[diff directories (reports missing files)]'
-      '--dirs[diff directories (reports missing files)]'
-      '-D[do not diff directories (do not report missing files)]'
-      '--no-dirs[do not diff directories (do not report missing files)]'
+      + '(dirs)'
+      {-d,--dirs}'[diff directories (reports missing files)]'
+      {-D,--no-dirs}'[do not diff directories (do not report missing files)]'
 
-      '-t[diff file types]'
-      '--type[diff file types]'
-      '-T[do not diff file types (implies -BSJKC)]'
-      '--no-type[do not diff file types (implies -BSJKC)]'
+      + '(type)'
+      {-t,--type}'[diff file types]'
+      {-T,--no-type}'[do not diff file types (implies -BSJKC)]'
 
-      '-m[diff file modes (permissions)]'
-      '--mode[diff file modes (permissions)]'
-      '-M[do not diff file modes (permissions)]'
-      '--no-mode[do not diff file modes (permissions)]'
+      + '(mode)'
+      {-m,--mode}'[diff file modes (permissions)]'
+      {-M,--no-mode}'[do not diff file modes (permissions)]'
 
-      '-u[diff file owner user id]'
-      '--uid[diff file owner user id]'
-      '-u[do not diff owner user id]'
-      '--no-uid[do not diff owner user id]'
+      + '(uid)'
+      {-u,--uid}'[diff file owner user id]'
+      {-U,--no-uid}'[do not diff owner user id]'
 
-      '-g[diff file group id]'
-      '--gid[diff file group id]'
-      '-G[do not diff group id]'
-      '--no-gid[do not diff group id]'
+      + '(gid)'
+      {-g,--gid}'[diff file group id]'
+      {-G,--no-gid}'[do not diff group id]'
 
-      '-z[diff file ctime (inode modification time)]'
-      '--ctime[diff file ctime (inode modification time)]'
-      '-Z[do not diff ctime (inode modification time)]'
-      '--no-ctime[do not diff ctime (inode modification time)]'
+      + '(nlink)'
+      {-n,--nlink}'[diff file (hard) link count]'
+      {-N,--no-nlink}'[do not diff (hard) link count]'
 
-      '-i[diff file mtime (contents modification time)]'
-      '--mtime[diff file mtime (contents modification time)]'
-      '-I[do not diff mtime (contents modification time)]'
-      '--no-mtime[do not diff mtime (contents modification time)]'
+      + '(hardlinks)'
+      {-e,--hardlinks}'[diff file hard link targets]'
+      {-E,--no-hardlinks}'[do not diff hard link targets]'
 
-      '-r[diff file atime (access time)]'
-      '--atime[diff file atime (access time)]'
-      '-R[do not diff atime (access time)]'
-      '--no-atime[do not diff atime (access time)]'
+      + '(ctime)'
+      {-z,--ctime}'[diff file ctime (inode modification time)]'
+      {-Z,--no-ctime}'[do not diff ctime (inode modification time)]'
 
-      '-s[diff file size (for regular files and symbolic links)]'
-      '--size[diff file size (for regular files and symbolic links)]'
-      '-S[do not diff size (for regular files and symbolic links)]'
-      '--no-size[do not diff size (for regular files and symbolic links)]'
+      + '(mtime)'
+      {-i,--mtime}'[diff file mtime (contents modification time)]'
+      {-I,--no-mtime}'[do not diff mtime (contents modification time)]'
 
-      '-b[diff file blocks (for regular files, directories and symbolic links)]'
-      '--blocks[diff file blocks (for regular files, directories and symbolic links)]'
-      '-B[do not diff blocks (for regular files, directories and symbolic links)]'
-      '--no-blocks[do not diff blocks (for regular files, directories and symbolic links)]'
+      + '(atime)'
+      {-r,--atime}'[diff file atime (access time)]'
+      {-R,--no-atime}'[do not diff atime (access time)]'
 
-      '-c[diff file contents (for regular files and symbolic links)]'
-      '--contents[diff file contents (for regular files and symbolic links)]'
-      '-C[do not diff contents (for regular files and symbolic links)]'
-      '--no-contents[do not diff contents (for regular files and symbolic links)]'
+      + '(size)'
+      {-s,--size}'[diff file size (for regular files and symbolic links)]'
+      {-S,--no-size}'[do not diff size (for regular files and symbolic links)]'
 
-      '-n[diff file (hard) link count]'
-      '--nlink[diff file (hard) link count]'
-      '-N[do not diff (hard) link count]'
-      '--no-nlink[do not diff (hard) link count]'
+      + '(blocks)'
+      {-b,--blocks}'[diff file blocks (for regular files, directories and symbolic links)]'
+      {-B,--no-blocks}'[do not diff blocks (for regular files, directories and symbolic links)]'
 
-      '-e[diff file hard link targets]'
-      '--hardlinks[diff file hard link targets]'
-      '-E[do not diff hard link targets]'
-      '--no-hardlinks[do not diff hard link targets]'
+      + '(contents)'
+      '(exec)'{-c,--contents}'[diff file contents (for regular files and symbolic links)]'
+      '(exec)'{-C,--no-contents}'[do not diff contents (for regular files and symbolic links)]'
 
-      '-j[diff file major device numbers (for device files)]'
-      '--major[diff file major device numbers (for device files)]'
-      '-J[do not diff major device numbers (for device files)]'
-      '--no-major[do not diff major device numbers (for device files)]'
+      + '(major)'
+      {-j,--major}'[diff file major device numbers (for device files)]'
+      {-J,--no-major}'[do not diff major device numbers (for device files)]'
 
-      '-k[diff file minor device numbers (for device files)]'
-      '--minor[diff file minor device numbers (for device files)]'
-      '-K[do not diff minor device numbers (for device files)]'
-      '--no-minor[do not diff minor device numbers (for device files)]'
+      + '(minor)'
+      {-k,--minor}'[diff file minor device numbers (for device files)]'
+      {-K,--no-minor}'[do not diff minor device numbers (for device files)]'
 
-      '-|[applies an OR mask to file modes]:mask (octal)'
-      '--mode-or[applies an OR mask to file modes]:mask (octal)'
+      + '(preset)'
+      {-p,--preset}'=[preset]:preset name:((0\:"clear all toggles, no comparisons"
+					 none\:"level 0\: nothing"
+					    1\:"only missing files and differing types"
+				      missing\:"level 1\: only missing files and differing types"
+					 type\:"level 1\: only missing files and differing types"
+					    2\:"add modes"
+					 mode\:"level 2\: missing, type, mode"
+					    3\:"add uid, gid, ACLs"
+					owner\:"level 3\: missing, type, mode, uid, gid, ACLs"
+					    4\:"add link counts and hard linked files"
+				    hardlinks\:"level 4\: missing, type, mode, ids, ACLs, hard links"
+					    5\:"add size, block count, contents, major & minor"
+				     contents\:"level 5\: add size, block count, contents, major & minor"
+					    6\:"add flags (BSD), xattrs"
+				      notimes\:"level 6\: everything but times"
+				      default\:"level 6\: everything but times"
+					    7\:"add mtime"
+					mtime\:"level 7\: everything but atime/ctime"
+					    8\:"add atime"
+				      amtimes\:"level 8\: everything but ctime"
+					    9\:"add ctime, all comparisons"
+				     alltimes\:"level 9\: everything"
+					  all\:"level 9\: everything"
+					    ))'
+      '-0[preset: nothing]'
+      '-1[preset: only missing files and differing types]'
+      '-2[preset: add modes]'
+      '-3[preset: add uid, gid, ACLs]'
+      '-4[preset: add link counts and hard linked files]'
+      '-5[preset: add size, block vount, contents, major & minor]'
+      '-6[preset: add flags (BSD), xattrs.  All but times.]'
+      '-7[preset: add mtime.  All but atime/ctime.]'
+      '-8[preset: add atime.  All but ctime.]'
+      '-9[preset: add ctime.  Everything.]'
 
-      '-x[execute a command to check if files are similar]:program: _command_names -e:*\;::program arguments: _normal'
-      '--exec[execute a command to check if files are similar]:program: _command_names -e:*\;::program arguments: _normal'
+      + '(exec)'
+      {-x,--exec}'[execute a command to check if files are similar]:program: _command_names -e:*\;::program arguments: _normal'
 
-      '-w[execute a command on file pairs]:program: _command_names -e:*\;::program arguments: _normal'
-      '--exec-always[execute a command on file pairs]:program: _command_names -e:*\;::program arguments: _normal'
+      + '(exec-always)'
+      {-w,--exec-always}'[execute a command on file pairs]:program: _command_names -e:*\;::program arguments: _normal'
+      {-W,--exec-always-diff}'[executes "diff -u" for every file pair]'
 
-      '-W[executes "diff -u" for every file pair]'
-      '--exec-always-diff[executes "diff -u" for every file pair]'
+      + '(mode-or)'
+      {-\|,--mode-or}'[applies an OR mask to file modes]:mask (octal)'
 
-      '-&[applies an AND mask to file modes]:mask (octal)'
-      '--mode-and[applies an AND mask to file modes]:mask (octal)'
-
-      '-X[exclude file]:file:_files'
-      '--exclude[exclude file]:file:_files'
+      + '(mode-and)'
+      {-\&,--mode-and}'[applies an AND mask to file modes]:mask (octal)'
      )
 
 local tdiff_out="$(tdiff --help)"
@@ -128,61 +144,31 @@ local has_flags has_acl has_xattr
 if [[ -n ${(M)tdiff_out:+--flags} ]]
 then
   has_flags=yes
-  args+=(
-	  '-f[diff file flags (BSD flags: nodump, uimmutable, etc)]'
-	  '--flags[diff file flags (BSD flags: nodump, uimmutable, etc)]'
-	  '-F[do not diff flags (BSD flags: nodump, uimmutable, etc)]'
-	  '--no-flags[do not diff flags (BSD flags: nodump, uimmutable, etc)]'
-    )
+  args+=( + '(flags)'
+	  {-f,--flags}'[diff file flags (BSD flags: nodump, uimmutable, etc)]'
+	  {-F,--no-flags}'[do not diff flags (BSD flags: nodump, uimmutable, etc)]'
+	)
 fi
 
-if [[ -n ${(M)tdiff_out:+--xattrs} ]]
+if [[ -n ${(M)tdiff_out:+--xattr} ]]
 then
   has_xattr=yes
-  args+=(
-	  '-q[diff file extended attributes]'
-	  '--xattr[diff file extended attributes]'
-	  '-Q[do not diff extended attributes]'
-	  '--no-xattr[do not diff extended attributes]'
-    )
+  args+=( + '(xattr)'
+	  {-q,--xattr}'[diff file extended attributes]'
+	  {-Q,--no-xattr}'[do not diff extended attributes]'
+	)
 fi
 
 if [[ -n ${(M)tdiff_out:+--acl} ]]
 then
   has_acl=yes
-  args+=(
-	  '-l[diff file ACLs (access control lists)]'
-	  '--acl[diff file ACLs (access control lists)]'
-	  '-L[do not diff ACLs (access control lists)]'
-	  '--no-acl[do not diff ACLs (access control lists)]'
-    )
+  args+=( + '(acl)'
+	  {-l,--acl}'[diff file ACLs (access control lists)]'
+	  {-L,--no-acl}'[do not diff ACLs (access control lists)]'
+	)
 fi
 
-local all_opts='dtm'
-if [[ -n $has_flags ]]
-then
-  all_opts+='f'
-fi
-all_opts+='ogsbcnejk'
-if [[ -n $has_xattr ]]
-then
-  all_opts+='q'
-fi
-if [[ -n $has_acl ]]
-then
-  all_opts+='l'
-fi
-
-
-args+=(	"-a[diff all but times, equivalent to -$all_opts]"
-	"--all[diff all but times, equivalent to -$all_opts]"
-	'-A[do not diff anything]'
-	'--no-all[do not diff anything]'
-      )
-
-_arguments -s -S $args[*] \
-	   '1:[first directory]:_files' \
-	   '2:[second directory]:_files'
+_arguments -s -S $args[*]
 
 # Local variables:
 # mode: shell-script

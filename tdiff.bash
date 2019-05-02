@@ -31,9 +31,13 @@ _tdiff()
       -m|--mode|\
       -M|--no-mode|\
       -u|--uid|\
-      -u|--no-uid|\
+      -U|--no-uid|\
       -g|--gid|\
       -G|--no-gid|\
+      -n|--nlink|\
+      -N|--no-nlink|\
+      -e|--hardlinks|\
+      -E|--no-hardlinks|\
       -z|--ctime|\
       -Z|--no-ctime|\
       -i|--mtime|\
@@ -46,25 +50,30 @@ _tdiff()
       -B|--no-blocks|\
       -c|--contents|\
       -C|--no-contents|\
-      -n|--nlink|\
-      -N|--no-nlink|\
-      -e|--hardlinks|\
-      -E|--no-hardlinks|\
       -j|--major|\
       -J|--no-major|\
       -k|--minor|\
       -K|--no-minor|\
-      -W|--exec-always-diff|\
+      -l|--acl|\
+      -L|--no-acl|\
       -f|--flags|\
       -F|--no-flags|\
       -q|--xattr|\
       -Q|--no-xattr|\
-      -l|--acl|\
-      -L|--no-acl)
+      -[0-9]|\
+      -W|--exec-always-diff)
 	;;
-      -\&|--mode-and|\
-      -\||--mode-or)
-	COMPREPLY=()
+      -p|--preset)
+	COMPREPLY=( $( compgen -W '0 none
+				   1 missing type
+				   2 mode
+				   3 owner
+				   4 hardlinks
+				   5 contents
+				   6 notimes default
+				   7 mtime
+				   8 amtimes
+				   9 alltimes all' -- "$cur" ) )
 	return
 	;;
       -x|--exec|\
@@ -76,7 +85,13 @@ _tdiff()
 	;;
       -X|--exclude)
 	_filedir
-	return;
+	return
+	;;
+      -\&|--mode-and|\
+      -\||--mode-or)
+	COMPREPLY=()
+	return
+	;;
     esac
 
     if [[ $cur == -* ]]; then
@@ -88,25 +103,27 @@ _tdiff()
 				 --mode --no-mode
 				 --uid --no-uid
 				 --gid --no-gid
+				 --nlink --no-nlink
+				 --hardlinks --no-hardlinks
 				 --ctime --no-ctime
 				 --mtime --no-mtime
 				 --atime --no-atime
 				 --size --no-size
 				 --blocks --no-blocks
 				 --contents --no-contents
-				 --nlink --no-nlink
-				 --hardlinks --no-hardlinks
 				 --major --no-major
 				 --minor --no-minor
-				 --exec-always-diff
+				 --acl --no-acl
 				 --flags --no-flags
 				 --xattr --no-xattr
-				 --acl --no-acl
-				 --mode-and
-				 --mode-or
+				 --preset
 				 --exec
 				 --exec-always
-				 --exclude' -- "$cur" ) )
+				 --exec-always-diff
+				 --mode-and
+				 --mode-or
+				 --exclude
+				 ' -- "$cur" ) )
 	return
     fi
 

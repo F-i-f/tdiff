@@ -1,3 +1,9 @@
+2019-05-02  Philippe Troin  <phil@fifi.org>
+
+	* _tdiff.zsh:
+	* tdiff.bash (_tdiff):
+	Add presets.  Remove -a/--all/-A/--no-all.
+
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
 	* README.md:
