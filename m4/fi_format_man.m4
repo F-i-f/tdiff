@@ -21,6 +21,8 @@
 #   Generate groff output devices files (html, pdf, ps) from manpages.
 #   The first arguments is the list of manpages to format.
 #   The second argument is the list of groff output devices.
+#   There must be a dist_doc_DATA target in your Makefile.am so that
+#   $(docdir) can be created properly.
 
 AC_DEFUN([FI_FORMAT_MAN_INIT_ONCE],
 	 [AM_MISSING_PROG([GROFF], [groff])])
@@ -63,6 +65,18 @@ fi_format_man_make_target: ]fi_format_man_manpage[
 all-am: fi_format_man_make_target
 
 maintainer-clean-am: maintainer-clean-fi-format-man-][fi_format_man_make_target
+
+install-]fi_format_man_device[-am: install-]fi_format_man_device[-fi-format-man-][fi_format_man_make_target
+
+.PHONY: install-]fi_format_man_device[-fi-format-man-][fi_format_man_make_target
+install-]fi_format_man_device[-fi-format-man-][fi_format_man_make_target: fi_format_man_make_target install-dist_docDATA
+	$(INSTALL_DATA) $(srcdir)/fi_format_man_make_target $(DESTDIR)$(docdir)/
+
+uninstall-am: uninstall-fi-format-man-][fi_format_man_make_target
+
+.PHONY: uninstall-fi-format-man-][fi_format_man_make_target
+uninstall-fi-format-man-][fi_format_man_make_target:
+	rm -f $(DESTDIR)$(docdir)/fi_format_man_make_target
 
 .PHONY: maintainer-clean-fi-format-man-][fi_format_man_make_target
 maintainer-clean-fi-format-man-][fi_format_man_make_target:
