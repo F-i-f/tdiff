@@ -1,5 +1,15 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset-flags-*.out.gold:
+	* tests/preset-flags-*.test:
+	Create.
+
+	* Makefile.am (TESTS): Add tests/preset-flags-*.test.
+	(EXTRA_DIST): Add tests/preset-flags-*.out.gold.
+
+	* tests/preset.lib.sh (setup): When flags are available, modify a
+	file's flags.
+
 	* tests/preset-xattr-*.out.gold:
 	* tests/preset-xattr-*.test:
 	Create.

@@ -3,6 +3,7 @@
 set -eu
 
 with_acl=0
+with_flags=0
 with_root=0
 with_xattr=0
 
@@ -10,6 +11,17 @@ case "$(basename "$0" .test)" in
   *-acl-*)
     . "$srcdir"/tests/require-acl.lib.sh
     with_acl=1
+    ;;
+  *-flags-*)
+    if [ "x$HAVE_ST_FLAGS" != xyes ]
+    then
+      exit 77
+    fi
+    pre_check_file() {
+      chflags nodump "$@"
+    }
+    . "$srcdir"/tests/pre-check-file.lib.sh
+    with_flags=1
     ;;
   *-root-*)
     . "$srcdir"/tests/fakeroot.lib.sh
@@ -35,6 +47,10 @@ setup() {
   if [ $with_acl -ne 0 ]
   then
     setfacl -m u:3:r "$1"/entry4
+  fi
+  if [ $with_flags -ne 0 ]
+  then
+    chflags nodump "$1"/entry4
   fi
   if [ $with_root -ne 0 ]
   then

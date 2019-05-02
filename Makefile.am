@@ -130,6 +130,16 @@ TESTS = tests/ent_pair_cache.test		\
 	tests/preset-acl-none.test		\
 	tests/preset-acl-notimes.test		\
 	tests/preset-acl-owner.test		\
+	tests/preset-flags-alltimes.test	\
+	tests/preset-flags-amtimes.test		\
+	tests/preset-flags-contents.test	\
+	tests/preset-flags-hardlinks.test	\
+	tests/preset-flags-missing.test		\
+	tests/preset-flags-mode.test		\
+	tests/preset-flags-mtime.test		\
+	tests/preset-flags-none.test		\
+	tests/preset-flags-notimes.test		\
+	tests/preset-flags-owner.test		\
 	tests/preset-root-alltimes.test		\
 	tests/preset-root-amtimes.test		\
 	tests/preset-root-contents.test		\
@@ -230,6 +240,16 @@ EXTRA_DIST = README.md					\
 	     tests/preset-acl-none.out.gold		\
 	     tests/preset-acl-notimes.out.gold		\
 	     tests/preset-acl-owner.out.gold		\
+	     tests/preset-flags-alltimes.out.gold	\
+	     tests/preset-flags-amtimes.out.gold	\
+	     tests/preset-flags-contents.out.gold	\
+	     tests/preset-flags-hardlinks.out.gold	\
+	     tests/preset-flags-missing.out.gold	\
+	     tests/preset-flags-mode.out.gold		\
+	     tests/preset-flags-mtime.out.gold		\
+	     tests/preset-flags-none.out.gold		\
+	     tests/preset-flags-notimes.out.gold	\
+	     tests/preset-flags-owner.out.gold		\
 	     tests/preset-root-alltimes.out.gold	\
 	     tests/preset-root-amtimes.out.gold		\
 	     tests/preset-root-contents.out.gold	\
