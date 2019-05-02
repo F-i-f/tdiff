@@ -1,5 +1,21 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset-xattr-*.out.gold:
+	* tests/preset-xattr-*.test:
+	Create.
+
+	* Makefile.am (TESTS): Add tests/preset-xattr-*.test.
+	(EXTRA_DIST): Add tests/preset-xattr-*.out.gold,
+	tests/require-xattr.lib.sh.
+
+	* tests/preset.lib.sh (setup): When xattr are available, modify a
+	file xattr.
+
+	* tests/require-xattr.lib.sh: Create.
+
+	* tests/acl.test: Factorize the code for verifying xattrs are
+	supported in require-xattr.lib.sh.
+
 	* tests/preset-acl-*.out.gold:
 	* tests/preset-acl-*.test:
 	Create.

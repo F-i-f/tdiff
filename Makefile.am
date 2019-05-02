@@ -140,6 +140,16 @@ TESTS = tests/ent_pair_cache.test		\
 	tests/preset-root-none.test		\
 	tests/preset-root-notimes.test		\
 	tests/preset-root-owner.test		\
+	tests/preset-xattr-alltimes.test	\
+	tests/preset-xattr-amtimes.test		\
+	tests/preset-xattr-contents.test	\
+	tests/preset-xattr-hardlinks.test	\
+	tests/preset-xattr-missing.test		\
+	tests/preset-xattr-mode.test		\
+	tests/preset-xattr-mtime.test		\
+	tests/preset-xattr-none.test		\
+	tests/preset-xattr-notimes.test		\
+	tests/preset-xattr-owner.test		\
 	tests/size.test				\
 	tests/type.test				\
 	tests/type-door.test			\
@@ -160,6 +170,7 @@ EXTRA_DIST = README.md					\
 	     tests/pre-check-file.lib.sh		\
 	     tests/preset.lib.sh			\
 	     tests/require-acl.lib.sh			\
+	     tests/require-xattr.lib.sh			\
 	     tests/test.lib.sh				\
 	     tests/type.lib.sh				\
 	     $(TESTS)					\
@@ -229,6 +240,16 @@ EXTRA_DIST = README.md					\
 	     tests/preset-root-none.out.gold		\
 	     tests/preset-root-notimes.out.gold		\
 	     tests/preset-root-owner.out.gold		\
+	     tests/preset-xattr-alltimes.out.gold	\
+	     tests/preset-xattr-amtimes.out.gold	\
+	     tests/preset-xattr-contents.out.gold	\
+	     tests/preset-xattr-hardlinks.out.gold	\
+	     tests/preset-xattr-missing.out.gold	\
+	     tests/preset-xattr-mode.out.gold		\
+	     tests/preset-xattr-mtime.out.gold		\
+	     tests/preset-xattr-none.out.gold		\
+	     tests/preset-xattr-notimes.out.gold	\
+	     tests/preset-xattr-owner.out.gold		\
 	     tests/size.out.gold			\
 	     tests/type.out.gold			\
 	     tests/type-door.out.gold			\

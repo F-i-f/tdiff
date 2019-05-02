@@ -4,6 +4,7 @@ set -eu
 
 with_acl=0
 with_root=0
+with_xattr=0
 
 case "$(basename "$0" .test)" in
   *-acl-*)
@@ -13,6 +14,10 @@ case "$(basename "$0" .test)" in
   *-root-*)
     . "$srcdir"/tests/fakeroot.lib.sh
     with_root=1
+    ;;
+  *-xattr-*)
+    . "$srcdir"/tests/require-xattr.lib.sh
+    with_xattr=1
     ;;
 esac
 
@@ -38,6 +43,10 @@ setup() {
     mknod "$1"/node1 c 4 5
     mknod "$1"/node2 c 7 8
     mknod "$1"/node3 b 17 18
+  fi
+  if [ $with_xattr -ne 0 ]
+  then
+    setfattr -n user.test -v boo "$1"/entry4
   fi
   mkdir "$1"/dir1
   touch "$1"/dir1/missing

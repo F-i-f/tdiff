@@ -2,16 +2,7 @@
 
 set -eu
 
-if [ "x$HAVE_XATTRS" != xyes ]
-then
-  exit 77
-fi
-
-pre_check_file() {
-  setfattr -n user.test -v value "$@"
-}
-
-. "$srcdir"/tests/pre-check-file.lib.sh
+. "$srcdir"/tests/require-xattr.lib.sh
 
 setup() {
   echo "1" > "$1"/file1
