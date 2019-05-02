@@ -1,5 +1,7 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (get_octal_arg): Show base on number parsing error.
+
 	* tdiff.1: Update the --version description.
 
 	* tdiff.c (show_version): Show time granularity (seconds or

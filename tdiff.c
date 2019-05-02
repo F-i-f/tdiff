@@ -1426,19 +1426,26 @@ get_exec_args(char **argv, int *optind, dexe_t *dex)
 int
 get_octal_arg(const char* string, unsigned int* val)
 {
-  size_t len;
-  char *ptr;
-  unsigned long m;
+  size_t	 len;
+  char		*ptr;
+  unsigned long	 m;
+  const char	*num_descr;
 
   len = strlen(string);
   if (len > 2 && string[0]=='0' && string[1]=='x')
-    m = strtoul(&string[2], &ptr, 16);
+    {
+      m = strtoul(&string[2], &ptr, 16);
+      num_descr = "hexadecimal";
+    }
   else
-    m = strtoul(string, &ptr, 8);
+    {
+      m = strtoul(string, &ptr, 8);
+      num_descr = "octal";
+    }
 
   if (*ptr)
     {
-      fprintf(stderr, "%s: not a number \"%s\"\n", progname, string);
+      fprintf(stderr, "%s: invalid %s number \"%s\"\n", progname, num_descr, string);
       return 0;
     }
   else
