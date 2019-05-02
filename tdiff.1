@@ -384,8 +384,10 @@ for any pair of matching regular files found in the trees.
 .I COMMAND
 is defined as for the \fB\-x\fR/\fB\-\-exec\fR options.
 .br
-If the option is specified more than once, the last command defined
+If either options are specified more than once, the last command defined
 will be used.
+.br
+Using either option turns on the \fB-c\fR/\fB--contents\fR toggle.
 .TP
 \fB\-W\fR, \fB\-\-exec\-always\-diff\fR
 Always execute
@@ -400,6 +402,8 @@ This is a shortcut for:
 The option will supersede whichever command was specified in a
 \fB\-w\fR/\fB\-\-exec\-always\fR option appearing earlier on the option
 list.
+.br
+Using either option turns on the \fB-c\fR/\fB--contents\fR toggle.
 .TP
 \fB\-x\fR, \fB\-\-exec\fR \fICOMMAND... \\\/;\fR
 Uses
@@ -422,8 +426,10 @@ and
 can only appear once on the command line, and must be full words:
 they cannot appear inside a larger shell word.
 .br
-If the option is specified more than once, the last command defined
+If either options are specified more than once, the last command defined
 will be used.
+.br
+Using either option turns on the \fB-c\fR/\fB--contents\fR toggle.
 .TP
 \fB\-X\fR, \fB\-\-exclude\fR \fIFILE\fR
 Excludes

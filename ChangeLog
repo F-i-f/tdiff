@@ -1,5 +1,7 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Add language to say that -w/-W/-x turn on -c.
+
 	* tests/contents-diff.test (tdiff_options): Drop -c.
 	(tdiff_long_options): Drop --contents.
 	--exec turns on -c/--contents, no need to specify it.
