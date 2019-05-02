@@ -68,11 +68,53 @@ to be different.  See the \fB\-x\fR/\fB\-\-exec\fR,
 \fB\-w\fR/\fB\-\-exec\-always\fR, and \fB\-W\fR/\fB\-\-exec\-always\-diff\fR
 options.
 .SH OPTIONS
-Most single-letter options come in two versions, upper-case and
+.SS Standard Options
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Show a short \fBh\fRelp message and exit.
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Increase \fBv\fRerbosity, currently reports about the inode cache
+used to avoid comparing hard-linked files more than once.  Four
+cumulative levels of logging verbosity are supported:
+.RS 10
+.TP
+.B -v
+report overall statistics: total number of files scanned, compared,
+etc.
+.TP
+.B -vv
+report if any files are skipped, and for what reason (exclusion,
+already compared, etc.)
+.TP
+.B -vvv
+report internal data structure statistics.
+.TP
+.B -vvvv
+report memory statistics.
+.RS -10
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Show the
+.B tdiff
+\fBv\fRersion information, compiled-in features and flags (if any)
+then exit.
+.br
+The compiled-in feature list shows which features
+.B tdiff
+has been compiled with: O_NOATIME, flags, acl, and xattr support, and
+the
+.BR readdir(2)
+implementation used.
+.br
+If flags support is compiled in, the list of recognized flags will be
+listed as well.
+.SS Toggle Options
+The single-letter toggle options come in two versions, upper-case and
 lower-case.  The lower-case option enables the the attribute check,
 while the upper-case option disables it.
 .PP
-The long options are named after the
+The long toggle options are named after the
 .BR stat(2)
 structure names: for example,
 .B \-\-mtime
@@ -204,9 +246,6 @@ This is on by default.
 .TP
 \fB\-G\fR, \fB\-\-no\-gid\fR
 Do not report any differences in file \fBg\fRroup ownership (owner group id).
-.TP
-\fB\-h\fR, \fB\-\-help\fR
-Show a short \fBh\fRelp message and exit.
 .TP
 \fB\-i\fR, \fB\-\-mtime\fR
 Report on any differences in file modification t\fBi\fRme
@@ -340,42 +379,22 @@ This is on by default.
 Do not report any differences in file \fBu\fRser ownership (owner user
 id).
 .TP
-\fB\-v\fR, \fB\-\-verbose\fR
-Increase \fBv\fRerbosity, currently reports about the inode cache
-used to avoid comparing hard-linked files more than once.  Four
-cumulative levels of logging verbosity are supported:
-.RS 10
-.TP
-.B -v
-report overall statistics: total number of files scanned, compared,
-etc.
-.TP
-.B -vv
-report if any files are skipped, and for what reason (exclusion,
-already compared, etc.)
-.TP
-.B -vvv
-report internal data structure statistics.
-.TP
-.B -vvvv
-report memory statistics.
-.RS -10
-.TP
-\fB\-V\fR, \fB\-\-version\fR
-Show the
-.B tdiff
-\fBv\fRersion information, compiled-in features and flags (if any)
-then exit.
+\fB\-z\fR, \fB\-\-ctime\fR
+Report on any differences in file inode change time
+(\fI\,st_ctime\/\fR), up to nanosecond resolution if the underlying OS
+reports it.
 .br
-The compiled-in feature list shows which features
-.B tdiff
-has been compiled with: O_NOATIME, flags, acl, and xattr support, and
-the
-.BR readdir(2)
-implementation used.
+Since inode change times are automatically set by Unix to the current
+time and cannot be changed afterwards, they will always be reported as
+different for any two file trees, except in rare cases (likely
+involving cloning raw file system images).
+.TP
+\fB\-Z\fR, \fB\-\-no\-ctime\fR
+Do not report any differences in file file inode change times
+(\fI\,st_ctime\/\fR).
 .br
-If flags support is compiled in, the list of recognized flags will be
-listed as well.
+This is on by default.
+.SS Other Miscellaneous Options
 .TP
 \fB\-w\fR, \fB\-\-exec\-always\fR \fICOMMAND... \\\/;\fR
 Always execute
@@ -444,22 +463,6 @@ sub-directories or files it contains will be completely ignored.
 .br
 This option may be specified more than once, all the files listed will
 be added to the exclusion list.
-.TP
-\fB\-z\fR, \fB\-\-ctime\fR
-Report on any differences in file inode change time
-(\fI\,st_ctime\/\fR), up to nanosecond resolution if the underlying OS
-reports it.
-.br
-Since inode change times are automatically set by Unix to the current
-time and cannot be changed afterwards, they will always be reported as
-different for any two file trees, except in rare cases (likely
-involving cloning raw file system images).
-.TP
-\fB\-Z\fR, \fB\-\-no\-ctime\fR
-Do not report any differences in file file inode change times
-(\fI\,st_ctime\/\fR).
-.br
-This is on by default.
 .TP
 \fB\-\\|\fR, \fB\-\-mode\-or\fR \fIMASK\fR
 Note that the pipe character must be escaped to prevent it from being

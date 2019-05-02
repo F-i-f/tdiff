@@ -1,5 +1,8 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Shuffle the manpage around 3 option subsections
+	(standard, toggles, miscellaneous).
+
 	* tdiff.1: Add language to say that -w/-W/-x turn on -c.
 
 	* tests/contents-diff.test (tdiff_options): Drop -c.
