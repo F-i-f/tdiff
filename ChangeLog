@@ -1,5 +1,10 @@
 2019-05-01  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset-missing.test (tdiff_options):
+	* tests/preset-notimes.test (tdiff_options):
+	* tests/preset-alltimes.test (tdiff_options):
+	Use alternate preset names.
+
 	* tdiff.c (show_help): Show preset 6 as the default.
 	(main): Add aliases to preset names: default aliased to notimes,
 	type aliased to missing.

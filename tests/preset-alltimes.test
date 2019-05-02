@@ -4,8 +4,8 @@ set -eu
 
 . "$srcdir"/tests/preset.lib.sh
 
-tdiff_options="-p alltimes"
-tdiff_options2="-p 9"
+tdiff_options="-p all"
+tdiff_options2="-p al"
 tdiff_options3="-9"
 tdiff_long_options="--preset alltimes"
 tdiff_long_options2="--preset 9"
