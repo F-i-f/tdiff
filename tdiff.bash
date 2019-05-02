@@ -83,13 +83,13 @@ _tdiff()
 	_command
 	return
 	;;
-      -X|--exclude)
-	_filedir
+      -a|--mode-and|\
+      -o|--mode-or)
+	COMPREPLY=()
 	return
 	;;
-      -\&|--mode-and|\
-      -\||--mode-or)
-	COMPREPLY=()
+      -X|--exclude)
+	_filedir
 	return
 	;;
     esac

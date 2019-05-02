@@ -545,12 +545,9 @@ sub-directories or files it contains will be completely ignored.
 This option may be specified more than once, all the files listed will
 be added to the exclusion list.
 .TP
-\fB\-\\|\fR, \fB\-\-mode\-or\fR \fIMASK\fR
-Note that the pipe character must be escaped to prevent it from being
-interpreted by the shell.
-.br
-When comparing file permission bits, perform a binary or between the
-permission bits and
+\fB\-o\fR, \fB\-\-mode\-or\fR \fIMASK\fR
+When comparing file permission bits, perform a binary \fBo\fRr between
+the permission bits and
 .I MASK
 before comparing them.
 .br
@@ -559,12 +556,9 @@ is specified in octal, like with
 .BR chmod(2) ,
 unless prefixed with \fI0x\/\fR, in which case it is parsed as hexadecimal.
 .TP
-\fB\-\\&\fR, \fB\-\-mode\-and\fR \fIMASK\fR
-Note that the ampersand character must be escaped to prevent it from being
-interpreted by the shell.
-.br
-When comparing file permission bits, perform a binary and between the
-permission bits and
+\fB\-a\fR, \fB\-\-mode\-and\fR \fIMASK\fR
+When comparing file permission bits, perform a binary \fBa\fRnd
+between the permission bits and
 .I MASK
 before comparing them.
 .br

@@ -1,5 +1,12 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tests/mode-and.test (tdiff_options):
+	* tests/mode-or.test (tdiff_options):
+	* tdiff.bash (_tdiff):
+	* tdiff.c (show_help, main):
+	* _tdiff.zsh (args):
+	Rename -| to -o and -& to -a.
+
 	* tdiff.c (get_octal_arg): Show base on number parsing error.
 
 	* tdiff.1: Update the --version description.

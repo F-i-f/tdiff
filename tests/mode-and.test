@@ -4,8 +4,8 @@ set -eu
 
 . "$srcdir"/tests/mode.lib.sh
 
-tdiff_options="-0m& 70"
-tdiff_options2="-0m& 0x38"
+tdiff_options="-0ma 70"
+tdiff_options2="-0ma 0x38"
 tdiff_long_options="--preset none --mode --mode-and 070"
 tdiff_long_options2="--preset none --mode --mode-and 0x38"
 

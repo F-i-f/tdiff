@@ -1335,8 +1335,8 @@ show_help(void)
 	 "                              from <dir1> and <dir2>.\n"
 	 "   -W --exec-always-diff \\;   always executes \"diff -u\" between files\n"
 	 "                              equivalent to -w diff -u %%1 %%2 \\;\n"
-	 "   -| --mode-or <bits>        applies <bits> OR mode before comparison\n"
-	 "   -& --mode-and <bits>       applies <bits> AND mode before comparison\n"
+	 "   -o --mode-or <bits>        applies <bits> OR mode before comparison\n"
+	 "   -a --mode-and <bits>       applies <bits> AND mode before comparison\n"
 	 "   -X --exclude <file>        omits <file> from report\n"
 #if ! HAVE_GETOPT_LONG
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
@@ -2248,9 +2248,9 @@ main(int argc, char*argv[])
 	{ "exec",              0, 0, 'x' },
 	{ "exec-always",       0, 0, 'w' },
 	{ "exec-always-diff",  0, 0, 'W' },
-	{ "mode-or",           1, 0, '|' },
-	{ "mode-and",          1, 0, '&' },
 	{ "exclude",           1, 0, 'X' },
+	{ "mode-or",           1, 0, 'o' },
+	{ "mode-and",          1, 0, 'a' },
 	{ 0,                   0, 0, 0}
       };
 #endif /* HAVE_GETOPT_LONG */
@@ -2271,7 +2271,7 @@ main(int argc, char*argv[])
 #if HAVE_ACL
 	      "lL"
 #endif
-	      "0123456789p:xwW|:&:X:"
+	      "0123456789p:xwWo:a:X:"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -2434,11 +2434,11 @@ main(int argc, char*argv[])
 	      options.contents = options.exec_always = 1;
 	    }
 	  break;
-	case '|':
+	case 'o':
 	  if (!get_octal_arg(optarg, &options.mode_or))
 	    end_after_options = EAO_error;
 	  break;
-	case '&':
+	case 'a':
 	  if (!get_octal_arg(optarg, &options.mode_and))
 	    end_after_options = EAO_error;
 	  break;

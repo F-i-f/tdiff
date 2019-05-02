@@ -132,10 +132,10 @@ args=('*'{-v,--verbose}'[increase verbosity level]'
       {-W,--exec-always-diff}'[executes "diff -u" for every file pair]'
 
       + '(mode-or)'
-      {-\|,--mode-or}'[applies an OR mask to file modes]:mask (octal)'
+      {-o,--mode-or}'[applies an OR mask to file modes]:mask (octal)'
 
       + '(mode-and)'
-      {-\&,--mode-and}'[applies an AND mask to file modes]:mask (octal)'
+      {-a,--mode-and}'[applies an AND mask to file modes]:mask (octal)'
      )
 
 local tdiff_out="$(tdiff --help)"
