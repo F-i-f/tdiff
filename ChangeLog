@@ -1,5 +1,10 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Update the --version description.
+
+	* tdiff.c (show_version): Show time granularity (seconds or
+	nanoseconds).
+
 	* tests/preset.lib.sh (setup):
 	* tests/mtime.test (setup):
 	* tests/ctime.test (setup):

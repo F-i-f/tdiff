@@ -102,10 +102,11 @@ then exit.
 .br
 The compiled-in feature list shows which features
 .B tdiff
-has been compiled with: O_NOATIME, flags, acl, and xattr support, and
+has been compiled with: O_NOATIME, flags, acl, and xattr support,
 the
 .BR readdir(2)
-implementation used.
+implementation used, and the file system time granularity (either
+seconds (\fI\,s\/\fR) or nanoseconds (\fI\,ns\/\fR)).
 .br
 If flags support is compiled in, the list of recognized flags will be
 listed as well.
@@ -826,4 +827,4 @@ along with this program.  If not, see
 \"  LocalWords:  fIfile1 fIfile2 fIdir2 files' readdir eg hardlinks
 \"  LocalWords:  fBf1 fBf2 fBf3 fIamtimes fIam fImissing fImiss fId
 \"  LocalWords:  fBf fRlags fIdefault fI9 fI8 fI7 fI6 notimes fI0 fI1
-\"  LocalWords:  fI2 fI3 fI4 fI5 amtimes alltimes Wi
+\"  LocalWords:  fI2 fI3 fI4 fI5 amtimes alltimes Wi ns

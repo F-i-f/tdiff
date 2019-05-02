@@ -1078,6 +1078,11 @@ show_version(void)
 #else /* ! HAVE_GETDENTS */
 	     "readdir=readdir",
 #endif /* ! HAVE_GETDENTS */
+#ifdef ST_ATIMENSEC
+	     "time_granularity=ns",
+#else /* ! def ST_ATIMENSEC */
+	     "time_granularity=s",
+#endif /* ! def ST_ATIMENSEC */
 #if HAVE_GETXATTR
 	     "xattr=yes",
 #else /* ! HAVE_GETXATTR */
