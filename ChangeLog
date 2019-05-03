@@ -1,5 +1,8 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Update: --size and --blocks checks work on all file
+	types but directories.
+
 	* tests/preset.lib.sh (setup): Use sync_if_needed.
 	When running as root on Solaris, always sleep as device nodes for
 	some reason only have second st_xtime resolution.

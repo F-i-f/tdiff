@@ -126,9 +126,8 @@ short toggle options, long toggle options have a \fB\-\-no\-\fR
 version to turn off the equivalent check (eg. \fB\-\-no\-mtime\fR).
 .TP
 \fB\-b\fR, \fB\-\-blocks\fR
-Report file \fBb\fRlock count differences for regular files,
-directories and symbolic links (\fI\,st_blocks\fR does not make sense on
-other types of inodes).
+Report file \fBb\fRlock count differences (\fI\,st_blocks\/\fR) except
+for directories which are ignored.
 .br
 This is on by default.
 .TP
@@ -304,8 +303,8 @@ This is on by default if extended attributes are supported by the system.
 Do not report any differences in file extended attributes.
 .TP
 \fB\-s\fR, \fB\-\-size\fR
-Report file \fBs\fRize differences for regular files and symbolic
-links (\fI\,st_size\fR does not make sense on other types of inodes).
+Report file \fBs\fRize differences (\fI\,st_size\/\fR), except for
+directories which are ignored.
 .br
 This is on by default.
 .TP
