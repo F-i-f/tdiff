@@ -1,5 +1,8 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset.lib.sh (preset_size_filter): Filter out node1's
+	size on Solaris.
+
 	* tdiff.1: Update: --size and --blocks checks work on all file
 	types but directories.
 

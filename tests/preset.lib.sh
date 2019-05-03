@@ -137,7 +137,19 @@ preset_size_filter() {
   #$ Combining both sed statements fails on FreeBSD 12.0p3
   sed -e '/^tdiff: entry1: blocks: /d' \
       -e '/^tdiff: entry1: size: /d' \
-      -e 's!^\(tdiff: entry4: blocks:\) [0-9][0-9]* [0-9][0-9]*!\1 XX XX!'
+      -e 's!^\(tdiff: entry4: blocks:\) [0-9][0-9]* [0-9][0-9]*!\1 XX XX!' \
+    | \
+    case "$TARGET_OS" in
+      solaris*)
+	# On Solaris char devs have size 0 but block devs have size
+	# $BIGNUM.  Node1 is a chardev in first dir, but a blockdev in
+	# second dir, triggering an error.
+	sed -e '/^tdiff: node1: size: /d'
+	;;
+      *)
+	cat
+	;;
+    esac
 }
 
 preset_atime_filter() {
