@@ -1,0 +1,7 @@
+tdiff: file1: flag sappend only set in tests/toggle-flag-sappend.dir2
+tdiff: file3: flag sappend only set in tests/toggle-flag-sappend.dir1
+tdiff:            4          inode pairs compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            0          excluded paths
+tdiff exit code=2

@@ -1,5 +1,15 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tests/toggle-*.out.gold: Update.
+
+	* tests/*.{test,out.gold}: Rename toggle tests and results to
+	tests/toggle-*.{test,out.gold}.
+
+	* Makefile.am (TESTS): Rename toggle tests tests/*.test to
+	tests/toggle-*.test.
+	(EXTRA_DIST): Rename toggle tests results tests/*.out.gold to
+	tests/toggle-*.out.gold.
+
 	* tdiff.c (reportMissing, getAclList, reportMissingFile, dodiff)
 	(main): Don't use abort(), print a nice error message and exit 4.
 

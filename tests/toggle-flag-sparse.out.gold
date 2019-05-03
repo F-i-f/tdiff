@@ -1,0 +1,7 @@
+tdiff: file1: flag sparse only set in tests/toggle-flag-sparse.dir2
+tdiff: file3: flag sparse only set in tests/toggle-flag-sparse.dir1
+tdiff:            4          inode pairs compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            0          excluded paths
+tdiff exit code=2

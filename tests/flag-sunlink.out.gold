@@ -1,7 +1,0 @@
-tdiff: file1: flag sunlink only set in tests/flag-sunlink.dir2
-tdiff: file3: flag sunlink only set in tests/flag-sunlink.dir1
-tdiff:            4          inode pairs compared
-tdiff:            0 ( 0.00%) inode pairs skipped as identical
-tdiff:            0 ( 0.00%) inode pairs skipped as already seen
-tdiff:            0          excluded paths
-tdiff exit code=2

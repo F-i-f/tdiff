@@ -1,0 +1,17 @@
+tdiff: file1: contents differ
+ALWAYS RUN tests/toggle-contents-always.dir1/file1 VS. tests/toggle-contents-always.dir2/file1
+tdiff: file2: contents differ
+ALWAYS RUN tests/toggle-contents-always.dir1/file2 VS. tests/toggle-contents-always.dir2/file2
+tdiff: file3: symbolic links differ
+ALWAYS RUN tests/toggle-contents-always.dir1/file5 VS. tests/toggle-contents-always.dir2/file5
+tdiff: file6: contents differ
+ALWAYS RUN tests/toggle-contents-always.dir1/file6 VS. tests/toggle-contents-always.dir2/file6
+tdiff: file7: already compared hard-linked files at file6
+tdiff: file8: already compared hard-linked files at file6
+tdiff: file9: same dev/ino pair, skipping
+tdiff:           10          inode pairs compared
+tdiff:            2 (20.00%) file pair contents compared
+tdiff:            1 (10.00%) inode pairs skipped as identical
+tdiff:            2 (20.00%) inode pairs skipped as already seen
+tdiff:            0          excluded paths
+tdiff exit code=2
