@@ -74,8 +74,7 @@ options.
 Show a short \fBh\fRelp message and exit.
 .TP
 \fB\-v\fR, \fB\-\-verbose\fR
-Increase \fBv\fRerbosity, currently reports about the inode cache
-used to avoid comparing hard-linked files more than once.  Four
+Increase \fBv\fRerbosity.  Four
 cumulative levels of logging verbosity are supported:
 .RS 10
 .TP
@@ -91,7 +90,7 @@ already compared, etc.)
 report internal data structure statistics.
 .TP
 .B -vvvv
-report memory statistics.
+report memory statistics (if available on your system).
 .RS -10
 .TP
 \fB\-V\fR, \fB\-\-version\fR
@@ -122,7 +121,7 @@ structure names: for example,
 is used to check the
 .I st_mtime
 .BR stat(2)
-structure member, which is the file modification times.  Similarly to
+structure member, which is the file modification time.  Similarly to
 short toggle options, long toggle options have a \fB\-\-no\-\fR
 version to turn off the equivalent check (eg. \fB\-\-no\-mtime\fR).
 .TP
@@ -141,13 +140,13 @@ Report file \fBc\fRontent differences for regular files and symbolic
 links.
 .br
 For regular files, their contents are compared and any discrepancies
-are reported as contents difference.
+are reported as a contents difference.
 .br
 For symbolic links, a difference will be reported if their targets
 differ.
 .br
 See the
-.BR CONTENTS\ COMPARISONS
+.B CONTENTS COMPARISONS
 section below for the exact semantics.
 .br
 This is on by default.
@@ -194,15 +193,17 @@ Will not report any differences in hard links sets.
 Diff file system \fBf\fRlags, as found in the
 .BR stat(2)
 .I st_flags
-structure member.  This is only supported on BSD and MacOSX.
+structure member.  This is only supported on BSD, MacOSX and other
+systems that have \fIst_flags\/\fR.
 .br
 .B tdiff --version
 will list which file system flags
 .B tdiff
 has been compiled with, but
 .B tdiff
-will report even differences in other unknown flags, but will do so
-numerically instead of listing the actual flag name.
+will report even differences in other flags unknown at compilation
+time, but will do so numerically instead of listing the actual flag
+name.
 .br
 This is on by default if your system's
 .BR stat(2)
@@ -241,7 +242,7 @@ of the same type (block or character).
 This is on by default.
 .TP
 \fB\-J\fR, \fB\-\-no\-major\fR
-Do not report any differences in major device numbers on device files.
+Do not report any differences in ma\fBj\fRor device numbers on device files.
 .TP
 \fB\-k\fR, \fB\-\-minor\fR
 For device files (either block or character), report any differences
@@ -256,7 +257,7 @@ This is on by default.
 Do not report any differences in minor device numbers on device files.
 .TP
 \fB\-l\fR, \fB\-\-acl\fR
-Report on any differences in file ACLs as defined by
+Report on any differences in file AC\fBL\fRs as defined by
 .BR acl_set_file(3) .
 .br
 Any missing or different ACLs between the file pairs are
@@ -265,14 +266,15 @@ reported.  Access, default and mask ACL entries are supported.
 This is on by default if ACLs are supported by the system.
 .TP
 \fB\-L\fR, \fB\-\-no\-acl\fR
-Do not report any differences in file ACLs.
+Do not report any differences in file AC\fBL\fRs.
 .TP
 \fB\-m\fR, \fB\-\-mode\fR
 Report on any differences in file access \fBm\fRode (permission bits as
 set by
 .BR chmod(1) ).
 If set,
-\fB\-\-mode\-or\fR and \fB\-\-mode\-and\fR bitmasks are applied.
+\fB\-o\fR/\fB\-\-mode\-or\fR and \fB\-a\fR/\fB\-\-mode\-and\fR
+bitmasks are applied, if set.
 .br
 This is on by default.
 .TP
@@ -293,7 +295,7 @@ Do not report any differences in file (hard) link counts.
 Report on any differences in file extended attributes as defined by
 .BR setxattr(2) .
 .br
-Any missing or different extended attributes between the file pairs are
+Any missing or different extended attribute between the file pairs is
 reported.
 .br
 This is on by default if extended attributes are supported by the system.
@@ -369,10 +371,10 @@ Do not report any differences in file file inode change times
 This is on by default.
 .SS Preset Options
 The preset single letter options are either a numeric preset level
-from 0 to 9, or
+from \fI0\fR to \fI9\/\fR, or
 .B \-p
-followed by a preset name or level.  Presets can also be toggled by
-the
+followed by a preset name or level.  Presets can also be activated
+with the
 .B \-\-preset
 long option followed by either a numeric preset level or a preset
 name.
@@ -503,9 +505,9 @@ unless prefixed with \fI0x\/\fR, in which case it is parsed as hexadecimal.
 \fB\-w\fR, \fB\-\-exec\-always\fR \fICOMMAND... \\\/;\fR
 Always execute
 .I COMMAND
-for any pair of matching regular files found in the trees.
-.I COMMAND
-is defined as for the \fB\-x\fR/\fB\-\-exec\fR options.
+for any pair of matching regular files found in the trees. Refer to the
+.B CONTENTS COMPARISONS
+section for details.
 .br
 If either options are specified more than once, the last command defined
 will be used.
@@ -519,7 +521,7 @@ for any pair of matching regular files found in the trees.
 This is a shortcut for:
 .in +2
 .br
-.B tdiff \-\-exec\-always diff \-u %1 %2 \\;
+.B tdiff \-\-exec\-always diff \-u %1 %2 \\\\;
 .in -2
 .br
 The option will supersede whichever command was specified in a
@@ -531,23 +533,9 @@ Using either option turns on the \fB-c\fR/\fB--contents\fR toggle.
 \fB\-x\fR, \fB\-\-exec\fR \fICOMMAND... \\\/;\fR
 Uses
 .I COMMAND
-when comparing files whose sizes are the same.
-.I COMMAND
-is a command line terminated by a semi-colon, which must be escaped
-to avoid processing by the shell.
-.br
-In the arguments can appear the
-strings
-.I %1
-and
-.I %2
-which will be replaced by the paths to files in the first
-or second compared directories.
-.I %1
-and
-.I %2
-can only appear once on the command line, and must be full words:
-they cannot appear inside a larger shell word.
+when comparing files whose sizes are the same. Refer to the
+.B CONTENTS COMPARISONS
+section for details.
 .br
 If either options are specified more than once, the last command defined
 will be used.
@@ -616,6 +604,34 @@ files with different sizes will be reported as having different
 contents without even comparing them as the size difference is enough
 to ascertain that their contents differ.
 .PP
+Optionally,
+.B tdiff
+can run external commands to perform the comparison.  When providing
+an external command, the
+.I COMMAND
+must be passed as multiple arguments terminated by a semi-colon, which
+must be escaped to avoid processing by the shell.
+.I COMMAND
+should not be quoted as a single argument.
+.br
+In the arguments can appear the strings
+.I %1
+and
+.I %2
+which will be respectively replaced by the paths to files in the first
+and second compared directories.
+.I %1
+and
+.I %2
+can only appear once on the command line, and must be full words:
+they cannot appear inside a larger shell word.
+.br
+For example:
+.RS 2
+.br
+.B tdiff --exec gtkdiff %1 %2 \\\\; directory1 directory2
+.RS -2
+.PP
 If either the \fB\-x\fR or \fB\-\-exec\fR options are used, the
 command specified there will be ran instead of the built-in comparison
 and its exit status used to detect a difference (zero exit status
@@ -667,7 +683,11 @@ if no discrepancies nor errors were encountered.
 if there were any problems with arguments or parsing the command line.
 .TP
 2
-if there were any differences reported.
+if there were any differences reported, either by
+.B tdiff
+logging a discrepancy, or any of the \fB\-x\fR/\fB\-\-exec\fR or
+\fB\-w\fR/\fB\-\-exec\-always\fR commands exiting with non-zero
+status.
 .TP
 3
 if there was any system error (a file couldn't be read for example).
@@ -822,3 +842,4 @@ along with this program.  If not, see
 \"  LocalWords:  fBf1 fBf2 fBf3 fIamtimes fIam fImissing fImiss fId
 \"  LocalWords:  fBf fRlags fIdefault fI9 fI8 fI7 fI6 notimes fI0 fI1
 \"  LocalWords:  fI2 fI3 fI4 fI5 amtimes alltimes Wi ns fBa fRnd fRr
+\"  LocalWords:  fBL fRs gtkdiff

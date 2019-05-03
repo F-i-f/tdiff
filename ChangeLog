@@ -1,3 +1,9 @@
+2019-05-03  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.1:
+	* README.md:
+	Enhance, fix typos.
+
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
 	* tests/error-directory.out.gold: Update.

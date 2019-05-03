@@ -11,7 +11,7 @@ Compare two file trees, showing any differences in their:
 * file block count (physical storage size),
 * owner user and group ids (uid & gid),
 * access, modification and inode change times,
-* hard links sets,
+* hard link count, and sets of hard linked files,
 * extended attributes (if supported),
 * ACLs (if supported),
 * file system flags (BSD UFS, MacOSX).
@@ -156,7 +156,8 @@ along with this program.  If not, see [http://www.gnu.org/licenses/].
   repository.
 
 * groff is optionally needed to generate the man page hard copies
-  (HTML & PDF).
+  (HTML & PDF). It is only needed if you intend to update the manual
+  page ROFF source.
 
 ### From a release
 
@@ -204,7 +205,9 @@ tar xvzf tdiff-0.7.2.tar.gz
 cd tdiff-0.7.2
 ./configure
 make
+make check
 make install
+make install-pdf install-html # Optional
 ```
 
 Alternately, you can create a RPM file by moving the source tar file
@@ -224,7 +227,9 @@ cd tdiff
 autoreconf -i
 ./configure
 make
+make check
 make install
+make install-pdf install-html # Optional
 ```
 
 ## Changelog
