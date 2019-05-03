@@ -178,7 +178,6 @@ typedef struct str_list_client_data_s
 
 
 str_list_t *getDirList(const char* path);
-int get_exec_args(char**, int*, dexe_t*);
 int dodiff(options_t* opts, const char* p1, const char* p2);
 char* pconcat(const char* p1, const char* p2);
 int execprocess(const dexe_t *dex, const char* p1, const char* p2);
@@ -1375,7 +1374,7 @@ show_help(void)
 	 );
 }
 
-int
+static void
 get_exec_args(char **argv, int *optind, dexe_t *dex)
 {
   char **cargv;
@@ -1410,7 +1409,7 @@ get_exec_args(char **argv, int *optind, dexe_t *dex)
       fprintf(stderr,
 	      "%s: missing final semi-colon while scanning command line\n",
 	      progname);
-      return 0;
+      exit(XIT_INVOC);
     }
   numargs = cargv-argv;
   if (dex->argv != NULL)
@@ -1436,7 +1435,6 @@ get_exec_args(char **argv, int *optind, dexe_t *dex)
 	dex->argv[i] = argv[i];
       }
   dex->argv[numargs] = NULL;
-  return 1;
 }
 
 int
@@ -2435,10 +2433,8 @@ main(int argc, char*argv[])
 	    }
 	  if (optcode == 'w')
 	    {
-	      if (get_exec_args(argv, &optind, &options.exec_always_args))
-		options.contents = options.exec_always = 1;
-	      else
-		end_after_options = EAO_error;
+	      get_exec_args(argv, &optind, &options.exec_always_args);
+	      options.contents = options.exec_always = 1;
 	    }
 	  else /* -W */
 	    {
@@ -2462,10 +2458,8 @@ main(int argc, char*argv[])
 	    {
 	      fprintf(stderr, "%s: -x specified twice, only the last command line will run\n", progname);
 	    }
-	  if (get_exec_args(argv, &optind, &options.exec_args))
-	    options.contents = options.exec = 1;
-	  else
-	    end_after_options = EAO_error;
+	  get_exec_args(argv, &optind, &options.exec_args);
+	  options.contents = options.exec = 1;
 	  break;
 	case 'X':
 	  gh_insert(options.exclusions, xstrdup(optarg), NULL);
