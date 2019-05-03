@@ -215,12 +215,18 @@ reportMissing(int which, const char* f, const char* what, str_list_client_data_t
       subp = f+(rootlen = clientData->opts->root2_length);
       break;
     default:
-      abort();
+      fprintf(stderr, "%s: reportMissing(): unexpected which=%d, aborting...\n",
+	      progname, which);
+      exit(XIT_INTERNALERROR);
     }
   if (*subp)
     {
       if (*subp != '/')
-	abort();
+	{
+	  fprintf(stderr, "%s: reportMissing(): unexpected subp=\"%c\" (code=%d), aborting...\n",
+		  progname, isprint(*subp) ? *subp : '?', *subp);
+	  exit(XIT_INTERNALERROR);
+	}
       ++subp;
     }
   else
@@ -444,7 +450,11 @@ getAclList(const char* path, acl_type_t acltype)
 	if (*p == ':')
 	  ++state;
 	else if (isspace(*p))
-	  abort();
+	  {
+	    fprintf(stderr, "%s: getAclList(): space-like character \"%c\" (code=%d) while parsing acl \"%s\", aborting...\n",
+		    progname, isprint(*p) ? *p : '?', *p, p);
+	    exit(XIT_INTERNALERROR);
+	  }
 	break;
       case STATE_PERM1:
       case STATE_PERM2:
@@ -457,9 +467,9 @@ getAclList(const char* path, acl_type_t acltype)
 	  case '-':
 	    break;
 	  default:
-	    fprintf(stderr, "%s: unexpected character in state %d: %c\n",
-		    progname, state, *p);
-	    abort();
+	    fprintf(stderr, "%s: getAclList(): unexpected character in state %d: \"%c\" (code=%d)\n",
+		    progname, state, isprint(*p) ? *p : '?', *p);
+	    exit(XIT_INTERNALERROR);
 	  }
 	if (state == STATE_PERM3)
 	  {
@@ -486,9 +496,9 @@ getAclList(const char* path, acl_type_t acltype)
 	  default:
 	    if (!isspace(*p))
 	      {
-		fprintf(stderr, "%s: unexpected non-whitespace character in state %d: %c (code=%d)\n",
-			progname, state, *p, *p);
-		abort();
+		fprintf(stderr, "%s: getAclList(): unexpected non-whitespace character in state %d: \"%c\" (code=%d), aborting...\n",
+			progname, state, isprint(*p) ? *p : '?', *p);
+		exit(XIT_INTERNALERROR);
 	      }
 	  }
 	break;
@@ -497,11 +507,17 @@ getAclList(const char* path, acl_type_t acltype)
 	  state = STATE_FIRST_WS;
 	break;
       default:
-	abort();
+	fprintf(stderr, "%s: getAclList(): unexpected state %d, aborting...\n",
+		progname, state);
+	exit(XIT_INTERNALERROR);
       }
 
   if (state != STATE_FIRST_WS)
-    abort();
+    {
+      fprintf(stderr, "%s: getAclList(): unexpected state %d at end, aborting...\n",
+	      progname, state);
+      exit(XIT_INTERNALERROR);
+    }
 
   acl_free(acls);
   acl_free(acl);
@@ -735,12 +751,18 @@ reportMissingFile(int which, const char* d, const char *f, str_list_client_data_
 	  subp = d+(rootlen = clientData->opts->root2_length);
 	  break;
 	default:
-	  abort();
+	  fprintf(stderr, "%s: reportMissingFile(): unexpected which=%d, aborting...\n",
+		  progname, which);
+	  exit(XIT_INTERNALERROR);
 	}
       if (*subp)
 	{
 	  if (*subp != '/')
-	    abort();
+	    {
+	      fprintf(stderr, "%s: reportMissingFile(): unexpected subp=\"%c\" (code=%d), aborting...\n",
+		      progname, isprint(*subp) ? *subp : '?', *subp);
+	      exit(XIT_INTERNALERROR);
+	    }
 	  ++subp;
 	}
       else
@@ -1640,7 +1662,10 @@ dodiff(options_t* opts, const char* p1, const char* p2)
     {
     case '\0': subpath = "(top-level)"; break;
     case '/':  subpath++;               break;
-    default:   abort();                 break;
+    default:
+      fprintf(stderr, "%s: dodiff(): unexpected *subpath=\"%c\" (code=%d), aborting...\n",
+	      progname, isprint(*subpath) ? *subpath : '?', *subpath);
+      exit(XIT_INTERNALERROR);
     }
 
   /* Check if we're comparing the same dev/inode pair */
@@ -2465,7 +2490,9 @@ main(int argc, char*argv[])
 	  gh_insert(options.exclusions, xstrdup(optarg), NULL);
 	  break;
 	default:
-	  abort();
+	  fprintf(stderr, "%s: unexpected return value from getopt(): \"%c\" (code=%d), aborting...\n",
+		  progname, isprint(optcode) ? optcode : '?', optcode);
+	  exit(XIT_INTERNALERROR);
 	}
     }
  end_of_options:

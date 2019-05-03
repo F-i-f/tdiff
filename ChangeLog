@@ -1,5 +1,8 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (reportMissing, getAclList, reportMissingFile, dodiff)
+	(main): Don't use abort(), print a nice error message and exit 4.
+
 	* configure.ac (HAVE_NANOSECOND_TIME_RESOLUTION): Fix feature
 	shell variable name for having st_atimespec stat(2) fields.
 	This will cause a regression failure on MacOSX which has
