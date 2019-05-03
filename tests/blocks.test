@@ -14,7 +14,7 @@ setup() {
   dd bs=4k count=4 if=/dev/zero of="$2/file4"
 
   # On Solaris block counts aren't updated until they're on storage.
-  sync
+  sync_if_needed
 }
 
 blocks_filter() {

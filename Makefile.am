@@ -68,6 +68,7 @@ dist_doc_DATA			= README \
 
 AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      FAKEROOT="$(FAKEROOT)" \
+			      TARGET_OS="$(TARGET_OS)" \
 			      HAVE_S_IFDOOR="$(HAVE_S_IFDOOR)" \
 			      HAVE_S_IFSOCK="$(HAVE_S_IFSOCK)" \
 			      HAVE_ST_FLAGS="$(HAVE_ST_FLAGS)" \

@@ -1,5 +1,18 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset.lib.sh (setup): Use sync_if_needed.
+	When running as root on Solaris, always sleep as device nodes for
+	some reason only have second st_xtime resolution.
+
+	* tests/blocks.test (setup): Use sync_if_needed.
+
+	* tests/test.lib.sh (sync_if_needed): Create.  Only call sync when
+	on Solaris.
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): Export TARGET_OS.
+
+	* configure.ac: AC_SUBST(TARGET_OS).
+
 	* tests/error-file.out.gold: Update.
 
 	* tests/error-file.test (setup): Set permissions on all files.

@@ -67,7 +67,21 @@ setup() {
   mkdir "$1"/dir1
   touch "$1"/dir1/missing
 
-  sleep_if_coarse_time 1
+  if [ $with_root -ne 0 ]
+  then
+    # Device nodes on Solaris only have second resolution for some
+    # reason.  When running as root on solaris, always sleep.
+    case "$TARGET_OS" in
+      solaris*)
+	sleep 1
+	;;
+      *)
+	sleep_if_coarse_time 1
+      ;;
+    esac
+  else
+    sleep_if_coarse_time 1
+  fi
 
   mkdir "$2"/entry1
   chmod 700 "$2"/entry1
@@ -88,7 +102,7 @@ setup() {
   sleep_if_coarse_time 1
 
   # On Solaris block counts aren't updated until they're on storage.
-  sync
+  sync_if_needed
 }
 
 if [ $with_acl -ne 0 ]

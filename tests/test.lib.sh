@@ -10,6 +10,15 @@ sleep_if_coarse_time() {
   fi
 }
 
+sync_if_needed() {
+  # On Solaris block counts aren't updated until they're on storage.
+  case "$TARGET_OS" in
+    solaris*)
+      sync
+      ;;
+  esac
+}
+
 # Filters
 acl_filter() {
   sed -e 's!\(: \(access\|default\) acl \(user\|group\):\)[^[:space:]]\+\(: .*\)$!\1XX\4!'

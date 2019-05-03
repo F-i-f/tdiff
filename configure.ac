@@ -333,6 +333,8 @@ AC_SUBST([HAVE_S_IFSOCK],[$fi_cv_S_IFSOCK])
 AM_CONDITIONAL([HAVE_S_IFDOOR], [test x$fi_cv_S_IFDOOR = xyes])
 AC_SUBST([HAVE_S_IFDOOR],[$fi_cv_S_IFDOOR])
 
+# Define further flags for the Makefile, for testing
+AC_SUBST([TARGET_OS],[$target_os])
 AC_SUBST([HAVE_ST_FLAGS],[$fi_cv_st_flags])
 AC_SUBST([HAVE_GETOPT_LONG],[$fi_cv_HAVE_GETOPT_LONG])
 AC_SUBST([HAVE_XATTRS],[$fi_cv_getxattr])
