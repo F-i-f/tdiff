@@ -1,5 +1,9 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tests/preset-flags-alltimes.out.gold: Update to reorder
+	time-related option lists that were changed a bit back but not
+	updated for the -flags- gold output.
+
 	* tdiff.c (CHECK_FLAG): Fix missing semicolon.
 
 	* tdiff.1:
