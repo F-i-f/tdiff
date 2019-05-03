@@ -1,5 +1,10 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac (HAVE_NANOSECOND_TIME_RESOLUTION): Fix feature
+	shell variable name for having st_atimespec stat(2) fields.
+	This will cause a regression failure on MacOSX which has
+	st_atimespec but the nanoseconds fields are empty.
+
 	* tdiff.1.html:
 	* tdiff.1.pdf:
 	Generate fresh copies.

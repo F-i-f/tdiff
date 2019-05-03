@@ -340,7 +340,7 @@ AC_SUBST([HAVE_GETOPT_LONG],[$fi_cv_HAVE_GETOPT_LONG])
 AC_SUBST([HAVE_XATTRS],[$fi_cv_getxattr])
 AC_SUBST([HAVE_ACLS],[$have_acls])
 
-if test "x$fi_cv_have_st_timensec" = xyes -o "x$fi_cv_have_st_atimespec" = xyes
+if test "x$fi_cv_have_st_timensec" = xyes -o "x$fi_cv_st_atimespec" = xyes
 then
   have_nanosecond_time_resolution=yes
 else
