@@ -1,5 +1,10 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (EXTRA_DIST, TESTS): tests/error.*->
+	tests/error-directory.*.
+
+	* tests/error.*: Rename to tests/error-directory.*.
+
 	* tests/hardlinks.out.gold (tdiff):
 	* tests/directories.out.gold (tdiff):
 	Update, exit code should be 2.
