@@ -1,5 +1,64 @@
 -*- outline -*-
 
+* Release 0.8
+** May 3, 2019.
+
+** New features:
+
+- The -e/--hardlinks option has been implemented: tdiff can now
+  compare hard link sets between both directories and report which
+  hard links are only in one of the directories.
+
+** User-visible changes:
+
+- Some options have been renamed for consistency with the stat(2)
+  structure member names, and others to avoid non-standard options.
+
+  | Old option (before 0.8)  | New option (0.8 and later) | Notes                        |
+  |--------------------------|----------------------------|------------------------------|
+  | -r/-R                    | -y/-Y                      | atime check                  |
+  | -o/-O/--owner/--no-owner | -u/-U/--uid/--no-uid       | file user id                 |
+  | --group/--no-group       | --gid/--no-gid             | file group id                |
+  | --nlinks                 | --nlink                    | hard link count              |
+  | -a/--all                 | -6/--preset default        | default option state         |
+  | -A/--no-all              | -0/--preset none           | clear all comparison toggles |
+  | -&vert;                  | -o                         | file mode OR bit mask        |
+  | -&                       | -a                         | file mode AND bit mask       |
+
+- A lot of presets have been added, replacing the -a/--all and
+  -A/--no-all options.  They can be used numerically (-3) or by name
+  (-p owner/--preset owner)
+
+- tdiff --version now reports the stat time granularity (seconds or
+  microseconds).
+
+- A message is printed when a comparison is skipped or sub-trees are
+  pruned because they cannot be read.
+
+- The README and NEWS files are now installed in
+  `$prefix/share/doc/tdiff`.
+
+- HTML and PDF versions of the manual page can optionally be installed
+  by running `make install-html` or `make install-pdf`.
+
+** Bugs fixed:
+
+- Fix compilation error on systems supporting st_xtimespec stat
+  structure members.
+
+- tdiff's exit status was not always consistent with the documented
+  behavior, this is now fixed.
+
+- Fix crash with the -x/--exec or -w/--exec-always command lines do
+  not end with a semicolon.
+
+** Other changes:
+
+- Manual page improvements and updates.
+- Test suite (`make check`) improvements.
+- Zsh completion function improvements.
+- Lots of changes under the hood.
+
 * Release 0.7.2
 ** April 30, 2019.
 
@@ -13,7 +72,7 @@
 - Fixed rare bug where files could be skipped (and misreported as
   having no differences) if two files with the name inode number but
   with different device numbers were scanned within the second
-  argument's subtree.
+  argument's sub-tree.
 
 * Release 0.7
 ** April 26, 2019.
@@ -92,4 +151,5 @@ Now includes support for ACLs, extended attributes, and link count.
 
 --
 LocalWords:  zsh hardlinks mmap ACLs xattrs MacOSX inode DJB2 NOATIME
-LocalWords:  autoconf getdents64 FreeBSD Solaris
+LocalWords:  autoconf getdents64 FreeBSD Solaris tdiff atime uid gid
+LocalWords:  nlinks nlink README xtimespec vert tdiff's html pdf

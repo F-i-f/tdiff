@@ -1,5 +1,5 @@
 Name:		tdiff
-Version:	0.7.2
+Version:	0.8
 Release:	1%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
@@ -8,15 +8,14 @@ URL:		https://github.com/F-i-f/tdiff
 Source0:	%{name}-%{version}.tar.gz
 
 %description
-Compare file system trees, including:
-  - file contents
-  - ownership
-  - group
-  - permissions
-  - file type
-  - extended attributes
-  - ACLs
-  - file times (mtime/ctime/atime)
+Compare file system trees, showing any differences in their:
+  - file size,
+  - file block count (physical storage size),
+  - owner user and group ids (uid & gid),
+  - access, modification and inode change times,
+  - hard link count, and sets of hard linked files,
+  - extended attributes (if supported),
+  - ACLs (if supported).
 
 %prep
 %setup -q
@@ -37,6 +36,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
+* Fri May  3 2019 Philippe Troin <phil@fifi.org> - 0.8-1
+- Upstream updated to 0.8.
+- Update description.
+- Rely on make install to install documentation files.
+
 * Tue Apr 30 2019 Philippe Troin <phil@fifi.org> - 0.7.2-1
 - Upstream updated to 0.7.2.
 

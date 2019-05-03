@@ -1,5 +1,18 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1.html:
+	* tdiff.1.pdf:
+	Generate fresh copies.
+
+	* tdiff.1:
+	* configure.ac:
+	Bump release to 0.8.
+
+	* README.md:
+	* NEWS:
+	* tdiff.spec:
+	Update changelog, bump release to 0.8.
+
 	* tdiff.c (get_exec_args): Exit directly if the ending semicolon
 	is missing, there are no more arguments to consume and getopt
 	returns non-sensical values.  Remove return value.
