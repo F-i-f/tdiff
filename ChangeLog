@@ -1,5 +1,20 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* str_list.c (str_list_compare): Use BUMP_EXIT_CODE
+	to manipulate exit code.
+
+	* tdiff.c (compareXattrs, compareAcls, dodiff): Use BUMP_EXIT_CODE
+	to manipulate exit code.
+
+	* tdiff.h (BUMP_EXIT_CODE): Define.
+
+	* tests/mtime.out.gold: Update, error code should be 2.
+
+	* tdiff.c (dodiff): Get rid of localerr, just operate on rv.
+	Report a diff error when mtimes differ.
+
+	* str_list.c (str_list_compare): Get rid of the useless localerr.
+
 	* tdiff.c (cmpFiles): Don't say open & close twice on open/close
 	error messages.
 

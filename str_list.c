@@ -106,7 +106,6 @@ str_list_compare(const char *p1, const char* p2,
   size_t	i1, i2;
   int		cmpres;
   int		rv	     = XIT_OK;
-  int		localerr     = 0;
   /**/
   str_list_sort(ct1);
   str_list_sort(ct2);
@@ -130,7 +129,7 @@ str_list_compare(const char *p1, const char* p2,
 	      int nrv;
 	      /**/
 	      nrv = compareEntries(p1, p2, ct1->strings[i1], ct2->strings[i2], clientData);
-	      if (nrv>rv) rv = nrv;
+	      BUMP_EXIT_CODE(rv, nrv);
 	    }
 	  i1++;
 	  i2++;
@@ -147,8 +146,6 @@ str_list_compare(const char *p1, const char* p2,
 	}
 
     }
-
-  if (localerr && XIT_DIFF>rv) rv = XIT_DIFF;
 
   return rv;
 }

@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   General definitions.
-  Copyright (C) 1999, 2014 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -27,5 +27,11 @@
 #define XIT_INTERNALERROR 4
 
 extern const char* progname;
+
+#define BUMP_EXIT_CODE(current_code, new_code)	\
+  do {						\
+    if (new_code > current_code)		\
+      current_code = new_code;			\
+  } while (0)
 
 #endif /* ndef TDIFF_H */

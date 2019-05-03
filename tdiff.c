@@ -346,14 +346,14 @@ compareXattrs(const char* p1, const char* p2,
 
   if (!buf1)
     {
-      rv = XIT_SYS;
+      BUMP_EXIT_CODE(rv, XIT_SYS);
       xperror("cannot get extended attribute list, lgetxattr()", p1);
       goto ret;
     }
 
   if (!buf2)
     {
-      rv = XIT_SYS;
+      BUMP_EXIT_CODE(rv, XIT_SYS);
       xperror("cannot get extended attribute list, lgetxattr()", p2);
       goto ret;
     }
@@ -362,8 +362,7 @@ compareXattrs(const char* p1, const char* p2,
     {
       printf("%s: %s: xattr %s: contents differ\n",
 	     progname, p1+clientData->opts->root1_length+1, e1);
-      if (XIT_DIFF > rv)
-	rv = XIT_DIFF;
+      BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
 
  ret:
@@ -548,8 +547,7 @@ compareAcls(const char* p1, ATTRIBUTE_UNUSED const char* p2,
     {
       printf("%s: %s: %s acl %s: %s %s\n",
 	     progname, p1+clientData->cmn.opts->root1_length+1, clientData->acldescr, e1, v1, v2);
-      if (XIT_DIFF > rv)
-	rv = XIT_DIFF;
+      BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
 
   return rv;
@@ -1601,7 +1599,6 @@ dodiff(options_t* opts, const char* p1, const char* p2)
   ent_pair_cache_key_t *	ice;
   char *			icepath;
   int				rv	     = XIT_OK;
-  int				localerr     = 0;
   const char *			subpath;
   int				content_diff = 1;
   /**/
@@ -1612,12 +1609,12 @@ dodiff(options_t* opts, const char* p1, const char* p2)
   if (lstat(p1, &sbuf1)<0)
     {
       xperror("cannot get inode status, lstat()", p1);
-      rv = XIT_SYS;
+      BUMP_EXIT_CODE(rv, XIT_SYS);
     }
   if (lstat(p2, &sbuf2)<0)
     {
       xperror("cannot get inode status, lstat()", p2);
-      rv = XIT_SYS;
+      BUMP_EXIT_CODE(rv, XIT_SYS);
     }
   if (rv != XIT_OK)
     return rv;
@@ -1705,9 +1702,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 				 &reportMissingHardLink,
 				 NULL,
 				 &clientData);
-	  if (nrv != 0)
-	    localerr = 1;
-
+	  BUMP_EXIT_CODE(rv, nrv);
 	}
 
       if (store1)
@@ -1754,7 +1749,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 
 	  printf("%s: %s: mode: %04o %04o%s\n",
 		 progname, subpath, rm1, rm2, buf);
-	  localerr = 1;
+	  BUMP_EXIT_CODE(rv, XIT_DIFF);
 	}
     }
 #if HAVE_ST_FLAGS
@@ -1771,7 +1766,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		     ? opts->root1_length		  \
 		     : opts->root2_length ),		  \
 		 ( (flags1 & (flag)) ? p1 : p2 ));	  \
-	  localerr = 1;					  \
+	  BUMP_EXIT_CODE(rv, XIT_DIFF)			  \
 	}						  \
 	flags1 &= ~flag;				  \
 	flags2 &= ~flag;				  \
@@ -1841,7 +1836,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	{
 	  printf("%s: %s: unknown flags: %08X %08X\n",
 		 progname, subpath, flags1, flags2);
-	  localerr = 1;
+	  BUMP_EXIT_CODE(rv, XIT_DIFF);
 	}
     }
 #endif /* HAVE_ST_FLAGS */
@@ -1862,7 +1857,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       if (pn1) free(pn1);
       if (pn2) free(pn2);
 
-      localerr = 1;
+      BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
   if (opts->gid && sbuf1.st_gid != sbuf2.st_gid)
     {
@@ -1881,7 +1876,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       if (gn1) free(gn1);
       if (gn2) free(gn2);
 
-      localerr = 1;
+      BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
   if (opts->mtime
       && (sbuf1.st_mtime != sbuf2.st_mtime
@@ -1899,6 +1894,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 			    -1, -1
 #endif
 			    );
+      BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
   if (opts->atime
       && ( sbuf1.st_atime != sbuf2.st_atime
@@ -1916,7 +1912,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 			    -1, -1
 #endif
 			    );
-      localerr = 1;
+      BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
   if (opts->ctime
       && ( sbuf1.st_ctime != sbuf2.st_ctime
@@ -1934,7 +1930,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 			    -1, -1
 #endif
 			    );
-      localerr = 1;
+      BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
 
   // Don't report on sizes and blocks for directories
@@ -1946,7 +1942,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		 progname,
 		 subpath,
 		 (long)sbuf1.st_blocks, (long)sbuf2.st_blocks);
-	  localerr = 1;
+	  BUMP_EXIT_CODE(rv, XIT_DIFF);
 	}
 
       if (sbuf1.st_size != sbuf2.st_size)
@@ -1957,7 +1953,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		     progname,
 		     subpath,
 		     (long long)sbuf1.st_size, (long long)sbuf2.st_size);
-	      localerr = 1;
+	      BUMP_EXIT_CODE(rv, XIT_DIFF);
 	    }
 	  content_diff = 0;
 	}
@@ -1969,7 +1965,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	     progname,
 	     subpath,
 	     (long)sbuf1.st_nlink, (long)sbuf2.st_nlink);
-      localerr = 1;
+      BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
 
 #if HAVE_GETXATTR
@@ -1993,8 +1989,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       else
 	nrv = XIT_SYS;
 
-      if (nrv > rv)
-	rv = nrv;
+      BUMP_EXIT_CODE(rv, nrv);
 
       if (xl1) str_list_destroy(xl1);
       if (xl2) str_list_destroy(xl2);
@@ -2012,8 +2007,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       int nrv;
       /**/
       nrv = diffacl(opts, p1, p2, ACL_TYPE_ACCESS, "access");
-      if (nrv > rv)
-	rv = nrv;
+      BUMP_EXIT_CODE(rv, nrv);
     }
 
   if (opts->acl
@@ -2021,8 +2015,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       && ((sbuf2.st_mode)&S_IFMT) == S_IFDIR)
     {
       int nrv = diffacl(opts, p1, p2, ACL_TYPE_DEFAULT, "default");
-      if (nrv > rv)
-	rv = nrv;
+      BUMP_EXIT_CODE(rv, nrv);
     }
 #endif
 
@@ -2035,7 +2028,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		 progname,
 		 subpath,
 		 getFileType(sbuf1.st_mode), getFileType(sbuf2.st_mode));
-	  localerr = 1;
+	  BUMP_EXIT_CODE(rv, XIT_DIFF);
 	}
     }
   else
@@ -2065,8 +2058,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	  else
 	    nrv = XIT_SYS;
 
-	  if (nrv > rv)
-	    rv = nrv;
+	  BUMP_EXIT_CODE(rv, nrv);
 
 	  if (ct1) str_list_destroy(ct1);
 	  if (ct2) str_list_destroy(ct2);
@@ -2081,24 +2073,24 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		if (opts->exec)
 		  {
 		    if (!execprocess(&opts->exec_args, p1, p2))
-		      localerr = 1;
+		      BUMP_EXIT_CODE(rv, XIT_DIFF);
 		  }
 		else if (!cmpFiles(p1, sbuf1, p2, sbuf2))
 		  {
 		    printf("%s: %s: contents differ\n",
 			   progname, subpath);
-		    localerr = 1;
+		    BUMP_EXIT_CODE(rv, XIT_DIFF);
 		  }
 	      }
 	    else
 	      {
 		printf("%s: %s: contents differ\n",
 		       progname, subpath);
-		localerr = 1;
+		BUMP_EXIT_CODE(rv, XIT_DIFF);
 	      }
-	    if (opts->exec_always)
-	      if (!execprocess(&opts->exec_always_args, p1, p2))
-		localerr=1;
+	    if (opts->exec_always
+		&& !execprocess(&opts->exec_always_args, p1, p2))
+	      BUMP_EXIT_CODE(rv, XIT_DIFF);
 	  }
 	break;
 #if HAVE_S_IFLNK
@@ -2111,7 +2103,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	      {
 		printf("%s: %s: symbolic links differ\n",
 		       progname, subpath);
-		localerr = 1;
+		BUMP_EXIT_CODE(rv, XIT_DIFF);
 	      }
 	    if (lnk1) free(lnk1);
 	    if (lnk2) free(lnk2);
@@ -2127,7 +2119,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		   subpath,
 		   (long)major(sbuf1.st_rdev),
 		   (long)major(sbuf2.st_rdev));
-	    localerr = 1;
+	    BUMP_EXIT_CODE(rv, XIT_DIFF);
 	  }
 	if (opts->minor && minor(sbuf1.st_rdev) != minor(sbuf2.st_rdev))
 	  {
@@ -2136,14 +2128,13 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		   subpath,
 		   (long)minor(sbuf1.st_rdev),
 		   (long)minor(sbuf2.st_rdev));
-	    localerr = 1;
+	    BUMP_EXIT_CODE(rv, XIT_DIFF);
 	  }
 	break;
       default:
 	break;
       }
 
-  if (localerr && XIT_DIFF>rv) rv = XIT_DIFF;
   return rv;
 }
 
