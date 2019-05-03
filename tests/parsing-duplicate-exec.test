@@ -8,7 +8,8 @@ setup() {
 }
 
 duplicate_exec_filter() {
-  sed -e 's! \(-w/-W\|-x\) \(specified twice, \)! -w/-W/-x \2!'
+  sed -e 's! -w/-W \(specified twice, \)! -w/-W/-x \1!' \
+      -e 's! -x \(specified twice, \)! -w/-W/-x \1!'
 }
 filter=duplicate_exec_filter
 

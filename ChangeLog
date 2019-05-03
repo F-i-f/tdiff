@@ -1,5 +1,8 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tests/parsing-duplicate-exec.test (duplicate_exec_filter):
+	FreeBSD's sed is really dated, no alternation in regexes.
+
 	* Makefile.am (TESTS): Add tests/parsing-*.test.
 	(EXTRA_DIST): Add tests/parsing-*.out.gold.
 
