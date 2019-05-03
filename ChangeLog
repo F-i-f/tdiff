@@ -1,5 +1,7 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (CHECK_FLAG): Fix missing semicolon.
+
 	* tdiff.1:
 	* README.md:
 	Enhance, fix typos.

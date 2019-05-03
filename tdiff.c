@@ -1784,7 +1784,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		     ? opts->root1_length		  \
 		     : opts->root2_length ),		  \
 		 ( (flags1 & (flag)) ? p1 : p2 ));	  \
-	  BUMP_EXIT_CODE(rv, XIT_DIFF)			  \
+	  BUMP_EXIT_CODE(rv, XIT_DIFF);			  \
 	}						  \
 	flags1 &= ~flag;				  \
 	flags2 &= ~flag;				  \
