@@ -10,4 +10,4 @@ tdiff:            0 ( 0.00%) inode pairs skipped as identical
 tdiff:            1 (11.11%) inode pairs skipped as already seen
 tdiff:            2          unmatched paths
 tdiff:            0          excluded paths
-tdiff exit code=0
+tdiff exit code=2

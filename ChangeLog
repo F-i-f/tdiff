@@ -1,5 +1,20 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tests/hardlinks.out.gold (tdiff):
+	* tests/directories.out.gold (tdiff):
+	Update, exit code should be 2.
+
+	* tdiff.c (reportMissingXattr, reportMissingAcl)
+	(reportMissingFile, reportMissingHardLink): Return if the value
+	was found different or not (a discrepancy may not need to be
+	reported if a toggle option turn it off).
+
+	* str_list.h: Update str_list_compare prototype.
+
+	* str_list.c (str_list_compare): When missing entries are
+	detected, delegate signaling an error to the reportMissing
+	callback, which must now return an int.
+
 	* Makefile.am (clean-local): Create, erasing the test directories.
 
 	* str_list.c (str_list_compare): Use BUMP_EXIT_CODE

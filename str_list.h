@@ -45,7 +45,7 @@ void str_list_push(str_list_t *l, const char* s);
 void str_list_push_length(str_list_t *l, const char* s, size_t sz);
 int  str_list_compare(const char *p1, const char* p2,
 		      const str_list_t *ct1, const str_list_t *ct2,
-		      void (*reportMissing)(int, const char*, const char*, struct str_list_client_data_s*),
+		      int (*reportMissing)(int, const char*, const char*, struct str_list_client_data_s*),
 		      int (*compareEntries)(const char* p1, const char* p2,
 					    const char* e1, const char* e2,
 					    struct str_list_client_data_s*),

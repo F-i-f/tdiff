@@ -97,7 +97,7 @@ str_list_destroy(str_list_t *d)
 int
 str_list_compare(const char *p1, const char* p2,
 		 const str_list_t *ct1, const str_list_t *ct2,
-		 void (*reportMissing)(int, const char*, const char*, struct str_list_client_data_s*),
+		 int (*reportMissing)(int, const char*, const char*, struct str_list_client_data_s*),
 		 int (*compareEntries)(const char* p1, const char* p2,
 				       const char* e1, const char* e2,
 				       struct str_list_client_data_s*),
@@ -105,7 +105,8 @@ str_list_compare(const char *p1, const char* p2,
 {
   size_t	i1, i2;
   int		cmpres;
-  int		rv	     = XIT_OK;
+  int		rv = XIT_OK;
+  int		nrv;
   /**/
   str_list_sort(ct1);
   str_list_sort(ct2);
@@ -113,21 +114,13 @@ str_list_compare(const char *p1, const char* p2,
   for (i1 = i2 = 0; i1 < ct1->size || i2 < ct2->size; )
     {
       if (i1 == ct1->size)
-	{
-	  reportMissing(2, p2, ct2->strings[i2], clientData);
-	  i2++;
-	}
+	goto missing_2;
       else if (i2 == ct2->size)
-	{
-	  reportMissing(1, p1, ct1->strings[i1], clientData);
-	  i1++;
-	}
+	goto missing_1;
       else if (!(cmpres = strcmp(ct1->strings[i1], ct2->strings[i2])))
 	{
 	  if (compareEntries != NULL)
 	    {
-	      int nrv;
-	      /**/
 	      nrv = compareEntries(p1, p2, ct1->strings[i1], ct2->strings[i2], clientData);
 	      BUMP_EXIT_CODE(rv, nrv);
 	    }
@@ -136,12 +129,16 @@ str_list_compare(const char *p1, const char* p2,
 	}
       else if (cmpres<0)
 	{
-	  reportMissing(1, p1, ct1->strings[i1], clientData);
+	missing_1:
+	  nrv = reportMissing(1, p1, ct1->strings[i1], clientData);
+	  BUMP_EXIT_CODE(rv, nrv);
 	  i1++;
 	}
       else /* cmpres>0 */
 	{
-	  reportMissing(2, p2, ct2->strings[i2], clientData);
+	missing_2:
+	  nrv = reportMissing(2, p2, ct2->strings[i2], clientData);
+	  BUMP_EXIT_CODE(rv, nrv);
 	  i2++;
 	}
 

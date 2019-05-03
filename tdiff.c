@@ -277,7 +277,7 @@ getXattrList(const char* path)
   return rv;
 }
 
-static void
+static int
 reportMissingXattr(int which, const char* f, const char* xn, str_list_client_data_t* clientData)
 {
   static const char prefix[] = "xattr ";
@@ -286,7 +286,7 @@ reportMissingXattr(int which, const char* f, const char* xn, str_list_client_dat
 
 #if HAVE_ACL
   if (dropAclXattrs(xn))
-    return;
+    return XIT_OK;
 #endif
 
   buf_len = sizeof(prefix)-1+strlen(xn)+1;
@@ -294,6 +294,8 @@ reportMissingXattr(int which, const char* f, const char* xn, str_list_client_dat
   snprintf(buf, buf_len, "%s%s", prefix, xn);
   reportMissing(which, f, buf, clientData);
   free(buf);
+
+  return XIT_DIFF;
 }
 
 void*
@@ -514,7 +516,7 @@ typedef struct aclCompareClientData_s
   const char*			acldescr;
 } aclCompareClientData_t;
 
-void
+int
 reportMissingAcl(int which, const char* f, const char* xn, str_list_client_data_t* commonClientData)
 {
   aclCompareClientData_t*	 clientData = (aclCompareClientData_t*)commonClientData;
@@ -528,6 +530,8 @@ reportMissingAcl(int which, const char* f, const char* xn, str_list_client_data_
   snprintf(buf, buf_len, "%s%s%s", clientData->acldescr, infix, xn);
   reportMissing(which, f, buf, &clientData->cmn);
   free(buf);
+
+  return XIT_DIFF;
 }
 
 int
@@ -706,11 +710,11 @@ getDirList(const char* path)
 }
 #endif
 
-static void
+static int
 reportMissingFile(int which, const char* d, const char *f, str_list_client_data_t* clientData)
 {
   if ( ! clientData->opts->dirs )
-    return;
+    return XIT_OK;
 
   if ( gh_find(clientData->opts->exclusions, f, NULL) )
     ++ clientData->opts->stats.excluded;
@@ -748,6 +752,7 @@ reportMissingFile(int which, const char* d, const char *f, str_list_client_data_
       printf("%s: %s: only present in %.*s\n",
 	     progname, fp, rootlen, d);
     }
+  return XIT_DIFF;
 }
 
 static int
@@ -774,7 +779,7 @@ compareFileEntries(const char* p1, const char* p2,
 /*
  * Hard links comparisons
  */
-static void
+static int
 reportMissingHardLink(int which, const char* d, const char *f, str_list_client_data_t* clientData)
 {
   static const char prefix[] = "hard link to ";
@@ -786,6 +791,8 @@ reportMissingHardLink(int which, const char* d, const char *f, str_list_client_d
   snprintf(buf, buf_len, "%s%s", prefix, f);
   reportMissing(which, d, buf, clientData);
   free(buf);
+
+  return XIT_DIFF;
 }
 
 /*
