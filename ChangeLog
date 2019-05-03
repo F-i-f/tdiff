@@ -1,5 +1,7 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (clean-local): Create, erasing the test directories.
+
 	* str_list.c (str_list_compare): Use BUMP_EXIT_CODE
 	to manipulate exit code.
 

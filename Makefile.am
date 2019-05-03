@@ -284,4 +284,12 @@ EXTRA_DIST = tdiff.spec					\
 
 CLEANFILES = tests/*.tmp.* tests/*.out tests/*~
 
+clean-local:
+	-chflags -R nosimmutable tests/*.dir?
+	-chflags -R nouimmutable tests/*.dir?
+	-chflags -R nosappend    tests/*.dir?
+	-chflags -R nouappend    tests/*.dir?
+	-chmod -R u+rwx tests/*.dir?
+	rm -fr tests/*.dir?
+
 @FI_AUTOMAKE@
