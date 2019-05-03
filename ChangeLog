@@ -1,5 +1,8 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (cmpFiles): Don't say open & close twice on open/close
+	error messages.
+
 	* m4/fi_format_man.m4 (FI_FORMAT_MAN): Add rules to optionally
 	install/uninstall HTML and PDF documentation.
 

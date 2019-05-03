@@ -880,7 +880,7 @@ cmpFiles(const char* f1, const struct stat sbuf1,
 #endif /* HAVE_O_NOATIME */
 		  ))<0)
     {
-      xperror("cannot open file, open()", f1);
+      xperror("cannot open file", f1);
       return 0;
     }
   if ((fd2 = open(f2, O_RDONLY
@@ -889,7 +889,7 @@ cmpFiles(const char* f1, const struct stat sbuf1,
 #endif /* HAVE_O_NOATIME */
 		  ))<0)
     {
-      xperror("cannot open file, open()", f2);
+      xperror("cannot open file", f2);
       goto fail1;
     }
 
@@ -937,12 +937,12 @@ cmpFiles(const char* f1, const struct stat sbuf1,
 
   if (close(fd2)<0)
     {
-      xperror("cannot close file, close()", f2);
+      xperror("cannot close file", f2);
       goto fail1;
     }
   if (close(fd1)<0)
     {
-      xperror("cannot close file, close()", f1);
+      xperror("cannot close file", f1);
       return 0;
     }
 
