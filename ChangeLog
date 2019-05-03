@@ -1,5 +1,13 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tests/error-directory.out.gold: Update.
+
+	* tests/error-directory.test (setup): Create another case where
+	both directories are unreadble.
+
+	* tdiff.c (dodiff): Print a message about directories being
+	skipped when unreadable.
+
 	* tests/error-file.out.gold:
 	* tests/error-file.test:
 	Create.

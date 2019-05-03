@@ -1,9 +1,14 @@
 tdiff: dir1: mode: 0000 0700
 tdiff: tests/error-directory.dir1/dir1: cannot get directory listing, readdir(): error
-tdiff: dir2: mode: 0700 0000
+tdiff: dir1: pruning tree as one directory is unreadable
+tdiff: tests/error-directory.dir1/dir2: cannot get directory listing, readdir(): error
 tdiff: tests/error-directory.dir2/dir2: cannot get directory listing, readdir(): error
-tdiff:            5          inode pairs compared
-tdiff:            1 (20.00%) file pair contents compared
+tdiff: dir2: pruning tree as both subdirectories are unreadable
+tdiff: dir3: mode: 0700 0000
+tdiff: tests/error-directory.dir2/dir3: cannot get directory listing, readdir(): error
+tdiff: dir3: pruning tree as one directory is unreadable
+tdiff:            6          inode pairs compared
+tdiff:            1 (16.67%) file pair contents compared
 tdiff:            0 ( 0.00%) inode pairs skipped as identical
 tdiff:            0 ( 0.00%) inode pairs skipped as already seen
 tdiff:            0          unmatched paths

@@ -2074,7 +2074,12 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 				     &clientData);
 	    }
 	  else
-	    nrv = XIT_SYS;
+	    {
+	      printf("%s: %s: pruning tree as %s unreadable\n",
+		     progname, subpath,
+		     (!ct1 && !ct2) ? "both subdirectories are" : "one directory is");
+	      nrv = XIT_SYS;
+	    }
 
 	  BUMP_EXIT_CODE(rv, nrv);
 
