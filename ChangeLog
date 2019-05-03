@@ -1,5 +1,7 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.spec (files): Use %{_docdir}/%{name}, not just %{_docdir}.
+
 	* tests/preset.lib.sh (preset_size_filter): Filter out node1's
 	size on Solaris.
 
