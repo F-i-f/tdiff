@@ -1,0 +1,34 @@
+#!/bin/sh
+
+set -eu
+
+if [ "$(id -u)" -eq 0 ]
+then
+  exit 77
+fi
+
+setup() {
+  echo file1 > "$1"/file1
+  echo file2 > "$1"/file2
+  echo file3 > "$1"/file3
+  echo file4 > "$1"/file4
+  chmod 700 "$1"/file[123]
+
+  echo File1 > "$2"/file1
+  echo File2 > "$2"/file2
+  echo File3 > "$2"/file3
+  echo File4 > "$2"/file4
+  chmod 700 "$1"/file[14]
+  chmod 000 "$1"/file[23]
+}
+
+readdir_filter() {
+  sed -e 's!listing, getdents():!listing, readdir():!' \
+      -e 's!listing, readdir(): ..* (errno=[0-9][0-9]*)$!listing, readdir(): error!'
+}
+filter=readdir_filter
+
+tdiff_options=""
+tdiff_long_options=""
+
+. "$srcdir"/tests/test.lib.sh

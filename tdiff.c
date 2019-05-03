@@ -856,27 +856,28 @@ reportTimeDiscrepancy(const char* f, const char* whattime,
 }
 
 
-int
+static int
 cmpFiles(const char* f1, const struct stat sbuf1,
 	 const char* f2, const struct stat sbuf2)
 {
-  int fd1, fd2;
-  int result = 1;
-  char buf1[CMPFILE_BUF_SIZE];
-  char buf2[CMPFILE_BUF_SIZE];
-  ssize_t toread;
+  int		fd1, fd2;
+  char		buf1[CMPFILE_BUF_SIZE];
+  char		buf2[CMPFILE_BUF_SIZE];
+  ssize_t	toread;
+  int		rv = XIT_OK;
   /**/
 
   if (sbuf1.st_size != sbuf2.st_size)
     {
       fprintf(stderr, "%s: cmpFiles called on files of different sizes\n",
 	      progname);
-      exit(XIT_INTERNALERROR);
+      BUMP_EXIT_CODE(rv, XIT_INTERNALERROR);
+      goto fail2;
     }
 
   if (sbuf1.st_size == 0)
     {
-      return 1;
+      return rv;
     }
 
   if ((fd1 = open(f1, O_RDONLY
@@ -886,7 +887,8 @@ cmpFiles(const char* f1, const struct stat sbuf1,
 		  ))<0)
     {
       xperror("cannot open file", f1);
-      return 0;
+      BUMP_EXIT_CODE(rv, XIT_SYS);
+      goto fail2;
     }
   if ((fd2 = open(f2, O_RDONLY
 #if HAVE_O_NOATIME
@@ -895,6 +897,7 @@ cmpFiles(const char* f1, const struct stat sbuf1,
 		  ))<0)
     {
       xperror("cannot open file", f2);
+      BUMP_EXIT_CODE(rv, XIT_SYS);
       goto fail1;
     }
 
@@ -908,33 +911,38 @@ cmpFiles(const char* f1, const struct stat sbuf1,
       if (nread1 < 0)
 	{
 	  xperror("read()", f1);
+	  BUMP_EXIT_CODE(rv, XIT_SYS);
 	  goto fail;
 	}
       if (nread1 < CMPFILE_BUF_SIZE && nread1 != toread)
 	{
 	  fprintf(stderr, "%s: %s: short read\n", progname, f1);
+	  BUMP_EXIT_CODE(rv, XIT_SYS);
 	  goto fail;
 	}
       nread2 = read(fd2, buf2, CMPFILE_BUF_SIZE);
       if (nread2 < 0)
 	{
 	  xperror("read()", f2);
+	  BUMP_EXIT_CODE(rv, XIT_SYS);
 	  goto fail;
 	}
       if (nread2 < CMPFILE_BUF_SIZE && nread2 != toread)
 	{
 	  fprintf(stderr, "%s: %s: short read\n", progname, f2);
+	  BUMP_EXIT_CODE(rv, XIT_SYS);
 	  goto fail;
 	}
       if (nread1 != nread2)
 	{
 	  fprintf(stderr, "%s: %s, %s: read different number of bytes (%d vs. %d)\n",
 		  progname, f1, f2, (int)nread1, (int)nread2);
+	  BUMP_EXIT_CODE(rv, XIT_SYS);
 	  goto fail;
 	}
       if (memcmp(buf1, buf2, nread1)!=0)
 	{
-	  result = 0;
+	  BUMP_EXIT_CODE(rv, XIT_DIFF);
 	  break;
 	}
       toread -= nread1;
@@ -943,21 +951,24 @@ cmpFiles(const char* f1, const struct stat sbuf1,
   if (close(fd2)<0)
     {
       xperror("cannot close file", f2);
+      BUMP_EXIT_CODE(rv, XIT_SYS);
       goto fail1;
     }
   if (close(fd1)<0)
     {
       xperror("cannot close file", f1);
-      return 0;
+      BUMP_EXIT_CODE(rv, XIT_SYS);
+      goto fail2;
     }
 
-  return result;
+  return rv;
 
  fail:
   close(fd2);
  fail1:
   close(fd1);
-  return 0;
+ fail2:
+  return rv;
 }
 
 /*
@@ -2082,11 +2093,23 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		    if (!execprocess(&opts->exec_args, p1, p2))
 		      BUMP_EXIT_CODE(rv, XIT_DIFF);
 		  }
-		else if (!cmpFiles(p1, sbuf1, p2, sbuf2))
+		else
 		  {
-		    printf("%s: %s: contents differ\n",
-			   progname, subpath);
-		    BUMP_EXIT_CODE(rv, XIT_DIFF);
+		    int nrv = cmpFiles(p1, sbuf1, p2, sbuf2);
+		    BUMP_EXIT_CODE(rv, nrv);
+		    switch(nrv)
+		      {
+		      case XIT_OK:
+			break;
+		      case XIT_DIFF:
+			printf("%s: %s: contents differ\n",
+			       progname, subpath);
+			break;
+		      default:
+			printf("%s: %s: contents comparison skipped\n",
+			       progname, subpath);
+			break;
+		      }
 		  }
 	      }
 	    else

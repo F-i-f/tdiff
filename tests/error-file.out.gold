@@ -1,0 +1,17 @@
+tdiff: file1: mode: 0700 0664
+tdiff: file1: contents differ
+tdiff: file2: mode: 0000 0664
+tdiff: tests/error-file.dir1/file2: cannot open file: Permission denied (errno=13)
+tdiff: file2: contents comparison skipped
+tdiff: file3: mode: 0000 0664
+tdiff: tests/error-file.dir1/file3: cannot open file: Permission denied (errno=13)
+tdiff: file3: contents comparison skipped
+tdiff: file4: mode: 0700 0664
+tdiff: file4: contents differ
+tdiff:            5          inode pairs compared
+tdiff:            4 (80.00%) file pair contents compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            0          unmatched paths
+tdiff:            0          excluded paths
+tdiff exit code=3

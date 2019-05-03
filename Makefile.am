@@ -89,6 +89,7 @@ TESTS = tests/ent_pair_cache.test		\
 	tests/ctime.test			\
 	tests/directories.test			\
 	tests/error-directory.test		\
+	tests/error-file.test			\
 	tests/exclude.test			\
 	tests/flag-archived.test		\
 	tests/flag-hidden.test			\
@@ -197,6 +198,7 @@ EXTRA_DIST = tdiff.spec					\
 	     tests/contents-exec.out.gold		\
 	     tests/ctime.out.gold			\
 	     tests/error-directory.out.gold		\
+	     tests/error-file.out.gold			\
 	     tests/exclude.out.gold			\
 	     tests/directories.out.gold			\
 	     tests/flag-archived.out.gold		\

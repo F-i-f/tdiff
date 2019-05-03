@@ -1,5 +1,18 @@
 2019-05-02  Philippe Troin  <phil@fifi.org>
 
+	* tests/error-file.out.gold:
+	* tests/error-file.test:
+	Create.
+
+	* Makefile.am (TESTS): Add tests/error-file.test.
+	(EXTRA_DIST): Add tests/error-file.out.gold.
+
+	* tdiff.c (cmpFiles): Use exit codes to communicate back to caller
+	if no differences were found, there was a difference or there was
+	an error.
+	(dodiff): When calling cmpFile, interpret result.  Print "contents
+	comparison skipped" upon error instead of just "contents differ".
+
 	* Makefile.am (EXTRA_DIST, TESTS): tests/error.*->
 	tests/error-directory.*.
 
