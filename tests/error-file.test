@@ -12,14 +12,14 @@ setup() {
   echo file2 > "$1"/file2
   echo file3 > "$1"/file3
   echo file4 > "$1"/file4
-  chmod 700 "$1"/file[123]
+  chmod 700 "$1"/file[1234]
 
   echo File1 > "$2"/file1
   echo File2 > "$2"/file2
   echo File3 > "$2"/file3
   echo File4 > "$2"/file4
-  chmod 700 "$1"/file[14]
-  chmod 000 "$1"/file[23]
+  chmod 700 "$2"/file[14]
+  chmod 000 "$2"/file[23]
 }
 
 readdir_filter() {

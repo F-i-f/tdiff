@@ -1,5 +1,9 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* tests/error-file.out.gold: Update.
+
+	* tests/error-file.test (setup): Set permissions on all files.
+
 	* tests/preset-flags-alltimes.out.gold: Update to reorder
 	time-related option lists that were changed a bit back but not
 	updated for the -flags- gold output.
