@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  : # Nothing
+}
+
+tdiff_options="-w"
+tdiff_options2="-x a bc -h"
+tdiff_long_options="--exec dk sd --help"
+tdiff_long_options2="--exec-always dk sd --help"
+
+. "$srcdir"/tests/test.lib.sh

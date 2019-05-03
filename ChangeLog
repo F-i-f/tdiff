@@ -1,5 +1,18 @@
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (TESTS): Add tests/parsing-*.test.
+	(EXTRA_DIST): Add tests/parsing-*.out.gold.
+
+	* tests/parsing-duplicate-exec.out.gold:
+	* tests/parsing-duplicate-exec.test:
+	* tests/parsing-missing-placeholders.out.gold:
+	* tests/parsing-missing-placeholders.test:
+	* tests/parsing-missing-semicolon.out.gold:
+	* tests/parsing-missing-semicolon.test:
+	* tests/parsing-wrong-preset.out.gold:
+	* tests/parsing-wrong-preset.test:
+	Create.
+
 	* tests/toggle-*.out.gold: Update.
 
 	* tests/*.{test,out.gold}: Rename toggle tests and results to

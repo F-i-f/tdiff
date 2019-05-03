@@ -1,0 +1,19 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  : # Nothing
+}
+
+tdiff_options="-p n"
+tdiff_options2="-p no"
+tdiff_long_options="--preset nosuchpreset"
+tdiff_long_options2="--preset a"
+
+wrong_preset_filter() {
+  sed -e 's!^\(tdiff: unknown preset \)"[^"]*"$!\1"XXX"!'
+}
+filter=wrong_preset_filter
+
+. "$srcdir"/tests/test.lib.sh

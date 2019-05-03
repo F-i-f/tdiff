@@ -1,0 +1,8 @@
+tdiff: -w/-W/-x specified twice, only the last command line will run
+tdiff:            2          inode pairs compared
+tdiff:            1 (50.00%) file pair contents compared
+tdiff:            0 ( 0.00%) inode pairs skipped as identical
+tdiff:            0 ( 0.00%) inode pairs skipped as already seen
+tdiff:            0          unmatched paths
+tdiff:            0          excluded paths
+tdiff exit code=0

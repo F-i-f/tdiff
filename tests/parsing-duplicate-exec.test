@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  echo foo > "$1"/file1
+  echo foo > "$2"/file1
+}
+
+duplicate_exec_filter() {
+  sed -e 's! \(-w/-W\|-x\) \(specified twice, \)! -w/-W/-x \2!'
+}
+filter=duplicate_exec_filter
+
+tdiff_options="-w true ; -w true ;"
+tdiff_options2="-x true ; -x true ;"
+tdiff_options3="-W -w true ;"
+tdiff_long_options="--exec true ; --exec true ;"
+tdiff_long_options2="--exec-always true ; --exec-always-diff"
+
+. "$srcdir"/tests/test.lib.sh

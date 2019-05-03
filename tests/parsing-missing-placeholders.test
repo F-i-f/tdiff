@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  echo foo > "$1"/file1
+  echo foo > "$2"/file1
+}
+
+tdiff_options="-w true ;"
+tdiff_options2="-x true ;"
+tdiff_long_options="--exec true ;"
+tdiff_long_options2="--exec-always true ;"
+
+. "$srcdir"/tests/test.lib.sh
