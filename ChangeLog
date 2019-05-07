@@ -1,5 +1,7 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* .gitignore: Add make_door, have_subsecond_times.
+
 	* tdiff.1: Elaborate on opening files with O_NOATIME.
 
 	* tests/toggle-flag-archived.test (flag): Strip the toggle-

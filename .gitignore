@@ -27,8 +27,10 @@ stamp-h1
 /tests/*.log
 /tests/*.trs
 
-/genhash_test
 /ent_pair_cache_test
+/genhash_test
+/have_subsecond_times
+/make_door
 /make_sock
 /tdiff
 /tdiff-*.tar.*
