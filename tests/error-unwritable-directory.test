@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -eu
+
+if [ "$(id -u)" -eq 0 ]
+then
+  exit 77
+fi
+
+setup() {
+  TDIFF_ARG1=/
+}
+
+tdiff_options="-0"
+tdiff_long_options="--preset none"
+
+. "$srcdir"/tests/test.lib.sh

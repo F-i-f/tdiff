@@ -1,5 +1,13 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tests/error-unwritable-directory.test:
+	* tests/error-unwritable-directory.out.gold:
+	* tests/error-unwritable-file.test:
+	* tests/error-unwritable-file.out.gold:
+	Create.
+
+	* Makefile.am (EXTRA_DIST, TESTS): Add tests/error-unwritable.
+
 	* tests/test.lib.sh (run_test): Print the tdiff command line.
 	(run_test): Allow overriding the tdiff arguments by defining
 	TDIFF_ARG1 and TDIFF_ARG2.
