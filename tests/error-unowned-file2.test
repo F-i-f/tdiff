@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -eu
+
+if [ "$(id -u)" -eq 0 ]
+then
+  exit 77
+fi
+
+setup() {
+  for f in /etc/passwd /etc/nsswitch.conf /etc/resolv.conf
+  do
+    if [ -r $f ]
+    then
+      TDIFF_ARG1="$1/$(basename "$f")"
+      TDIFF_ARG2="$f"
+      cp -p "$TDIFF_ARG2" "$TDIFF_ARG1"
+      break
+    fi
+  done
+  if [ "x${TDIFF_ARG1-}" = x ]
+  then
+    exit 99
+  fi
+}
+
+tdiff_options="-0c"
+tdiff_long_options="--preset none --contents"
+
+. "$srcdir"/tests/test.lib.sh
