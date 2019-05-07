@@ -9,7 +9,8 @@ setup() {
 
 duplicate_exec_filter() {
   sed -e 's! -w/-W \(specified twice, \)! -w/-W/-x \1!' \
-      -e 's! -x \(specified twice, \)! -w/-W/-x \1!'
+      -e 's! -x \(specified twice, \)! -w/-W/-x \1!' \
+      -e '/^No differences encountered$/d'
 }
 filter=duplicate_exec_filter
 

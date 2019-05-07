@@ -1,5 +1,8 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tests/parsing-duplicate-exec.test (duplicate_exec_filter):
+	Filter out the SVr4 diff "No differences encounted".
+
 	* tests/test.lib.sh (sleep_if_coarse_time): Call
 	have_subsecond_times to find out if the build directory actually
 	has subsecond times.
