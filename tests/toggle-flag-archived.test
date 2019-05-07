@@ -7,7 +7,7 @@ then
   exit 77
 fi
 
-flag="$(echo "$(basename "$0" .test)" | sed -e 's!^flag-!!')"
+flag="$(echo "$(basename "$0" .test)" | sed -e 's!^toggle-flag-!!')"
 case "$flag" in
   no*) noflag="$(echo "$flag" | sed -e 's!^no!!')";;
   *)   noflag="no$flag";;

@@ -1,5 +1,8 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tests/toggle-flag-archived.test (flag): Strip the toggle-
+	file-name prefix.
+
 	* tests/parsing-duplicate-exec.test (duplicate_exec_filter):
 	Filter out the SVr4 diff "No differences encounted".
 
