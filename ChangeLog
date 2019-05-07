@@ -1,5 +1,9 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib.sh (run_test): Print the tdiff command line.
+	(run_test): Allow overriding the tdiff arguments by defining
+	TDIFF_ARG1 and TDIFF_ARG2.
+
 	* tdiff.c (getDirList, cmpFiles): When an open/opendir fails with
 	EPERM and O_NOATIME was in the flags, retry without it.  O_NOATIME
 	is only allowed for root and file owner.

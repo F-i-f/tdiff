@@ -63,9 +63,11 @@ run_test()
   "${reset:-:}" "$dir1" "$dir2"
 
   echo 1>&2 "$progname: tdiff $what..."
+  echo 1>&2 "$progname:    ${TDIFF:-./tdiff} -vv $* ${TDIFF_ARG1:-$dir1} ${TDIFF_ARG2:-$dir2}"
   (
     exitcode=0
-    ${TDIFF:-./tdiff} -vv "$@" "$dir1" "$dir2" || exitcode=$?
+    ${TDIFF:-./tdiff} -vv "$@" "${TDIFF_ARG1:-$dir1}" "${TDIFF_ARG2:-$dir2}" \
+      || exitcode=$?
     echo "tdiff exit code=$exitcode"
   ) > "$out" 2>&1
   echo 1>&2 "$progname: tdiff output:"
