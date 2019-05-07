@@ -626,6 +626,18 @@ getDirList(const char* path)
 		 |O_NOATIME
 #endif /* HAVE_O_NOATIME */
 	    );
+
+#if HAVE_O_NOATIME
+  /* open(O_NOATIME) can fail with EPERM when not running as root and
+   * the file is not ours */
+  if (fd < 0 && errno == EPERM)
+    fd = open(path, O_RDONLY
+#if HAVE_O_DIRECTORY
+	      |O_DIRECTORY
+#endif /* HAVE_O_DIRECTORY */
+		 );
+#endif /* HAVE_O_NOATIME */
+
   if (fd<0)
     goto err;
 
@@ -682,6 +694,18 @@ getDirList(const char* path)
 	       |O_NOATIME
 #endif /* HAVE_O_NOATIME */
 	       );
+
+#if HAVE_O_NOATIME
+  /* open(O_NOATIME) can fail with EPERM when not running as root and
+   * the file is not ours */
+  if ( dirfd < 0 && errno == EPERM)
+    dirfd = open(path, O_RDONLY
+#if HAVE_O_DIRECTORY
+		 |O_DIRECTORY
+#endif /* HAVE_O_DIRECTORY */
+		 );
+#endif /* HAVE_O_NOATIME */
+
   if ( dirfd < 0 )
     goto err;
 
@@ -901,21 +925,40 @@ cmpFiles(const char* f1, const struct stat sbuf1,
       return rv;
     }
 
-  if ((fd1 = open(f1, O_RDONLY
+  fd1 = open(f1, O_RDONLY
 #if HAVE_O_NOATIME
-		     |O_NOATIME
+	     |O_NOATIME
 #endif /* HAVE_O_NOATIME */
-		  ))<0)
+	     );
+
+#if HAVE_O_NOATIME
+  /* open(O_NOATIME) can fail with EPERM when not running as root and
+   * the file is not ours */
+  if ( fd1 < 0 && errno == EPERM)
+    fd1 = open(f1, O_RDONLY);
+#endif /* HAVE_O_NOATIME */
+
+  if (fd1 < 0)
     {
       xperror("cannot open file", f1);
       BUMP_EXIT_CODE(rv, XIT_SYS);
       goto fail2;
     }
-  if ((fd2 = open(f2, O_RDONLY
+
+  fd2 = open(f2, O_RDONLY
 #if HAVE_O_NOATIME
-		     |O_NOATIME
+	     |O_NOATIME
 #endif /* HAVE_O_NOATIME */
-		  ))<0)
+	     );
+
+#if HAVE_O_NOATIME
+  /* open(O_NOATIME) can fail with EPERM when not running as root and
+   * the file is not ours */
+  if ( fd2 < 0 && errno == EPERM)
+    fd2 = open(f2, O_RDONLY);
+#endif /* HAVE_O_NOATIME */
+
+  if (fd2 < 0)
     {
       xperror("cannot open file", f2);
       BUMP_EXIT_CODE(rv, XIT_SYS);

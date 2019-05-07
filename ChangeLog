@@ -1,5 +1,9 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (getDirList, cmpFiles): When an open/opendir fails with
+	EPERM and O_NOATIME was in the flags, retry without it.  O_NOATIME
+	is only allowed for root and file owner.
+
 	* tests/error-*: Rename to tests/error-unreadable-*.
 
 	* Makefile.am (EXTRA_DIST, TESTS): Rename tests/error-* to
