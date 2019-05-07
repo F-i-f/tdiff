@@ -1,5 +1,7 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.spec (BuildRequires): Add fakeroot.
+
 	* tests/error-unowned-file2-*: Create.
 
 	* Makefile.am (EXTRA_DIST, TESTS): Add tests/error-unowned-file2-*.

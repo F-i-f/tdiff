@@ -6,6 +6,7 @@ Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 License:	GPLv3
 URL:		https://github.com/F-i-f/tdiff
 Source0:	%{name}-%{version}.tar.gz
+BuildRequires:	fakeroot
 
 %description
 Compare file system trees, showing any differences in their:
