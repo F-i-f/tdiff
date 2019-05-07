@@ -1,3 +1,10 @@
+2019-05-07  Philippe Troin  <phil@fifi.org>
+
+	* tests/error-*: Rename to tests/error-unreadable-*.
+
+	* Makefile.am (EXTRA_DIST, TESTS): Rename tests/error-* to
+	tests/error-unreadable-*.
+
 2019-05-03  Philippe Troin  <phil@fifi.org>
 
 	* tests/parsing-duplicate-exec.test (duplicate_exec_filter):

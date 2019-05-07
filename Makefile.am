@@ -79,8 +79,8 @@ AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      ;
 TEST_EXTENSIONS	     = .test
 TESTS = tests/ent_pair_cache.test			\
-	tests/error-directory.test			\
-	tests/error-file.test				\
+	tests/error-unreadable-directory.test		\
+	tests/error-unreadable-file.test		\
 	tests/genhash.test				\
 	tests/parsing-duplicate-exec.test		\
 	tests/parsing-missing-placeholders.test		\
@@ -194,8 +194,8 @@ EXTRA_DIST = tdiff.spec						\
 	     tests/test.lib.sh					\
 	     tests/type.lib.sh					\
 	     $(TESTS)						\
-	     tests/error-directory.out.gold			\
-	     tests/error-file.out.gold				\
+	     tests/error-unreadable-directory.out.gold		\
+	     tests/error-unreadable-file.out.gold		\
 	     tests/parsing-duplicate-exec.out.gold		\
 	     tests/parsing-missing-placeholders.out.gold	\
 	     tests/parsing-missing-semicolon.out.gold		\
