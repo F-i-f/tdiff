@@ -4,10 +4,18 @@ set -eu
 
 # Utilities
 sleep_if_coarse_time() {
-  if [ "x$HAVE_NANOSECOND_TIME_RESOLUTION" != xyes ]
+  if [ "x$HAVE_NANOSECOND_TIME_RESOLUTION" = xyes ]
   then
-    sleep "$@"
+    xitcode=0
+    ./have_subsecond_times || xitcode=$?
+    case $xitcode in
+      0)   return;;
+      1|2) ;;
+      *)   exit $xitcode;;
+    esac
   fi
+
+  sleep "$@"
 }
 
 sync_if_needed() {

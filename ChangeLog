@@ -1,5 +1,21 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib.sh (sleep_if_coarse_time): Call
+	have_subsecond_times to find out if the build directory actually
+	has subsecond times.
+
+	* Makefile.am (noinst_PROGRAMS): Add have_subsecond_times.
+	(have_subsecond_times_SOURCES): Create.
+
+	* have_subsecond_times.c: Create.
+
+	* Makefile.am (libtdiff_a_SOURCES): Add st_xtime_ns.h.
+
+	* st_xtime_ns.h: Create.
+
+	* tdiff.c: Move the ST_XTIMENSEC macros to their own st_xtime_ns.h
+	header.
+
 	* tdiff.spec (BuildRequires): Add fakeroot.
 
 	* tests/error-unowned-file2-*: Create.

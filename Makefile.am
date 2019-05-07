@@ -26,6 +26,7 @@ libtdiff_a_SOURCES		= ent_key.h		\
 				  genhash.h		\
 				  hard_links_cache.c    \
 				  hard_links_cache.h	\
+				  st_xtime_ns.h		\
 				  str_list.c		\
 				  str_list.h		\
 				  utils.c		\
@@ -40,13 +41,16 @@ noinst_HEADERS			= linux_getdents.c	\
 dist_man1_MANS			= tdiff.1
 
 noinst_PROGRAMS			= ent_pair_cache_test	\
-				  genhash_test
+				  genhash_test \
+				  have_subsecond_times
 
 genhash_test_SOURCES		= genhash_test.c
 genhash_test_LDADD		= libtdiff.a
 
 ent_pair_cache_test_SOURCES	= ent_pair_cache_test.c
 ent_pair_cache_test_LDADD	= libtdiff.a
+
+have_subsecond_times_SOURCES	= have_subsecond_times.c
 
 if HAVE_S_IFSOCK
 noinst_PROGRAMS		       += make_sock

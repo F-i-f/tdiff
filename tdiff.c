@@ -87,16 +87,8 @@
 #include "utils.h"
 #include "ent_pair_cache.h"
 #include "hard_links_cache.h"
+#include "st_xtime_ns.h"
 
-#if HAVE_ST_ATIMESPEC
-# define ST_ATIMENSEC st_atimespec
-# define ST_CTIMENSEC st_ctimespec
-# define ST_MTIMENSEC st_mtimespec
-#elif HAVE_ST_TIMENSEC
-# define ST_ATIMENSEC st_atim
-# define ST_CTIMENSEC st_ctim
-# define ST_MTIMENSEC st_mtim
-#endif
 
 #if __GNUC__
 # define ATTRIBUTE_UNUSED __attribute__((unused))
