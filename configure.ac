@@ -15,7 +15,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([tdiff],[0.8])
+AC_INIT([tdiff],[0.8.1])
 AC_CONFIG_AUX_DIR([config.aux])
 AC_CANONICAL_TARGET()
 FI_PROJECT()

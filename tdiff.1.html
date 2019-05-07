@@ -1,5 +1,5 @@
 <!-- Creator     : groff version 1.22.3 -->
-<!-- CreationDate: Fri May  3 10:45:43 2019 -->
+<!-- CreationDate: Tue May  7 15:34:19 2019 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -552,7 +552,14 @@ Since merely reading a file causes the access time to be
 updated, this option is likely to be of limited use.
 <b>tdiff</b> will not update the file access times when
 comparing files if compiled on an OS with <b>O_NOATIME
-open(2)</b> support. However commands specified with
+open(2)</b> support, whenever possible. One of the Operating
+Systems with <b>O_NOATIME</b> support, Linux, only allows to
+open a file with <b>O_NOATIME</b> if <b>tdiff</b> is ran by
+the file owner or root. All files for which this is the case
+will then be opened with <b>NO_ATIME</b>, but <b>tdiff</b>
+will silently drop the <b>O_NOATIME</b> flag if a
+<i>Permission denied</i> error is encountered. Please also
+note that commands specified with
 <b>&minus;x</b>/<b>&minus;&minus;exec</b>,
 <b>&minus;w</b>/<b>&minus;&minus;exec&minus;always</b> or
 <b>&minus;W</b>/<b>&minus;&minus;exec&minus;always&minus;diff</b>

@@ -162,24 +162,24 @@ along with this program.  If not, see [http://www.gnu.org/licenses/].
 ### From a release
 
 Download the [latest release from
-GitHub](https://github.com/F-i-f/tdiff/releases/download/v0.8/tdiff-0.8.tar.gz)
-or the [secondary mirror](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.tar.gz):
+GitHub](https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz)
+or the [secondary mirror](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz):
 
 * [Primary Site (GitHub)](https://github.com/F-i-f/tdiff/releases/):
 
   * Source:
-	[https://github.com/F-i-f/tdiff/releases/download/v0.8/tdiff-0.8.tar.gz](https://github.com/F-i-f/tdiff/releases/download/v0.8/tdiff-0.8.tar.gz)
+	[https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz](https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz)
 
   * Signature:
-	[https://github.com/F-i-f/tdiff/releases/download/v0.8/tdiff-0.8.tar.gz.asc](https://github.com/F-i-f/tdiff/releases/download/v0.8/tdiff-0.8.tar.gz.asc)
+	[https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz.asc](https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz.asc)
 
 * [Secondary Site](http://ftp.fifi.org/phil/tdiff/):
 
   * Source:
-	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.tar.gz](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.tar.gz)
+	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz)
 
   * Signature:
-	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.tar.gz.asc](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.tar.gz.asc)
+	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz.asc](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz.asc)
 
 
 The source code release are signed with the GPG key ID `0x88D51582`,
@@ -192,7 +192,7 @@ mirror](http://ftp.fifi.org/phil/tdiff/).
 
 When downloading from the GitHub release pages, be careful to download
 the source code from the link named with the full file name
-(_tdiff-0.8.tar.gz_), and **not** from the links marked _Source code
+(_tdiff-0.8.1.tar.gz_), and **not** from the links marked _Source code
 (zip)_ or _Source code (tar.gz)_ as these are repository snapshots
 generated automatically by GitHub and require specialized tools to
 build (see [Building from GitHub](#from-the-github-repository)).
@@ -201,8 +201,8 @@ build (see [Building from GitHub](#from-the-github-repository)).
 After downloading the sources, unpack and build with:
 
 ```shell
-tar xvzf tdiff-0.8.tar.gz
-cd tdiff-0.8
+tar xvzf tdiff-0.8.1.tar.gz
+cd tdiff-0.8.1
 ./configure
 make
 make check
@@ -233,6 +233,23 @@ make install-pdf install-html # Optional
 ```
 
 ## Changelog
+
+### Version 0.8.1
+#### May 7, 2019.
+
+##### Bugs fixed:
+
+- tdiff could fail on Linux with O_NOATIME support when comparing
+  files or reading directories not owned by the invoking user, when
+  not running as root.
+
+##### Other changes:
+
+- Specify better tdiff's behavior with regards to O_NOATIME.
+- Spec file now BuildRequires fakeroot.
+- Enhanced test suite / regressions.
+- Don't abort() on unexpected state, exit cleanly.
+- Fix nanosecond resolution detection in regressions.
 
 ### Version 0.8
 #### May 3, 2019.
@@ -397,5 +414,7 @@ make install-pdf install-html # Optional
  -->
 <!--  LocalWords:  Troin Changelog directory1 directory2 atime nlinks
  -->
-<!--  LocalWords:  nlink vert README xtimespec tdiff's ROFF
+<!--  LocalWords:  nlink vert README xtimespec tdiff's ROFF fakeroot
+ -->
+<!--  LocalWords:  BuildRequires
  -->
