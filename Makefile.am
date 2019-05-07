@@ -80,7 +80,7 @@ AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 TEST_EXTENSIONS	     = .test
 TESTS = tests/ent_pair_cache.test			\
 	tests/error-unowned-directory.test		\
-	tests/error-unowned-file.test			\
+	tests/error-unowned-file1.test			\
 	tests/error-unreadable-directory.test		\
 	tests/error-unreadable-file.test		\
 	tests/genhash.test				\
@@ -197,7 +197,7 @@ EXTRA_DIST = tdiff.spec						\
 	     tests/type.lib.sh					\
 	     $(TESTS)						\
 	     tests/error-unowned-directory.out.gold		\
-	     tests/error-unowned-file.out.gold			\
+	     tests/error-unowned-file1.out.gold			\
 	     tests/error-unreadable-directory.out.gold		\
 	     tests/error-unreadable-file.out.gold		\
 	     tests/parsing-duplicate-exec.out.gold		\

@@ -1,5 +1,10 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tests/error-unowned-file-*: Rename to tests/error-unowned-file1-*.
+
+	* Makefile.am (EXTRA_DIST, TESTS): Rename tests/error-unowned-file-*
+	to tests/errors-unowned-file1-*.
+
 	* tests/error-unwritable-*: Rename to tests/error-unowned-*.
 
 	* Makefile.am (EXTRA_DIST, TESTS): Rename tests/error-unwritable-*
