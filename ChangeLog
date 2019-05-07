@@ -1,5 +1,10 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tests/error-unwritable-*: Rename to tests/error-unowned-*.
+
+	* Makefile.am (EXTRA_DIST, TESTS): Rename tests/error-unwritable-*
+	to tests/errors-unowned-*.
+
 	* tests/error-unwritable-directory.test:
 	* tests/error-unwritable-directory.out.gold:
 	* tests/error-unwritable-file.test:

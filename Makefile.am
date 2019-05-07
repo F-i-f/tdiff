@@ -79,10 +79,10 @@ AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      ;
 TEST_EXTENSIONS	     = .test
 TESTS = tests/ent_pair_cache.test			\
+	tests/error-unowned-directory.test		\
+	tests/error-unowned-file.test			\
 	tests/error-unreadable-directory.test		\
 	tests/error-unreadable-file.test		\
-	tests/error-unwritable-directory.test		\
-	tests/error-unwritable-file.test		\
 	tests/genhash.test				\
 	tests/parsing-duplicate-exec.test		\
 	tests/parsing-missing-placeholders.test		\
@@ -196,10 +196,10 @@ EXTRA_DIST = tdiff.spec						\
 	     tests/test.lib.sh					\
 	     tests/type.lib.sh					\
 	     $(TESTS)						\
+	     tests/error-unowned-directory.out.gold		\
+	     tests/error-unowned-file.out.gold			\
 	     tests/error-unreadable-directory.out.gold		\
 	     tests/error-unreadable-file.out.gold		\
-	     tests/error-unwritable-directory.out.gold		\
-	     tests/error-unwritable-file.out.gold		\
 	     tests/parsing-duplicate-exec.out.gold		\
 	     tests/parsing-missing-placeholders.out.gold	\
 	     tests/parsing-missing-semicolon.out.gold		\
