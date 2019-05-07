@@ -342,8 +342,21 @@ will not update the file access times when comparing files if compiled
 on an OS with
 .B O_NOATIME
 .BR open(2)
-support.  However commands specified with \fB\-x\fR/\fB\-\-exec\fR,
-\fB\-w\fR/\fB\-\-exec\-always\fR or
+support, whenever possible.  One of the Operating Systems with
+.B O_NOATIME
+support, Linux, only allows to open a file with
+.B O_NOATIME
+if
+.B tdiff
+is ran by the file owner or root.  All files for which this is the
+case will then be opened with \fBNO_ATIME\fR, but
+.B tdiff
+will silently drop the
+.B O_NOATIME
+flag if a
+.I Permission denied
+error is encountered.  Please also note that commands specified with
+\fB\-x\fR/\fB\-\-exec\fR, \fB\-w\fR/\fB\-\-exec\-always\fR or
 \fB\-W\fR/\fB\-\-exec\-always\-diff\fR may update the access times of
 the files they read.
 .TP
@@ -841,4 +854,4 @@ along with this program.  If not, see
 \"  LocalWords:  fBf1 fBf2 fBf3 fIamtimes fIam fImissing fImiss fId
 \"  LocalWords:  fBf fRlags fIdefault fI9 fI8 fI7 fI6 notimes fI0 fI1
 \"  LocalWords:  fI2 fI3 fI4 fI5 amtimes alltimes Wi ns fBa fRnd fRr
-\"  LocalWords:  fBL fRs gtkdiff
+\"  LocalWords:  fBL fRs gtkdiff fBNO

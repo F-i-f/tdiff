@@ -1,5 +1,7 @@
 2019-05-07  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Elaborate on opening files with O_NOATIME.
+
 	* tests/toggle-flag-archived.test (flag): Strip the toggle-
 	file-name prefix.
 
