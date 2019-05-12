@@ -75,7 +75,7 @@
 #endif
 
 #if HAVE_GETXATTR
-#include <attr/xattr.h>
+#include <sys/xattr.h>
 #endif
 
 #if HAVE_ACL

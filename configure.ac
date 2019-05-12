@@ -237,7 +237,7 @@ then
 	    [Define to 1 if your system provides nanosecond timestamps (st_atimensec, st_ctimensec, st_mtimensec)])
 fi
 
-FI_CHECK_IDENTIFIER([getxattr], [#include <attr/xattr.h>], [in <attr/xattr.h>])
+FI_CHECK_IDENTIFIER([getxattr], [#include <sys/xattr.h>], [in <sys/xattr.h>])
 
 ### 7) Checking for compiler characteristics
 AC_C_INLINE
