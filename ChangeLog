@@ -1,5 +1,11 @@
 2019-05-12  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c: HAVE_GETXATTR -> HAVE_LGETXATTR.
+
+	* configure.ac: Check for lgetxattr instead of getxattr: We're
+	using lgetxattr anyways, and MacOSX has an incompatible getxattr
+	in <sys/xattr.h>.
+
 	* .gitignore: Add the files created by build-android.
 
 	* build-android: Create.

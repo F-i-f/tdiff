@@ -74,7 +74,7 @@
 #  error Cannot find major() and minor()
 #endif
 
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 #include <sys/xattr.h>
 #endif
 
@@ -232,7 +232,7 @@ reportMissing(int which, const char* f, const char* what, str_list_client_data_t
 /*
  * Xattrs comparisons
  */
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 str_list_t*
 getXattrList(const char* path)
 {
@@ -1155,11 +1155,11 @@ show_version(void)
 #else /* ! def ST_ATIMENSEC */
 	     "time_granularity=s",
 #endif /* ! def ST_ATIMENSEC */
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	     "xattr=yes",
-#else /* ! HAVE_GETXATTR */
+#else /* ! HAVE_LGETXATTR */
 	     "xattr=no",
-#endif /* ! HAVE_GETXATTR */
+#endif /* ! HAVE_LGETXATTR */
 	     NULL);
 
 #if HAVE_ST_FLAGS
@@ -1270,7 +1270,7 @@ show_help(void)
 #if HAVE_ACL
 	 "   -l --acl       diffs file ACLs\n"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "   -q --xattr     diffs file extended attributes\n"
 #endif
 	 "  Each of these options can be negated with an uppercase (short option)\n"
@@ -1283,7 +1283,7 @@ show_help(void)
 #if HAVE_ACL
 	 "L"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "Q"
 #endif
 	 ")\n"
@@ -1294,7 +1294,7 @@ show_help(void)
 #if HAVE_ACL
 	 "L"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "Q"
 #endif
 	 ")\n"
@@ -1305,7 +1305,7 @@ show_help(void)
 #if HAVE_ACL
 	 "L"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "Q"
 #endif
 	 ")\n"
@@ -1322,7 +1322,7 @@ show_help(void)
 #if HAVE_ACL
 	 "l"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "Q"
 #endif
 	 ")\n"
@@ -1333,7 +1333,7 @@ show_help(void)
 #if HAVE_ACL
 	 "l"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "Q"
 #endif
 	 ")\n"
@@ -1345,12 +1345,12 @@ show_help(void)
 #if HAVE_ACL
 	 "l"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "Q"
 #endif
 	 ")\n"
 	 "   -6 -p|--preset 6|notimes    "
-#if HAVE_ST_FLAGS || HAVE_GETXATTR
+#if HAVE_ST_FLAGS || HAVE_LGETXATTR
 	 "Add %-13s (default) (-dtmugneIYZsbcjk"
 # if HAVE_ST_FLAGS
 	 "f"
@@ -1358,11 +1358,11 @@ show_help(void)
 # if HAVE_ACL
 	 "l"
 # endif
-# if HAVE_GETXATTR
+# if HAVE_LGETXATTR
 	 "q"
 # endif
 	 ")"
-#else /* ! HAVE_ST_FLAGS && ! HAVE_GETXATTR */
+#else /* ! HAVE_ST_FLAGS && ! HAVE_LGETXATTR */
 	 "Same as preset 5 or contents."
 #endif
 	 "\n"
@@ -1373,7 +1373,7 @@ show_help(void)
 #if HAVE_ACL
 	 "l"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "q"
 #endif
 	 ")\n"
@@ -1384,7 +1384,7 @@ show_help(void)
 #if HAVE_ACL
 	 "l"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "q"
 #endif
 	 ")\n"
@@ -1395,7 +1395,7 @@ show_help(void)
 #if HAVE_ACL
 	 "l"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	 "q"
 #endif
 	 ")\n"
@@ -1414,13 +1414,13 @@ show_help(void)
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
 #endif
 	 ,progname, progname
-#if HAVE_ST_FLAGS || HAVE_GETXATTR
+#if HAVE_ST_FLAGS || HAVE_LGETXATTR
 	 ,
 	 ""
 # if HAVE_ST_FLAGS
 	 "flags"
 # endif
-# if HAVE_GETXATTR
+# if HAVE_LGETXATTR
 #   if HAVE_ST_FLAGS
 	 ", "
 #   endif
@@ -2044,7 +2044,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
 
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
   if (opts->xattr)
     {
       str_list_t		*xl1 = getXattrList(p1);
@@ -2325,7 +2325,7 @@ main(int argc, char*argv[])
 	{ "acl",               0, 0, 'l' },
 	{ "no-acl",            0, 0, 'L' },
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	{ "xattr",             0, 0, 'q' },
 	{ "no-xattr",          0, 0, 'Q' },
 #endif
@@ -2353,7 +2353,7 @@ main(int argc, char*argv[])
 #if HAVE_ACL
 	      "lL"
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	      "qQ"
 #endif
 	      "0123456789p:a:o:wWxX:"
@@ -2416,7 +2416,7 @@ main(int argc, char*argv[])
 	case 'l': options.acl		  = 1; break;
 	case 'L': options.acl		  = 0; break;
 #endif
-#if HAVE_GETXATTR
+#if HAVE_LGETXATTR
 	case 'q': options.xattr		  = 1; break;
 	case 'Q': options.xattr		  = 0; break;
 #endif
