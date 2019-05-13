@@ -1,5 +1,13 @@
 2019-05-12  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac:
+	Bump release to 0.8.2.
+
+	* README.md:
+	* NEWS:
+	* tdiff.spec:
+	Update changelog, bump release to 0.8.2.
+
 	* tdiff.c: HAVE_GETXATTR -> HAVE_LGETXATTR.
 
 	* configure.ac: Check for lgetxattr instead of getxattr: We're

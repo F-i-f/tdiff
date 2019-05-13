@@ -1,5 +1,16 @@
 -*- outline -*-
 
+* Release 0.8.2
+** May 12, 2019.
+
+** Bugs fixed:
+
+- Fix missing xattr feature on Android.
+
+** Other changes:
+
+- Provide a build script for building all Android targets.
+
 * Release 0.8.1
 ** May 7, 2019.
 
@@ -170,4 +181,4 @@ Now includes support for ACLs, extended attributes, and link count.
 LocalWords:  zsh hardlinks mmap ACLs xattrs MacOSX inode DJB2 NOATIME
 LocalWords:  autoconf getdents64 FreeBSD Solaris tdiff atime uid gid
 LocalWords:  nlinks nlink README xtimespec vert tdiff's html pdf
-LocalWords:  BuildRequires fakeroot
+LocalWords:  BuildRequires fakeroot xattr

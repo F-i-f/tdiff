@@ -162,24 +162,24 @@ along with this program.  If not, see [http://www.gnu.org/licenses/].
 ### From a release
 
 Download the [latest release from
-GitHub](https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz)
-or the [secondary mirror](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz):
+GitHub](https://github.com/F-i-f/tdiff/releases/download/v0.8.2/tdiff-0.8.2.tar.gz)
+or the [secondary mirror](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.2.tar.gz):
 
 * [Primary Site (GitHub)](https://github.com/F-i-f/tdiff/releases/):
 
   * Source:
-	[https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz](https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz)
+	[https://github.com/F-i-f/tdiff/releases/download/v0.8.2/tdiff-0.8.2.tar.gz](https://github.com/F-i-f/tdiff/releases/download/v0.8.2/tdiff-0.8.2.tar.gz)
 
   * Signature:
-	[https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz.asc](https://github.com/F-i-f/tdiff/releases/download/v0.8.1/tdiff-0.8.1.tar.gz.asc)
+	[https://github.com/F-i-f/tdiff/releases/download/v0.8.2/tdiff-0.8.2.tar.gz.asc](https://github.com/F-i-f/tdiff/releases/download/v0.8.2/tdiff-0.8.2.tar.gz.asc)
 
 * [Secondary Site](http://ftp.fifi.org/phil/tdiff/):
 
   * Source:
-	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz)
+	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.2.tar.gz](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.2.tar.gz)
 
   * Signature:
-	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz.asc](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.1.tar.gz.asc)
+	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.2.tar.gz.asc](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.2.tar.gz.asc)
 
 
 The source code release are signed with the GPG key ID `0x88D51582`,
@@ -192,7 +192,7 @@ mirror](http://ftp.fifi.org/phil/tdiff/).
 
 When downloading from the GitHub release pages, be careful to download
 the source code from the link named with the full file name
-(_tdiff-0.8.1.tar.gz_), and **not** from the links marked _Source code
+(_tdiff-0.8.2.tar.gz_), and **not** from the links marked _Source code
 (zip)_ or _Source code (tar.gz)_ as these are repository snapshots
 generated automatically by GitHub and require specialized tools to
 build (see [Building from GitHub](#from-the-github-repository)).
@@ -201,8 +201,8 @@ build (see [Building from GitHub](#from-the-github-repository)).
 After downloading the sources, unpack and build with:
 
 ```shell
-tar xvzf tdiff-0.8.1.tar.gz
-cd tdiff-0.8.1
+tar xvzf tdiff-0.8.2.tar.gz
+cd tdiff-0.8.2
 ./configure
 make
 make check
@@ -233,6 +233,17 @@ make install-pdf install-html # Optional
 ```
 
 ## Changelog
+
+### Version 0.8.2
+#### May 12, 2019.
+
+##### Bugs fixed:
+
+- Fix missing xattr feature on Android.
+
+##### Other changes:
+
+- Provide a build script for building all Android targets.
 
 ### Version 0.8.1
 #### May 7, 2019.
@@ -404,7 +415,7 @@ make install-pdf install-html # Optional
 
 **tdiff** was written by Philippe Troin ([F-i-f on GitHub](https://github.com/F-i-f)).
 
-<!--  LocalWords:  tdiff inode uid gid ACLs UFS MacOSX nbsp eg
+<!--  LocalWords:  tdiff inode uid gid ACLs UFS MacOSX nbsp eg xattr
  -->
 <!--  LocalWords:  MERCHANTABILITY gcc libacl ACL autotools autoconf
  -->
