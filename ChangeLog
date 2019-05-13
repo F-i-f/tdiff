@@ -1,5 +1,9 @@
 2019-05-12  Philippe Troin  <phil@fifi.org>
 
+	* .gitignore: Add the files created by build-android.
+
+	* build-android: Create.
+
 	* tdiff.c: Include in <sys/xattr.h> instead of <attr/xattr.h>.
 
 	* configure.ac (HAVE_XATTR): Look in <sys/xattr.h> instead of

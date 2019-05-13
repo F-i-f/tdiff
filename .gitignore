@@ -34,6 +34,10 @@ stamp-h1
 /make_sock
 /tdiff
 /tdiff-*.tar.*
+/tdiff-armv7
+/tdiff-armv8
+/tdiff-i686
+/tdiff-x86_64
 /tests/*.dir[12]
 /tests/*.out
 /tests/*.tmp.*

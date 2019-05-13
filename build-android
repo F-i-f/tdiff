@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# Use this script to build tdiff for all support Android targets.
+# Requires Android NDK r19 or later (tested with r19c).
+
+progname="${0##*/}"
+
+buildarch="$("$(dirname "$0")"/config.aux/config.guess)"
+case "$buildarch" in
+  x86_64-*linux*) ;;
+  *)
+     echo 1>&2 "$progname: unsupported architecture: $buildarch"
+     exit 1
+     ;;
+esac
+
+build() {
+  local arch="$1" ndkdir="$2" sdk="$3" suffix="$4"
+
+  case "$arch" in
+    armv7a-linux-androideabi) tarch=arm-linux-androideabi;;
+    *)                        tarch="$arch";;
+  esac
+
+  export TOOLCHAIN="$ndkdir/toolchains/llvm/prebuilt/linux-x86_64"
+  export AR="$TOOLCHAIN/bin/$tarch-ar"
+  export AS="$TOOLCHAIN/bin/$tarch-as"
+  export CC="$TOOLCHAIN/bin/$arch$sdk-clang"
+  export CXX="$TOOLCHAIN/bin/$arch$sdk-clang++"
+  export LD="$TOOLCHAIN/bin/$tarch-ld"
+  export RANLIB="$TOOLCHAIN/bin/$tarch-ranlib"
+  export STRIP="$TOOLCHAIN/bin/$tarch-strip"
+  ./configure --host "$arch" --enable-compiler-warnings --prefix="$PWD/build-$arch"
+  make install-strip
+  mv "build-$arch/bin/tdiff" tdiff"$suffix"
+  make distclean
+  rm -fr "build-$arch"
+}
+
+sdk=28
+
+if [[ $# -eq 0 || $# -gt 2 ]]
+then
+  echo 1>&2 "usage: $progname <ndk-base-dir> [<android-sdk>]"
+  echo 1>&2 "       <android-sdk> defaults to $sdk"
+  exit 1
+fi
+
+ndkdir="$1"
+if [[ $# -ge 2 ]]
+then
+  sdk="$2"
+fi
+
+make distclean || :
+for arch in aarch64-linux-android \
+	    armv7a-linux-androideabi \
+	    i686-linux-android \
+	    x86_64-linux-android
+do
+  sarch="${arch%-linux-*}"
+  case "$sarch" in
+    armv7*)         sarch=armv7;;
+    armv8*|aarch64) sarch=armv8;;
+  esac
+  build "$arch" "$ndkdir" "$sdk" "-$sarch"
+done
