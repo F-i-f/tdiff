@@ -5,8 +5,18 @@ git:
 branches:
   only:
     - master
+    - coverity_scan
 
 language: c
+
+env:
+  global:
+    # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+    #   via the "travis encrypt" command using the project repo's public key
+    secure: "rvgid+A6EOVvRnOaf55vL6NUqFGHA3/e5uusCox7wLH5+31es6UANN47Txcg7px/kkFxapqLS6fKktyVPfo7782LVuQGvCi2ogM5/P/PF26xLzYOmTwyu8mj1sgkcbyenQ3U6slz8M44J/X9VN0UzbdffdfWeYeDSYRWZmdV7S4C7gTkk7k+jhgiAAfxFL3vujiV0IuVzaEWY8p+7o87n9oTg7DFAVgsAKDBFsEw5iiWgN7moZGT3m+6LCTwD/v9izas096rD6UhLKnTO9i2d5746vuHRunJDCq+MqqyyOR64XtX3xGYBCSx4v1311ge0pSWIl3H11siL0hZtJY3LTA3w+IUV1FuiXktPW2FkS2NDOGY5Qvzru8afGWkH3DyStAlwH1fWuzfoj5wIk7OaRA8gmKcyrDNGtHPpEgbV7w/xkFhy/FBBKKRFH0PTcvc5Il5loD08slx3P0n37Jggtc9Sx/OahuqlQEXhDI8TAE6Cy6EYrBK2oU+AX3gV6XuCgGandcfoWTM0Z9ayKk6RVUQUK5E1UXSpTMK1BF+gX64CgLjZK5CTnmUorbn9y5m6NYusAZ4dsIMohwnyENfH7hBzdFqu2d+8+Lz0hbqURSflV+FFB7SDpecP/oBpcCE+7iCuvdTMPKVjBLj/4fzM8gaGO7Maia3ms25AtTuwME="
+
+before_install:
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
 addons:
   apt:
@@ -17,8 +27,20 @@ addons:
     packages:
       - fakeroot
       - groff
+  coverity_scan:
+    project:
+      name: "F-i-f/tdiff"
+      description: "Tree diff - diff, with mode, owner, permissions and other inode attributes"
+    notification_email: phil+github@fifi.org
+    build_command_prepend: "autoreconf -i && ./configure"
+    build_command: "make"
+    branch_pattern: coverity_scan
+
+before_install:
+  - test $TRAVIS_BRANCH != coverity_scan -o ${TRAVIS_JOB_NUMBER##*.} = 1 || exit 0
 
 script:
+  - test $TRAVIS_BRANCH != coverity_scan || exit 0
   - autoreconf -i
   - ./configure --enable-compiler-warnings
   - make check
