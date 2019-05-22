@@ -283,6 +283,6 @@ gh_stats(const genhash_t *gh, const char* name)
 	  name, gh,
 	  primelist[gh->primidx], gh->entries,
 	  obucks, ((double)obucks)/gh->entries*100,
-	  ((double)gh->entries)/obucks,
+	  obucks != 0.0 ? ((double)gh->entries)/obucks : 0.0,
 	  maxbucklen);
 }

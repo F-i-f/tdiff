@@ -654,14 +654,20 @@ getDirList(const char* path)
 	}
     }
 
-  if (nread<0 || close(fd)<0)
-    {
-      str_list_destroy(rv);
-      rv = NULL;
-      goto err;
-    }
+  if (nread<0)
+    goto err3;
+
+  if (close(fd)<0)
+    goto err2;
 
   return rv;
+
+ err3:
+  close(fd);
+
+ err2:
+  str_list_destroy(rv);
+  rv = NULL;
 
  err:
   xperror("cannot get directory listing, getdents()", path);
@@ -894,8 +900,8 @@ reportTimeDiscrepancy(const char* f, const char* whattime,
 
 
 static int
-cmpFiles(const char* f1, const struct stat sbuf1,
-	 const char* f2, const struct stat sbuf2)
+cmpFiles(const char* f1, const struct stat *sbuf1,
+	 const char* f2, const struct stat *sbuf2)
 {
   int		fd1, fd2;
   char		buf1[CMPFILE_BUF_SIZE];
@@ -904,7 +910,7 @@ cmpFiles(const char* f1, const struct stat sbuf1,
   int		rv = XIT_OK;
   /**/
 
-  if (sbuf1.st_size != sbuf2.st_size)
+  if (sbuf1->st_size != sbuf2->st_size)
     {
       fprintf(stderr, "%s: cmpFiles called on files of different sizes\n",
 	      progname);
@@ -912,7 +918,7 @@ cmpFiles(const char* f1, const struct stat sbuf1,
       goto fail2;
     }
 
-  if (sbuf1.st_size == 0)
+  if (sbuf1->st_size == 0)
     {
       return rv;
     }
@@ -959,7 +965,7 @@ cmpFiles(const char* f1, const struct stat sbuf1,
 
 	/**/
 
-  for (toread = sbuf1.st_size; toread>0; )
+  for (toread = sbuf1->st_size; toread>0; )
     {
       int nread1, nread2;
       /**/
@@ -1047,11 +1053,11 @@ get_terminal_width(FILE *fd)
   width_string = getenv("WIDTH");
   if (width_string != NULL)
     {
-      unsigned width;
+      unsigned long width;
       char *ptr;
 
-      width = strtoul(width_string, &ptr, 0);
       errno = 0;
+      width = strtoul(width_string, &ptr, 0);
       if (*ptr == '\0' && width > 0 && errno == 0 && width < UINT_MAX )
 	return (unsigned)width;
     }
@@ -2158,7 +2164,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		  }
 		else
 		  {
-		    int nrv = cmpFiles(p1, sbuf1, p2, sbuf2);
+		    int nrv = cmpFiles(p1, &sbuf1, p2, &sbuf2);
 		    BUMP_EXIT_CODE(rv, nrv);
 		    switch(nrv)
 		      {
