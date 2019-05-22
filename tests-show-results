@@ -7,7 +7,7 @@ do
     echo "*** $i"
     cat "$i"
     echo "*** $i dirs"
-    find "${i%.log}.dir"? -print0 | sort -z | xargs -r0 stat -c "%n %s %b %f %u %g %D %i %h %t %T %x %y %z %W %o"
+    find "${i%.log}.dir"? -print0 | sort -z | xargs -0 stat -c "%n %s %b %f %u %g %D %i %h %t %T %x %y %z %W %o"
     echo "*** END $i"
   fi
 done
