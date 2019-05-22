@@ -61,5 +61,6 @@ matrix:
       osx_image: xcode9.2
     - os: osx
       osx_image: xcode10.1
-    - os: osx
-      osx_image: xcode10.2
+# Disable XCode 10.2 / MacOSX 10.14, there's a problem with the "touch" command.
+#    - os: osx
+#      osx_image: xcode10.2
