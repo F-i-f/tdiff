@@ -1,3 +1,13 @@
+2019-05-22  Philippe Troin  <phil@fifi.org>
+
+	* configure.ac:
+	Bump release to 0.8.3.
+
+	* README.md:
+	* NEWS:
+	* tdiff.spec:
+	Update changelog, bump release to 0.8.3.
+
 2019-05-21  Philippe Troin  <phil@fifi.org>
 
 	* tests/test.lib.sh (sleep_if_coarse_time): Force sleeping when

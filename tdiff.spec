@@ -1,5 +1,5 @@
 Name:		tdiff
-Version:	0.8.2
+Version:	0.8.3
 Release:	1%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
@@ -37,6 +37,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
+* Wed May 22 2019 Philippe Troin <phil@fifi.org> - 0.8.3-1
+- Upstream updated to 0.8.3.
+
 * Sun May 12 2019 Philippe Troin <phil@fifi.org> - 0.8.2-1
 - Upstream updated to 0.8.2.
 
