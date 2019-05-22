@@ -3,6 +3,10 @@ tdiff
 Compare files inode attributes
 ==============================
 
+Master: [![Build Status](https://travis-ci.org/F-i-f/tdiff.svg?branch=master)](https://travis-ci.org/F-i-f/tdiff)
+
+Coverity: [![Build Status](https://travis-ci.org/F-i-f/tdiff.svg?branch=coverity_scan)](https://travis-ci.org/F-i-f/tdiff) [![Coverity Scan Build Status](https://scan.coverity.com/projects/18443/badge.svg)](https://scan.coverity.com/projects/f-i-f-tdiff)
+
 ## Features
 
 Compare two file trees, showing any differences in their:
