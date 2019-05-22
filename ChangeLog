@@ -1,5 +1,8 @@
 2019-05-21  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib.sh (sleep_if_coarse_time): Force sleeping when
+	running under Travis.
+
 	* tdiff.c (cmpFiles): Pass pointers to struct stat.
 	(get_terminal_width): Set errno to zero *before* strtoul().
 	Change width to correct type.

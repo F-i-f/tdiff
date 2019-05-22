@@ -4,7 +4,7 @@ set -eu
 
 # Utilities
 sleep_if_coarse_time() {
-  if [ "x$HAVE_NANOSECOND_TIME_RESOLUTION" = xyes ]
+  if [ "x$HAVE_NANOSECOND_TIME_RESOLUTION" = xyes -a "x${TRAVIS_JOB_NUMBER-}" = x ]
   then
     xitcode=0
     ./have_subsecond_times || xitcode=$?
