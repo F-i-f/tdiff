@@ -25,7 +25,7 @@ addons:
       - groff
   homebrew:
     packages:
-      - fakeroot
+      # - fakeroot # Fakeroot is broken on XCode 10.2 and uninstallable on 7.3
       - groff
   coverity_scan:
     project:
