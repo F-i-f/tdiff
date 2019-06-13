@@ -89,6 +89,7 @@ TESTS = tests/ent_pair_cache.test			\
 	tests/error-unreadable-directory.test		\
 	tests/error-unreadable-file.test		\
 	tests/genhash.test				\
+	tests/option-follow-symlinks.test		\
 	tests/parsing-duplicate-exec.test		\
 	tests/parsing-missing-placeholders.test		\
 	tests/parsing-missing-semicolon.test		\
@@ -206,6 +207,7 @@ EXTRA_DIST = tdiff.spec						\
 	     tests/error-unowned-file2.out.gold			\
 	     tests/error-unreadable-directory.out.gold		\
 	     tests/error-unreadable-file.out.gold		\
+	     tests/option-follow-symlinks.out.gold		\
 	     tests/parsing-duplicate-exec.out.gold		\
 	     tests/parsing-missing-placeholders.out.gold	\
 	     tests/parsing-missing-semicolon.out.gold		\

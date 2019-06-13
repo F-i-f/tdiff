@@ -1,5 +1,13 @@
 2019-06-13  Philippe Troin  <phil@fifi.org>
 
+	* Makefile.am (EXTRA_DIST): Add
+	tests/option-follow-symlinks.out.gold.
+	(TESTS): Add tests/option-follow-symlinks.test.
+
+	* tests/option-follow-symlinks.test:
+	* tests/option-follow-symlinks.out.gold:
+	Add.
+
 	* tdiff.c (dodiff): Don't print any reference to "hard" linked
 	files when --follow-symlinks is active as symlinked entries will
 	be skipped by the hard link cache.

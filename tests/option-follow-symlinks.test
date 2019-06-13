@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -eu
+
+setup() {
+  mkdir "$1"/dir1
+  echo "file1" > "$1"/dir1/file1
+  ln -s dir1 "$1"/dir2
+  echo "file2" > "$1"/file2
+  echo "file3" > "$1"/file3
+
+  mkdir "$2"/dir2
+  echo "file1" > "$2"/dir2/file1
+  ln -s dir2 "$2"/dir1
+  echo "file3" > "$2"/file2
+  ln -s file2 "$2"/file3
+}
+
+tdiff_options="-O"
+tdiff_long_options="--follow-symlinks"
+
+. "$srcdir"/tests/test.lib.sh
