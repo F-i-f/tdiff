@@ -1412,7 +1412,7 @@ show_help(void)
 	 "   -w --exec-always <cmd> \\;  always executes <cmd> for every regular file pair\n"
 	 "                              <cmd> uses %%1 and %%2 as placeholders for files\n"
 	 "                              from <dir1> and <dir2>.\n"
-	 "   -W --exec-always-diff \\;   always executes \"diff -u\" for every reg. file pair\n"
+	 "   -W --exec-always-diff      always executes \"diff -u\" for every reg. file pair\n"
 	 "                              equivalent to: -w diff -u %%1 %%2 \\;\n"
 	 "   -x --exec <cmd> \\;         executes <cmd> for every reg. file pair having the\n"
 	 "                              same size to determine if their contents are equal\n"

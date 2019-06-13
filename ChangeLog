@@ -1,5 +1,7 @@
 2019-06-13  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (show_help): Fix wrong synopsis on -W/--exec-always-diff.
+
 	* tdiff.1: Add -O/--follow-symlinks.
 
 	* tdiff.bash (_tdiff): Add -O/--follow-symlinks.
