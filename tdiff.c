@@ -1752,8 +1752,8 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	{
 	  const char* ptr;
 	  ptr = epc_get(opts->inocache, ice);
-	  fprintf(stderr, "%s: %s: already compared hard-linked files at %s\n",
-		 progname, icepath, ptr);
+	  fprintf(stderr, "%s: %s: already compared %slinked files at %s\n",
+		  progname, icepath, opts->follow_symlinks ? "" : "hard-", ptr);
 	}
       free(ice);
       free(icepath);

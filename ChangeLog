@@ -1,5 +1,9 @@
 2019-06-13  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (dodiff): Don't print any reference to "hard" linked
+	files when --follow-symlinks is active as symlinked entries will
+	be skipped by the hard link cache.
+
 	* _tdiff.zsh: Detect --flags/--acl/--xattr in --help correctly.
 
 	* tdiff.c (show_help): Fix wrong synopsis on -W/--exec-always-diff.
