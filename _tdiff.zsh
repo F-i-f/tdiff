@@ -148,7 +148,7 @@ args=('*'{-v,--verbose}'[increase verbosity level]'
 local tdiff_out="$(tdiff --help)"
 local has_flags has_acl has_xattr
 
-if [[ -n ${(M)tdiff_out:+--flags} ]]
+if [[ -n ${(M)tdiff_out:#* --flags *} ]]
 then
   has_flags=yes
   args+=( + '(flags)'
@@ -157,7 +157,7 @@ then
 	)
 fi
 
-if [[ -n ${(M)tdiff_out:+--acl} ]]
+if [[ -n ${(M)tdiff_out:#* --acl *} ]]
 then
   has_acl=yes
   args+=( + '(acl)'
@@ -166,7 +166,7 @@ then
 	)
 fi
 
-if [[ -n ${(M)tdiff_out:+--xattr} ]]
+if [[ -n ${(M)tdiff_out:#* --xattr *} ]]
 then
   has_xattr=yes
   args+=( + '(xattr)'

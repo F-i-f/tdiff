@@ -1,5 +1,7 @@
 2019-06-13  Philippe Troin  <phil@fifi.org>
 
+	* _tdiff.zsh: Detect --flags/--acl/--xattr in --help correctly.
+
 	* tdiff.c (show_help): Fix wrong synopsis on -W/--exec-always-diff.
 
 	* tdiff.1: Add -O/--follow-symlinks.
