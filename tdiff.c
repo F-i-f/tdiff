@@ -142,6 +142,7 @@ typedef struct option_s
   unsigned int		 mode_or;
   unsigned int		 exec:1;
   unsigned int		 exec_always:1;
+  unsigned int           follow_symlinks:1;
   genhash_t*		 exclusions;
   dexe_t		 exec_args;
   dexe_t		 exec_always_args;
@@ -1416,6 +1417,7 @@ show_help(void)
 	 "   -x --exec <cmd> \\;         executes <cmd> for every reg. file pair having the\n"
 	 "                              same size to determine if their contents are equal\n"
 	 "   -X --exclude <file>        omits <file> from report\n"
+	 "   -O --follow-symlinks       always dereference symbolic links\n"
 #if ! HAVE_GETOPT_LONG
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
 #endif
@@ -1543,6 +1545,7 @@ printopts(const options_t* o)
 {
 #define POPT(x) printf(#x " = %s\n", o->x ? "yes" : "no")
   printf("verbosityLevel = %d\n", o->verbosityLevel);
+  POPT(follow_symlinks);
   POPT(dirs);
   POPT(type);
   POPT(mode);
@@ -1673,6 +1676,8 @@ xreadlink(const char* path)
 int
 dodiff(options_t* opts, const char* p1, const char* p2)
 {
+  int                         (*stat_func)(const char*, struct stat*);
+  const char*			stat_func_name;
   struct stat			sbuf1;
   struct stat			sbuf2;
   ent_pair_cache_key_t *	ice;
@@ -1685,14 +1690,27 @@ dodiff(options_t* opts, const char* p1, const char* p2)
   ++ opts->stats.compared;
 
   /* Stat the paths */
-  if (lstat(p1, &sbuf1)<0)
+  if (opts->follow_symlinks)
     {
-      xperror("cannot get inode status, lstat()", p1);
+      stat_func	     = stat;
+      stat_func_name = "stat";
+    }
+  else
+    {
+      stat_func	     = lstat;
+      stat_func_name = "lstat";
+    }
+
+  if (stat_func(p1, &sbuf1)<0)
+    {
+      fprintf(stderr, "%s: %s: cannot get inode status, %s(): %s (errno=%d)\n",
+	      progname, p1, stat_func_name, strerror(errno), errno);
       BUMP_EXIT_CODE(rv, XIT_SYS);
     }
-  if (lstat(p2, &sbuf2)<0)
+  if (stat_func(p2, &sbuf2)<0)
     {
-      xperror("cannot get inode status, lstat()", p2);
+      fprintf(stderr, "%s: %s: cannot get inode status, %s(): %s (errno=%d)\n",
+	      progname, p2, stat_func_name, strerror(errno), errno);
       BUMP_EXIT_CODE(rv, XIT_SYS);
     }
   if (rv != XIT_OK)
@@ -2342,6 +2360,7 @@ main(int argc, char*argv[])
 	{ "exclude",           1, 0, 'X' },
 	{ "exec-always",       0, 0, 'w' },
 	{ "exec-always-diff",  0, 0, 'W' },
+	{ "follow-symlinks",   0, 0, 'O' },
 	{ 0,                   0, 0, 0}
       };
 #endif /* HAVE_GETOPT_LONG */
@@ -2362,7 +2381,7 @@ main(int argc, char*argv[])
 #if HAVE_LGETXATTR
 	      "qQ"
 #endif
-	      "0123456789p:a:o:wWxX:"
+	      "0123456789p:a:o:wWxX:O"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
 #endif
@@ -2529,6 +2548,9 @@ main(int argc, char*argv[])
 	  break;
 	case 'X':
 	  gh_insert(options.exclusions, xstrdup(optarg), NULL);
+	  break;
+	case 'O':
+	  options.follow_symlinks = 1;
 	  break;
 	default:
 	  fprintf(stderr, "%s: unexpected return value from getopt(): \"%c\" (code=%d), aborting...\n",

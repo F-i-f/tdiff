@@ -140,6 +140,9 @@ args=('*'{-v,--verbose}'[increase verbosity level]'
       + '(exec)'
       {-x,--exec}'[execute a command to check if files are similar]:program: _command_names -e:*\;::program arguments: _normal'
 
+      + '(follow-symlinks)'
+      {-O,--follow-symlinks}'[follow symbolic links]'
+
      )
 
 local tdiff_out="$(tdiff --help)"

@@ -1,5 +1,18 @@
 2019-06-13  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Add -O/--follow-symlinks.
+
+	* tdiff.bash (_tdiff): Add -O/--follow-symlinks.
+
+	* _tdiff.zsh (args): Add -O/--follow-symlinks.
+
+	* tdiff.c (struct option_s): Add follow_symlinks.
+	(show_help): Add -O/--follow_symlinks.
+	(printopts): Show follow_symlinks.
+	(dodiff): Pick either stat or lstat to stat the file depending
+	upon follow_symlinks.
+	(main): Handle -O/--follow_symlinks.
+
 	* _tdiff.zsh (args): Make -V/--version and -h/--help not repeatable.
 
 2019-05-22  Philippe Troin  <phil@fifi.org>

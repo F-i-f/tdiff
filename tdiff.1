@@ -14,7 +14,7 @@
 .\"
 .\" You should have received a copy of the GNU General Public License
 .\" along with this program.  If not, see <http://www.gnu.org/licenses/>.
-.TH TDIFF 1 "May 2019" "tdiff 0.8.1" "User Commands"
+.TH TDIFF 1 "June 2019" "tdiff 0.8.4" "User Commands"
 .SH NAME
 tdiff \- tree diff, list differences between various inode attributes (
 .BR stat(2)
@@ -567,6 +567,11 @@ sub-directories or files it contains will be completely ignored.
 .br
 This option may be specified more than once, all the files listed will
 be added to the exclusion list.
+.TP
+\fB\-O\fR, \fB\-\-follow\-symlinks\fR
+Completely ignore symbolic links and always f\fBO\fRllow and dereference them.
+.br
+This is off by default (symbolic links are not followed / dereferenced).
 .SH HARD LINKS
 .B tdiff
 optimizes for hard links in two ways:
@@ -854,4 +859,5 @@ along with this program.  If not, see
 \"  LocalWords:  fBf1 fBf2 fBf3 fIamtimes fIam fImissing fImiss fId
 \"  LocalWords:  fBf fRlags fIdefault fI9 fI8 fI7 fI6 notimes fI0 fI1
 \"  LocalWords:  fI2 fI3 fI4 fI5 amtimes alltimes Wi ns fBa fRnd fRr
-\"  LocalWords:  fBL fRs gtkdiff fBNO
+\"  LocalWords:  fBL fRs gtkdiff fBNO symlinks fBO fRllow dereference
+\"  LocalWords:  dereferenced

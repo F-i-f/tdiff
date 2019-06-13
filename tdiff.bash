@@ -61,7 +61,8 @@ _tdiff()
       -q|--xattr|\
       -Q|--no-xattr|\
       -[0-9]|\
-      -W|--exec-always-diff)
+      -W|--exec-always-diff|\
+      -O|--follow-symlinks)
 	;;
       -p|--preset)
 	COMPREPLY=( $( compgen -W '0 none
@@ -123,6 +124,7 @@ _tdiff()
 				 --exec-always-diff
 				 --exec
 				 --exclude
+				 --follow-symlinks
 				 ' -- "$cur" ) )
 	return
     fi
