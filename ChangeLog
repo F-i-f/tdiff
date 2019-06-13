@@ -1,3 +1,7 @@
+2019-06-13  Philippe Troin  <phil@fifi.org>
+
+	* _tdiff.zsh (args): Make -V/--version and -h/--help not repeatable.
+
 2019-05-22  Philippe Troin  <phil@fifi.org>
 
 	* configure.ac:

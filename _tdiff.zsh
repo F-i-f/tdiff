@@ -20,13 +20,16 @@
 local -a args
 
 args=('*'{-v,--verbose}'[increase verbosity level]'
-      {-V,--version}'[show version information]'
-      {-h,--help}'[show terse help message]'
-
       '*'{-X,--exclude}'[exclude file]:file:_files'
 
       '1:first directory:_files'
       '2:second directory:_files'
+
+      + '(help)'
+      {-h,--help}'[show terse help message]'
+
+      + '(version)'
+      {-V,--version}'[show version information]'
 
       + '(dirs)'
       {-d,--dirs}'[diff directories (reports missing files)]'
