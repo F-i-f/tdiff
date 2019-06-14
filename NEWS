@@ -1,5 +1,16 @@
 -*- outline -*-
 
+* Release 0.8.4
+** June 14, 2019.
+
+** New features:
+
+- A new -O/--follow-symlinks option has been implemented.
+
+** Bugs fixed:
+
+- Minor bug fixes in zsh completion.
+
 * Release 0.8.3
 ** May 22, 2019.
 
@@ -191,4 +202,4 @@ Now includes support for ACLs, extended attributes, and link count.
 LocalWords:  zsh hardlinks mmap ACLs xattrs MacOSX inode DJB2 NOATIME
 LocalWords:  autoconf getdents64 FreeBSD Solaris tdiff atime uid gid
 LocalWords:  nlinks nlink README xtimespec vert tdiff's html pdf
-LocalWords:  BuildRequires fakeroot xattr Coverity
+LocalWords:  BuildRequires fakeroot xattr Coverity symlinks

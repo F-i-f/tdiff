@@ -1,3 +1,17 @@
+2019-06-14  Philippe Troin  <phil@fifi.org>
+
+	* configure.ac:
+	Bump release to 0.8.4.
+
+	* README.md:
+	* NEWS:
+	* tdiff.spec:
+	Update changelog, bump release to 0.8.4.
+
+	* tdiff.1.html:
+	* tdiff.1.pdf:
+	Generate fresh copies with 0.8.4 updates.
+
 2019-06-13  Philippe Troin  <phil@fifi.org>
 
 	* Makefile.am (EXTRA_DIST): Add
