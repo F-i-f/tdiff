@@ -1,12 +1,12 @@
 Name:		tdiff
 Version:	0.8.4
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
 License:	GPLv3
 URL:		https://github.com/F-i-f/tdiff
-Source0:	%{name}-%{version}.tar.gz
-BuildRequires:	fakeroot
+Source:		https://github.com/F-i-f/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.gz
+BuildRequires:	fakeroot, zsh
 
 %description
 Compare file system trees, showing any differences in their:
@@ -37,6 +37,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
+* Sun Aug 25 2019 Philippe Troin <phil@fifi.org> - 0.8.4-2
+- BuildRequires zsh.
+- Use URL in Source.
+
 * Fri Jun 14 2019 Philippe Troin <phil@fifi.org> - 0.8.4-1
 - Upstream updated to 0.8.4.
 
