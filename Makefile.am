@@ -303,7 +303,8 @@ EXTRA_DIST = tdiff.spec						\
 	     tests/toggle-type-root.out.gold			\
 	     tests/toggle-type-sock.out.gold			\
 	     tests/toggle-uid.out.gold				\
-	     tests/toggle-xattr.out.gold
+	     tests/toggle-xattr.out.gold			\
+	     tests-show-results
 
 CLEANFILES = tests/*.tmp.* tests/*.out tests/*~
 

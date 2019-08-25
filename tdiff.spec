@@ -1,12 +1,12 @@
 Name:		tdiff
 Version:	0.8.4
-Release:	2%{?dist}
+Release:	3%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
 License:	GPLv3
 URL:		https://github.com/F-i-f/tdiff
 Source:		https://github.com/F-i-f/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.gz
-BuildRequires:	fakeroot, zsh
+BuildRequires:	fakeroot, zsh, bash, gcc, make, autoconf, automake, libacl-devel
 
 %description
 Compare file system trees, showing any differences in their:
@@ -22,8 +22,13 @@ Compare file system trees, showing any differences in their:
 %setup -q
 
 %build
-%configure --enable-compiler-warnings
-make %{?_smp_mflags} check
+if [ ! -e config.aux/missing ]
+then
+  autoreconf -f
+fi
+%configure --enable-compiler-warnings --docdir="%{_docdir}/%{name}"
+make %{?_smp_mflags}
+make %{?_smp_mflags} check || ( ./tests-show-results ; exit 1 )
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -37,6 +42,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
+* Sun Aug 25 2019 Philippe Troin <phil@fifi.org> - 0.8.4-3
+- Add to BuildRequires.
+- Configure with --docdir for non-RHEL/Fedora distributions.
+- Run test-show-results upon failure.
+
 * Sun Aug 25 2019 Philippe Troin <phil@fifi.org> - 0.8.4-2
 - BuildRequires zsh.
 - Use URL in Source.

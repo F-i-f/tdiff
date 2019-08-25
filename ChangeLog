@@ -1,3 +1,20 @@
+2019-08-25  Philippe Troin  <phil@fifi.org>
+
+	* Makefile.am (EXTRA_DIST): Add test-show-results.
+
+	* tdiff.spec (BuildRequires): Add autoconf, automake, libacl-devel.
+	(%build): Run autoreconf if config.aux/missing is missing (fixes
+	Mageia copr builds).
+	(%build): Pass --docdir to configure.
+	(%build): Run test-show-results on test-suite failure.
+	(%files): Use _docdir again, be consistent SuSE doc location.
+	(Release): Bump to 3.
+
+2019-08-24  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.spec (BuildRequires): Add bash, gcc, make.
+	(%files): Don't use _docdir, it's broken with copr SuSE builds.
+
 2019-08-24  Philippe Troin  <phil@fifi.org>
 
 	* tdiff.spec (BuildRequires): Add zsh.
