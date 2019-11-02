@@ -1,5 +1,13 @@
 -*- outline -*-
 
+* Release 0.8.5
+** November 1, 2019.
+
+** Bugs fixed:
+
+- Minor bug fixes terminal width handling.
+- Improvements in .spec cross-distribution compatibility.
+
 * Release 0.8.4
 ** June 14, 2019.
 

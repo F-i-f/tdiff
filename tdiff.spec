@@ -1,6 +1,6 @@
 Name:		tdiff
-Version:	0.8.4
-Release:	3%{?dist}
+Version:	0.8.5
+Release:	1%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
 License:	GPLv3
@@ -42,6 +42,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
+* Sat Nov  2 2019 Philippe Troin <phil@fifi.org> - 0.8.5-1
+- Upstream release 0.8.5:
+  * Minor bug fixes terminal width handling.
+  * Improvements in .spec cross-distribution compatibility.
+
 * Sun Aug 25 2019 Philippe Troin <phil@fifi.org> - 0.8.4-3
 - Add to BuildRequires.
 - Configure with --docdir for non-RHEL/Fedora distributions.

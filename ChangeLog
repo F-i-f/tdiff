@@ -1,5 +1,12 @@
 2019-11-01  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac: Update to 0.8.5.
+
+	* tdiff.spec:
+	* README.md:
+	* NEWS:
+	Add changelog, update to 0.8.5.
+
 	* tdiff.c (get_terminal_width): Change terminal width environment
 	variable to COLUMNS.
 	(get_terminal_width): Ignore zero terminal width as returned by
