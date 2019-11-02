@@ -1063,7 +1063,7 @@ get_terminal_width(FILE *fd)
 	return (unsigned)width;
     }
 
-  if (ioctl(fileno(fd), TIOCGWINSZ, &ws) != -1)
+  if (ioctl(fileno(fd), TIOCGWINSZ, &ws) != -1 && ws.ws_col > 0)
     return ws.ws_col;
 
   return default_terminal_width;

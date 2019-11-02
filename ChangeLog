@@ -2,6 +2,8 @@
 
 	* tdiff.c (get_terminal_width): Change terminal width environment
 	variable to COLUMNS.
+	(get_terminal_width): Ignore zero terminal width as returned by
+	TIOCGWINSZ.
 
 2019-08-25  Philippe Troin  <phil@fifi.org>
 
