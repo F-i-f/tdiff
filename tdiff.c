@@ -1051,7 +1051,7 @@ get_terminal_width(FILE *fd)
   if (! isatty(fno))
     return default_terminal_width;
 
-  width_string = getenv("WIDTH");
+  width_string = getenv("COLUMNS");
   if (width_string != NULL)
     {
       unsigned long width;
