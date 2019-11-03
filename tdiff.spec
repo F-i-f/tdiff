@@ -1,12 +1,27 @@
 Name:		tdiff
 Version:	0.8.5
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
 License:	GPLv3
 URL:		https://github.com/F-i-f/tdiff
 Source:		https://github.com/F-i-f/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.gz
-BuildRequires:	fakeroot, zsh, bash, gcc, make, autoconf, automake, libacl-devel
+
+BuildRequires:	zsh
+BuildRequires:	bash
+BuildRequires:	gcc
+BuildRequires:	make
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libacl-devel
+%if 0%{?rhel} == 0
+BuildRequires:	fakeroot
+%endif
+
+# Work-around for Mageia mucking with config.aux files
+%if 0%{?mgaversion} > 0
+%define _disable_libtoolize 1
+%endif
 
 %description
 Compare file system trees, showing any differences in their:
@@ -22,10 +37,6 @@ Compare file system trees, showing any differences in their:
 %setup -q
 
 %build
-if [ ! -e config.aux/missing ]
-then
-  autoreconf -f
-fi
 %configure --enable-compiler-warnings --docdir="%{_docdir}/%{name}"
 make %{?_smp_mflags}
 make %{?_smp_mflags} check || ( ./tests-show-results ; exit 1 )
@@ -42,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
+* Sun Nov  3 2019 Philippe Troin <phil@fifi.org> - 0.8.5-2
+- Fix build on RHEL which does not have fakeroot.
+
 * Sat Nov  2 2019 Philippe Troin <phil@fifi.org> - 0.8.5-1
 - Upstream release 0.8.5:
   * Minor bug fixes terminal width handling.

@@ -1,3 +1,7 @@
+2019-11-02  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.spec: Fix RHEL Copr builds.
+
 2019-11-01  Philippe Troin  <phil@fifi.org>
 
 	* configure.ac: Update to 0.8.5.
