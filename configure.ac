@@ -267,10 +267,10 @@ FI_LINK_IFELSE([for fdopendir()], [HAVE_FDOPENDIR],
 				 ]])],
 	       [Define to 1 if your system has fdopendir().])
 
-FI_LINK_IFELSE([for mallinfo()], [HAVE_MALLINFO],
+FI_LINK_IFELSE([for mallinfo2()], [HAVE_MALLINFO2],
 	       [AC_LANG_PROGRAM([[#include <malloc.h>]],
-				[[mallinfo();]])],
-	       [Define to 1 if your system has mallinfo().])
+				[[mallinfo2();]])],
+	       [Define to 1 if your system has mallinfo2().])
 
 if test "x$getdents" != "xnot-found"
 then

@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#if HAVE_MALLINFO
+#if HAVE_MALLINFO2
 #  include <malloc.h>
 #endif
 
@@ -84,9 +84,9 @@ setprogname(const char *argvname)
 void
 pmem(void)
 {
-#if HAVE_MALLINFO
-  struct mallinfo minfo;
-  minfo = mallinfo();
+#if HAVE_MALLINFO2
+  struct mallinfo2 minfo;
+  minfo = mallinfo2();
   fprintf(stderr,
 	  "  brk memory = %7ld bytes (%ld top bytes unreleased)\n"
 	  " mmap memory = %7ld bytes\n"
