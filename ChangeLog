@@ -1,5 +1,7 @@
 2022-05-20  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c: Update copyright notice.
+
 	* NEWS:
 	* README.md:
 	* tdiff.spec:
