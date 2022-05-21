@@ -1,5 +1,12 @@
 2022-05-20  Philippe Troin  <phil@fifi.org>
 
+	* NEWS:
+	* README.md:
+	* tdiff.spec:
+	Add changelog, update to 0.8.6.
+
+	* configure.ac: Updated to 0.8.6.
+
 	* linux_getdents64.c (getdents64): Update prototype.
 
 	* utils.c (pmem): Prefer mallinfo2 if found over mallinfo.

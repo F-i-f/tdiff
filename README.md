@@ -238,6 +238,14 @@ make install-pdf install-html # Optional
 
 ## Changelog
 
+### Version 0.8.6
+#### May 20, 2022.
+
+##### Bugs fixed:
+
+- Handle mallinfo2() and glibc 2.34.
+- Make getdents64 work on Linux again.
+
 ### Version 0.8.5
 #### November 1, 2019.
 

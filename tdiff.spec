@@ -1,6 +1,6 @@
 Name:		tdiff
-Version:	0.8.5
-Release:	2%{?dist}
+Version:	0.8.6
+Release:	1%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
 License:	GPLv3
@@ -53,6 +53,10 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
+* Sat May 21 2022 Philippe Troin <phil@fifi.org> - 0.8.6-1
+- Upstream release 0.8.6:
+  * Handle mallinfo2 and glibc 2.34.
+
 * Sun Nov  3 2019 Philippe Troin <phil@fifi.org> - 0.8.5-2
 - Fix build on RHEL which does not have fakeroot.
 
