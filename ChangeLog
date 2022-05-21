@@ -1,5 +1,7 @@
 2022-05-20  Philippe Troin  <phil@fifi.org>
 
+	* linux_getdents64.c (getdents64): Update prototype.
+
 	* utils.c (pmem): Prefer mallinfo2 if found over mallinfo.
 
 	* configure.ac (HAVE_MALLINFO2): Detect mallinfo2() on newer

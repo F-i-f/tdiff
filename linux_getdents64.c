@@ -10,8 +10,8 @@ struct linux_dent64 {
   char			d_name[NAME_MAX+1];
 };
 
-int
-getdents64(int fd, char* buf, unsigned count)
+ssize_t
+getdents64(int fd, void* buf, size_t count)
 {
   return syscall(SYS_getdents64, fd, buf, count);
 }
