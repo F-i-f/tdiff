@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Misc utilities.
-  Copyright (C) 1999, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2014, 2019, 2022 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#if HAVE_MALLINFO
+#if HAVE_MALLINFO || HAVE_MALLINFO2
 #  include <malloc.h>
 #endif
 
@@ -84,9 +84,15 @@ setprogname(const char *argvname)
 void
 pmem(void)
 {
-#if HAVE_MALLINFO
+#if HAVE_MALLINFO || HAVE_MALLINFO2
+# if HAVE_MALLINFO2
+  struct mallinfo2 minfo;
+  minfo = mallinfo2();
+# else
   struct mallinfo minfo;
   minfo = mallinfo();
+#endif
+
   fprintf(stderr,
 	  "  brk memory = %7ld bytes (%ld top bytes unreleased)\n"
 	  " mmap memory = %7ld bytes\n"

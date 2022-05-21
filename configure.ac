@@ -1,6 +1,6 @@
 #  tdiff - tree diffs
 #  configure.ac
-#  Copyright (C) 1999, 2006, 2008, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
+#  Copyright (C) 1999, 2006, 2008, 2014, 2019, 2022 Philippe Troin <phil+github-commits@fifi.org>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -271,6 +271,10 @@ FI_LINK_IFELSE([for mallinfo()], [HAVE_MALLINFO],
 	       [AC_LANG_PROGRAM([[#include <malloc.h>]],
 				[[mallinfo();]])],
 	       [Define to 1 if your system has mallinfo().])
+FI_LINK_IFELSE([for mallinfo2()], [HAVE_MALLINFO2],
+	       [AC_LANG_PROGRAM([[#include <malloc.h>]],
+				[[mallinfo2();]])],
+	       [Define to 1 if your system has mallinfo2().])
 
 if test "x$getdents" != "xnot-found"
 then
