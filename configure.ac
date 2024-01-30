@@ -1,6 +1,6 @@
 #  tdiff - tree diffs
 #  configure.ac
-#  Copyright (C) 1999, 2006, 2008, 2014, 2019, 2022 Philippe Troin <phil+github-commits@fifi.org>
+#  Copyright (C) 1999, 2006, 2008, 2014, 2019, 2022, 2024 Philippe Troin <phil+github-commits@fifi.org>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -341,7 +341,7 @@ AC_SUBST([HAVE_S_IFDOOR],[$fi_cv_S_IFDOOR])
 AC_SUBST([TARGET_OS],[$target_os])
 AC_SUBST([HAVE_ST_FLAGS],[$fi_cv_st_flags])
 AC_SUBST([HAVE_GETOPT_LONG],[$fi_cv_HAVE_GETOPT_LONG])
-AC_SUBST([HAVE_XATTRS],[$fi_cv_getxattr])
+AC_SUBST([HAVE_XATTRS],[$fi_cv_lgetxattr])
 AC_SUBST([HAVE_ACLS],[$have_acls])
 
 if test "x$fi_cv_have_st_timensec" = xyes -o "x$fi_cv_st_atimespec" = xyes

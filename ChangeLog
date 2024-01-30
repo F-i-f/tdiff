@@ -1,5 +1,8 @@
 2024-01-29  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac (HAVE_XATTR): Check against lgetxattr, not
+	getxattr. Fixes bug introduced in 0ccc359 that skips xattr tests.
+
 	* build-android: Add Copyright notice.
 	(build): Build statically. Bump Android SDK to 30.
 
