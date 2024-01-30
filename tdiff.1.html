@@ -1,5 +1,5 @@
-<!-- Creator     : groff version 1.22.3 -->
-<!-- CreationDate: Fri Jun 14 16:44:30 2019 -->
+<!-- Creator     : groff version 1.23.0 -->
+<!-- CreationDate: Tue Jan 30 14:40:08 2024 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -24,6 +24,10 @@
 <a href="#SYNOPSIS">SYNOPSIS</a><br>
 <a href="#DESCRIPTION">DESCRIPTION</a><br>
 <a href="#OPTIONS">OPTIONS</a><br>
+<a href="#Standard Options">Standard Options</a><br>
+<a href="#Toggle Options">Toggle Options</a><br>
+<a href="#Preset Options">Preset Options</a><br>
+<a href="#Other Miscellaneous Options">Other Miscellaneous Options</a><br>
 <a href="#HARD LINKS">HARD LINKS</a><br>
 <a href="#CONTENTS COMPARISONS">CONTENTS COMPARISONS</a><br>
 <a href="#EXIT STATUS">EXIT STATUS</a><br>
@@ -40,7 +44,7 @@
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">tdiff &minus;
+<p style="margin-left:9%; margin-top: 1em">tdiff &minus;
 tree diff, list differences between various inode attributes
 ( <b>stat(2)</b> structure) and contents for two directory
 trees</p>
@@ -50,7 +54,7 @@ trees</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>tdiff</b>
+<p style="margin-left:9%; margin-top: 1em"><b>tdiff</b>
 [<i>OPTIONS</i>]... <i>DIRECTORY1 DIRECTORY2</i></p>
 
 <h2>DESCRIPTION
@@ -58,123 +62,140 @@ trees</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">List
-differences between <i>DIRECTORY1</i> and <i>DIRECTORY2</i>
-file trees, comparing any of the inode attributes, also
-known as <b>stat(2)</b> structure members. Inode attributes
-are:</p>
+<p style="margin-left:9%; margin-top: 1em">List differences
+between <i>DIRECTORY1</i> and <i>DIRECTORY2</i> file trees,
+comparing any of the inode attributes, also known as
+<b>stat(2)</b> structure members. Inode attributes are:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="71%">
 
 
 <p>file type (regular file, directory, FIFO, socket,
-etc.),</p> </td></tr>
+etc.),</p> </td>
+<td width="12%">
+</td></tr>
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="71%">
 
 
-<p>file size,</p></td></tr>
+<p>file size,</p></td>
+<td width="12%">
+</td></tr>
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="71%">
 
 
-<p>file block count (physical storage size),</p></td></tr>
+<p>file block count (physical storage size),</p></td>
+<td width="12%">
+</td></tr>
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="71%">
 
 
-<p>owner uid and gid,</p></td></tr>
+<p>owner uid and gid,</p></td>
+<td width="12%">
+</td></tr>
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="71%">
 
 
-<p>access, modification and inode change times,</p></td></tr>
+<p>access, modification and inode change times,</p></td>
+<td width="12%">
+</td></tr>
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="71%">
 
 
-<p>the set of hard links a file has,</p></td></tr>
+<p>the set of hard links a file has,</p></td>
+<td width="12%">
+</td></tr>
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="71%">
 
 
-<p>extended attributes (if supported),</p></td></tr>
+<p>extended attributes (if supported),</p></td>
+<td width="12%">
+</td></tr>
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="71%">
 
 
-<p>ACLs (if supported),</p></td></tr>
+<p>ACLs (if supported),</p></td>
+<td width="12%">
+</td></tr>
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="71%">
 
 
-<p>file system flags (BSD UFS, MacOSX).</p></td></tr>
+<p>file system flags (BSD UFS, MacOSX).</p></td>
+<td width="12%">
+</td></tr>
 </table>
 
-<p style="margin-left:11%; margin-top: 1em">By default,
+<p style="margin-left:9%; margin-top: 1em">By default,
 <b>tdiff</b> reports differences in any file contents or
 attributes except for the various file times. The set of
 attributes to be checked can be modified with the various
 options.</p>
 
-<p style="margin-left:11%; margin-top: 1em">Beyond inode
+<p style="margin-left:9%; margin-top: 1em">Beyond inode
 attribute checks, <b>tdiff</b> can check (and will check by
 default) regular files for contents difference. Optionally,
 <b>tdiff</b> can use an external program to determine if the
@@ -189,92 +210,104 @@ options.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>Standard
-Options <br>
-&minus;h</b>, <b>&minus;&minus;help</b></p>
+<h3>Standard Options
+<a name="Standard Options"></a>
+</h3>
 
-<p style="margin-left:22%;">Show a short <b>h</b>elp
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;h</b>,
+<b>&minus;&minus;help</b></p>
+
+<p style="margin-left:18%;">Show a short <b>h</b>elp
 message and exit.</p>
 
-<p style="margin-left:11%;"><b>&minus;v</b>,
+<p style="margin-left:9%;"><b>&minus;v</b>,
 <b>&minus;&minus;verbose</b></p>
 
-<p style="margin-left:22%;">Increase <b>v</b>erbosity. Four
+<p style="margin-left:18%;">Increase <b>v</b>erbosity. Four
 cumulative levels of logging verbosity are supported:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="26%"></td>
-<td width="8%">
+<td width="22%"></td>
+<td width="6%">
 
 
 <p><b>-v</b></p></td>
 <td width="3%"></td>
-<td width="63%">
+<td width="69%">
 
 
 <p>report overall statistics: total number of files
 scanned, compared, etc.</p></td></tr>
 <tr valign="top" align="left">
-<td width="26%"></td>
-<td width="8%">
+<td width="22%"></td>
+<td width="6%">
 
 
 <p><b>-vv</b></p></td>
 <td width="3%"></td>
-<td width="63%">
+<td width="69%">
 
 
 <p>report if any files are skipped, and for what reason
 (exclusion, already compared, etc.)</p></td></tr>
 <tr valign="top" align="left">
-<td width="26%"></td>
-<td width="8%">
+<td width="22%"></td>
+<td width="6%">
 
 
 <p><b>-vvv</b></p></td>
 <td width="3%"></td>
-<td width="63%">
+<td width="69%">
 
 
 <p>report internal data structure statistics.</p></td></tr>
 <tr valign="top" align="left">
-<td width="26%"></td>
-<td width="8%">
+<td width="22%"></td>
+<td width="6%">
 
 
 <p><b>-vvvv</b></p></td>
 <td width="3%"></td>
-<td width="63%">
+<td width="69%">
 
 
 <p>report memory statistics (if available on your
 system).</p> </td></tr>
 </table>
 
-<p style="margin-left:11%;"><b>&minus;V</b>,
+<p style="margin-left:9%;"><b>&minus;V</b>,
 <b>&minus;&minus;version</b></p>
 
-<p style="margin-left:22%;">Show the <b>tdiff v</b>ersion
+<p style="margin-left:18%;">Show the <b>tdiff v</b>ersion
 information, compiled-in features and flags (if any) then
 exit. <br>
 The compiled-in feature list shows which features
 <b>tdiff</b> has been compiled with: O_NOATIME, flags, acl,
-and xattr support, the <b>readdir(2)</b> implementation
-used, and the file system time granularity (either seconds
-(<i>s</i>) or nanoseconds (<i>ns</i>)). <br>
+and xattr support, acl optimization (<b>acl_cmp</b>), the
+<b>readdir(2)</b> implementation used, the file system time
+granularity (either seconds (<i>s</i>) or nanoseconds
+(<i>ns</i>)) and if comparing symbolic links will update
+their access time (<b>readlink=readlink</b>) or not
+(<b>readlink=open(O_PATH|O_NOFOLLOW)+readlinkat</b>). <br>
 If flags support is compiled in, the list of recognized
 flags will be listed as well.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>Toggle
-Options</b> <br>
-The single-letter toggle options come in two versions,
+<h3>Toggle Options
+<a name="Toggle Options"></a>
+</h3>
+
+
+<p style="margin-left:9%; margin-top: 1em">The
+single-letter toggle options come in two versions,
 upper-case and lower-case. The lower-case option enables the
 the attribute check, while the upper-case option disables
 it.</p>
 
-<p style="margin-left:11%; margin-top: 1em">The long toggle
+<p style="margin-left:9%; margin-top: 1em">The long toggle
 options are named after the <b>stat(2)</b> structure names:
 for example, <b>&minus;&minus;mtime</b> is used to check the
 <i>st_mtime</i> <b>stat(2)</b> structure member, which is
@@ -285,21 +318,21 @@ equivalent check (eg. <b>&minus;&minus;no&minus;mtime</b>).
 <b><br>
 &minus;b</b>, <b>&minus;&minus;blocks</b></p>
 
-<p style="margin-left:22%;">Report file <b>b</b>lock count
+<p style="margin-left:18%;">Report file <b>b</b>lock count
 differences (<i>st_blocks</i>) except for directories which
 are ignored. <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;B</b>,
+<p style="margin-left:9%;"><b>&minus;B</b>,
 <b>&minus;&minus;no&minus;blocks</b></p>
 
-<p style="margin-left:22%;">Do not report file <b>b</b>lock
+<p style="margin-left:18%;">Do not report file <b>b</b>lock
 count differences.</p>
 
-<p style="margin-left:11%;"><b>&minus;c</b>,
+<p style="margin-left:9%;"><b>&minus;c</b>,
 <b>&minus;&minus;contents</b></p>
 
-<p style="margin-left:22%;">Report file <b>c</b>ontent
+<p style="margin-left:18%;">Report file <b>c</b>ontent
 differences for regular files and symbolic links. <br>
 For regular files, their contents are compared and any
 discrepancies are reported as a contents difference. <br>
@@ -309,33 +342,33 @@ See the <b>CONTENTS COMPARISONS</b> section below for the
 exact semantics. <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;C</b>,
+<p style="margin-left:9%;"><b>&minus;C</b>,
 <b>&minus;&minus;no&minus;contents</b></p>
 
-<p style="margin-left:22%;">Do not report file
+<p style="margin-left:18%;">Do not report file
 <b>c</b>ontent differences.</p>
 
-<p style="margin-left:11%;"><b>&minus;d</b>,
+<p style="margin-left:9%;"><b>&minus;d</b>,
 <b>&minus;&minus;dirs</b></p>
 
-<p style="margin-left:22%;">Diff <b>d</b>irectory contents:
+<p style="margin-left:18%;">Diff <b>d</b>irectory contents:
 report if any file is present in only one directory. <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;D</b>,
+<p style="margin-left:9%;"><b>&minus;D</b>,
 <b>&minus;&minus;no&minus;dirs</b></p>
 
-<p style="margin-left:22%;">Do not diff <b>d</b>irectory
+<p style="margin-left:18%;">Do not diff <b>d</b>irectory
 contents: files only present in a single directory are not
 reported.</p>
 
-<p style="margin-left:11%;"><b>&minus;e</b>,
+<p style="margin-left:9%;"><b>&minus;e</b>,
 <b>&minus;&minus;hardlinks</b></p>
 
-<p style="margin-left:22%;">Report any differences in the
+<p style="margin-left:18%;">Report any differences in the
 set of hard links a file may be linked to. <br>
 For example if in a directory two files are hard linked
-together while in the other directory, their are not,
+together while in the other directory, they are not,
 <b>tdiff</b> will report that the files are hard links only
 in the first directory. <b><br>
 tdiff</b> will only report the differences once per set of
@@ -349,16 +382,16 @@ and <b>f2</b> are part of the same set of hard linked files.
 <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;E</b>,
+<p style="margin-left:9%;"><b>&minus;E</b>,
 <b>&minus;&minus;no&minus;hardlinks</b></p>
 
-<p style="margin-left:22%;">Will not report any differences
+<p style="margin-left:18%;">Will not report any differences
 in hard links sets.</p>
 
-<p style="margin-left:11%;"><b>&minus;f</b>,
+<p style="margin-left:9%;"><b>&minus;f</b>,
 <b>&minus;&minus;flags</b></p>
 
-<p style="margin-left:22%;">Diff file system <b>f</b>lags,
+<p style="margin-left:18%;">Diff file system <b>f</b>lags,
 as found in the <b>stat(2)</b> <i>st_flags</i> structure
 member. This is only supported on BSD, MacOSX and other
 systems that have <i>st_flags</i>. <b><br>
@@ -370,76 +403,76 @@ listing the actual flag name. <br>
 This is on by default if your system&rsquo;s <b>stat(2)</b>
 structure has <i>st_flags</i>.</p>
 
-<p style="margin-left:11%;"><b>&minus;F</b>,
+<p style="margin-left:9%;"><b>&minus;F</b>,
 <b>&minus;&minus;no&minus;flags</b></p>
 
-<p style="margin-left:22%;">Do not diff file system
+<p style="margin-left:18%;">Do not diff file system
 <b>f</b>lags.</p>
 
-<p style="margin-left:11%;"><b>&minus;g</b>,
+<p style="margin-left:9%;"><b>&minus;g</b>,
 <b>&minus;&minus;gid</b></p>
 
-<p style="margin-left:22%;">Report on any differences in
+<p style="margin-left:18%;">Report on any differences in
 file <b>g</b>roup ownership (owner group id, <i>st_gid</i>).
 <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;G</b>,
+<p style="margin-left:9%;"><b>&minus;G</b>,
 <b>&minus;&minus;no&minus;gid</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in file <b>g</b>roup ownership (owner group id).</p>
 
-<p style="margin-left:11%;"><b>&minus;i</b>,
+<p style="margin-left:9%;"><b>&minus;i</b>,
 <b>&minus;&minus;mtime</b></p>
 
-<p style="margin-left:22%;">Report on any differences in
+<p style="margin-left:18%;">Report on any differences in
 file modification t<b>i</b>me (<i>st_mtime</i>), up to
 nanosecond resolution if the underlying OS reports it.</p>
 
-<p style="margin-left:11%;"><b>&minus;I</b>,
+<p style="margin-left:9%;"><b>&minus;I</b>,
 <b>&minus;&minus;no&minus;mtime</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in file modification t<b>i</b>mes (<i>st_mtime</i>). <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;j</b>,
+<p style="margin-left:9%;"><b>&minus;j</b>,
 <b>&minus;&minus;major</b></p>
 
-<p style="margin-left:22%;">For device files (either block
+<p style="margin-left:18%;">For device files (either block
 or character), report any differences in ma<b>j</b>or device
 numbers. <br>
 Note that major numbers will only be compared if both device
 files are of the same type (block or character). <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;J</b>,
+<p style="margin-left:9%;"><b>&minus;J</b>,
 <b>&minus;&minus;no&minus;major</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in ma<b>j</b>or device numbers on device files.</p>
 
-<p style="margin-left:11%;"><b>&minus;k</b>,
+<p style="margin-left:9%;"><b>&minus;k</b>,
 <b>&minus;&minus;minor</b></p>
 
-<p style="margin-left:22%;">For device files (either block
+<p style="margin-left:18%;">For device files (either block
 or character), report any differences in minor device
 numbers. <br>
 Note that minor numbers will only be compared if both device
 files are of the same type (block or character). <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;K</b>,
+<p style="margin-left:9%;"><b>&minus;K</b>,
 <b>&minus;&minus;no&minus;minor</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in minor device numbers on device files.</p>
 
-<p style="margin-left:11%;"><b>&minus;l</b>,
+<p style="margin-left:9%;"><b>&minus;l</b>,
 <b>&minus;&minus;acl</b></p>
 
-<p style="margin-left:22%;">Report on any differences in
+<p style="margin-left:18%;">Report on any differences in
 file AC<b>L</b>s as defined by <b>acl_set_file(3)</b>. <br>
 Any missing or different ACLs between the file pairs are
 reported. Access, default and mask ACL entries are
@@ -447,16 +480,16 @@ supported. <br>
 This is on by default if ACLs are supported by the
 system.</p>
 
-<p style="margin-left:11%;"><b>&minus;L</b>,
+<p style="margin-left:9%;"><b>&minus;L</b>,
 <b>&minus;&minus;no&minus;acl</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in file AC<b>L</b>s.</p>
 
-<p style="margin-left:11%;"><b>&minus;m</b>,
+<p style="margin-left:9%;"><b>&minus;m</b>,
 <b>&minus;&minus;mode</b></p>
 
-<p style="margin-left:22%;">Report on any differences in
+<p style="margin-left:18%;">Report on any differences in
 file access <b>m</b>ode (permission bits as set by
 <b>chmod(1)</b>). If set,
 <b>&minus;o</b>/<b>&minus;&minus;mode&minus;or</b> and
@@ -464,30 +497,30 @@ file access <b>m</b>ode (permission bits as set by
 are applied, if set. <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;M</b>,
+<p style="margin-left:9%;"><b>&minus;M</b>,
 <b>&minus;&minus;no&minus;mode</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in file access <b>m</b>odes (permission bits).</p>
 
-<p style="margin-left:11%;"><b>&minus;n</b>,
+<p style="margin-left:9%;"><b>&minus;n</b>,
 <b>&minus;&minus;nlink</b></p>
 
-<p style="margin-left:22%;">Report on any differences in
+<p style="margin-left:18%;">Report on any differences in
 file (hard) link counts (<i>st_</i><b>n</b><i>links</i>).
 <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;N</b>,
+<p style="margin-left:9%;"><b>&minus;N</b>,
 <b>&minus;&minus;no&minus;nlink</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in file (hard) link counts.</p>
 
-<p style="margin-left:11%;"><b>&minus;q</b>,
+<p style="margin-left:9%;"><b>&minus;q</b>,
 <b>&minus;&minus;xattr</b></p>
 
-<p style="margin-left:22%;">Report on any differences in
+<p style="margin-left:18%;">Report on any differences in
 file extended attributes as defined by <b>setxattr(2)</b>.
 <br>
 Any missing or different extended attribute between the file
@@ -495,57 +528,57 @@ pairs is reported. <br>
 This is on by default if extended attributes are supported
 by the system.</p>
 
-<p style="margin-left:11%;"><b>&minus;Q</b>,
+<p style="margin-left:9%;"><b>&minus;Q</b>,
 <b>&minus;&minus;no&minus;xattr</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in file extended attributes.</p>
 
-<p style="margin-left:11%;"><b>&minus;s</b>,
+<p style="margin-left:9%;"><b>&minus;s</b>,
 <b>&minus;&minus;size</b></p>
 
-<p style="margin-left:22%;">Report file <b>s</b>ize
+<p style="margin-left:18%;">Report file <b>s</b>ize
 differences (<i>st_size</i>), except for directories which
 are ignored. <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;S</b>,
+<p style="margin-left:9%;"><b>&minus;S</b>,
 <b>&minus;&minus;no&minus;size</b></p>
 
-<p style="margin-left:22%;">Do not report file <b>s</b>ize
+<p style="margin-left:18%;">Do not report file <b>s</b>ize
 differences.</p>
 
-<p style="margin-left:11%;"><b>&minus;t</b>,
+<p style="margin-left:9%;"><b>&minus;t</b>,
 <b>&minus;&minus;type</b></p>
 
-<p style="margin-left:22%;">Report file <b>t</b>ype
+<p style="margin-left:18%;">Report file <b>t</b>ype
 differences (files, directories, symbolic links, etc.) <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;T</b>,
+<p style="margin-left:9%;"><b>&minus;T</b>,
 <b>&minus;&minus;no&minus;type</b></p>
 
-<p style="margin-left:22%;">Do not report file <b>t</b>ype
+<p style="margin-left:18%;">Do not report file <b>t</b>ype
 differences between the two compared directories.</p>
 
-<p style="margin-left:11%;"><b>&minus;u</b>,
+<p style="margin-left:9%;"><b>&minus;u</b>,
 <b>&minus;&minus;uid</b></p>
 
-<p style="margin-left:22%;">Report on any differences in
+<p style="margin-left:18%;">Report on any differences in
 file <b>u</b>ser ownership (owner user id, <i>st_uid</i>).
 <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;U</b>,
+<p style="margin-left:9%;"><b>&minus;U</b>,
 <b>&minus;&minus;no&minus;uid</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in file <b>u</b>ser ownership (owner user id).</p>
 
-<p style="margin-left:11%;"><b>&minus;y</b>,
+<p style="margin-left:9%;"><b>&minus;y</b>,
 <b>&minus;&minus;atime</b></p>
 
-<p style="margin-left:22%;">Report on any differences in
+<p style="margin-left:18%;">Report on any differences in
 file access time (<i>st_atime</i>), up to nanosecond
 resolution if the underlying OS reports it. <br>
 Since merely reading a file causes the access time to be
@@ -565,17 +598,17 @@ note that commands specified with
 <b>&minus;W</b>/<b>&minus;&minus;exec&minus;always&minus;diff</b>
 may update the access times of the files they read.</p>
 
-<p style="margin-left:11%;"><b>&minus;Y</b>,
+<p style="margin-left:9%;"><b>&minus;Y</b>,
 <b>&minus;&minus;no&minus;atime</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in file access times (<i>st_atime</i>). <br>
 This is on by default.</p>
 
-<p style="margin-left:11%;"><b>&minus;z</b>,
+<p style="margin-left:9%;"><b>&minus;z</b>,
 <b>&minus;&minus;ctime</b></p>
 
-<p style="margin-left:22%;">Report on any differences in
+<p style="margin-left:18%;">Report on any differences in
 file inode change time (<i>st_ctime</i>), up to nanosecond
 resolution if the underlying OS reports it. <br>
 Since inode change times are automatically set by Unix to
@@ -584,37 +617,41 @@ always be reported as different for any two file trees,
 except in rare cases (likely involving cloning raw file
 system images).</p>
 
-<p style="margin-left:11%;"><b>&minus;Z</b>,
+<p style="margin-left:9%;"><b>&minus;Z</b>,
 <b>&minus;&minus;no&minus;ctime</b></p>
 
-<p style="margin-left:22%;">Do not report any differences
+<p style="margin-left:18%;">Do not report any differences
 in file file inode change times (<i>st_ctime</i>). <br>
 This is on by default.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>Preset
-Options</b> <br>
-The preset single letter options are either a numeric preset
-level from <i>0</i> to <i>9</i>, or <b>&minus;p</b> followed
-by a preset name or level. Presets can also be activated
-with the <b>&minus;&minus;preset</b> long option followed by
-either a numeric preset level or a preset name. <br>
+<h3>Preset Options
+<a name="Preset Options"></a>
+</h3>
+
+
+<p style="margin-left:9%; margin-top: 1em">The preset
+single letter options are either a numeric preset level from
+<i>0</i> to <i>9</i>, or <b>&minus;p</b> followed by a
+preset name or level. Presets can also be activated with the
+<b>&minus;&minus;preset</b> long option followed by either a
+numeric preset level or a preset name. <br>
 Preset names can be shortened to their smallest unambiguous
 prefix. For example, <b>&minus;&minus;preset</b>
 <i>amtimes</i> can be shortened to <i>am</i>, <i>missing</i>
 to <i>miss</i>, <i>default</i> to <i>d</i>, etc.</p>
 
-<p style="margin-left:11%; margin-top: 1em">The presets are
+<p style="margin-left:9%; margin-top: 1em">The presets are
 cumulative, preset level <i>9</i> is a super-set of preset
 level <i>8</i>, itself a super-set of level <i>7</i> and so
 on.</p>
 
-<p style="margin-left:11%; margin-top: 1em">The default
+<p style="margin-left:9%; margin-top: 1em">The default
 preset level when <b>tdiff</b> starts parsing its options is
 preset <i>6</i>/<i>notimes</i>/<i>default</i>. <b><br>
 &minus;0</b>, <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>0</i>|<i>none</i></p>
 
-<p style="margin-left:22%;">Do not check anything. All the
+<p style="margin-left:18%;">Do not check anything. All the
 toggles are set to their inactive
 (<b>&minus;&minus;no&minus;</b>) state. <br>
 If only this preset is active (it is provided last on the
@@ -624,11 +661,11 @@ only useful to reset <b>tdiff</b>&rsquo;s set of comparisons
 to the empty set and add exactly which fields should be
 compared with further toggle options.</p>
 
-<p style="margin-left:11%;"><b>&minus;1</b>,
+<p style="margin-left:9%;"><b>&minus;1</b>,
 <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>1</i>|<i>missing</i>|<i>type</i></p>
 
-<p style="margin-left:22%;">Report missing files and
+<p style="margin-left:18%;">Report missing files and
 different file types. <b><br>
 tdiff</b> will only emit messages for either files missing
 in either directory
@@ -638,22 +675,22 @@ of different file types
 toggles are set to their inactive
 (<b>&minus;&minus;no&minus;</b>) state.</p>
 
-<p style="margin-left:11%;"><b>&minus;2</b>,
+<p style="margin-left:9%;"><b>&minus;2</b>,
 <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>2</i>|<i>mode</i></p>
 
-<p style="margin-left:22%;">In addition to the comparisons
+<p style="margin-left:18%;">In addition to the comparisons
 enabled at preset level <i>1</i>, <b>tdiff</b> will also
 enable file mode comparisons
 (<b>&minus;m</b>/<b>&minus;&minus;mode</b>). All the other
 toggles are set to their inactive
 (<b>&minus;&minus;no&minus;</b>) state.</p>
 
-<p style="margin-left:11%;"><b>&minus;3</b>,
+<p style="margin-left:9%;"><b>&minus;3</b>,
 <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>3</i>|<i>owner</i></p>
 
-<p style="margin-left:22%;">In addition to the comparisons
+<p style="margin-left:18%;">In addition to the comparisons
 enabled at preset level <i>2</i>, <b>tdiff</b> will also
 enable user id (<b>&minus;u</b>/<b>&minus;&minus;uid</b>),
 group id (<b>&minus;g</b>/<b>&minus;&minus;gid</b>) and, if
@@ -662,11 +699,11 @@ supported, Access Control Lists
 the other toggles are set to their inactive
 (<b>&minus;&minus;no&minus;</b>) state.</p>
 
-<p style="margin-left:11%;"><b>&minus;4</b>,
+<p style="margin-left:9%;"><b>&minus;4</b>,
 <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>4</i>|<i>hardlinks</i></p>
 
-<p style="margin-left:22%;">In addition to the comparisons
+<p style="margin-left:18%;">In addition to the comparisons
 enabled at preset level <i>3</i>, <b>tdiff</b> will also
 enable link count
 (<b>&minus;n</b>/<b>&minus;&minus;nlink</b>) and hard link
@@ -674,11 +711,11 @@ targets (<b>&minus;e</b>/<b>&minus;&minus;hardlinks</b>)
 comparisons. All the other toggles are set to their inactive
 (<b>&minus;&minus;no&minus;</b>) state.</p>
 
-<p style="margin-left:11%;"><b>&minus;5</b>,
+<p style="margin-left:9%;"><b>&minus;5</b>,
 <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>5</i>|<i>contents</i></p>
 
-<p style="margin-left:22%;">In addition to the comparisons
+<p style="margin-left:18%;">In addition to the comparisons
 enabled at preset level <i>4</i>, <b>tdiff</b> will also
 compare file contents
 (<b>&minus;c</b>/<b>&minus;&minus;contents</b>), size
@@ -690,11 +727,11 @@ device files, major
 All the other toggles are set to their inactive
 (<b>&minus;&minus;no&minus;</b>) state.</p>
 
-<p style="margin-left:11%;"><b>&minus;6</b>,
+<p style="margin-left:9%;"><b>&minus;6</b>,
 <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>6</i>|<i>notimes</i>|<i>default</i></p>
 
-<p style="margin-left:22%;">In addition to the comparisons
+<p style="margin-left:18%;">In addition to the comparisons
 enabled at preset level <i>5</i>, <b>tdiff</b> will also
 compare, if supported, flags
 (<b>&minus;f</b>/<b>&minus;&minus;flags</b>) and extended
@@ -711,11 +748,11 @@ attributes, then preset level <i>6</i> is equivalent to
 preset level <i>5</i>. <br>
 This is the default preset level.</p>
 
-<p style="margin-left:11%;"><b>&minus;7</b>,
+<p style="margin-left:9%;"><b>&minus;7</b>,
 <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>7</i>|<i>mtime</i></p>
 
-<p style="margin-left:22%;">In addition to the comparisons
+<p style="margin-left:18%;">In addition to the comparisons
 enabled at preset level <i>6</i>, <b>tdiff</b> will also
 compare file modification times
 (<b>&minus;i</b>/<b>&minus;&minus;mtime</b>). This
@@ -726,11 +763,11 @@ modification time
 (<b>&minus;z</b>/<b>&minus;&minus;ctime</b>) that are
 off.</p>
 
-<p style="margin-left:11%;"><b>&minus;8</b>,
+<p style="margin-left:9%;"><b>&minus;8</b>,
 <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>8</i>|<i>amtimes</i></p>
 
-<p style="margin-left:22%;">In addition to the comparisons
+<p style="margin-left:18%;">In addition to the comparisons
 enabled at preset level <i>7</i>, <b>tdiff</b> will also
 compare file access times
 (<b>&minus;y</b>/<b>&minus;&minus;atime</b>). This
@@ -739,40 +776,44 @@ inode modification time
 (<b>&minus;z</b>/<b>&minus;&minus;ctime</b>) that is
 off.</p>
 
-<p style="margin-left:11%;"><b>&minus;9</b>,
+<p style="margin-left:9%;"><b>&minus;9</b>,
 <b>&minus;p</b>|<b>&minus;&minus;preset</b>
 <i>9</i>|<i>alltimes</i>|<i>all</i></p>
 
-<p style="margin-left:22%;"><b>tdiff</b> will compare all
+<p style="margin-left:18%;"><b>tdiff</b> will compare all
 available attributes, turning all toggles on.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>Other
-Miscellaneous Options <br>
-&minus;a</b>, <b>&minus;&minus;mode&minus;and</b>
-<i>MASK</i></p>
+<h3>Other Miscellaneous Options
+<a name="Other Miscellaneous Options"></a>
+</h3>
 
-<p style="margin-left:22%;">When comparing file permission
+
+
+<p style="margin-left:9%; margin-top: 1em"><b>&minus;a</b>,
+<b>&minus;&minus;mode&minus;and</b> <i>MASK</i></p>
+
+<p style="margin-left:18%;">When comparing file permission
 bits, perform a binary <b>a</b>nd between the permission
 bits and <i>MASK</i> before comparing them. <i><br>
 MASK</i> is specified in octal, like with <b>chmod(2)</b>,
 unless prefixed with <i>0x</i>, in which case it is parsed
 as hexadecimal.</p>
 
-<p style="margin-left:11%;"><b>&minus;o</b>,
+<p style="margin-left:9%;"><b>&minus;o</b>,
 <b>&minus;&minus;mode&minus;or</b> <i>MASK</i></p>
 
-<p style="margin-left:22%;">When comparing file permission
+<p style="margin-left:18%;">When comparing file permission
 bits, perform a binary <b>o</b>r between the permission bits
 and <i>MASK</i> before comparing them. <i><br>
 MASK</i> is specified in octal, like with <b>chmod(2)</b>,
 unless prefixed with <i>0x</i>, in which case it is parsed
 as hexadecimal.</p>
 
-<p style="margin-left:11%;"><b>&minus;w</b>,
+<p style="margin-left:9%;"><b>&minus;w</b>,
 <b>&minus;&minus;exec&minus;always</b> <i>COMMAND...
 \;</i></p>
 
-<p style="margin-left:22%;">Always execute <i>COMMAND</i>
+<p style="margin-left:18%;">Always execute <i>COMMAND</i>
 for any pair of matching regular files found in the trees.
 Refer to the <b>CONTENTS COMPARISONS</b> section for
 details. <br>
@@ -781,28 +822,28 @@ command defined will be used. <br>
 Using either option turns on the <b>-c</b>/<b>--contents</b>
 toggle.</p>
 
-<p style="margin-left:11%;"><b>&minus;W</b>,
+<p style="margin-left:9%;"><b>&minus;W</b>,
 <b>&minus;&minus;exec&minus;always&minus;diff</b></p>
 
-<p style="margin-left:22%;">Always execute <i>diff
+<p style="margin-left:18%;">Always execute <i>diff
 &minus;u</i> for any pair of matching regular files found in
 the trees. This is a shortcut for:</p>
 
-<p style="margin-left:25%;"><b>tdiff
+<p style="margin-left:21%;"><b>tdiff
 &minus;&minus;exec&minus;always diff &minus;u %1 %2
 \;</b></p>
 
-<p style="margin-left:22%;">The option will supersede
+<p style="margin-left:18%;">The option will supersede
 whichever command was specified in a
 <b>&minus;w</b>/<b>&minus;&minus;exec&minus;always</b>
 option appearing earlier on the option list. <br>
 Using either option turns on the <b>-c</b>/<b>--contents</b>
 toggle.</p>
 
-<p style="margin-left:11%;"><b>&minus;x</b>,
+<p style="margin-left:9%;"><b>&minus;x</b>,
 <b>&minus;&minus;exec</b> <i>COMMAND... \;</i></p>
 
-<p style="margin-left:22%;">Uses <i>COMMAND</i> when
+<p style="margin-left:18%;">Uses <i>COMMAND</i> when
 comparing files whose sizes are the same. Refer to the
 <b>CONTENTS COMPARISONS</b> section for details. <br>
 If either options are specified more than once, the last
@@ -810,10 +851,10 @@ command defined will be used. <br>
 Using either option turns on the <b>-c</b>/<b>--contents</b>
 toggle.</p>
 
-<p style="margin-left:11%;"><b>&minus;X</b>,
+<p style="margin-left:9%;"><b>&minus;X</b>,
 <b>&minus;&minus;exclude</b> <i>FILE</i></p>
 
-<p style="margin-left:22%;">Excludes <i>FILE</i> from
+<p style="margin-left:18%;">Excludes <i>FILE</i> from
 processing: any discrepancies on a file or missing file
 named <i>FILE</i> will not be reported. Neither will
 external commands be ran on them. If <i>FILE</i> matches the
@@ -823,10 +864,10 @@ ignored. <br>
 This option may be specified more than once, all the files
 listed will be added to the exclusion list.</p>
 
-<p style="margin-left:11%;"><b>&minus;O</b>,
+<p style="margin-left:9%;"><b>&minus;O</b>,
 <b>&minus;&minus;follow&minus;symlinks</b></p>
 
-<p style="margin-left:22%;">Completely ignore symbolic
+<p style="margin-left:18%;">Completely ignore symbolic
 links and always f<b>O</b>llow and dereference them. <br>
 This is off by default (symbolic links are not followed /
 dereferenced).</p>
@@ -836,26 +877,26 @@ dereferenced).</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>tdiff</b>
+<p style="margin-left:9%; margin-top: 1em"><b>tdiff</b>
 optimizes for hard links in two ways:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p>&bull;</p></td>
 <td width="3%"></td>
-<td width="80%">
+<td width="83%">
 
 
 <p><b>tdiff</b> will skip examining a pair of files if it
 has already compared the pair&rsquo;s hard links copies.</p></td></tr>
 </table>
 
-<p style="margin-left:20%; margin-top: 1em">For example, if
+<p style="margin-left:17%; margin-top: 1em">For example, if
 you have <i>file1</i> hard linked to <i>file2</i> in both
 <i>DIRECTORY1</i> and <i>DIRECTORY2</i>, <b>tdiff</b> will
 only report any differences for <i>file1</i> and will skip
@@ -867,37 +908,37 @@ differences would the same as for the already reported
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="15%"></td>
-<td width="2%">
+<td width="13%"></td>
+<td width="1%">
 
 
 <p style="margin-top: 1em">&bull;</p></td>
 <td width="3%"></td>
-<td width="74%">
+<td width="61%">
 
 
 <p style="margin-top: 1em"><b>tdiff</b> will skip examining
 two hard-linked files.</p></td>
-<td width="6%">
+<td width="22%">
 </td></tr>
 </table>
 
-<p style="margin-left:20%; margin-top: 1em">For example, if
+<p style="margin-left:17%; margin-top: 1em">For example, if
 <i>dir1/file</i> is hard linked to <i>dir2/file</i>, then
 <b>tdiff</b> will omit examining the file pair entirely
 since they really are the same object and would have no
 differences at all.</p>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>tdiff</b>&rsquo;s
+<p style="margin-left:9%; margin-top: 1em"><b>tdiff</b>&rsquo;s
 hard link optimization depends on files&rsquo; inode and
 device numbers to be stable, unique and consistent at least
 for the duration of the <b>tdiff</b> run. This is generally
 the case for traditional file systems.</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>tdiff</b>
-can optionally show which hard linked files are skipped and
-for what reason when run at the verbosity level 2 or above
+<p style="margin-left:9%; margin-top: 1em"><b>tdiff</b> can
+optionally show which hard linked files are skipped and for
+what reason when run at the verbosity level 2 or above
 (<b>-vv</b> or <b>--verbose --verbose</b>).</p>
 
 <h2>CONTENTS COMPARISONS
@@ -905,7 +946,7 @@ for what reason when run at the verbosity level 2 or above
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>tdiff</b>
+<p style="margin-left:9%; margin-top: 1em"><b>tdiff</b>
 uses built-in code for file contents comparisons. It avoid
 running an actual comparison if the file&rsquo;s sizes
 (<i>st_size</i>) are different: the files with different
@@ -913,7 +954,7 @@ sizes will be reported as having different contents without
 even comparing them as the size difference is enough to
 ascertain that their contents differ.</p>
 
-<p style="margin-left:11%; margin-top: 1em">Optionally,
+<p style="margin-left:9%; margin-top: 1em">Optionally,
 <b>tdiff</b> can run external commands to perform the
 comparison. When providing an external command, the
 <i>COMMAND</i> must be passed as multiple arguments
@@ -928,10 +969,10 @@ line, and must be full words: they cannot appear inside a
 larger shell word. <br>
 For example:</p>
 
-<p style="margin-left:14%;"><b>tdiff --exec gtkdiff %1 %2
+<p style="margin-left:12%;"><b>tdiff --exec gtkdiff %1 %2
 \; directory1 directory2</b></p>
 
-<p style="margin-left:11%; margin-top: 1em">If either the
+<p style="margin-left:9%; margin-top: 1em">If either the
 <b>&minus;x</b> or <b>&minus;&minus;exec</b> options are
 used, the command specified there will be ran instead of the
 built-in comparison and its exit status used to detect a
@@ -945,7 +986,7 @@ ran if</i> <b>tdiff</b> <i>can find via the file size</i>
 that the files differ by virtue of having different
 sizes.</p>
 
-<p style="margin-left:11%; margin-top: 1em">If either the
+<p style="margin-left:9%; margin-top: 1em">If either the
 <b>&minus;w</b>/<b>&minus;&minus;exec&minus;always</b> or
 <b>&minus;W</b>/<b>&minus;&minus;exec&minus;always&minus;diff</b>
 options are used, the command specified with these options
@@ -962,7 +1003,7 @@ internal comparison or the
 <b>&minus;x</b>/<b>&minus;&minus;exec</b> command are
 successful.</p>
 
-<p style="margin-left:11%; margin-top: 1em">If both
+<p style="margin-left:9%; margin-top: 1em">If both
 <b>&minus;x</b>/<b>&minus;&minus;exec</b> and
 <b>&minus;w</b>/<b>&minus;&minus;exec&minus;always</b>/<b>&minus;W</b>/<b>&minus;&minus;exec&minus;always&minus;diff</b>
 options are used, then the command specified for
@@ -981,43 +1022,43 @@ commands will be ran for files with the same size.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>tdiff</b>
+<p style="margin-left:9%; margin-top: 1em"><b>tdiff</b>
 exits with status:</p>
 
 <table width="100%" border="0" rules="none" frame="void"
        cellspacing="0" cellpadding="0">
 <tr valign="top" align="left">
-<td width="11%"></td>
+<td width="9%"></td>
 <td width="1%">
 
 
 <p style="margin-top: 1em">0</p></td>
-<td width="10%"></td>
-<td width="78%">
+<td width="8%"></td>
+<td width="82%">
 
 
 <p style="margin-top: 1em">if no discrepancies nor errors
 were encountered.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
+<td width="9%"></td>
 <td width="1%">
 
 
 <p>1</p></td>
-<td width="10%"></td>
-<td width="78%">
+<td width="8%"></td>
+<td width="82%">
 
 
 <p>if there were any problems with arguments or parsing the
 command line.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
+<td width="9%"></td>
 <td width="1%">
 
 
 <p>2</p></td>
-<td width="10%"></td>
-<td width="78%">
+<td width="8%"></td>
+<td width="82%">
 
 
 <p>if there were any differences reported, either by
@@ -1026,25 +1067,25 @@ command line.</p></td></tr>
 <b>&minus;w</b>/<b>&minus;&minus;exec&minus;always</b>
 commands exiting with non-zero status.</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
+<td width="9%"></td>
 <td width="1%">
 
 
 <p>3</p></td>
-<td width="10%"></td>
-<td width="78%">
+<td width="8%"></td>
+<td width="82%">
 
 
 <p>if there was any system error (a file couldn&rsquo;t be
 read for example).</p></td></tr>
 <tr valign="top" align="left">
-<td width="11%"></td>
+<td width="9%"></td>
 <td width="1%">
 
 
 <p>4</p></td>
-<td width="10%"></td>
-<td width="78%">
+<td width="8%"></td>
+<td width="82%">
 
 
 <p>if there was an internal error. This should not
@@ -1056,97 +1097,97 @@ happen.</p> </td></tr>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Check that the
+<p style="margin-left:9%; margin-top: 1em">Check that the
 two file trees rooted at <i>directory1</i> and
 <i>directory2</i> are exactly the same, including symbolic
 link targets if any, permissions, hard disk block usage,
 owner user and group ids, and if supported, flags, ACLs and
 extended attributes:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff</b>
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff</b>
 <i>directory1 directory2</i></p>
 
-<p style="margin-left:11%; margin-top: 1em">Same as
-previous example, but also check that the file modification
-times are the same:</p>
+<p style="margin-left:9%; margin-top: 1em">Same as previous
+example, but also check that the file modification times are
+the same:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff -i</b>
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff -i</b>
 <i>directory1 directory2</i></p>
 
-<p style="margin-left:11%; margin-top: 1em">Only report if
+<p style="margin-left:9%; margin-top: 1em">Only report if
 any files are present in only one directory:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;0 &minus;&minus;dirs</b> <i>directory1
 directory2</i></p>
 
-<p style="margin-left:11%; margin-top: 1em">Report only
+<p style="margin-left:9%; margin-top: 1em">Report only
 ownership (user or group id) differences, ignore any missing
 files:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;0 &minus;&minus;uid &minus;&minus;gid</b>
 <i>directory1 directory2</i></p>
 
-<p style="margin-left:11%; margin-top: 1em">Report only
+<p style="margin-left:9%; margin-top: 1em">Report only
 group permission bits differences, ignore any missing
 files:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;0 &minus;&minus;mode &minus;&minus;mode&minus;and
 70</b> <i>directory1 directory2</i></p>
 
-<p style="margin-left:14%; margin-top: 1em">or:</p>
+<p style="margin-left:12%; margin-top: 1em">or:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;0 &minus;&minus;mode &minus;&minus;mode&minus;or
 7707</b> <i>directory1 directory2</i></p>
 
-<p style="margin-left:11%; margin-top: 1em">Report only
+<p style="margin-left:9%; margin-top: 1em">Report only
 sticky bits differences, ignore any missing files:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;0 &minus;&minus;mode &minus;&minus;mode&minus;and
 1000</b> <i>directory1 directory2</i></p>
 
-<p style="margin-left:14%; margin-top: 1em">or:</p>
+<p style="margin-left:12%; margin-top: 1em">or:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;0 &minus;&minus;mode &minus;&minus;mode&minus;or
 6777</b> <i>directory1 directory2</i></p>
 
-<p style="margin-left:11%; margin-top: 1em">Run <b>cmp
+<p style="margin-left:9%; margin-top: 1em">Run <b>cmp
 &minus;l</b> on every file of the same size in both
 trees:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;0 &minus;&minus;exec cmp -l %1 %2 \;</b>
 <i>directory1 directory2</i></p>
 
-<p style="margin-left:11%; margin-top: 1em">Run super-diff:
+<p style="margin-left:9%; margin-top: 1em">Run super-diff:
 diff files with <b>diff &minus;u</b> and reports any other
 kind of differences in inode contents except for times:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;&minus;exec&minus;always&minus;diff</b> <i>directory1
 directory2</i></p>
 
-<p style="margin-left:14%; margin-top: 1em">or more
+<p style="margin-left:12%; margin-top: 1em">or more
 tersely:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;W</b> <i>directory1 directory2</i></p>
 
-<p style="margin-left:11%; margin-top: 1em">Same with file
+<p style="margin-left:9%; margin-top: 1em">Same with file
 modification times:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;W &minus;&minus;preset mtime</b> <i>directory1
 directory2</i></p>
 
-<p style="margin-left:14%; margin-top: 1em">or also:</p>
+<p style="margin-left:12%; margin-top: 1em">or also:</p>
 
-<p style="margin-left:17%; margin-top: 1em"><b>tdiff
+<p style="margin-left:14%; margin-top: 1em"><b>tdiff
 &minus;Wi</b> <i>directory1 directory2</i></p>
 
 <h2>REPORTING BUGS
@@ -1154,7 +1195,7 @@ directory2</i></p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Report bugs on
+<p style="margin-left:9%; margin-top: 1em">Report bugs on
 the <a href="https://github.com/F-i-f/tdiff/issues">GitHub
 Issues page</a>.</p>
 
@@ -1163,11 +1204,11 @@ Issues page</a>.</p>
 </h2>
 
 
-<p style="margin-left:11%; margin-top: 1em">Copyright (C)
+<p style="margin-left:9%; margin-top: 1em">Copyright (C)
 1999, 2008, 2014, 2019 Philippe Troin (
 <a href="https://github.com/F-i-f">F-i-f on GitHub</a>).</p>
 
-<p style="margin-left:11%; margin-top: 1em"><b>tdiff</b>
+<p style="margin-left:9%; margin-top: 1em"><b>tdiff</b>
 comes with ABSOLUTELY NO WARRANTY. <br>
 This is free software, and you are welcome to redistribute
 it under certain conditions. <br>
@@ -1181,7 +1222,7 @@ License along with this program. If not, see
 
 
 
-<p style="margin-left:11%; margin-top: 1em"><b>acl_set_file(1)</b>,
+<p style="margin-left:9%; margin-top: 1em"><b>acl_set_file(1)</b>,
 <b>chmod(1)</b>, <b>diff(1)</b>, <b>getfacl(1)</b>,
 <b>getfattr(1)</b>, <b>open(2)</b>, <b>setxattr(2)</b>,
 <b>stat(2)</b>.</p>

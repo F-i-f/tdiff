@@ -1,5 +1,7 @@
 2024-01-30  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.1: Update with new features shown in --version.
+
 	* m4/fi_check_shell_functions_dir.m4
 	(FI_CHECK_SHELL_FUNCTIONS_DIR): Modernize (AC_HELP_STRING ->
 	AS_HELP_STRING).

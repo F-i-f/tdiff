@@ -1,6 +1,6 @@
 .\" tdiff - tree diffs
 .\" tdiff.1 - Manual page
-.\" Copyright (C) 2019 Philippe Troin <phil+github-commits@fifi.org>
+.\" Copyright (C) 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 .\"
 .\" You should have received a copy of the GNU General Public License
 .\" along with this program.  If not, see <http://www.gnu.org/licenses/>.
-.TH TDIFF 1 "June 2019" "tdiff 0.8.4" "User Commands"
+.TH TDIFF 1 "January 2024" "tdiff 0.8.7" "User Commands"
 .SH NAME
 tdiff \- tree diff, list differences between various inode attributes (
 .BR stat(2)
@@ -102,10 +102,12 @@ then exit.
 The compiled-in feature list shows which features
 .B tdiff
 has been compiled with: O_NOATIME, flags, acl, and xattr support,
-the
+acl optimization (\fBacl_cmp\fR), the
 .BR readdir(2)
-implementation used, and the file system time granularity (either
-seconds (\fI\,s\/\fR) or nanoseconds (\fI\,ns\/\fR)).
+implementation used, the file system time granularity (either
+seconds (\fI\,s\/\fR) or nanoseconds (\fI\,ns\/\fR)) and if comparing
+symbolic links will update their access time (\fBreadlink=readlink\fR)
+or not (\fBreadlink=open(O_PATH|O_NOFOLLOW)+readlinkat\fR).
 .br
 If flags support is compiled in, the list of recognized flags will be
 listed as well.
@@ -168,7 +170,7 @@ Report any differences in the set of hard links a file may be linked
 to.
 .br
 For example if in a directory two files are hard linked together while
-in the other directory, their are not,
+in the other directory, they are not,
 .B tdiff
 will report that the files are hard links only in the first directory.
 .br
@@ -860,4 +862,4 @@ along with this program.  If not, see
 \"  LocalWords:  fBf fRlags fIdefault fI9 fI8 fI7 fI6 notimes fI0 fI1
 \"  LocalWords:  fI2 fI3 fI4 fI5 amtimes alltimes Wi ns fBa fRnd fRr
 \"  LocalWords:  fBL fRs gtkdiff fBNO symlinks fBO fRllow dereference
-\"  LocalWords:  dereferenced
+\"  LocalWords:  dereferenced readlink NOFOLLOW readlinkat
