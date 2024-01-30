@@ -1,5 +1,62 @@
 2024-01-29  Philippe Troin  <phil@fifi.org>
 
+	* tests/contents.lib.sh:
+	* tests/error-unowned-directory.test:
+	* tests/error-unowned-file1.test:
+	* tests/error-unowned-file2.test:
+	* tests/error-unreadable-directory.test:
+	* tests/error-unreadable-file.test:
+	* tests/fakeroot.lib.sh:
+	* tests/mode.lib.sh:
+	* tests/option-follow-symlinks.test:
+	* tests/parsing-duplicate-exec.test:
+	* tests/parsing-missing-placeholders.test:
+	* tests/parsing-missing-semicolon.test:
+	* tests/parsing-wrong-preset.test:
+	* tests/pre-check-file.lib.sh:
+	* tests/preset.lib.sh:
+	* tests/preset-alltimes.test:
+	* tests/preset-amtimes.test:
+	* tests/preset-contents.test:
+	* tests/preset-hardlinks.test:
+	* tests/preset-missing.test:
+	* tests/preset-mode.test:
+	* tests/preset-mtime.test:
+	* tests/preset-none.test:
+	* tests/preset-notimes.test:
+	* tests/preset-owner.test:
+	* tests/require-acl.lib.sh:
+	* tests/require-xattr.lib.sh:
+	* tests/toggle-acl.test:
+	* tests/toggle-atime.test:
+	* tests/toggle-blocks.test:
+	* tests/toggle-contents-always-diff.test:
+	* tests/toggle-contents-always.test:
+	* tests/toggle-contents-exec.test:
+	* tests/toggle-contents.test:
+	* tests/toggle-ctime.test:
+	* tests/toggle-directories.test:
+	* tests/toggle-exclude.test:
+	* tests/toggle-flag-archived.test:
+	* tests/toggle-gid.test:
+	* tests/toggle-hardlinks.test:
+	* tests/toggle-major.test:
+	* tests/toggle-minor.test:
+	* tests/toggle-mode-and.test:
+	* tests/toggle-mode-or.test:
+	* tests/toggle-mode.test:
+	* tests/toggle-mtime.test:
+	* tests/toggle-nlink.test:
+	* tests/toggle-size.test:
+	* tests/toggle-type-door.test:
+	* tests/toggle-type-root.test:
+	* tests/toggle-type-sock.test:
+	* tests/toggle-type.test:
+	* tests/toggle-uid.test:
+	* tests/toggle-xattr.test:
+	* tests/type.lib.sh:
+	Add Copyright notice.
+
 	* tests/test.lib.sh: Add Copyright notice.
 	(acl_filter, xid_filter, xtime_filter): Convert to sed regexes to
 	extended regexes. FreeBSD does not deal with regex alternation (|)
