@@ -1,5 +1,22 @@
 -*- outline -*-
 
+* Release 0.8.7
+** January 30, 2024.
+
+** Bugs fixed:
+
+- Ignore `trusted.SGI_ACL_DEFAULT` default ACL (XFS-specific).
+- Do not update access time when comparing symbolic-link
+  (system-dependent, Linux only).
+
+** Improvements:
+
+- Compare ACLs faster if acl_cmp() is available.
+- Improve test suite portability on *BSD.
+- Android build now defaults to statically linked executable.
+- Test suite skips some time and block related tests on problem
+  platforms.
+
 * Release 0.8.6
 ** May 20, 2022.
 
@@ -217,5 +234,6 @@ Now includes support for ACLs, extended attributes, and link count.
 --
 LocalWords:  zsh hardlinks mmap ACLs xattrs MacOSX inode DJB2 NOATIME
 LocalWords:  autoconf getdents64 FreeBSD Solaris tdiff atime uid gid
-LocalWords:  nlinks nlink README xtimespec vert tdiff's html pdf
-LocalWords:  BuildRequires fakeroot xattr Coverity symlinks
+LocalWords:  nlinks nlink README xtimespec vert tdiff's html pdf SGI
+LocalWords:  BuildRequires fakeroot xattr Coverity symlinks ACL XFS
+LocalWords:  acl cmp mallinfo2 glibc

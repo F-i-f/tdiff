@@ -1,5 +1,14 @@
 2024-01-30  Philippe Troin  <phil@fifi.org>
 
+	* NEWS:
+	* README.md:
+	* tdiff.spec:
+	Add changelog, update to 0.8.7.
+	Fix typos.
+	Drop Travis CI badges.
+
+	* configure.ac: Updated to 0.8.7.
+
 	* tdiff.1: Update with new features shown in --version.
 
 	* m4/fi_check_shell_functions_dir.m4
@@ -29,7 +38,7 @@
 
 	* tdiff.c (xreadlink): Use Linux-specific open with
 	O_PATH|O_NOFOLLOW|O_NOATIME followed by readlinkat(fd, "") to
-	avoid updating symlink st_atime access time.
+	avoid updating symbolic links st_atime access time.
 	(show_version): Show readlink method in --version.
 
 	* configure.ac (HAVE_O_PATH, HAVE_O_FOLLOW, HAVE_READLINKAT): Add.
@@ -296,7 +305,7 @@
 	file-name prefix.
 
 	* tests/parsing-duplicate-exec.test (duplicate_exec_filter):
-	Filter out the SVr4 diff "No differences encounted".
+	Filter out the SVr4 diff "No differences encountered".
 
 	* tests/test.lib.sh (sleep_if_coarse_time): Call
 	have_subsecond_times to find out if the build directory actually
@@ -445,7 +454,7 @@
 	* tests/error-directory.out.gold: Update.
 
 	* tests/error-directory.test (setup): Create another case where
-	both directories are unreadble.
+	both directories are unreadable.
 
 	* tdiff.c (dodiff): Print a message about directories being
 	skipped when unreadable.
@@ -876,7 +885,7 @@
 	* m4/fi_format_man.m4 (FI_FORMAT_MAN): Mark the generated file as
 	.PRECIOUS. Use a m4 macro for the target name.
 
-	* tests/test.lib.sh: Allow the tdiff command to be overriden with
+	* tests/test.lib.sh: Allow the tdiff command to be overridden with
 	the TDIFF environment variable to run eg. valgrind.
 
 	* tdiff.spec (Version):
@@ -895,7 +904,7 @@
 
 	* tests/error.out.gold: Update for forced directory mode.
 
-	* tests/error.test (setup): Force the subdirectories mode as they
+	* tests/error.test (setup): Force the sub-directories mode as they
 	get in the error output and can vary depending on the running
 	user's umask.
 
@@ -1649,17 +1658,19 @@
 
 	* inocache.c (ic_hash): Fix 64-bit hashing.
 
-LocalWords:  Troin tdiff zsh args getDirList arg Un dropAclXattrs SGI
+LocalWords:  Troin tdiff zsh args getDirList arg Un dropAclXattrs SGI md
 LocalWords:  DIRENT compat Solaris getdents NEXTDENT inocache genhash dir
-LocalWords:  config autoconf struct printopts hardlinks Makefile FI m4
+LocalWords:  config autoconf struct printopts hardlinks Makefile FI m4 fd
 LocalWords:  SUBST distclean autom4te libc syscall EGREP ChangeLog acls
-LocalWords:  getdents64 linux acl readdir xattr mmap stdout gitignore
+LocalWords:  getdents64 linux acl readdir xattr mmap stdout gitignore cmp
 LocalWords:  cmpFiles dodiff nommap opendir NOATIME fdopendir MEM stderr
 LocalWords:  verbosityLevel utils pmem ifdef reportMissingFile vvv memset
-LocalWords:  compareFileEntries initializer inode DJB2 ic gh UF
+LocalWords:  compareFileEntries initializer inode DJB2 ic gh UF README ns
 LocalWords:  getAclList EINVAL MacOSX xperror getXattrList compareXattrs
 LocalWords:  xreadlink GETOPT MALLINFO madvise LSTAT IFELSE FreeBSD PROG
-LocalWords:  najor timensec fi atimespec getxattr distcheck INIT
+LocalWords:  najor timensec fi atimespec getxattr distcheck INIT NOFOLLOW
 LocalWords:  ACLOCAL AMFLAGS otherdir phil nlinks timestamps CFLAGS MADV
 LocalWords:  Xattrs newStrList pushStrList compareStrList automake LFS
-LocalWords:  WILLNEED CLEANFILES
+LocalWords:  WILLNEED CLEANFILES changelog readlinkat atime readlink ACLs
+LocalWords:  getAcl diffacl xid xtime sed regexes lgetxattr SDK XFS
+LocalWords:  mallinfo2 mallinfo

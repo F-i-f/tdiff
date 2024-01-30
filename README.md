@@ -3,9 +3,7 @@ tdiff
 Compare files inode attributes
 ==============================
 
-Master: [![Build Status](https://travis-ci.org/F-i-f/tdiff.svg?branch=master)](https://travis-ci.org/F-i-f/tdiff)
-
-Coverity: [![Build Status](https://travis-ci.org/F-i-f/tdiff.svg?branch=coverity_scan)](https://travis-ci.org/F-i-f/tdiff) [![Coverity Scan Build Status](https://scan.coverity.com/projects/18443/badge.svg)](https://scan.coverity.com/projects/f-i-f-tdiff)
+Coverity: [![Coverity Scan Build Status](https://scan.coverity.com/projects/18443/badge.svg)](https://scan.coverity.com/projects/f-i-f-tdiff)
 
 ## Features
 
@@ -166,24 +164,24 @@ along with this program.  If not, see [http://www.gnu.org/licenses/].
 ### From a release
 
 Download the [latest release from
-GitHub](https://github.com/F-i-f/tdiff/releases/download/v0.8.6/tdiff-0.8.6.tar.gz)
-or the [secondary mirror](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.6.tar.gz):
+GitHub](https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz)
+or the [secondary mirror](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz):
 
 * [Primary Site (GitHub)](https://github.com/F-i-f/tdiff/releases/):
 
   * Source:
-	[https://github.com/F-i-f/tdiff/releases/download/v0.8.6/tdiff-0.8.6.tar.gz](https://github.com/F-i-f/tdiff/releases/download/v0.8.6/tdiff-0.8.6.tar.gz)
+	[https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz](https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz)
 
   * Signature:
-	[https://github.com/F-i-f/tdiff/releases/download/v0.8.6/tdiff-0.8.6.tar.gz.asc](https://github.com/F-i-f/tdiff/releases/download/v0.8.6/tdiff-0.8.6.tar.gz.asc)
+	[https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz.asc](https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz.asc)
 
 * [Secondary Site](http://ftp.fifi.org/phil/tdiff/):
 
   * Source:
-	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.6.tar.gz](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.6.tar.gz)
+	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz)
 
   * Signature:
-	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.6.tar.gz.asc](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.6.tar.gz.asc)
+	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz.asc](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz.asc)
 
 
 The source code release are signed with the GPG key ID `0x88D51582`,
@@ -196,7 +194,7 @@ mirror](http://ftp.fifi.org/phil/tdiff/).
 
 When downloading from the GitHub release pages, be careful to download
 the source code from the link named with the full file name
-(_tdiff-0.8.6.tar.gz_), and **not** from the links marked _Source code
+(_tdiff-0.8.7.tar.gz_), and **not** from the links marked _Source code
 (zip)_ or _Source code (tar.gz)_ as these are repository snapshots
 generated automatically by GitHub and require specialized tools to
 build (see [Building from GitHub](#from-the-github-repository)).
@@ -205,8 +203,8 @@ build (see [Building from GitHub](#from-the-github-repository)).
 After downloading the sources, unpack and build with:
 
 ```shell
-tar xvzf tdiff-0.8.6.tar.gz
-cd tdiff-0.8.6
+tar xvzf tdiff-0.8.7.tar.gz
+cd tdiff-0.8.7
 ./configure
 make
 make check
@@ -237,6 +235,23 @@ make install-pdf install-html # Optional
 ```
 
 ## Changelog
+
+### Version 0.8.7
+#### January 30, 2024.
+
+##### Bugs fixed:
+
+- Ignore `trusted.SGI_ACL_DEFAULT` default ACL (XFS-specific).
+- Do not update access time when comparing symbolic-link
+  (system-dependent, Linux only).
+
+##### Improvements:
+
+- Compare ACLs faster if acl_cmp() is available.
+- Improve test suite portability on *BSD.
+- Android build now defaults to statically linked executable.
+- Test suite skips some time and block related tests on problem
+  platforms.
 
 ### Version 0.8.6
 #### May 20, 2022.
@@ -468,5 +483,7 @@ make install-pdf install-html # Optional
  -->
 <!--  LocalWords:  nlink vert README xtimespec tdiff's ROFF fakeroot
  -->
-<!--  LocalWords:  BuildRequires Coverity symlinks
+<!--  LocalWords:  BuildRequires Coverity symlinks XFS acl cmp glibc
+ -->
+<!--  LocalWords:  mallinfo2
  -->

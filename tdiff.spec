@@ -1,5 +1,5 @@
 Name:		tdiff
-Version:	0.8.6
+Version:	0.8.7
 Release:	1%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
@@ -53,8 +53,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
-* Tue Jan 30 2024 Philippe Troin <phil@fifi.org> -
+* Tue Jan 30 2024 Philippe Troin <phil@fifi.org> - 0.8.7-1
 - Don't presume man file compression style.
+- Upstream release 0.8.7.
+  * Ignore `trusted.SGI_ACL_DEFAULT` default ACL (XFS-specific).
+  * Do not update access time when comparing symbolic-link
+    (system-dependent, Linux only).
+  * Compare ACLs faster if acl_cmp() is available.
+  * Improve test suite portability on *BSD.
+  * Android build now defaults to statically linked executable.
+  * Test suite skips some time and block related tests on problem
+    platforms.
 
 * Sat May 21 2022 Philippe Troin <phil@fifi.org> - 0.8.6-1
 - Upstream release 0.8.6:
