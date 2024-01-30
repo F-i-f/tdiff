@@ -1,5 +1,8 @@
 2024-01-29  Philippe Troin  <phil@fifi.org>
 
+	* build-android: Add Copyright notice.
+	(build): Build statically. Bump Android SDK to 30.
+
 	* tdiff.c (dropAclXattrs): Also ignore trusted.SGI_ACL_DEFAULT
 	xattr. These are only present on XFS directories. SGI_ACL_FILE
 	xattr was already ignored.

@@ -1,5 +1,22 @@
 #!/bin/bash
 
+# tdiff - tree diffs
+# build-android
+# Copyright (C) 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 # Use this script to build tdiff for all support Android targets.
 # Requires Android NDK r19 or later (tested with r19c).
 
@@ -30,14 +47,14 @@ build() {
   export LD="$TOOLCHAIN/bin/$tarch-ld"
   export RANLIB="$TOOLCHAIN/bin/$tarch-ranlib"
   export STRIP="$TOOLCHAIN/bin/$tarch-strip"
-  ./configure --host "$arch" --enable-compiler-warnings --prefix="$PWD/build-$arch"
+  ./configure --host "$arch" --enable-compiler-warnings --prefix="$PWD/build-$arch" CFLAGS="-static"
   make install-strip
   mv "build-$arch/bin/tdiff" tdiff"$suffix"
   make distclean
   rm -fr "build-$arch"
 }
 
-sdk=28
+sdk=30
 
 if [[ $# -eq 0 || $# -gt 2 ]]
 then
