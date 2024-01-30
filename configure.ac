@@ -24,6 +24,44 @@ FI_PROJECT()
 AC_CONFIG_SRCDIR([tdiff.c])
 AC_LANG([C])
 
+### 0) Flags
+
+AC_MSG_CHECKING([if time checks should be enabled])
+AC_ARG_ENABLE([time-checks],
+	      [AS_HELP_STRING([--enable-time-checks],[perform test suite tests related to time (auto-detected)])
+AS_HELP_STRING([--disable-time-checks],[skip test suite tests related to time (auto-detected)])],[
+  enable_time_checks=$enableval
+  AC_MSG_RESULT([$enable_time_checks])
+], [
+  enable_time_checks=yes
+  case "$target_os" in
+    *linux*)
+      case "$target_cpu" in
+	s390x|aarch64|powerpc64le) enable_time_checks=no;;
+      esac
+      ;;
+  esac
+  AC_MSG_RESULT([$enable_time_checks (auto-detected on os=$target_os cpu=$target_cpu)])
+])
+
+AC_MSG_CHECKING([if block checks should be enabled])
+AC_ARG_ENABLE([block-checks],
+	      [AS_HELP_STRING([--enable-block-checks],[perform test suite tests related to file system blocks (auto-detected)])
+AS_HELP_STRING([--disable-block-checks],[skip test suite tests related to file system blocks (auto-detected)])], [
+  enable_block_checks=$enableval
+  AC_MSG_RESULT([$enable_block_checks])
+], [
+  enable_block_checks=yes
+  case "$target_os" in
+    *linux*)
+      case "$target_cpu" in
+	powerpc64le) enable_block_checks=no;;
+      esac
+      ;;
+  esac
+  AC_MSG_RESULT([$enable_block_checks (auto-detected on os=$target_os cpu=$target_cpu)])
+])
+
 ### 1) Checking for system
 AC_USE_SYSTEM_EXTENSIONS
 AC_SYS_LARGEFILE
@@ -359,6 +397,8 @@ AC_SUBST([HAVE_ST_FLAGS],[$fi_cv_st_flags])
 AC_SUBST([HAVE_GETOPT_LONG],[$fi_cv_HAVE_GETOPT_LONG])
 AC_SUBST([HAVE_XATTRS],[$fi_cv_lgetxattr])
 AC_SUBST([HAVE_ACLS],[$have_acls])
+AC_SUBST([ENABLE_TIME_CHECKS],[$enable_time_checks])
+AC_SUBST([ENABLE_BLOCK_CHECKS],[$enable_block_checks])
 
 if test "x$fi_cv_have_st_timensec" = xyes -o "x$fi_cv_st_atimespec" = xyes
 then

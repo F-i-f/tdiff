@@ -19,6 +19,21 @@
 
 set -eu
 
+case "$(basename "$0" .test)" in
+  *-mtime|*-amtimes|*-alltimes|toggle-?time)
+    if [ "x$ENABLE_TIME_CHECKS" != xyes ]
+    then
+      exit 77
+    fi
+    ;;
+  toggle-blocks)
+    if [ "x$ENABLE_BLOCK_CHECKS" != xyes ]
+    then
+      exit 77
+    fi
+    ;;
+esac
+
 # Utilities
 sleep_if_coarse_time() {
   if [ "x$HAVE_NANOSECOND_TIME_RESOLUTION" = xyes -a "x${TRAVIS_JOB_NUMBER-}" = x ]

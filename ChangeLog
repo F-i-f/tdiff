@@ -1,5 +1,16 @@
 2024-01-30  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib.sh: Skip time and block checks if configured.
+
+	* Makefile.am (AM_TESTS_ENVIRONMENT): Pass down
+	ENABLE_BLOCK_CHECKS and ENABLE_TIME_CHECKS to test environment.
+
+	* configure.ac (--enable/disable-block-checks)
+	(--enable/disable-time-checks): Add toggles for disabling or
+	enabling part of the regressions related to time and file system
+	blocks. Auto-detect defaults for Linux (disable time checks on
+	s390x, aarch64, ppc64le; disable block checks on ppc64le).
+
 	* tdiff.spec (%files): Wildcard man page compression
 	extension. Different distributions (eg. Mageia) compress man pages
 	differently.

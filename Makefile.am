@@ -1,6 +1,6 @@
 #  tdiff - tree diffs
 #  Makefile.am
-#  Copyright (C) 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
+#  Copyright (C) 2014, 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -80,6 +80,8 @@ AM_TESTS_ENVIRONMENT = export LC_ALL=C \
 			      HAVE_ACLS="$(HAVE_ACLS)" \
 			      HAVE_XATTRS="$(HAVE_XATTRS)" \
 			      HAVE_NANOSECOND_TIME_RESOLUTION="$(HAVE_NANOSECOND_TIME_RESOLUTION)" \
+			      ENABLE_BLOCK_CHECKS="$(ENABLE_BLOCK_CHECKS)" \
+			      ENABLE_TIME_CHECKS="$(ENABLE_TIME_CHECKS)" \
 			      ;
 TEST_EXTENSIONS	     = .test
 TESTS = tests/ent_pair_cache.test			\
