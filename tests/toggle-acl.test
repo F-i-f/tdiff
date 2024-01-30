@@ -12,7 +12,7 @@ setup() {
 	g:36:r
 	g:37:rw
 	g:38:rwx
-	m:rw
+	m::rw
 EOD
   cat - "$1"/acl-f-list > "$1"/acl-d-list <<-'EOD'
 	d:u:43:--x
@@ -21,7 +21,7 @@ EOD
 	d:g:46:w
 	d:g:47:rx
 	d:g:48:rwx
-	d:m:rwx
+	d:m::rwx
 EOD
   for i in $(seq 1 9)
   do
@@ -48,14 +48,14 @@ EOD
   setfacl -n -x g:36 "$1"/file5 "$1"/dir5
   setfacl -n -m g:37:wx "$1"/file6 "$1"/dir6
   setfacl -n -m g:39:r "$1"/file7 "$1"/dir7
-  setfacl -n -m m:r "$1"/file8 "$1"/dir8
+  setfacl -n -m m::r "$1"/file8 "$1"/dir8
   setfacl -n -m d:u:43:w "$1"/dir10
   setfacl -n -x d:u:44 "$1"/dir11
   setfacl -n -m d:u:42:x "$1"/dir12
   setfacl -n -m d:g:46:wx "$1"/dir13
   setfacl -n -x d:g:47 "$1"/dir14
   setfacl -n -m d:g:49:x "$1"/dir15
-  setfacl -n -m d:m:w "$2"/dir16
+  setfacl -n -m d:m::w "$2"/dir16
 }
 
 tdiff_options="-0l"
