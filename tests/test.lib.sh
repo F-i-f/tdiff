@@ -1,5 +1,22 @@
 # This is -*- mode: shell-script; sh-shell:sh; -*-
 
+# tdiff - tree diffs
+# tests/test.lib.sh
+# Copyright (C) 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 set -eu
 
 # Utilities
@@ -29,15 +46,15 @@ sync_if_needed() {
 
 # Filters
 acl_filter() {
-  sed -e 's!\(: \(access\|default\) acl \(user\|group\):\)[^[:space:]]\+\(: .*\)$!\1XX\4!'
+  sed -re 's!(: (access|default) acl (user|group):)[^[:space:]]+(: .*)$!\1XX\4!'
 }
 
 xid_filter() {
-  sed -e 's!\(: '"$1"':\) [^[:space:]]*(\([0-9][0-9]*\)) [^[:space:]]*(\([0-9][0-9]*\))$!\1 \2 \3!'
+  sed -re 's!(: '"$1"':) [^[:space:]]*\(([0-9][0-9]*)\) [^[:space:]]*\(([0-9][0-9]*)\)$!\1 \2 \3!'
 }
 
 xtime_filter() {
-  sed -e 's!\(: '"$1"':\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
+  sed -re 's!(: '"$1"':) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
 }
 
 # Main program

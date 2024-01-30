@@ -1,5 +1,10 @@
 2024-01-29  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib.sh: Add Copyright notice.
+	(acl_filter, xid_filter, xtime_filter): Convert to sed regexes to
+	extended regexes. FreeBSD does not deal with regex alternation (|)
+	in legacy regexes.
+
 	* configure.ac (HAVE_XATTR): Check against lgetxattr, not
 	getxattr. Fixes bug introduced in 0ccc359 that skips xattr tests.
 
