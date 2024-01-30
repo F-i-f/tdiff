@@ -1,5 +1,14 @@
 2024-01-29  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (getAcl, getAclList): Factor reading ACLs out of
+	getAclList() info getAcl().
+	(diffacl): Separate reading the ACL from converting it to string
+	and comparing it so that acl_cmp() can be used (if available) as
+	acl_to_text() is expensive.
+	(show_version): Show acl_cmp=yes or no in --version.
+
+	* configure.ac (HAVE_ACL_CMP): Test for acl_cmp() (Linux extension).
+
 	* tests/contents.lib.sh:
 	* tests/error-unowned-directory.test:
 	* tests/error-unowned-file1.test:

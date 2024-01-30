@@ -325,6 +325,18 @@ AC_SEARCH_LIBS([acl_get_file],[acl],[
   have_acls=yes
 ],[have_acls=no])
 
+if test "x$have_acls" = xyes
+then
+  AC_CACHE_CHECK([for acl_cmp in acl/libacl.h], fi_cv_have_acl_cmp, [
+    AC_EGREP_CPP(acl_cmp, [#include <acl/libacl.h>],
+		 [fi_cv_have_acl_cmp=yes],
+		 [fi_cv_have_acl_cmp=no])])
+  if test "x$fi_cv_have_acl_cmp" = xyes
+  then
+    AC_DEFINE([HAVE_ACL_CMP],1,[Define if your system has acl_cmp().])
+  fi
+fi
+
 FI_USE_XNET([no])
 FI_CHECK_LIB_FOR_SOCKETS
 

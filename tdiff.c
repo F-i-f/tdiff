@@ -80,6 +80,9 @@
 
 #if HAVE_ACL
 #include <sys/acl.h>
+#  if HAVE_ACL_CMP
+#    include <acl/libacl.h>
+#  endif
 #endif
 
 #include "tdiff.h"
@@ -387,37 +390,43 @@ dropAclXattrs(const char *xn)
  * ACL comparisons
  */
 #if HAVE_ACL
-str_list_t *
-getAclList(const char* path, acl_type_t acltype)
+static int
+getAcl(const char* path, acl_type_t acltype, acl_t *pacl)
 {
-  acl_t acl = acl_get_file(path , acltype);
+  acl_t acl = acl_get_file(path, acltype);
+  if (acl == NULL)
+    switch(errno)
+      {
+      case ENOTSUP:
+      case EINVAL:
+	*pacl = NULL;
+	return 0;
+      default:
+	xperror("cannot get ACL, acl_get_file()", path);
+	return XIT_SYS;
+      }
+  *pacl = acl;
+  return 0;
+}
+
+str_list_t *
+getAclList(const char* path, acl_t acl)
+{
   ssize_t acllen;
   char *acls;
   char *p;
   str_list_t *rv;
   /**/
 
-  if (acl == NULL)
-    switch(errno)
-      {
-      case ENOTSUP:
-      case EINVAL:
-	str_list_new(&rv);
-	return rv;
-      default:
-	xperror("cannot get ACL, acl_get_file()", path);
-	return NULL;
-      }
+  str_list_new(&rv);
+  if (acl == NULL) return rv;
 
   acls = acl_to_text(acl, &acllen);
   if (!acls)
     {
       xperror("cannot get ACL, acl_to_text()", path);
-      acl_free(acl);
       return NULL;
     }
-
-  str_list_new(&rv);
 
   const char* beg_user = acls;
   enum {
@@ -514,7 +523,6 @@ getAclList(const char* path, acl_type_t acltype)
     }
 
   acl_free(acls);
-  acl_free(acl);
 
   return rv;
 }
@@ -570,29 +578,64 @@ int
 diffacl(options_t* opts, const char* p1, const char* p2,
 	acl_type_t acltype, const char* acldescr)
 {
-  str_list_t *acl1 = getAclList(p1, acltype);
-  str_list_t *acl2 = getAclList(p2, acltype);
-  int rv;
+  acl_t				 acl1  = NULL;
+  acl_t				 acl2  = NULL;
+  str_list_t			*acls1 = NULL;
+  str_list_t			*acls2 = NULL;
+  int				 rv, rv2;
+  aclCompareClientData_t	 clientData;
   /**/
 
-  if (acl1 && acl2)
+  rv = getAcl(p1, acltype, &acl1);
+  rv2 = getAcl(p2, acltype, &acl2);
+  if (rv || rv2) {
+    rv = rv || rv2;
+    goto clean_acls;
+  }
+
+  if (acl1 == NULL && acl2 == NULL) return 0;
+
+#if HAVE_ACL_CMP
+  if (acl1 != NULL && acl2 != NULL)
     {
-      aclCompareClientData_t clientData;
-
-      clientData.cmn.opts = opts;
-      clientData.acldescr = acldescr;
-
-      rv = str_list_compare(p1, p2,
-			    acl1, acl2,
-			    reportMissingAcl,
-			    compareAcls,
-			    (str_list_client_data_t*)&clientData);
+      int ret = acl_cmp(acl1, acl2);
+      switch(ret)
+	{
+	case -1:
+	  xperror("cannot compare ACLs, acl_cmp()", p1);
+	  rv = XIT_SYS;
+	  goto clean_acls;
+	case 0:
+	  rv = 0;
+	  goto clean_acls;
+	case 1:
+	  break;
+	default:
+	  fprintf(stderr, "%s: %s: acl_cmp(): unexpected result %d\n",
+		  progname, p1, ret);
+	  return XIT_SYS;
+	}
     }
-  else
-    rv = XIT_SYS;
+#endif /* HAVE_ACL_CMP */
 
-  if (acl1) str_list_destroy(acl1);
-  if (acl2) str_list_destroy(acl2);
+  acls1 = getAclList(p1, acl1);
+  acls2 = getAclList(p2, acl2);
+
+  clientData.cmn.opts = opts;
+  clientData.acldescr = acldescr;
+
+  rv = str_list_compare(p1, p2,
+			acls1, acls2,
+			reportMissingAcl,
+			compareAcls,
+			(str_list_client_data_t*)&clientData);
+
+  str_list_destroy(acls1);
+  str_list_destroy(acls2);
+
+ clean_acls:
+  if (acl1 != NULL) acl_free(acl1);
+  if (acl2 != NULL) acl_free(acl2);
 
   return rv;
 }
@@ -1132,8 +1175,14 @@ show_version(void)
 	     "Features: ",
 #if HAVE_ACL
 	     "acl=yes",
+#  if HAVE_ACL_CMP
+	     "acl_cmp=yes",
+#  else /* ! HAVE_ACL_CMP */
+	     "acl_cmp=no",
+#  endif /* ! HAVE_ACL_CMP */
 #else /* ! HAVE_ACL */
 	     "acl=no",
+	     "acl_cmp=no",
 #endif /* ! HAVE_ACL */
 #if HAVE_ST_FLAGS
 	     "flags=BSD",
