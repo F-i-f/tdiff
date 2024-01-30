@@ -1,6 +1,6 @@
 #  fi-autoconf-macros - A collection of autoconf macros
 #  fi_check_shell_functions_dir
-#  Copyright (C) 1999, 2006, 2008, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
+#  Copyright (C) 1999, 2006, 2008, 2014, 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -60,9 +60,9 @@ AC_DEFUN([FI_CHECK_SHELL_FUNCTIONS_DIR],
 	 AS_VAR_SET([with_shell_fpath], [default])
 	 AS_VAR_PUSHDEF([have_shell],[])
 	 AC_ARG_WITH([AS_TR_SH([$1])-functions-dir],
-	   AC_HELP_STRING([--with-[]AS_TR_SH([$1])-functions-dir=PATH],
+	   AS_HELP_STRING([--with-[]AS_TR_SH([$1])-functions-dir=PATH],
 			  [Install $1 completions to PATH])
-AC_HELP_STRING([--without-[]AS_TR_SH([$1])-functions-dir],
+AS_HELP_STRING([--without-[]AS_TR_SH([$1])-functions-dir],
 			  [Do not install $1 completions]),
 	   [AS_VAR_SET([with_shell_fpath],[$withval])])
 	 AS_VAR_PUSHDEF([have_shell],[AS_TR_SH([have_$1])])

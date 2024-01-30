@@ -1,5 +1,11 @@
 2024-01-30  Philippe Troin  <phil@fifi.org>
 
+	* m4/fi_check_shell_functions_dir.m4
+	(FI_CHECK_SHELL_FUNCTIONS_DIR): Modernize (AC_HELP_STRING ->
+	AS_HELP_STRING).
+
+	* configure.ac (AC_CONFIG_HEADERS): Quote properly.
+
 	* tests/test.lib.sh: Skip time and block checks if configured.
 
 	* Makefile.am (AM_TESTS_ENVIRONMENT): Pass down

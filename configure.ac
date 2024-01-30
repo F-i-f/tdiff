@@ -410,7 +410,7 @@ AC_SUBST([HAVE_NANOSECOND_TIME_RESOLUTION],[$have_nanosecond_time_resolution])
 
 ### END: output
 
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 
