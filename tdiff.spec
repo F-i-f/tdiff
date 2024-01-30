@@ -47,12 +47,15 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %{_bindir}/tdiff
-%{_mandir}/man1/tdiff.1.gz
+%{_mandir}/man1/tdiff.1*
 %{_datadir}/bash-completion/completions/tdiff
 %{_datadir}/zsh/site-functions/_tdiff
 %{_docdir}/%{name}
 
 %changelog
+* Tue Jan 30 2024 Philippe Troin <phil@fifi.org> -
+- Don't presume man file compression style.
+
 * Sat May 21 2022 Philippe Troin <phil@fifi.org> - 0.8.6-1
 - Upstream release 0.8.6:
   * Handle mallinfo2 and glibc 2.34.
