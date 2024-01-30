@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Main()
-  Copyright (C) 1999, 2008, 2014, 2019, 2022 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2008, 2014, 2019, 2022, 2024 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -378,7 +378,8 @@ dropAclXattrs(const char *xn)
 {
   return (!strcmp(xn, "system.posix_acl_access")
 	  || !strcmp(xn, "system.posix_acl_default")
-	  || !strcmp(xn, "trusted.SGI_ACL_FILE"));
+	  || !strcmp(xn, "trusted.SGI_ACL_FILE")
+	  || !strcmp(xn, "trusted.SGI_ACL_DEFAULT"));
 }
 #endif
 

@@ -1,5 +1,9 @@
 2024-01-29  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (dropAclXattrs): Also ignore trusted.SGI_ACL_DEFAULT
+	xattr. These are only present on XFS directories. SGI_ACL_FILE
+	xattr was already ignored.
+
 	* tests/toggle-acl.test (setup): Specify ACL masks
 	correctly. Colon should be doubled. Found on FreeBSD 14 which is
 	picky about ACL syntax.
