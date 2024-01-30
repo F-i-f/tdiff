@@ -1288,7 +1288,7 @@ show_version(void)
 #endif /* HAVE_ST_FLAGS */
 
   printf("\n"
-	 "Copyright (C) 1999-2022 Philippe Troin <phil+github-commits@fifi.org>.\n"
+	 "Copyright (C) 1999-2024 Philippe Troin <phil+github-commits@fifi.org>.\n"
 	 "Tdiff comes with ABSOLUTELY NO WARRANTY.\n"
 	 "This is free software, and you are welcome to redistribute it\n"
 	 "under certain conditions.\n"

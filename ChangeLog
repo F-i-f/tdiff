@@ -1,5 +1,7 @@
 2024-01-29  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (show_version): Update Copyright notice.
+
 	* tdiff.c (xreadlink): Use Linux-specific open with
 	O_PATH|O_NOFOLLOW|O_NOATIME followed by readlinkat(fd, "") to
 	avoid updating symlink st_atime access time.
