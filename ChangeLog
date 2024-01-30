@@ -1,5 +1,12 @@
 2024-01-29  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (xreadlink): Use Linux-specific open with
+	O_PATH|O_NOFOLLOW|O_NOATIME followed by readlinkat(fd, "") to
+	avoid updating symlink st_atime access time.
+	(show_version): Show readlink method in --version.
+
+	* configure.ac (HAVE_O_PATH, HAVE_O_FOLLOW, HAVE_READLINKAT): Add.
+
 	* tdiff.c (getAcl, getAclList): Factor reading ACLs out of
 	getAclList() info getAcl().
 	(diffacl): Separate reading the ACL from converting it to string

@@ -201,7 +201,7 @@ fi
 
 ### 6) Checking for macros
 
-FI_CHECK_DEFINES([O_NOATIME O_DIRECTORY], [#include <sys/types.h>
+FI_CHECK_DEFINES([O_NOATIME O_DIRECTORY O_PATH O_NOFOLLOW], [#include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>])
 
@@ -336,6 +336,10 @@ then
     AC_DEFINE([HAVE_ACL_CMP],1,[Define if your system has acl_cmp().])
   fi
 fi
+
+AC_SEARCH_LIBS([readlinkat],[],[
+  AC_DEFINE([HAVE_READLINKAT],1,[Define if your system has readlinkat])
+])
 
 FI_USE_XNET([no])
 FI_CHECK_LIB_FOR_SOCKETS

@@ -1207,6 +1207,11 @@ show_version(void)
 #else /* ! HAVE_GETDENTS */
 	     "readdir=readdir",
 #endif /* ! HAVE_GETDENTS */
+#if HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME
+	     "readlink=open(O_PATH|O_NOFOLLOW)+readlinkat",
+#else /* ! (HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME) */
+	     "readlink=readlink",
+#endif /* ! (HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME) */
 #ifdef ST_ATIMENSEC
 	     "time_granularity=ns",
 #else /* ! def ST_ATIMENSEC */
@@ -1705,14 +1710,26 @@ xreadlink(const char* path)
   char *buf;
   int bufsize = XREADLINK_BUF_SIZE;
   int nstored;
+#if HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME
+  int fd = -1;
   /**/
+  fd = open(path, O_PATH|O_NOATIME);
+#endif /* HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME */
   buf = xmalloc(bufsize);
+
  again:
-  if ((nstored=readlink(path, buf, bufsize))<0)
+#if HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME
+  if (fd >= 0)
+    nstored = readlinkat(fd, "", buf, bufsize);
+  if (fd < 0 || nstored < 0)
+#endif /* HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME */
+    nstored=readlink(path, buf, bufsize);
+  if (nstored < 0)
     {
-      free(buf);
       xperror("cannot read link target, readlink()", path);
-      return NULL;
+      free(buf);
+      buf = NULL;
+      goto out;
     }
   if (nstored==bufsize-1)
     {
@@ -1720,6 +1737,12 @@ xreadlink(const char* path)
       goto again;
     }
   buf[nstored] = 0;
+
+ out:
+#if HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME
+  if (fd >= 0)
+    close(fd);
+#endif /* HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME */
   return buf;
 }
 
