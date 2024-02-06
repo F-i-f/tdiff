@@ -168,7 +168,7 @@ typedef struct str_list_client_data_s
 } str_list_client_data_t;
 
 
-str_list_t *getDirList(const char* path);
+str_list_t *getDirList(const char* path, const struct stat*, int*);
 int dodiff(options_t* opts, const char* p1, const char* p2);
 char* pconcat(const char* p1, const char* p2);
 int execprocess(const dexe_t *dex, const char* p1, const char* p2);
@@ -639,44 +639,74 @@ diffacl(options_t* opts, const char* p1, const char* p2,
 #endif /* HAVE_ACL */
 
 /*
+ * Utilities
+ */
+static int
+openFile(const char* path, const struct stat *sbuf)
+{
+  int fd;
+  int flags;
+  /**/
+
+  flags = O_RDONLY;
+  switch((sbuf->st_mode) & S_IFMT)
+    {
+    case S_IFDIR:
+      flags = O_RDONLY;
+#if HAVE_O_DIRECTORY
+      flags |= O_DIRECTORY;
+#endif /* HAVE_O_DIRECTORY */
+      break;
+    case S_IFREG:
+      flags = O_RDONLY;
+      break;
+#if HAVE_S_IFLNK && HAVE_O_PATH && HAVE_O_NOFOLLOW
+    case S_IFLNK:
+      flags = O_PATH|O_NOFOLLOW;
+      break;
+#endif /* HAVE_S_IFLNK && HAVE_O_PATH && HAVE_O_NOFOLLOW */
+    default:
+#if HAVE_O_PATH
+      flags = O_PATH;
+#else /* ! HAVE_O_PATH */
+      flags = O_RDONLY;
+#endif /* ! HAVE_O_PATH */
+      break;
+    }
+#if HAVE_O_NOATIME
+  flags |= O_NOATIME;
+#endif /* HAVE_O_NOATIME */
+
+  fd = open(path, flags);
+
+#if HAVE_O_NOATIME
+  if (fd < 0 && errno == EPERM)
+    fd = open(path, flags & ~O_NOATIME);
+#endif
+
+  return fd;
+}
+
+/*
  * Directory comparisons
  */
 str_list_t *
-getDirList(const char* path)
+getDirList(const char* path, const struct stat *sbuf, int *fd)
 #if HAVE_GETDENTS
 {
   char		dentbuf[GETDIRLIST_DENTBUF_SIZE];
-  int		fd;
   str_list_t *	rv = NULL;
   int		nread;
   /**/
 
-  fd = open(path, O_RDONLY
-#if HAVE_O_DIRECTORY
-		 |O_DIRECTORY
-#endif /* HAVE_O_DIRECTORY */
-#if HAVE_O_NOATIME
-		 |O_NOATIME
-#endif /* HAVE_O_NOATIME */
-	    );
-
-#if HAVE_O_NOATIME
-  /* open(O_NOATIME) can fail with EPERM when not running as root and
-   * the file is not ours */
-  if (fd < 0 && errno == EPERM)
-    fd = open(path, O_RDONLY
-#if HAVE_O_DIRECTORY
-	      |O_DIRECTORY
-#endif /* HAVE_O_DIRECTORY */
-		 );
-#endif /* HAVE_O_NOATIME */
-
-  if (fd<0)
-    goto err;
+  if (*fd < 0)
+    *fd = openFile(path, sbuf);
+  if (*fd < 0)
+    goto err_open;
 
   str_list_new(&rv);
 
-  while((nread = getdents(fd, (void*)dentbuf,
+  while((nread = getdents(*fd, (void*)dentbuf,
 			  GETDIRLIST_DENTBUF_SIZE))>0)
     {
       struct STRUCT_DIRENT *dent;
@@ -696,28 +726,22 @@ getDirList(const char* path)
     }
 
   if (nread<0)
-    goto err3;
-
-  if (close(fd)<0)
-    goto err2;
+    goto err_dents;
 
   return rv;
 
- err3:
-  close(fd);
-
- err2:
+ err_dents:
   str_list_destroy(rv);
   rv = NULL;
 
- err:
+ err_open:
   xperror("cannot get directory listing, getdents()", path);
   return rv;
 }
-#else
+#else /* ! HAVE_GETDENTS */
 {
 #if HAVE_FDOPENDIR
-  int		 dirfd;
+  int           dupfd;
 #endif /* HAVE_FDOPENDIR */
   DIR		*dir;
   struct dirent *dent;
@@ -725,36 +749,25 @@ getDirList(const char* path)
   /**/
 
 #if HAVE_FDOPENDIR
-  dirfd = open(path, O_RDONLY
-#if HAVE_O_DIRECTORY
-	       |O_DIRECTORY
-#endif /* HAVE_O_DIRECTORY */
-#if HAVE_O_NOATIME
-	       |O_NOATIME
-#endif /* HAVE_O_NOATIME */
-	       );
+  if (*fd < 0)
+    *fd = openFile(path, sbuf);
 
-#if HAVE_O_NOATIME
-  /* open(O_NOATIME) can fail with EPERM when not running as root and
-   * the file is not ours */
-  if ( dirfd < 0 && errno == EPERM)
-    dirfd = open(path, O_RDONLY
-#if HAVE_O_DIRECTORY
-		 |O_DIRECTORY
-#endif /* HAVE_O_DIRECTORY */
-		 );
-#endif /* HAVE_O_NOATIME */
-
-  if ( dirfd < 0 )
+  if ( *fd < 0 )
     goto err;
 
-  dir = fdopendir(dirfd);
+  dupfd = dup(*fd);
+  if (dupfd < 0)
+    goto err;
+
+  dir = fdopendir(dupfd);
   if (!dir)
     {
-      close(dirfd);
+      close(dupfd);
       goto err;
     }
 #else /* ! HAVE_FDOPENDIR */
+  UNUSED(sbuf);
+  UNUSED(fd);
   dir = opendir(path);
   if (!dir)
     goto err;
@@ -786,7 +799,7 @@ getDirList(const char* path)
   xperror("cannot get directory listing, readdir()", path);
   return rv;
 }
-#endif
+#endif  /* ! HAVE_GETDENTS */
 
 static int
 reportMissingFile(int which, const char* d, const char *f, str_list_client_data_t* clientData)
@@ -940,12 +953,10 @@ reportTimeDiscrepancy(const char* f, const char* whattime,
 	 progname, f, whattime, t1, t2);
 }
 
-
 static int
-cmpFiles(const char* f1, const struct stat *sbuf1,
-	 const char* f2, const struct stat *sbuf2)
+cmpFiles(const char* f1, const struct stat *sbuf1, int *fd1,
+	 const char* f2, const struct stat *sbuf2, int *fd2)
 {
-  int		fd1, fd2;
   char		buf1[CMPFILE_BUF_SIZE];
   char		buf2[CMPFILE_BUF_SIZE];
   ssize_t	toread;
@@ -957,7 +968,7 @@ cmpFiles(const char* f1, const struct stat *sbuf1,
       fprintf(stderr, "%s: cmpFiles called on files of different sizes\n",
 	      progname);
       BUMP_EXIT_CODE(rv, XIT_INTERNALERROR);
-      goto fail2;
+      return rv;
     }
 
   if (sbuf1->st_size == 0)
@@ -965,84 +976,62 @@ cmpFiles(const char* f1, const struct stat *sbuf1,
       return rv;
     }
 
-  fd1 = open(f1, O_RDONLY
-#if HAVE_O_NOATIME
-	     |O_NOATIME
-#endif /* HAVE_O_NOATIME */
-	     );
+  if (*fd1 < 0)
+    *fd1 = openFile(f1, sbuf1);
 
-#if HAVE_O_NOATIME
-  /* open(O_NOATIME) can fail with EPERM when not running as root and
-   * the file is not ours */
-  if ( fd1 < 0 && errno == EPERM)
-    fd1 = open(f1, O_RDONLY);
-#endif /* HAVE_O_NOATIME */
-
-  if (fd1 < 0)
+  if (*fd1 < 0)
     {
       xperror("cannot open file", f1);
       BUMP_EXIT_CODE(rv, XIT_SYS);
-      goto fail2;
+      return rv;
     }
 
-  fd2 = open(f2, O_RDONLY
-#if HAVE_O_NOATIME
-	     |O_NOATIME
-#endif /* HAVE_O_NOATIME */
-	     );
+  if (*fd2 < 0)
+    *fd2 = openFile(f2, sbuf2);
 
-#if HAVE_O_NOATIME
-  /* open(O_NOATIME) can fail with EPERM when not running as root and
-   * the file is not ours */
-  if ( fd2 < 0 && errno == EPERM)
-    fd2 = open(f2, O_RDONLY);
-#endif /* HAVE_O_NOATIME */
-
-  if (fd2 < 0)
+  if (*fd2 < 0)
     {
       xperror("cannot open file", f2);
       BUMP_EXIT_CODE(rv, XIT_SYS);
-      goto fail1;
+      return rv;
     }
-
-	/**/
 
   for (toread = sbuf1->st_size; toread>0; )
     {
       int nread1, nread2;
       /**/
-      nread1 = read(fd1, buf1, CMPFILE_BUF_SIZE);
+      nread1 = read(*fd1, buf1, CMPFILE_BUF_SIZE);
       if (nread1 < 0)
 	{
 	  xperror("read()", f1);
 	  BUMP_EXIT_CODE(rv, XIT_SYS);
-	  goto fail;
+	  return rv;
 	}
       if (nread1 < CMPFILE_BUF_SIZE && nread1 != toread)
 	{
 	  fprintf(stderr, "%s: %s: short read\n", progname, f1);
 	  BUMP_EXIT_CODE(rv, XIT_SYS);
-	  goto fail;
+	  return rv;
 	}
-      nread2 = read(fd2, buf2, CMPFILE_BUF_SIZE);
+      nread2 = read(*fd2, buf2, CMPFILE_BUF_SIZE);
       if (nread2 < 0)
 	{
 	  xperror("read()", f2);
 	  BUMP_EXIT_CODE(rv, XIT_SYS);
-	  goto fail;
+	  return rv;
 	}
       if (nread2 < CMPFILE_BUF_SIZE && nread2 != toread)
 	{
 	  fprintf(stderr, "%s: %s: short read\n", progname, f2);
 	  BUMP_EXIT_CODE(rv, XIT_SYS);
-	  goto fail;
+	  return rv;
 	}
       if (nread1 != nread2)
 	{
 	  fprintf(stderr, "%s: %s, %s: read different number of bytes (%d vs. %d)\n",
 		  progname, f1, f2, (int)nread1, (int)nread2);
 	  BUMP_EXIT_CODE(rv, XIT_SYS);
-	  goto fail;
+	  return rv;
 	}
       if (memcmp(buf1, buf2, nread1)!=0)
 	{
@@ -1052,26 +1041,6 @@ cmpFiles(const char* f1, const struct stat *sbuf1,
       toread -= nread1;
     }
 
-  if (close(fd2)<0)
-    {
-      xperror("cannot close file", f2);
-      BUMP_EXIT_CODE(rv, XIT_SYS);
-      goto fail1;
-    }
-  if (close(fd1)<0)
-    {
-      xperror("cannot close file", f1);
-      BUMP_EXIT_CODE(rv, XIT_SYS);
-      goto fail2;
-    }
-
-  return rv;
-
- fail:
-  close(fd2);
- fail1:
-  close(fd1);
- fail2:
   return rv;
 }
 
@@ -1701,32 +1670,35 @@ execprocess(const dexe_t *dex, const char* p1, const char* p2)
     }
 }
 
+#if HAVE_S_IFLNK
 char*
-xreadlink(const char* path)
+xreadlink(const char* path, const struct stat *sbuf, int *fd)
 {
   char *buf;
   int bufsize = XREADLINK_BUF_SIZE;
   int nstored;
 #if HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME
-  int fd = -1;
   /**/
-  fd = open(path, O_PATH|O_NOATIME);
-#endif /* HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME */
+  if (*fd < 0)
+    *fd = openFile(path, sbuf);
+#else /* ! (HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME) */
+  UNUSED(sbuf);
+  UNUSED(fd);
+#endif /* ! (HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME) */
   buf = xmalloc(bufsize);
 
  again:
 #if HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME
-  if (fd >= 0)
-    nstored = readlinkat(fd, "", buf, bufsize);
-  if (fd < 0 || nstored < 0)
+  if (*fd >= 0)
+    nstored = readlinkat(*fd, "", buf, bufsize);
+  if (*fd < 0 || nstored < 0)
 #endif /* HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME */
-    nstored=readlink(path, buf, bufsize);
+    nstored = readlink(path, buf, bufsize);
   if (nstored < 0)
     {
       xperror("cannot read link target, readlink()", path);
       free(buf);
-      buf = NULL;
-      goto out;
+      return NULL;
     }
   if (nstored >= bufsize)
     {
@@ -1734,14 +1706,9 @@ xreadlink(const char* path)
       goto again;
     }
   buf[nstored] = 0;
-
- out:
-#if HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME
-  if (fd >= 0)
-    close(fd);
-#endif /* HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME */
   return buf;
 }
+#endif /* HAVE_S_IFLNK */
 
 int
 dodiff(options_t* opts, const char* p1, const char* p2)
@@ -1750,6 +1717,8 @@ dodiff(options_t* opts, const char* p1, const char* p2)
   const char*			stat_func_name;
   struct stat			sbuf1;
   struct stat			sbuf2;
+  int                           fd1 = -1;
+  int                           fd2 = -1;
   ent_pair_cache_key_t *	ice;
   char *			icepath;
   int				rv	     = XIT_OK;
@@ -2211,8 +2180,8 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	  int				 nrv;
 	  /**/
 
-	  ct1 = getDirList(p1);
-	  ct2 = getDirList(p2);
+	  ct1 = getDirList(p1, &sbuf1, &fd1);
+	  ct2 = getDirList(p2, &sbuf2, &fd2);
 
 	  if (ct1 && ct2)
 	    {
@@ -2252,7 +2221,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		  }
 		else
 		  {
-		    int nrv = cmpFiles(p1, &sbuf1, p2, &sbuf2);
+		    int nrv = cmpFiles(p1, &sbuf1, &fd1, p2, &sbuf2, &fd2);
 		    BUMP_EXIT_CODE(rv, nrv);
 		    switch(nrv)
 		      {
@@ -2284,8 +2253,8 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       case S_IFLNK:
 	if (opts->contents)
 	  {
-	    char *lnk1 = xreadlink(p1);
-	    char *lnk2 = xreadlink(p2);
+	    char *lnk1 = xreadlink(p1, &sbuf1, &fd1);
+	    char *lnk2 = xreadlink(p2, &sbuf2, &fd2);
 	    if (lnk1 && lnk2 && strcmp(lnk1, lnk2) != 0)
 	      {
 		printf("%s: %s: symbolic links differ\n",
@@ -2322,6 +2291,18 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	break;
       }
 
+  if (fd1 >= 0 && close(fd1))
+    {
+      xperror("cannot close", p1);
+      BUMP_EXIT_CODE(rv, XIT_SYS);
+    }
+
+  if (fd2 >= 0 && close(fd2))
+    {
+      xperror("cannot close", p2);
+      BUMP_EXIT_CODE(rv, XIT_SYS);
+    }
+
   return rv;
 }
 
@@ -2333,7 +2314,7 @@ applyPresets(options_t* opts, int presetLevel)
   opts->uid	   = opts->gid       = opts->acl    = presetLevel >= 3;
   opts->nlink	   = opts->hardlinks                = presetLevel >= 4;
   opts->size	   = opts->blocks    =
-    opts->contents = opts->major     = opts->minor  = presetLevel >= 5;
+  opts->contents   = opts->major     = opts->minor  = presetLevel >= 5;
   opts->flags      = opts->xattr                    = presetLevel >= 6;
   opts->mtime                                       = presetLevel >= 7;
   opts->atime                                       = presetLevel >= 8;

@@ -1,4 +1,10 @@
 2024-02-06  Philippe Troin  <phil@fifi.org>
+	* tdiff.c (openFile): Factor out from multiple locations where a
+	file is opened.
+	(getDirList, cmpFiles, xreadlink): Use per-file file descriptor to
+	have a single open/close per pair of compared files.
+	(dodiff): Only open every file at most once.
+
 	* have_subsecond_times.c (ATTRIBUTE_UNUSED): Removed unused macro.
 
 	* make_door.c (UNUSED): New macro to mark an unused variable or
