@@ -168,19 +168,19 @@ typedef struct str_list_client_data_s
 } str_list_client_data_t;
 
 
-str_list_t *getDirList(const char* path, const struct stat*, int*);
-int dodiff(options_t* opts, const char* p1, const char* p2);
-char* pconcat(const char* p1, const char* p2);
-int execprocess(const dexe_t *dex, const char* p1, const char* p2);
-int dropAclXattrs(const char*);
+static str_list_t *getDirList(const char* path, const struct stat*, int*);
+static int dodiff(options_t* opts, const char* p1, const char* p2);
+static char* pconcat(const char* p1, const char* p2);
+static int execprocess(const dexe_t *dex, const char* p1, const char* p2);
+static int dropAclXattrs(const char*);
 
 #if DEBUG
-void printopts(const options_t*);
+static void printopts(const options_t*);
 #else
 #  define printopts(a)
 #endif
 
-void
+static void
 xperror(const char* msg, const char *filename)
 {
   fprintf(stderr, "%s: %s: %s: %s (errno=%d)\n",
@@ -232,7 +232,7 @@ reportMissing(int which, const char* f, const char* what, str_list_client_data_t
  * Xattrs comparisons
  */
 #if HAVE_LGETXATTR
-str_list_t*
+static str_list_t*
 getXattrList(const char* path)
 {
   str_list_t *rv;
@@ -294,7 +294,7 @@ reportMissingXattr(int which, const char* f, const char* xn, str_list_client_dat
   return XIT_DIFF;
 }
 
-void*
+static void*
 getXattr(const char* p, const char* name, size_t *retSize)
 {
   size_t	 bufSize = XATTR_BUF_SIZE;
@@ -323,7 +323,7 @@ getXattr(const char* p, const char* name, size_t *retSize)
   return buf;
 }
 
-int
+static int
 compareXattrs(const char* p1, const char* p2,
 	      const char* e1, const char* e2,
 	      str_list_client_data_t* clientData)
@@ -371,7 +371,7 @@ compareXattrs(const char* p1, const char* p2,
   return rv;
 }
 
-int
+static int
 dropAclXattrs(const char *xn)
 {
   return (!strcmp(xn, "system.posix_acl_access")
@@ -404,7 +404,7 @@ getAcl(const char* path, acl_type_t acltype, acl_t *pacl)
   return 0;
 }
 
-str_list_t *
+static str_list_t *
 getAclList(const char* path, acl_t acl)
 {
   ssize_t acllen;
@@ -528,7 +528,7 @@ typedef struct aclCompareClientData_s
   const char*			acldescr;
 } aclCompareClientData_t;
 
-int
+static int
 reportMissingAcl(int which, const char* f, const char* xn, str_list_client_data_t* commonClientData)
 {
   aclCompareClientData_t*	 clientData = (aclCompareClientData_t*)commonClientData;
@@ -546,7 +546,7 @@ reportMissingAcl(int which, const char* f, const char* xn, str_list_client_data_
   return XIT_DIFF;
 }
 
-int
+static int
 compareAcls(const char* p1, const char* p2,
 	    const char* e1, const char* e2,
 	    str_list_client_data_t* commonClientData)
@@ -570,7 +570,7 @@ compareAcls(const char* p1, const char* p2,
   return rv;
 }
 
-int
+static int
 diffacl(options_t* opts, const char* p1, const char* p2,
 	acl_type_t acltype, const char* acldescr)
 {
@@ -690,7 +690,7 @@ openFile(const char* path, const struct stat *sbuf)
 /*
  * Directory comparisons
  */
-str_list_t *
+static str_list_t *
 getDirList(const char* path, const struct stat *sbuf, int *fd)
 #if HAVE_GETDENTS
 {
@@ -896,7 +896,7 @@ reportMissingHardLink(int which, const char* d, const char *f, str_list_client_d
 /*
  * Reporting utilities
  */
-const char*
+static const char*
 getFileType(mode_t m)
 {
   switch(m & S_IFMT)
@@ -935,7 +935,6 @@ formatTime(char* obuf, size_t obufsize, time_t fsecs, int fnsecs)
   if (fnsecs >= 0 && written < obufsize)
     snprintf(obuf+written, obufsize-written, ".%09d", fnsecs);
 }
-
 
 static void
 reportTimeDiscrepancy(const char* f, const char* whattime,
@@ -1048,7 +1047,7 @@ cmpFiles(const char* f1, const struct stat *sbuf1, int *fd1,
  * Options handling
  */
 
-unsigned
+static unsigned
 get_terminal_width(FILE *fd)
 {
   static const int	 default_terminal_width = 80;
@@ -1079,7 +1078,7 @@ get_terminal_width(FILE *fd)
   return default_terminal_width;
 }
 
-void
+static void
 print_list(FILE* fd, unsigned width, const char *header, ...)
 {
   size_t	 header_length;
@@ -1125,7 +1124,7 @@ print_list(FILE* fd, unsigned width, const char *header, ...)
     fprintf(fd, ".\n");
 }
 
-void
+static void
 show_version(void)
 {
   unsigned terminal_width = get_terminal_width(stdout);
@@ -1262,7 +1261,7 @@ show_version(void)
 	 "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n");
 }
 
-void
+static void
 show_help(void)
 {
   printf("usage: %s [options]... <dir1> <dir2>\n"
@@ -1523,7 +1522,7 @@ get_exec_args(char **argv, int *optind, dexe_t *dex)
   dex->argv[numargs] = NULL;
 }
 
-int
+static int
 get_octal_arg(const char* string, unsigned int* val)
 {
   size_t	 len;
@@ -1561,7 +1560,7 @@ get_octal_arg(const char* string, unsigned int* val)
 }
 
 #if DEBUG
-void
+static void
 printopts(const options_t* o)
 {
 #define POPT(x) printf(#x " = %s\n", o->x ? "yes" : "no")
@@ -1617,7 +1616,7 @@ printopts(const options_t* o)
 }
 #endif /* DEBUG */
 
-char*
+static char*
 pconcat(const char* p1, const char* p2)
 {
   char *rv;
@@ -1631,7 +1630,7 @@ pconcat(const char* p1, const char* p2)
   return rv;
 }
 
-int
+static int
 execprocess(const dexe_t *dex, const char* p1, const char* p2)
 {
   int status;
@@ -1671,7 +1670,7 @@ execprocess(const dexe_t *dex, const char* p1, const char* p2)
 }
 
 #if HAVE_S_IFLNK
-char*
+static char*
 xreadlink(const char* path, const struct stat *sbuf, int *fd)
 {
   char *buf;
@@ -1710,7 +1709,7 @@ xreadlink(const char* path, const struct stat *sbuf, int *fd)
 }
 #endif /* HAVE_S_IFLNK */
 
-int
+static int
 dodiff(options_t* opts, const char* p1, const char* p2)
 {
   int                         (*stat_func)(const char*, struct stat*);

@@ -1,4 +1,10 @@
 2024-02-06  Philippe Troin  <phil@fifi.org>
+	* tdiff.c (xperror, getXattrList, getXattr, compareXattrs)
+	(dropAclXattrs, getAclList, reportMissingAcl, compareAcls)
+	(diffacl, getDirList, getFileType, get_terminal_width)
+	(print_list, show_version, show_help, get_octal_arg, printopts)
+	(pconcat, execprocess, xreadlink, dodiff): Make static.
+
 	* tdiff.c (openFile): Factor out from multiple locations where a
 	file is opened.
 	(getDirList, cmpFiles, xreadlink): Use per-file file descriptor to
