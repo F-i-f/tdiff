@@ -1,3 +1,12 @@
+2024-02-06  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.c (xreadlink): Off-by-one in xreadlink which could lead to
+	memory corruption for symbolic links of length of a multiple of
+	1024. Unlikely to be a problem as most filesystems limit symbolic
+	link sizes to lower than 1024.
+
+	* tdiff.1: Update Copyright notice.
+
 2024-01-30  Philippe Troin  <phil@fifi.org>
 
 	* NEWS:

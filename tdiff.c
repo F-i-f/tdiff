@@ -1731,7 +1731,7 @@ xreadlink(const char* path)
       buf = NULL;
       goto out;
     }
-  if (nstored==bufsize-1)
+  if (nstored >= bufsize)
     {
       buf = xrealloc(buf, bufsize*=2);
       goto again;
