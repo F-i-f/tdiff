@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   have_subsecond_times.c - Check if the build directory has subsecond times.
-  Copyright (C) 2019 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -28,14 +28,6 @@
 #include <errno.h>
 
 #include "st_xtime_ns.h"
-
-#if __GNUC__
-# define ATTRIBUTE_UNUSED __attribute__((unused))
-#else /* ! __GNUC__ */
-# define ATTRIBUTE_UNUSED /**/
-#endif /* ! __GNUC__ */
-
-
 
 static const char * const paths[] = { ".",
 				      "tdiff.h",

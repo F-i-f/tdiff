@@ -1,4 +1,15 @@
 2024-02-06  Philippe Troin  <phil@fifi.org>
+	* have_subsecond_times.c (ATTRIBUTE_UNUSED): Removed unused macro.
+
+	* make_door.c (UNUSED): New macro to mark an unused variable or
+	parameter.
+	(ATTRIBUTE_UNUSED): Remove.
+	(door_proc): ATTRIBUTE_UNUSED -> UNUSED.
+
+	* tdiff.c (UNUSED): New macro to mark an unused variable or
+	parameter.
+	(ATTRIBUTE_UNUSED): Remove.
+	(compareAcls, compareFileEntries): ATTRIBUTE_UNUSED -> UNUSED.
 
 	* tdiff.c (xreadlink): Off-by-one in xreadlink which could lead to
 	memory corruption for symbolic links of length of a multiple of

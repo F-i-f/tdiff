@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   make_door
-  Copyright (C) 2019 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -37,11 +37,7 @@ int fattach(int, const char*);
 #include <sys/types.h>
 #include <unistd.h>
 
-#if __GNUC__
-# define ATTRIBUTE_UNUSED __attribute__((unused))
-#else /* ! __GNUC__ */
-# define ATTRIBUTE_UNUSED /**/
-#endif /* ! __GNUC__ */
+#define UNUSED(x) ((void)(x))
 
 static int
 max(int a, int b)
@@ -54,12 +50,17 @@ max(int a, int b)
 }
 
 static void
-door_proc(ATTRIBUTE_UNUSED void* cookie,
-	  ATTRIBUTE_UNUSED char* argp,
-	  ATTRIBUTE_UNUSED size_t arg_size,
-	  ATTRIBUTE_UNUSED door_desc_t *dp,
-	  ATTRIBUTE_UNUSED unsigned flags)
+door_proc(void* cookie,
+	  char* argp,
+	  size_t arg_size,
+	  door_desc_t *dp,
+	  unsigned flags)
 {
+  UNUSED(cookie);
+  UNUSED(argp);
+  UNUSED(arg_size);
+  UNUSED(dp);
+  UNUSED(flags);
   door_return(NULL, 0, NULL, 0);
 }
 

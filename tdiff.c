@@ -92,12 +92,7 @@
 #include "hard_links_cache.h"
 #include "st_xtime_ns.h"
 
-
-#if __GNUC__
-# define ATTRIBUTE_UNUSED __attribute__((unused))
-#else /* ! __GNUC__ */
-# define ATTRIBUTE_UNUSED /**/
-#endif /* ! __GNUC__ */
+#define UNUSED(x) ((void)(x))
 
 #define XATTR_BUF_SIZE		16384
 #define GETDIRLIST_DENTBUF_SIZE 8192
@@ -552,7 +547,7 @@ reportMissingAcl(int which, const char* f, const char* xn, str_list_client_data_
 }
 
 int
-compareAcls(const char* p1, ATTRIBUTE_UNUSED const char* p2,
+compareAcls(const char* p1, const char* p2,
 	    const char* e1, const char* e2,
 	    str_list_client_data_t* commonClientData)
 {
@@ -560,6 +555,7 @@ compareAcls(const char* p1, ATTRIBUTE_UNUSED const char* p2,
   int rv = XIT_OK;
   const char *v1;
   const char *v2;
+  UNUSED(p2);
 
   v1 = e1 + strlen(e1)+1;
   v2 = e2 + strlen(e1)+1;
@@ -845,10 +841,11 @@ reportMissingFile(int which, const char* d, const char *f, str_list_client_data_
 
 static int
 compareFileEntries(const char* p1, const char* p2,
-		   const char* e1, ATTRIBUTE_UNUSED const char* e2,
+		   const char* e1, const char* e2,
 		   str_list_client_data_t* clientData)
 {
   int rv = XIT_OK;
+  UNUSED(e2);
   /**/
 
   if (gh_find(clientData->opts->exclusions, e1, NULL))
