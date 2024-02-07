@@ -117,7 +117,7 @@ typedef struct dexe_s
 #define OPT_MODE_AND_DEFAULT ((unsigned)~0)
 typedef struct option_s
 {
-  unsigned int		 verbosityLevel:8;
+  unsigned int		 verbosity_level:8;
   unsigned int		 dirs:1;
   unsigned int		 type:1;
   unsigned int		 mode:1;
@@ -168,16 +168,16 @@ typedef struct str_list_client_data_s
 } str_list_client_data_t;
 
 
-static str_list_t *getDirList(const char* path, const struct stat*, int*);
+static str_list_t *get_dir_list(const char* path, const struct stat*, int*);
 static int dodiff(options_t* opts, const char* p1, const char* p2);
 static char* pconcat(const char* p1, const char* p2);
-static int execprocess(const dexe_t *dex, const char* p1, const char* p2);
-static int dropAclXattrs(const char*);
+static int exec_process(const dexe_t *dex, const char* p1, const char* p2);
+static int drop_acl_xattrs(const char*);
 
 #if DEBUG
-static void printopts(const options_t*);
+static void print_options(const options_t*);
 #else
-#  define printopts(a)
+#  define print_options(a)
 #endif
 
 static void
@@ -191,7 +191,7 @@ xperror(const char* msg, const char *filename)
  * Common printing
  */
 static void
-reportMissing(int which, const char* f, const char* what, str_list_client_data_t* clientData)
+report_missing(int which, const char* f, const char* what, str_list_client_data_t* client_data)
 {
   const char*	subp;
   int		rootlen;
@@ -200,13 +200,13 @@ reportMissing(int which, const char* f, const char* what, str_list_client_data_t
   switch(which)
     {
     case 1:
-      subp = f+(rootlen = clientData->opts->root1_length);
+      subp = f+(rootlen = client_data->opts->root1_length);
       break;
     case 2:
-      subp = f+(rootlen = clientData->opts->root2_length);
+      subp = f+(rootlen = client_data->opts->root2_length);
       break;
     default:
-      fprintf(stderr, "%s: reportMissing(): unexpected which=%d, aborting...\n",
+      fprintf(stderr, "%s: report_missing(): unexpected which=%d, aborting...\n",
 	      progname, which);
       exit(XIT_INTERNALERROR);
     }
@@ -214,7 +214,7 @@ reportMissing(int which, const char* f, const char* what, str_list_client_data_t
     {
       if (*subp != '/')
 	{
-	  fprintf(stderr, "%s: reportMissing(): unexpected subp=\"%c\" (code=%d), aborting...\n",
+	  fprintf(stderr, "%s: report_missing(): unexpected subp=\"%c\" (code=%d), aborting...\n",
 		  progname, isprint(*subp) ? *subp : '?', *subp);
 	  exit(XIT_INTERNALERROR);
 	}
@@ -233,21 +233,21 @@ reportMissing(int which, const char* f, const char* what, str_list_client_data_t
  */
 #if HAVE_LGETXATTR
 static str_list_t*
-getXattrList(const char* path)
+get_xattr_list(const char* path)
 {
   str_list_t *rv;
   char *buf;
-  size_t bufSize = XATTR_BUF_SIZE;
-  ssize_t rSize;
+  size_t buf_size = XATTR_BUF_SIZE;
+  ssize_t read_size;
   const char *p;
   const char *p_e;
   /**/
 
-  buf = xmalloc(bufSize);
+  buf = xmalloc(buf_size);
 
  again:
-  rSize = llistxattr(path, buf, bufSize);
-  if (rSize == -1)
+  read_size = llistxattr(path, buf, buf_size);
+  if (read_size == -1)
     switch(errno)
       {
       case ENOTSUP:
@@ -255,7 +255,7 @@ getXattrList(const char* path)
 	return rv;
       case ERANGE:
 	free(buf);
-	buf = xmalloc(bufSize *= 2);
+	buf = xmalloc(buf_size *= 2);
 	goto again;
       default:
 	xperror("cannot get extended attribute list, llistxattr()", path);
@@ -264,7 +264,7 @@ getXattrList(const char* path)
       }
 
   str_list_new(&rv);
-  for (p = buf, p_e = buf+rSize;
+  for (p = buf, p_e = buf+read_size;
        p < p_e && *p;
        p += strlen(p)+1)
     str_list_push(rv, p);
@@ -274,59 +274,59 @@ getXattrList(const char* path)
 }
 
 static int
-reportMissingXattr(int which, const char* f, const char* xn, str_list_client_data_t* clientData)
+report_missing_xattr(int which, const char* f, const char* xn, str_list_client_data_t* client_data)
 {
   static const char prefix[] = "xattr ";
   size_t	 buf_len;
   char		*buf;
 
 #if HAVE_ACL
-  if (dropAclXattrs(xn))
+  if (drop_acl_xattrs(xn))
     return XIT_OK;
 #endif
 
   buf_len = sizeof(prefix)-1+strlen(xn)+1;
   buf = xmalloc(buf_len);
   snprintf(buf, buf_len, "%s%s", prefix, xn);
-  reportMissing(which, f, buf, clientData);
+  report_missing(which, f, buf, client_data);
   free(buf);
 
   return XIT_DIFF;
 }
 
 static void*
-getXattr(const char* p, const char* name, size_t *retSize)
+get_xattr(const char* p, const char* name, size_t *returned_size)
 {
-  size_t	 bufSize = XATTR_BUF_SIZE;
-  void		*buf	 = xmalloc(bufSize);
+  size_t	 buf_size = XATTR_BUF_SIZE;
+  void		*buf	  = xmalloc(buf_size);
   ssize_t	 sz;
   /**/
 
-  *retSize = 0;
+  *returned_size = 0;
 
  again:
-  sz	 = lgetxattr(p, name, buf, bufSize);
+  sz	 = lgetxattr(p, name, buf, buf_size);
 
   if (sz == -1)
     switch(errno)
       {
       case ERANGE:
 	free(buf);
-	buf = xmalloc(bufSize *= 2);
+	buf = xmalloc(buf_size *= 2);
 	goto again;
       default:
 	free(buf);
 	return 0;
       }
 
-  *retSize = sz;
+  *returned_size = sz;
   return buf;
 }
 
 static int
-compareXattrs(const char* p1, const char* p2,
-	      const char* e1, const char* e2,
-	      str_list_client_data_t* clientData)
+compare_xattrs(const char* p1, const char* p2,
+	       const char* e1, const char* e2,
+	       str_list_client_data_t* client_data)
 {
   int rv = XIT_OK;
   size_t sz1 = 0;
@@ -335,12 +335,12 @@ compareXattrs(const char* p1, const char* p2,
   void* buf2;
 
 #if HAVE_ACL
-  if (dropAclXattrs(e1))
+  if (drop_acl_xattrs(e1))
     return rv;
 #endif
 
-  buf1 = getXattr(p1, e1, &sz1);
-  buf2 = getXattr(p2, e2, &sz2);
+  buf1 = get_xattr(p1, e1, &sz1);
+  buf2 = get_xattr(p2, e2, &sz2);
 
   if (!buf1)
     {
@@ -359,7 +359,7 @@ compareXattrs(const char* p1, const char* p2,
   if (sz1 != sz2 || memcmp(buf1, buf2, sz1))
     {
       printf("%s: %s: xattr %s: contents differ\n",
-	     progname, p1+clientData->opts->root1_length+1, e1);
+	     progname, p1+client_data->opts->root1_length+1, e1);
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
 
@@ -372,7 +372,7 @@ compareXattrs(const char* p1, const char* p2,
 }
 
 static int
-dropAclXattrs(const char *xn)
+drop_acl_xattrs(const char *xn)
 {
   return (!strcmp(xn, "system.posix_acl_access")
 	  || !strcmp(xn, "system.posix_acl_default")
@@ -386,7 +386,7 @@ dropAclXattrs(const char *xn)
  */
 #if HAVE_ACL
 static int
-getAcl(const char* path, acl_type_t acltype, acl_t *pacl)
+get_acl(const char* path, acl_type_t acltype, acl_t *pacl)
 {
   acl_t acl = acl_get_file(path, acltype);
   if (acl == NULL)
@@ -405,7 +405,7 @@ getAcl(const char* path, acl_type_t acltype, acl_t *pacl)
 }
 
 static str_list_t *
-getAclList(const char* path, acl_t acl)
+get_acl_list(const char* path, acl_t acl)
 {
   ssize_t acllen;
   char *acls;
@@ -449,7 +449,7 @@ getAclList(const char* path, acl_t acl)
 	  ++state;
 	else if (isspace(*p))
 	  {
-	    fprintf(stderr, "%s: getAclList(): space-like character \"%c\" (code=%d) while parsing acl \"%s\", aborting...\n",
+	    fprintf(stderr, "%s: get_acl_list(): space-like character \"%c\" (code=%d) while parsing acl \"%s\", aborting...\n",
 		    progname, isprint(*p) ? *p : '?', *p, p);
 	    exit(XIT_INTERNALERROR);
 	  }
@@ -465,7 +465,7 @@ getAclList(const char* path, acl_t acl)
 	  case '-':
 	    break;
 	  default:
-	    fprintf(stderr, "%s: getAclList(): unexpected character in state %d: \"%c\" (code=%d)\n",
+	    fprintf(stderr, "%s: get_acl_list(): unexpected character in state %d: \"%c\" (code=%d)\n",
 		    progname, state, isprint(*p) ? *p : '?', *p);
 	    exit(XIT_INTERNALERROR);
 	  }
@@ -494,7 +494,7 @@ getAclList(const char* path, acl_t acl)
 	  default:
 	    if (!isspace(*p))
 	      {
-		fprintf(stderr, "%s: getAclList(): unexpected non-whitespace character in state %d: \"%c\" (code=%d), aborting...\n",
+		fprintf(stderr, "%s: get_acl_list(): unexpected non-whitespace character in state %d: \"%c\" (code=%d), aborting...\n",
 			progname, state, isprint(*p) ? *p : '?', *p);
 		exit(XIT_INTERNALERROR);
 	      }
@@ -505,14 +505,14 @@ getAclList(const char* path, acl_t acl)
 	  state = STATE_FIRST_WS;
 	break;
       default:
-	fprintf(stderr, "%s: getAclList(): unexpected state %d, aborting...\n",
+	fprintf(stderr, "%s: get_acl_list(): unexpected state %d, aborting...\n",
 		progname, state);
 	exit(XIT_INTERNALERROR);
       }
 
   if (state != STATE_FIRST_WS)
     {
-      fprintf(stderr, "%s: getAclList(): unexpected state %d at end, aborting...\n",
+      fprintf(stderr, "%s: get_acl_list(): unexpected state %d at end, aborting...\n",
 	      progname, state);
       exit(XIT_INTERNALERROR);
     }
@@ -522,36 +522,36 @@ getAclList(const char* path, acl_t acl)
   return rv;
 }
 
-typedef struct aclCompareClientData_s
+typedef struct acl_compare_client_data_s
 {
   str_list_client_data_t	cmn;
   const char*			acldescr;
-} aclCompareClientData_t;
+} acl_compare_client_data_t;
 
 static int
-reportMissingAcl(int which, const char* f, const char* xn, str_list_client_data_t* commonClientData)
+report_missing_acl(int which, const char* f, const char* xn, str_list_client_data_t* common_client_data)
 {
-  aclCompareClientData_t*	 clientData = (aclCompareClientData_t*)commonClientData;
+  acl_compare_client_data_t*	 client_data = (acl_compare_client_data_t*)common_client_data;
   static const char infix[]		    = " acl ";
   size_t			 buf_len;
   char				*buf;
   /**/
 
-  buf_len = strlen(clientData->acldescr)+sizeof(infix)-1+strlen(xn)+1;
+  buf_len = strlen(client_data->acldescr)+sizeof(infix)-1+strlen(xn)+1;
   buf = xmalloc(buf_len);
-  snprintf(buf, buf_len, "%s%s%s", clientData->acldescr, infix, xn);
-  reportMissing(which, f, buf, &clientData->cmn);
+  snprintf(buf, buf_len, "%s%s%s", client_data->acldescr, infix, xn);
+  report_missing(which, f, buf, &client_data->cmn);
   free(buf);
 
   return XIT_DIFF;
 }
 
 static int
-compareAcls(const char* p1, const char* p2,
-	    const char* e1, const char* e2,
-	    str_list_client_data_t* commonClientData)
+compare_acls(const char* p1, const char* p2,
+	     const char* e1, const char* e2,
+	     str_list_client_data_t* common_client_data)
 {
-  aclCompareClientData_t* clientData = (aclCompareClientData_t*)commonClientData;
+  acl_compare_client_data_t* client_data = (acl_compare_client_data_t*)common_client_data;
   int rv = XIT_OK;
   const char *v1;
   const char *v2;
@@ -563,7 +563,7 @@ compareAcls(const char* p1, const char* p2,
   if (strcmp(v1, v2))
     {
       printf("%s: %s: %s acl %s: %s %s\n",
-	     progname, p1+clientData->cmn.opts->root1_length+1, clientData->acldescr, e1, v1, v2);
+	     progname, p1+client_data->cmn.opts->root1_length+1, client_data->acldescr, e1, v1, v2);
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
 
@@ -571,19 +571,19 @@ compareAcls(const char* p1, const char* p2,
 }
 
 static int
-diffacl(options_t* opts, const char* p1, const char* p2,
-	acl_type_t acltype, const char* acldescr)
+diff_acl(options_t* opts, const char* p1, const char* p2,
+	 acl_type_t acltype, const char* acldescr)
 {
   acl_t				 acl1  = NULL;
   acl_t				 acl2  = NULL;
   str_list_t			*acls1 = NULL;
   str_list_t			*acls2 = NULL;
   int				 rv, rv2;
-  aclCompareClientData_t	 clientData;
+  acl_compare_client_data_t	 client_data;
   /**/
 
-  rv = getAcl(p1, acltype, &acl1);
-  rv2 = getAcl(p2, acltype, &acl2);
+  rv = get_acl(p1, acltype, &acl1);
+  rv2 = get_acl(p2, acltype, &acl2);
   if (rv || rv2) {
     rv = rv || rv2;
     goto clean_acls;
@@ -614,17 +614,17 @@ diffacl(options_t* opts, const char* p1, const char* p2,
     }
 #endif /* HAVE_ACL_CMP */
 
-  acls1 = getAclList(p1, acl1);
-  acls2 = getAclList(p2, acl2);
+  acls1 = get_acl_list(p1, acl1);
+  acls2 = get_acl_list(p2, acl2);
 
-  clientData.cmn.opts = opts;
-  clientData.acldescr = acldescr;
+  client_data.cmn.opts = opts;
+  client_data.acldescr = acldescr;
 
   rv = str_list_compare(p1, p2,
 			acls1, acls2,
-			reportMissingAcl,
-			compareAcls,
-			(str_list_client_data_t*)&clientData);
+			report_missing_acl,
+			compare_acls,
+			(str_list_client_data_t*)&client_data);
 
   str_list_destroy(acls1);
   str_list_destroy(acls2);
@@ -642,7 +642,7 @@ diffacl(options_t* opts, const char* p1, const char* p2,
  * Utilities
  */
 static int
-openFile(const char* path, const struct stat *sbuf)
+open_path(const char* path, const struct stat *sbuf)
 {
   int fd;
   int flags;
@@ -691,7 +691,7 @@ openFile(const char* path, const struct stat *sbuf)
  * Directory comparisons
  */
 static str_list_t *
-getDirList(const char* path, const struct stat *sbuf, int *fd)
+get_dir_list(const char* path, const struct stat *sbuf, int *fd)
 #if HAVE_GETDENTS
 {
   char		dentbuf[GETDIRLIST_DENTBUF_SIZE];
@@ -700,7 +700,7 @@ getDirList(const char* path, const struct stat *sbuf, int *fd)
   /**/
 
   if (*fd < 0)
-    *fd = openFile(path, sbuf);
+    *fd = open_path(path, sbuf);
   if (*fd < 0)
     goto err_open;
 
@@ -750,7 +750,7 @@ getDirList(const char* path, const struct stat *sbuf, int *fd)
 
 #if HAVE_FDOPENDIR
   if (*fd < 0)
-    *fd = openFile(path, sbuf);
+    *fd = open_path(path, sbuf);
 
   if ( *fd < 0 )
     goto err;
@@ -802,13 +802,13 @@ getDirList(const char* path, const struct stat *sbuf, int *fd)
 #endif  /* ! HAVE_GETDENTS */
 
 static int
-reportMissingFile(int which, const char* d, const char *f, str_list_client_data_t* clientData)
+report_missing_file(int which, const char* d, const char *f, str_list_client_data_t* client_data)
 {
-  if ( ! clientData->opts->dirs )
+  if ( ! client_data->opts->dirs )
     return XIT_OK;
 
-  if ( gh_find(clientData->opts->exclusions, f, NULL) )
-    ++ clientData->opts->stats.excluded;
+  if ( gh_find(client_data->opts->exclusions, f, NULL) )
+    ++ client_data->opts->stats.excluded;
   else
     {
       const char*	subp;
@@ -816,18 +816,18 @@ reportMissingFile(int which, const char* d, const char *f, str_list_client_data_
       size_t		fp_len = strlen(f)+strlen(d)+1;
       char		fp[fp_len];
 
-      ++ clientData->opts->stats.singles;
+      ++ client_data->opts->stats.singles;
 
       switch(which)
 	{
 	case 1:
-	  subp = d+(rootlen = clientData->opts->root1_length);
+	  subp = d+(rootlen = client_data->opts->root1_length);
 	  break;
 	case 2:
-	  subp = d+(rootlen = clientData->opts->root2_length);
+	  subp = d+(rootlen = client_data->opts->root2_length);
 	  break;
 	default:
-	  fprintf(stderr, "%s: reportMissingFile(): unexpected which=%d, aborting...\n",
+	  fprintf(stderr, "%s: report_missing_file(): unexpected which=%d, aborting...\n",
 		  progname, which);
 	  exit(XIT_INTERNALERROR);
 	}
@@ -835,7 +835,7 @@ reportMissingFile(int which, const char* d, const char *f, str_list_client_data_
 	{
 	  if (*subp != '/')
 	    {
-	      fprintf(stderr, "%s: reportMissingFile(): unexpected subp=\"%c\" (code=%d), aborting...\n",
+	      fprintf(stderr, "%s: report_missing_file(): unexpected subp=\"%c\" (code=%d), aborting...\n",
 		      progname, isprint(*subp) ? *subp : '?', *subp);
 	      exit(XIT_INTERNALERROR);
 	    }
@@ -853,21 +853,21 @@ reportMissingFile(int which, const char* d, const char *f, str_list_client_data_
 }
 
 static int
-compareFileEntries(const char* p1, const char* p2,
-		   const char* e1, const char* e2,
-		   str_list_client_data_t* clientData)
+compare_directories(const char* p1, const char* p2,
+		    const char* e1, const char* e2,
+		    str_list_client_data_t* client_data)
 {
   int rv = XIT_OK;
   UNUSED(e2);
   /**/
 
-  if (gh_find(clientData->opts->exclusions, e1, NULL))
-    ++ clientData->opts->stats.excluded;
+  if (gh_find(client_data->opts->exclusions, e1, NULL))
+    ++ client_data->opts->stats.excluded;
   else
     {
       char *np1 = pconcat(p1, e1);
       char *np2 = pconcat(p2, e1);
-      rv = dodiff(clientData->opts, np1, np2);
+      rv = dodiff(client_data->opts, np1, np2);
       free(np1);
       free(np2);
     }
@@ -878,7 +878,7 @@ compareFileEntries(const char* p1, const char* p2,
  * Hard links comparisons
  */
 static int
-reportMissingHardLink(int which, const char* d, const char *f, str_list_client_data_t* clientData)
+report_missing_hard_link(int which, const char* d, const char *f, str_list_client_data_t* client_data)
 {
   static const char prefix[] = "hard link to ";
   size_t	 buf_len;
@@ -887,7 +887,7 @@ reportMissingHardLink(int which, const char* d, const char *f, str_list_client_d
   buf_len = sizeof(prefix)-1+strlen(f)+1;
   buf = xmalloc(buf_len);
   snprintf(buf, buf_len, "%s%s", prefix, f);
-  reportMissing(which, d, buf, clientData);
+  report_missing(which, d, buf, client_data);
   free(buf);
 
   return XIT_DIFF;
@@ -897,7 +897,7 @@ reportMissingHardLink(int which, const char* d, const char *f, str_list_client_d
  * Reporting utilities
  */
 static const char*
-getFileType(mode_t m)
+get_file_type(mode_t m)
 {
   switch(m & S_IFMT)
     {
@@ -925,19 +925,19 @@ getFileType(mode_t m)
 }
 
 static void
-formatTime(char* obuf, size_t obufsize, time_t fsecs, int fnsecs)
+format_time(char* obuf, size_t buf_size, time_t fsecs, int fnsecs)
 {
   size_t written;
   struct tm tms;
   /**/
   localtime_r(&fsecs, &tms);
-  written = strftime(obuf, obufsize, "%Y-%m-%d %H:%M:%S", &tms);
-  if (fnsecs >= 0 && written < obufsize)
-    snprintf(obuf+written, obufsize-written, ".%09d", fnsecs);
+  written = strftime(obuf, buf_size, "%Y-%m-%d %H:%M:%S", &tms);
+  if (fnsecs >= 0 && written < buf_size)
+    snprintf(obuf+written, buf_size-written, ".%09d", fnsecs);
 }
 
 static void
-reportTimeDiscrepancy(const char* f, const char* whattime,
+report_time_discrepancy(const char* f, const char* whattime,
 		      time_t f1secs, time_t f2secs,
 		      int f1nsecs, int f2nsecs)
 {
@@ -945,16 +945,16 @@ reportTimeDiscrepancy(const char* f, const char* whattime,
   char t2[256];
   /**/
 
-  formatTime(t1, sizeof(t1), f1secs, f1nsecs);
-  formatTime(t2, sizeof(t2), f2secs, f2nsecs);
+  format_time(t1, sizeof(t1), f1secs, f1nsecs);
+  format_time(t2, sizeof(t2), f2secs, f2nsecs);
 
   printf("%s: %s: %s: [%s] [%s]\n",
 	 progname, f, whattime, t1, t2);
 }
 
 static int
-cmpFiles(const char* f1, const struct stat *sbuf1, int *fd1,
-	 const char* f2, const struct stat *sbuf2, int *fd2)
+compare_files(const char* f1, const struct stat *sbuf1, int *fd1,
+	      const char* f2, const struct stat *sbuf2, int *fd2)
 {
   char		buf1[CMPFILE_BUF_SIZE];
   char		buf2[CMPFILE_BUF_SIZE];
@@ -964,7 +964,7 @@ cmpFiles(const char* f1, const struct stat *sbuf1, int *fd1,
 
   if (sbuf1->st_size != sbuf2->st_size)
     {
-      fprintf(stderr, "%s: cmpFiles called on files of different sizes\n",
+      fprintf(stderr, "%s: compare_files called on files of different sizes\n",
 	      progname);
       BUMP_EXIT_CODE(rv, XIT_INTERNALERROR);
       return rv;
@@ -976,7 +976,7 @@ cmpFiles(const char* f1, const struct stat *sbuf1, int *fd1,
     }
 
   if (*fd1 < 0)
-    *fd1 = openFile(f1, sbuf1);
+    *fd1 = open_path(f1, sbuf1);
 
   if (*fd1 < 0)
     {
@@ -986,7 +986,7 @@ cmpFiles(const char* f1, const struct stat *sbuf1, int *fd1,
     }
 
   if (*fd2 < 0)
-    *fd2 = openFile(f2, sbuf2);
+    *fd2 = open_path(f2, sbuf2);
 
   if (*fd2 < 0)
     {
@@ -1561,10 +1561,10 @@ get_octal_arg(const char* string, unsigned int* val)
 
 #if DEBUG
 static void
-printopts(const options_t* o)
+print_options(const options_t* o)
 {
 #define POPT(x) printf(#x " = %s\n", o->x ? "yes" : "no")
-  printf("verbosityLevel = %d\n", o->verbosityLevel);
+  printf("verbosity_level = %d\n", o->verbosity_level);
   POPT(follow_symlinks);
   POPT(dirs);
   POPT(type);
@@ -1631,7 +1631,7 @@ pconcat(const char* p1, const char* p2)
 }
 
 static int
-execprocess(const dexe_t *dex, const char* p1, const char* p2)
+exec_process(const dexe_t *dex, const char* p1, const char* p2)
 {
   int status;
   /**/
@@ -1674,34 +1674,34 @@ static char*
 xreadlink(const char* path, const struct stat *sbuf, int *fd)
 {
   char *buf;
-  int bufsize = XREADLINK_BUF_SIZE;
+  int buf_size = XREADLINK_BUF_SIZE;
   int nstored;
 #if HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME
   /**/
   if (*fd < 0)
-    *fd = openFile(path, sbuf);
+    *fd = open_path(path, sbuf);
 #else /* ! (HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME) */
   UNUSED(sbuf);
   UNUSED(fd);
 #endif /* ! (HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME) */
-  buf = xmalloc(bufsize);
+  buf = xmalloc(buf_size);
 
  again:
 #if HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME
   if (*fd >= 0)
-    nstored = readlinkat(*fd, "", buf, bufsize);
+    nstored = readlinkat(*fd, "", buf, buf_size);
   if (*fd < 0 || nstored < 0)
 #endif /* HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME */
-    nstored = readlink(path, buf, bufsize);
+    nstored = readlink(path, buf, buf_size);
   if (nstored < 0)
     {
       xperror("cannot read link target, readlink()", path);
       free(buf);
       return NULL;
     }
-  if (nstored >= bufsize)
+  if (nstored >= buf_size)
     {
-      buf = xrealloc(buf, bufsize*=2);
+      buf = xrealloc(buf, buf_size*=2);
       goto again;
     }
   buf[nstored] = 0;
@@ -1769,7 +1769,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
   if (sbuf1.st_ino == sbuf2.st_ino && sbuf1.st_dev == sbuf2.st_dev)
     {
       ++ opts->stats.skipped_same;
-      if (opts->verbosityLevel >= VERB_SKIPS)
+      if (opts->verbosity_level >= VERB_SKIPS)
 	fprintf(stderr, "%s: %s: same dev/ino pair, skipping\n",
 	       progname, subpath);
       return rv;
@@ -1786,7 +1786,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
   if (! epc_put(opts->inocache, ice, icepath))
     {
       ++ opts->stats.skipped_cache;
-      if (opts->verbosityLevel >= VERB_SKIPS)
+      if (opts->verbosity_level >= VERB_SKIPS)
 	{
 	  const char* ptr;
 	  ptr = epc_get(opts->inocache, ice);
@@ -1827,19 +1827,19 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 
       if (v1 != NULL || v2 != NULL)
 	{
-	  str_list_client_data_t	clientData;
+	  str_list_client_data_t	client_data;
 	  int				nrv;
 
 	  if ((v1 == NULL || v2 == NULL) && opts->empty_str_list == NULL)
 	    str_list_new_size(&opts->empty_str_list, 0);
 
-	  clientData.opts = opts;
+	  client_data.opts = opts;
 	  nrv = str_list_compare(p1, p2,
 				 v1 != NULL ? v1 : opts->empty_str_list,
 				 v2 != NULL ? v2 : opts->empty_str_list,
-				 &reportMissingHardLink,
+				 &report_missing_hard_link,
 				 NULL,
-				 &clientData);
+				 &client_data);
 	  BUMP_EXIT_CODE(rv, nrv);
 	}
 
@@ -2024,14 +2024,14 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	  )
       )
     {
-      reportTimeDiscrepancy(subpath, "mtime",
-			    sbuf1.st_mtime, sbuf2.st_mtime,
+      report_time_discrepancy(subpath, "mtime",
+			      sbuf1.st_mtime, sbuf2.st_mtime,
 #ifdef ST_CTIMENSEC
-			    sbuf1.ST_MTIMENSEC.tv_nsec, sbuf2.ST_MTIMENSEC.tv_nsec
+			      sbuf1.ST_MTIMENSEC.tv_nsec, sbuf2.ST_MTIMENSEC.tv_nsec
 #else
-			    -1, -1
+			      -1, -1
 #endif
-			    );
+			      );
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
   if (opts->atime
@@ -2042,14 +2042,14 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	   )
       )
     {
-      reportTimeDiscrepancy(subpath, "atime",
-			    sbuf1.st_atime, sbuf2.st_atime,
+      report_time_discrepancy(subpath, "atime",
+			      sbuf1.st_atime, sbuf2.st_atime,
 #ifdef ST_CTIMENSEC
-			    sbuf1.ST_ATIMENSEC.tv_nsec, sbuf2.ST_ATIMENSEC.tv_nsec
+			      sbuf1.ST_ATIMENSEC.tv_nsec, sbuf2.ST_ATIMENSEC.tv_nsec
 #else
-			    -1, -1
+			      -1, -1
 #endif
-			    );
+			      );
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
   if (opts->ctime
@@ -2060,14 +2060,14 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	   )
       )
     {
-      reportTimeDiscrepancy(subpath, "ctime",
-			    sbuf1.st_ctime, sbuf2.st_ctime,
+      report_time_discrepancy(subpath, "ctime",
+			      sbuf1.st_ctime, sbuf2.st_ctime,
 #ifdef ST_CTIMENSEC
-			    sbuf1.ST_CTIMENSEC.tv_nsec, sbuf2.ST_CTIMENSEC.tv_nsec
+			      sbuf1.ST_CTIMENSEC.tv_nsec, sbuf2.ST_CTIMENSEC.tv_nsec
 #else
-			    -1, -1
+			      -1, -1
 #endif
-			    );
+			      );
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
 
@@ -2109,20 +2109,20 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 #if HAVE_LGETXATTR
   if (opts->xattr)
     {
-      str_list_t		*xl1 = getXattrList(p1);
-      str_list_t		*xl2 = getXattrList(p2);
+      str_list_t		*xl1 = get_xattr_list(p1);
+      str_list_t		*xl2 = get_xattr_list(p2);
       int			 nrv;
       /**/
 
       if (xl1 && xl2)
 	{
-	  str_list_client_data_t clientData;
-	  clientData.opts = opts;
+	  str_list_client_data_t client_data;
+	  client_data.opts = opts;
 	  nrv = str_list_compare(p1, p2,
 				 xl1, xl2,
-				 reportMissingXattr,
-				 compareXattrs,
-				 &clientData);
+				 report_missing_xattr,
+				 compare_xattrs,
+				 &client_data);
 	}
       else
 	nrv = XIT_SYS;
@@ -2144,7 +2144,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
     {
       int nrv;
       /**/
-      nrv = diffacl(opts, p1, p2, ACL_TYPE_ACCESS, "access");
+      nrv = diff_acl(opts, p1, p2, ACL_TYPE_ACCESS, "access");
       BUMP_EXIT_CODE(rv, nrv);
     }
 
@@ -2152,7 +2152,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       && ((sbuf1.st_mode)&S_IFMT) == S_IFDIR
       && ((sbuf2.st_mode)&S_IFMT) == S_IFDIR)
     {
-      int nrv = diffacl(opts, p1, p2, ACL_TYPE_DEFAULT, "default");
+      int nrv = diff_acl(opts, p1, p2, ACL_TYPE_DEFAULT, "default");
       BUMP_EXIT_CODE(rv, nrv);
     }
 #endif
@@ -2165,7 +2165,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	  printf("%s: %s: type: %s %s\n",
 		 progname,
 		 subpath,
-		 getFileType(sbuf1.st_mode), getFileType(sbuf2.st_mode));
+		 get_file_type(sbuf1.st_mode), get_file_type(sbuf2.st_mode));
 	  BUMP_EXIT_CODE(rv, XIT_DIFF);
 	}
     }
@@ -2179,19 +2179,19 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 	  int				 nrv;
 	  /**/
 
-	  ct1 = getDirList(p1, &sbuf1, &fd1);
-	  ct2 = getDirList(p2, &sbuf2, &fd2);
+	  ct1 = get_dir_list(p1, &sbuf1, &fd1);
+	  ct2 = get_dir_list(p2, &sbuf2, &fd2);
 
 	  if (ct1 && ct2)
 	    {
-	      str_list_client_data_t	 clientData;
+	      str_list_client_data_t	 client_data;
 
-	      clientData.opts = opts;
+	      client_data.opts = opts;
 	      nrv = str_list_compare(p1, p2,
 				     ct1, ct2,
-				     reportMissingFile,
-				     compareFileEntries,
-				     &clientData);
+				     report_missing_file,
+				     compare_directories,
+				     &client_data);
 	    }
 	  else
 	    {
@@ -2215,12 +2215,12 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		++ opts->stats.contents_compared;
 		if (opts->exec)
 		  {
-		    if (!execprocess(&opts->exec_args, p1, p2))
+		    if (!exec_process(&opts->exec_args, p1, p2))
 		      BUMP_EXIT_CODE(rv, XIT_DIFF);
 		  }
 		else
 		  {
-		    int nrv = cmpFiles(p1, &sbuf1, &fd1, p2, &sbuf2, &fd2);
+		    int nrv = compare_files(p1, &sbuf1, &fd1, p2, &sbuf2, &fd2);
 		    BUMP_EXIT_CODE(rv, nrv);
 		    switch(nrv)
 		      {
@@ -2244,7 +2244,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 		BUMP_EXIT_CODE(rv, XIT_DIFF);
 	      }
 	    if (opts->exec_always
-		&& !execprocess(&opts->exec_always_args, p1, p2))
+		&& !exec_process(&opts->exec_always_args, p1, p2))
 	      BUMP_EXIT_CODE(rv, XIT_DIFF);
 	  }
 	break;
@@ -2306,18 +2306,18 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 }
 
 static void
-applyPresets(options_t* opts, int presetLevel)
+apply_preset(options_t* opts, int preset_level)
 {
-  opts->dirs	   = opts->type                     = presetLevel >= 1;
-  opts->mode					    = presetLevel >= 2;
-  opts->uid	   = opts->gid       = opts->acl    = presetLevel >= 3;
-  opts->nlink	   = opts->hardlinks                = presetLevel >= 4;
+  opts->dirs	   = opts->type                     = preset_level >= 1;
+  opts->mode					    = preset_level >= 2;
+  opts->uid	   = opts->gid       = opts->acl    = preset_level >= 3;
+  opts->nlink	   = opts->hardlinks                = preset_level >= 4;
   opts->size	   = opts->blocks    =
-  opts->contents   = opts->major     = opts->minor  = presetLevel >= 5;
-  opts->flags      = opts->xattr                    = presetLevel >= 6;
-  opts->mtime                                       = presetLevel >= 7;
-  opts->atime                                       = presetLevel >= 8;
-  opts->ctime                                       = presetLevel >= 9;
+  opts->contents   = opts->major     = opts->minor  = preset_level >= 5;
+  opts->flags      = opts->xattr                    = preset_level >= 6;
+  opts->mtime                                       = preset_level >= 7;
+  opts->atime                                       = preset_level >= 8;
+  opts->ctime                                       = preset_level >= 9;
 }
 
 int
@@ -2344,7 +2344,7 @@ main(int argc, char*argv[])
 
   memset(&options, 0, sizeof(options));
 
-  applyPresets(&options, 6);
+  apply_preset(&options, 6);
 
   options.mode_or           = OPT_MODE_OR_DEFAULT;
   options.mode_and	    = OPT_MODE_AND_DEFAULT;
@@ -2452,40 +2452,40 @@ main(int argc, char*argv[])
 	  show_help();
 	  end_after_options = 1;
 	  break;
-	case 'v': options.verbosityLevel += 1; break;
-	case 'd': options.dirs            = 1; break;
-	case 'D': options.dirs            = 0; break;
-	case 't': options.type		  = 1; break;
-	case 'T': options.type		  = 0; break;
-	case 'm': options.mode		  = 1; break;
-	case 'M': options.mode		  = 0; break;
-	case 'u': options.uid		  = 1; break;
-	case 'U': options.uid		  = 0; break;
-	case 'g': options.gid		  = 1; break;
-	case 'G': options.gid		  = 0; break;
-	case 'n': options.nlink		  = 1; break;
-	case 'N': options.nlink		  = 0; break;
-	case 'e': options.hardlinks	  = 1; break;
-	case 'E': options.hardlinks	  = 0; break;
-	case 'i': options.mtime		  = 1; break;
-	case 'I': options.mtime		  = 0; break;
-	case 'y': options.atime		  = 1; break;
-	case 'Y': options.atime		  = 0; break;
-	case 'z': options.ctime		  = 1; break;
-	case 'Z': options.ctime		  = 0; break;
-	case 's': options.size		  = 1; break;
-	case 'S': options.size		  = 0; break;
-	case 'b': options.blocks	  = 1; break;
-	case 'B': options.blocks	  = 0; break;
-	case 'c': options.contents	  = 1; break;
-	case 'C': options.contents	  = 0; break;
-	case 'j': options.major		  = 1; break;
-	case 'J': options.major		  = 0; break;
-	case 'k': options.minor		  = 1; break;
-	case 'K': options.minor		  = 0; break;
+	case 'v': options.verbosity_level += 1; break;
+	case 'd': options.dirs             = 1; break;
+	case 'D': options.dirs             = 0; break;
+	case 't': options.type		   = 1; break;
+	case 'T': options.type		   = 0; break;
+	case 'm': options.mode		   = 1; break;
+	case 'M': options.mode		   = 0; break;
+	case 'u': options.uid		   = 1; break;
+	case 'U': options.uid		   = 0; break;
+	case 'g': options.gid		   = 1; break;
+	case 'G': options.gid		   = 0; break;
+	case 'n': options.nlink		   = 1; break;
+	case 'N': options.nlink		   = 0; break;
+	case 'e': options.hardlinks	   = 1; break;
+	case 'E': options.hardlinks	   = 0; break;
+	case 'i': options.mtime		   = 1; break;
+	case 'I': options.mtime		   = 0; break;
+	case 'y': options.atime		   = 1; break;
+	case 'Y': options.atime		   = 0; break;
+	case 'z': options.ctime		   = 1; break;
+	case 'Z': options.ctime		   = 0; break;
+	case 's': options.size		   = 1; break;
+	case 'S': options.size		   = 0; break;
+	case 'b': options.blocks	   = 1; break;
+	case 'B': options.blocks	   = 0; break;
+	case 'c': options.contents	   = 1; break;
+	case 'C': options.contents	   = 0; break;
+	case 'j': options.major		   = 1; break;
+	case 'J': options.major		   = 0; break;
+	case 'k': options.minor		   = 1; break;
+	case 'K': options.minor		   = 0; break;
 #if HAVE_ST_FLAGS
-	case 'f': options.flags           = 1; break;
-	case 'F': options.flags           = 0; break;
+	case 'f': options.flags            = 1; break;
+	case 'F': options.flags            = 0; break;
 #endif
 #if HAVE_ACL
 	case 'l': options.acl		  = 1; break;
@@ -2505,42 +2505,42 @@ main(int argc, char*argv[])
 	case '7':
 	case '8':
 	case '9':
-	  applyPresets(&options, optcode - '0');
+	  apply_preset(&options, optcode - '0');
 	  break;
 	case 'p':
 	  if (optarg[0] >= '0' && optarg[0] <= '9' && optarg[1] == '\0')
-	    applyPresets(&options, optarg[0] - '0');
+	    apply_preset(&options, optarg[0] - '0');
 	  else
 	    {
 	      static const struct {
 		const char * const name;
 		unsigned char level;
 		unsigned char minreq;
-	      } presetNames[] = {
-				 { "alltimes",  9, 2},
-				 { "amtimes",   8, 2},
-				 { "contents",  5, 1},
-				 { "default",   6, 1},
-				 { "hardlinks", 4, 1},
-				 { "mode",      2, 2},
-				 { "missing",   1, 2},
-				 { "mtime",     7, 2},
-				 { "none",      0, 3},
-				 { "notimes",   6, 3},
-				 { "owner",     3, 1},
-				 { "type",      1, 1}
+	      } preset_names[] = {
+		{ "alltimes",  9, 2},
+		{ "amtimes",   8, 2},
+		{ "contents",  5, 1},
+		{ "default",   6, 1},
+		{ "hardlinks", 4, 1},
+		{ "mode",      2, 2},
+		{ "missing",   1, 2},
+		{ "mtime",     7, 2},
+		{ "none",      0, 3},
+		{ "notimes",   6, 3},
+		{ "owner",     3, 1},
+		{ "type",      1, 1}
 	      };
 	      size_t i;
 	      size_t optlen = strlen(optarg);
 	      int found = 0;
 
-	      for (i=0; i < sizeof(presetNames)/sizeof(presetNames[0]); ++i)
+	      for (i=0; i < sizeof(preset_names)/sizeof(preset_names[0]); ++i)
 		{
-		  if (optlen <= strlen(presetNames[i].name)
-		      && optlen >= presetNames[i].minreq
-		      && memcmp(optarg, presetNames[i].name, optlen) == 0)
+		  if (optlen <= strlen(preset_names[i].name)
+		      && optlen >= preset_names[i].minreq
+		      && memcmp(optarg, preset_names[i].name, optlen) == 0)
 		    {
-		      applyPresets(&options, presetNames[i].level);
+		      apply_preset(&options, preset_names[i].level);
 		      found = 1;
 		      break;
 		    }
@@ -2625,7 +2625,7 @@ main(int argc, char*argv[])
   argc -= optind;
   argv += optind;
 
-  printopts(&options);
+  print_options(&options);
 
   if (argc!=2)
     {
@@ -2633,7 +2633,7 @@ main(int argc, char*argv[])
       exit(XIT_INVOC);
     }
 
-  if ( options.verbosityLevel >= VERB_MEM_STATS)
+  if ( options.verbosity_level >= VERB_MEM_STATS)
     {
       fprintf(stderr, "%s: memory stats before starting traversal:\n",
 	      progname);
@@ -2667,7 +2667,7 @@ main(int argc, char*argv[])
     str_list_destroy(options.empty_str_list);
   gh_delete(options.exclusions);
 
-  if (options.verbosityLevel >= VERB_STATS)
+  if (options.verbosity_level >= VERB_STATS)
     {
       fprintf(stderr, "%s: %12lld          inode pairs compared\n",
 	      progname, options.stats.compared);
@@ -2699,7 +2699,7 @@ main(int argc, char*argv[])
 
     }
 
-  if ( options.verbosityLevel >= VERB_HASH_STATS )
+  if ( options.verbosity_level >= VERB_HASH_STATS )
     {
       fprintf(stderr, "%s: inode cache statistics:\n", progname);
       gh_stats(options.inocache, "inode cache");
@@ -2717,7 +2717,7 @@ main(int argc, char*argv[])
 	}
     }
 
-  if ( options.verbosityLevel >= VERB_MEM_STATS)
+  if ( options.verbosity_level >= VERB_MEM_STATS)
     {
       fprintf(stderr, "%s: memory stats before releasing inode cache:\n",
 	      progname);
@@ -2732,7 +2732,7 @@ main(int argc, char*argv[])
       hc_destroy(options.hardlinks1);
       hc_destroy(options.hardlinks2);
     }
-  if ( options.verbosityLevel >= VERB_MEM_STATS)
+  if ( options.verbosity_level >= VERB_MEM_STATS)
     {
       fprintf(stderr, "%s: memory stats before exit:\n", progname);
       pmem();

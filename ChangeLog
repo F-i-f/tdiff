@@ -1,4 +1,44 @@
 2024-02-06  Philippe Troin  <phil@fifi.org>
+	* tdiff.c (reportMissing): Rename to report_missing.
+	(reportMissingAcl): Rename to report_missing_acl.
+	(reportMissingFile): Rename to report_missing_file.
+	(reportMissingHardLink): Rename to report_missing_hard_link.
+	(reportMissingXattr): Rename to report_missing_xattr.
+	(getXattrList): Rename to get_xattr_list.
+	(getXattr): Rename to get_xattr.
+	(compareXattrs): Rename to compare_xattrs.
+	(dropAclXattrs): Rename to drop_acl_xattrs.
+	(getAcl): Rename to get_acl.
+	(getAclList): Rename to get_acl_list.
+	(reportMissingAcl): Rename to report_missing_acl.
+	(compareAcls): Rename to compare_acls.
+	(diffacl): Rename to diff_acl.
+	(openFile): Rename to open_path.
+	(getDirList): Rename to get_dir_list.
+	(compareFileEntries): Rename to compare_directories.
+	(getFileType): Rename get_file_type.
+	(formatTime): Rename to format_time.
+	(reportTimeDiscrepancy): Rename to report_time_discrepancy
+	(cmpFiles): Rename to compare_files.
+	(printopts): Rename to print_options.
+	(execprocess): Rename to exec_process.
+	(applyPresets): Rename to apply_preset.
+	(aclCompareClientData_t): Rename to acl_compare_client_data_t.
+	(aclCompareClientData_s): Rename to acl_compare_client_data_s.
+	(report_missing, report_missing_xattr, compare_xattrs)
+	(report_missing_acl, compare_acls, diff_acl)
+	(report_missing_file, compare_directories, dodiff): Rename
+	clientData to client_data.
+	(report_missing_acl, compare_acls): Rename commonClientData to
+	common_client_data.
+	(options_t): Rename verbosityLevel to verbosity_level.
+	(get_xattr_list, get_xattr, xreadlink): Rename bufSize to buf_size.
+	(format_time): Rename obufsize to buf_size.
+	(apply_preset): Rename presetLevel to preset_level.
+	(main): Rename presetNames to preset_names.
+	(get_xattr_list): Rename rSize to read_size;
+	(get_xattr): Rename retSize to returned_size.
+
 	* tdiff.c (xperror, getXattrList, getXattr, compareXattrs)
 	(dropAclXattrs, getAclList, reportMissingAcl, compareAcls)
 	(diffacl, getDirList, getFileType, get_terminal_width)
