@@ -1,5 +1,7 @@
 2024-09-10  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.spec (URL): Use %{name}.
+
 	* Makefile.am (dist_doc_DATA): Add ChangeLog.
 
 2024-02-06  Philippe Troin  <phil@fifi.org>

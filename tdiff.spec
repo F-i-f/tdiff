@@ -4,7 +4,7 @@ Release:	1%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
 License:	GPLv3
-URL:		https://github.com/F-i-f/tdiff
+URL:		https://github.com/F-i-f/%{name}
 Source:		https://github.com/F-i-f/%{name}/releases/download/v%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:	zsh
