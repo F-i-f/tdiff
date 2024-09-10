@@ -66,7 +66,8 @@ endif
 bash_FUNCTIONS			= tdiff.bash
 zsh_FUNCTIONS			= _tdiff.zsh
 
-dist_doc_DATA			= README \
+dist_doc_DATA			= ChangeLog \
+				  README \
 				  README.md \
 				  NEWS
 

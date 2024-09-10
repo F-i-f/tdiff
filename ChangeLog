@@ -1,3 +1,7 @@
+2024-09-10  Philippe Troin  <phil@fifi.org>
+
+	* Makefile.am (dist_doc_DATA): Add ChangeLog.
+
 2024-02-06  Philippe Troin  <phil@fifi.org>
 	* tdiff.c (reportMissing): Rename to report_missing.
 	(reportMissingAcl): Rename to report_missing_acl.
