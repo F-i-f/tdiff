@@ -221,10 +221,10 @@ rpmbuild -ba SPECS/tdiff.spec
 
 ### From the GitHub repository
 
-Clone the [repository](https://github.com/F-i-f/tdiff.git):
+Clone the [repository](https://github.com/F-i-f/tdiff.git), including submodules:
 
 ```shell
-git clone https://github.com/F-i-f/tdiff.git
+git clone --recurse-submodules https://github.com/F-i-f/tdiff.git
 cd tdiff
 autoreconf -i
 ./configure

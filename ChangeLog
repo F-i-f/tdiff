@@ -1,5 +1,7 @@
 2024-09-10  Philippe Troin  <phil@fifi.org>
 
+	* README.md: Include submodules when cloning from github.
+
 	* tdiff.spec (URL): Use %{name}.
 
 	* Makefile.am (dist_doc_DATA): Add ChangeLog.
