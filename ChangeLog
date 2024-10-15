@@ -1,3 +1,7 @@
+2024-10-15  Philippe Troin  <phil@fifi.org>
+
+	* genhash.c (GH_INITIAL_SIZE): Removed dead/unused constant.
+
 2024-09-10  Philippe Troin  <phil@fifi.org>
 
 	* README.md: Include submodules when cloning from github.

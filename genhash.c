@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Generic hash implementation.
-  Copyright (C) 1999, 2014, 2019 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2014, 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -23,8 +23,6 @@
 
 #include <string.h>
 #include <stdio.h>
-
-#define GH_INITIAL_SIZE 97
 
 static int primelist[] =
 {
