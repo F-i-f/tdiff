@@ -1,5 +1,9 @@
 2025-10-22  Philippe Troin  <phil@fifi.org>
 
+	* tests/test.lib.sh (acl_filter, xid_filter, xtime_filter): Use
+	plain regexes, not extended ones (not supported on MacOSX).
+	This partially reverts 2dc1bd34ecdac92a32234342ad4d53034a7887da.
+
 	* tdiff.c (report_missing_file): Do not report an error when an
 	excluded file is missing.
 	(show_version): Update copyright.

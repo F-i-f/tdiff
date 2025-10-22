@@ -2,7 +2,7 @@
 
 # tdiff - tree diffs
 # tests/test.lib.sh
-# Copyright (C) 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
+# Copyright (C) 2019, 2024, 2025 Philippe Troin <phil+github-commits@fifi.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -61,15 +61,15 @@ sync_if_needed() {
 
 # Filters
 acl_filter() {
-  sed -re 's!(: (access|default) acl (user|group):)[^[:space:]]+(: .*)$!\1XX\4!'
+  sed -e 's!\(: \(access\|default\) acl \(user\|group\):\)[^[:space:]]\+\(: .*\)$!\1XX\4!'
 }
 
 xid_filter() {
-  sed -re 's!(: '"$1"':) [^[:space:]]*\(([0-9][0-9]*)\) [^[:space:]]*\(([0-9][0-9]*)\)$!\1 \2 \3!'
+  sed -e 's!\(: '"$1"':\) [^[:space:]]*(\([0-9][0-9]*\)) [^[:space:]]*(\([0-9][0-9]*\))$!\1 \2 \3!'
 }
 
 xtime_filter() {
-  sed -re 's!(: '"$1"':) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
+  sed -e 's!\(: '"$1"':\) \[[^]][^]]*\] \[[^]][^]]*\]$!\1 [XXX] [XXX]!'
 }
 
 # Main program
