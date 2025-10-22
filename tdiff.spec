@@ -1,5 +1,5 @@
 Name:		tdiff
-Version:	0.8.7
+Version:	0.8.8
 Release:	1%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
@@ -53,6 +53,18 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
+* Wed Oct 22 2025 Philippe Troin  <phil@fifi.org> - 0.8.8-1
+- Upstream release 0.8.8.
+  * An excluded but missing file caused tdiff to exit with a failure
+    code.
+  * Memory corruption could occur if a symlink target string size is a
+    multiple of 1024 (unlikely, symlink lengths are typically limited to
+    1024 or less).
+  * Regressions (`make check`) now run without errors on MacOSX.
+  * Code refactoring and cleanups.
+  * Open files at most once (speedup).
+  * m4 macros have been moved to a sub-module.
+
 * Tue Jan 30 2024 Philippe Troin <phil@fifi.org> - 0.8.7-1
 - Don't presume man file compression style.
 - Upstream release 0.8.7.

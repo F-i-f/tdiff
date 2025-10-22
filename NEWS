@@ -1,12 +1,30 @@
 -*- outline -*-
 
+* Release 0.8.8
+** October 22, 2025.
+
+** Bugs fixed:
+
+- An excluded but missing file caused tdiff to exit with a failure
+  code.
+- Memory corruption could occur if a symlink target string size is a
+  multiple of 1024 (unlikely, symlink lengths are typically limited to
+  1024 or less).
+- Regressions (`make check`) now run without errors on MacOSX.
+
+** Improvements:
+
+- Code refactoring and cleanups.
+- Open files at most once (speedup).
+- m4 macros have been moved to a sub-module.
+
 * Release 0.8.7
 ** January 30, 2024.
 
 ** Bugs fixed:
 
 - Ignore `trusted.SGI_ACL_DEFAULT` default ACL (XFS-specific).
-- Do not update access time when comparing symbolic-link
+- Do not update access time when comparing symbolic links
   (system-dependent, Linux only).
 
 ** Improvements:
@@ -236,4 +254,5 @@ LocalWords:  zsh hardlinks mmap ACLs xattrs MacOSX inode DJB2 NOATIME
 LocalWords:  autoconf getdents64 FreeBSD Solaris tdiff atime uid gid
 LocalWords:  nlinks nlink README xtimespec vert tdiff's html pdf SGI
 LocalWords:  BuildRequires fakeroot xattr Coverity symlinks ACL XFS
-LocalWords:  acl cmp mallinfo2 glibc
+LocalWords:  acl cmp mallinfo2 glibc symlink m4 SGI_ACL_DEFAULT
+LocalWords:  system-dependent acl_cmp

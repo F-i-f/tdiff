@@ -164,24 +164,24 @@ along with this program.  If not, see [http://www.gnu.org/licenses/].
 ### From a release
 
 Download the [latest release from
-GitHub](https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz)
-or the [secondary mirror](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz):
+GitHub](https://github.com/F-i-f/tdiff/releases/download/v0.8.8/tdiff-0.8.8.tar.gz)
+or the [secondary mirror](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.8.tar.gz):
 
 * [Primary Site (GitHub)](https://github.com/F-i-f/tdiff/releases/):
 
   * Source:
-	[https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz](https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz)
+	[https://github.com/F-i-f/tdiff/releases/download/v0.8.8/tdiff-0.8.8.tar.gz](https://github.com/F-i-f/tdiff/releases/download/v0.8.8/tdiff-0.8.8.tar.gz)
 
   * Signature:
-	[https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz.asc](https://github.com/F-i-f/tdiff/releases/download/v0.8.7/tdiff-0.8.7.tar.gz.asc)
+	[https://github.com/F-i-f/tdiff/releases/download/v0.8.8/tdiff-0.8.8.tar.gz.asc](https://github.com/F-i-f/tdiff/releases/download/v0.8.8/tdiff-0.8.8.tar.gz.asc)
 
 * [Secondary Site](http://ftp.fifi.org/phil/tdiff/):
 
   * Source:
-	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz)
+	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.8.tar.gz](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.8.tar.gz)
 
   * Signature:
-	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz.asc](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.7.tar.gz.asc)
+	[http://ftp.fifi.org/phil/tdiff/tdiff-0.8.8.tar.gz.asc](http://ftp.fifi.org/phil/tdiff/tdiff-0.8.8.tar.gz.asc)
 
 
 The source code release are signed with the GPG key ID `0x88D51582`,
@@ -194,7 +194,7 @@ mirror](http://ftp.fifi.org/phil/tdiff/).
 
 When downloading from the GitHub release pages, be careful to download
 the source code from the link named with the full file name
-(_tdiff-0.8.7.tar.gz_), and **not** from the links marked _Source code
+(_tdiff-0.8.8.tar.gz_), and **not** from the links marked _Source code
 (zip)_ or _Source code (tar.gz)_ as these are repository snapshots
 generated automatically by GitHub and require specialized tools to
 build (see [Building from GitHub](#from-the-github-repository)).
@@ -203,8 +203,8 @@ build (see [Building from GitHub](#from-the-github-repository)).
 After downloading the sources, unpack and build with:
 
 ```shell
-tar xvzf tdiff-0.8.7.tar.gz
-cd tdiff-0.8.7
+tar xvzf tdiff-0.8.8.tar.gz
+cd tdiff-0.8.8
 ./configure
 make
 make check
@@ -236,13 +236,31 @@ make install-pdf install-html # Optional
 
 ## Changelog
 
+### Version 0.8.8
+#### October 22, 2025.
+
+##### Bugs fixed:
+
+- An excluded but missing file caused tdiff to exit with a failure
+  code.
+- Memory corruption could occur if a symlink target string size is a
+  multiple of 1024 (unlikely, symlink lengths are typically limited to
+  1024 or less).
+- Regressions (`make check`) now run without errors on MacOSX.
+
+##### Improvements:
+
+- Code refactoring and cleanups.
+- Open files at most once (speedup).
+- m4 macros have been moved to a sub-module.
+
 ### Version 0.8.7
 #### January 30, 2024.
 
 ##### Bugs fixed:
 
 - Ignore `trusted.SGI_ACL_DEFAULT` default ACL (XFS-specific).
-- Do not update access time when comparing symbolic-link
+- Do not update access time when comparing symbolic links
   (system-dependent, Linux only).
 
 ##### Improvements:
@@ -475,7 +493,7 @@ make install-pdf install-html # Optional
  -->
 <!--  LocalWords:  MERCHANTABILITY gcc libacl ACL autotools autoconf
  -->
-<!--  LocalWords:  automake groff GPG gz github Zsh hardlinks mmap
+<!--  LocalWords:  automake groff GPG gz github Zsh hardlinks mmap m4
  -->
 <!--  LocalWords:  xattrs DJB2 NOATIME getdents64 FreeBSD Solaris zsh
  -->
@@ -485,5 +503,5 @@ make install-pdf install-html # Optional
  -->
 <!--  LocalWords:  BuildRequires Coverity symlinks XFS acl cmp glibc
  -->
-<!--  LocalWords:  mallinfo2
+<!--  LocalWords:  mallinfo2 symlink
  -->

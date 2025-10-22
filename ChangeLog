@@ -1,5 +1,12 @@
 2025-10-22  Philippe Troin  <phil@fifi.org>
 
+	* NEWS:
+	* README.md:
+	* tdiff.spec:
+	Bbump version to 0.8.8, update changelog.
+
+	* configure.ac: Bump version to 0.8.8, update copyright.
+
 	* tests/test.lib.sh (acl_filter, xid_filter, xtime_filter): Use
 	plain regexes, not extended ones (not supported on MacOSX).
 	This partially reverts 2dc1bd34ecdac92a32234342ad4d53034a7887da.
