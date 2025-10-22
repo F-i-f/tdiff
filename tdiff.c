@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Main()
-  Copyright (C) 1999, 2008, 2014, 2019, 2022, 2024 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2008, 2014, 2019, 2022, 2024, 2025 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -808,7 +808,10 @@ report_missing_file(int which, const char* d, const char *f, str_list_client_dat
     return XIT_OK;
 
   if ( gh_find(client_data->opts->exclusions, f, NULL) )
-    ++ client_data->opts->stats.excluded;
+    {
+      ++ client_data->opts->stats.excluded;
+      return XIT_OK;
+    }
   else
     {
       const char*	subp;
@@ -848,8 +851,8 @@ report_missing_file(int which, const char* d, const char *f, str_list_client_dat
       snprintf(fp, fp_len, "%s%s%s", subp, *subp ? "/" : "", f);
       printf("%s: %s: only present in %.*s\n",
 	     progname, fp, rootlen, d);
+      return XIT_DIFF;
     }
-  return XIT_DIFF;
 }
 
 static int
@@ -1253,7 +1256,7 @@ show_version(void)
 #endif /* HAVE_ST_FLAGS */
 
   printf("\n"
-	 "Copyright (C) 1999-2024 Philippe Troin <phil+github-commits@fifi.org>.\n"
+	 "Copyright (C) 1999-2025 Philippe Troin <phil+github-commits@fifi.org>.\n"
 	 "Tdiff comes with ABSOLUTELY NO WARRANTY.\n"
 	 "This is free software, and you are welcome to redistribute it\n"
 	 "under certain conditions.\n"

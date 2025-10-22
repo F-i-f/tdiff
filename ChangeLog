@@ -1,3 +1,9 @@
+2025-10-22  Philippe Troin  <phil@fifi.org>
+
+	* tdiff.c (report_missing_file): Do not report an error when an
+	excluded file is missing.
+	(show_version): Update copyright.
+
 2024-10-15  Philippe Troin  <phil@fifi.org>
 
 	* genhash.c (GH_INITIAL_SIZE): Removed dead/unused constant.
