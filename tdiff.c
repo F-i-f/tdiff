@@ -1109,8 +1109,8 @@ print_list(FILE* fd, unsigned width, const char *header, ...)
 	  printed_so_far = header_length + item_length;
 	}
       else if (printed_so_far + item_length + 3 > width)
-	// 2 for ", " and 1 more for the trailing "," or "." that will
-	// be added later.
+	/* 2 for ", " and 1 more for the trailing "," or "." that will
+	   be added later. */
 	{
 	  fprintf(fd, ",\n");
 	  for (i=0; i<header_length; ++i)
@@ -2078,7 +2078,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
 
-  // Don't report on sizes and blocks for directories
+  /* Don't report on sizes and blocks for directories */
   if (((sbuf1.st_mode)&S_IFMT) != S_IFDIR)
     {
       if (opts->blocks && sbuf1.st_blocks != sbuf2.st_blocks)

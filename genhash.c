@@ -1,7 +1,7 @@
 /*
   tdiff - tree diffs
   Generic hash implementation.
-  Copyright (C) 1999, 2014, 2019, 2024 Philippe Troin <phil+github-commits@fifi.org>
+  Copyright (C) 1999, 2014, 2019, 2024, 2025 Philippe Troin <phil+github-commits@fifi.org>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -185,9 +185,9 @@ gh_insert(genhash_t *gh, void* key, void* value)
 hashval_t
 gh_string_hash_old(const void* vstring)
 {
-  // Each letter will be shifted from 0 to 23 bits according to the
-  // sequence: 17,10,3,20,13,6,23,16,9,2,19,12,5,22,15,8,1,18,11,4,
-  // 21,14,7,0
+  /* Each letter will be shifted from 0 to 23 bits according to the
+     sequence: 17,10,3,20,13,6,23,16,9,2,19,12,5,22,15,8,1,18,11,4,
+     21,14,7,0 */
   const char* string = vstring;
   hashval_t val = 0;
   int i = 17;
