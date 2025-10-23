@@ -40,11 +40,11 @@
 
 #if HAVE_TERMIOS_H
 # include <termios.h>
-#endif
+#endif /* HAVE_TERMIOS_H */
 
 #if HAVE_SYS_TTY_H
 # include <sys/tty.h>
-#endif
+#endif /* HAVE_SYS_TTY_H */
 
 #if HAVE_GETDENTS
 #  if HAVE_SYS_DIRENT_H
@@ -53,18 +53,18 @@
 #    include "linux_getdents64.c"
 #  elif HAVE_GETDENTS_SYSCALL_H
 #    include "linux_getdents.c"
-#  else
+#  else /* ! HAVE_SYS_DIRENT_H && ! HAVE_GETDENTS64_SYSCALL_H && ! HAVE_GETDENTS_SYSCALL_H */
 #    error HAVE_GETDENTS is set, but I do not know how to get it !!!
-#  endif
-#endif
+#  endif /* ! HAVE_SYS_DIRENT_H && ! HAVE_GETDENTS64_SYSCALL_H && ! HAVE_GETDENTS_SYSCALL_H */
+#endif /* HAVE_GETDENTS */
 
 #if HAVE_GETOPT_LONG
 #  include <getopt.h>
-#endif
+#endif /* HAVE_GETOPT_LONG */
 
 #if !HAVE_LSTAT
 #  define lstat(f,b) stat(f,b)
-#endif
+#endif /* !HAVE_LSTAT */
 
 #if HAVE_SYS_MKDEV_H
 #  include <sys/mkdev.h>
@@ -72,18 +72,18 @@
 #  include <sys/sysmacros.h>
 #elif ! HAVE_MAJOR_MINOR_FUNCTIONS
 #  error Cannot find major() and minor()
-#endif
+#endif /* ! HAVE_MAJOR_MINOR_FUNCTIONS */
 
 #if HAVE_LGETXATTR
 #include <sys/xattr.h>
-#endif
+#endif /* HAVE_LGETXATTR */
 
 #if HAVE_ACL
 #include <sys/acl.h>
 #  if HAVE_ACL_CMP
 #    include <acl/libacl.h>
-#  endif
-#endif
+#  endif /* HAVE_ACL_CMP */
+#endif /* HAVE_ACL */
 
 #include "tdiff.h"
 #include "str_list.h"
@@ -176,9 +176,9 @@ static int drop_acl_xattrs(const char*);
 
 #if DEBUG
 static void print_options(const options_t*);
-#else
+#else /* ! DEBUG */
 #  define print_options(a)
-#endif
+#endif /* ! DEBUG */
 
 static void
 xperror(const char* msg, const char *filename)
@@ -283,7 +283,7 @@ report_missing_xattr(int which, const char* f, const char* xn, str_list_client_d
 #if HAVE_ACL
   if (drop_acl_xattrs(xn))
     return XIT_OK;
-#endif
+#endif /* HAVE_ACL */
 
   buf_len = sizeof(prefix)-1+strlen(xn)+1;
   buf = xmalloc(buf_len);
@@ -337,7 +337,7 @@ compare_xattrs(const char* p1, const char* p2,
 #if HAVE_ACL
   if (drop_acl_xattrs(e1))
     return rv;
-#endif
+#endif /* HAVE_ACL */
 
   buf1 = get_xattr(p1, e1, &sz1);
   buf2 = get_xattr(p2, e2, &sz2);
@@ -379,7 +379,7 @@ drop_acl_xattrs(const char *xn)
 	  || !strcmp(xn, "trusted.SGI_ACL_FILE")
 	  || !strcmp(xn, "trusted.SGI_ACL_DEFAULT"));
 }
-#endif
+#endif /* HAVE_LGETXATTR */
 
 /*
  * ACL comparisons
@@ -682,7 +682,7 @@ open_path(const char* path, const struct stat *sbuf)
 #if HAVE_O_NOATIME
   if (fd < 0 && errno == EPERM)
     fd = open(path, flags & ~O_NOATIME);
-#endif
+#endif /* HAVE_O_NOATIME */
 
   return fd;
 }
@@ -910,19 +910,19 @@ get_file_type(mode_t m)
     case S_IFBLK:  return "block-device";
 #if HAVE_S_IFIFO
     case S_IFIFO:  return "fifo";
-#endif
+#endif /* HAVE_S_IFIFO */
 #if HAVE_S_IFLNK
     case S_IFLNK:  return "symbolic-link";
-#endif
+#endif /* HAVE_S_IFLNK */
 #if HAVE_S_IFSOCK
     case S_IFSOCK: return "socket";
-#endif
+#endif /* HAVE_S_IFSOCK */
 #if HAVE_S_IFDOOR
     case S_IFDOOR: return "door";
-#endif
+#endif /* HAVE_S_IFDOOR */
 #if HAVE_S_IFWHT
     case S_IFWHT:  return "whiteout";
-#endif
+#endif /* HAVE_S_IFWHT */
     default:       return "unknown";
     }
 }
@@ -1135,7 +1135,7 @@ show_version(void)
   printf("tdiff version " VERSION
 #ifdef GIT_REVISION
 	 " (git: " GIT_REVISION ")"
-#endif
+#endif /* defined(GIT_REVISION) */
 	 "\n");
 
 
@@ -1169,9 +1169,9 @@ show_version(void)
 	     "readdir=getdents64(syscall)",
 #  elif HAVE_GETDENTS_SYSCALL_H
 	     "readdir=getdents(syscall)",
-#  else
+#  else /* ! HAVE_SYS_DIRENT_H && ! HAVE_GETDENTS64_SYSCALL_H && ! HAVE_GETDENTS_SYSCALL_H */
 #    error HAVE_GETDENTS is set, but I do not know how to get it !!!
-#  endif
+#  endif /* ! HAVE_SYS_DIRENT_H && ! HAVE_GETDENTS64_SYSCALL_H && ! HAVE_GETDENTS_SYSCALL_H */
 #else /* ! HAVE_GETDENTS */
 	     "readdir=readdir",
 #endif /* ! HAVE_GETDENTS */
@@ -1182,9 +1182,9 @@ show_version(void)
 #endif /* ! (HAVE_READLINKAT && HAVE_O_PATH && HAVE_O_NOFOLLOW && HAVE_O_NOATIME) */
 #ifdef ST_ATIMENSEC
 	     "time_granularity=ns",
-#else /* ! def ST_ATIMENSEC */
+#else /* ! defined(ST_ATIMENSEC) */
 	     "time_granularity=s",
-#endif /* ! def ST_ATIMENSEC */
+#endif /* ! defined(ST_ATIMENSEC) */
 #if HAVE_LGETXATTR
 	     "xattr=yes",
 #else /* ! HAVE_LGETXATTR */
@@ -1197,61 +1197,61 @@ show_version(void)
 	     "Flags: ",
 # if HAVE_UF_NODUMP
 	     "UF_NODUMP (nodump)",
-# endif
+# endif /* HAVE_UF_NODUMP */
 # if HAVE_UF_IMMUTABLE
 	     "UF_IMMUTABLE (uimmutable)",
-# endif
+# endif /* HAVE_UF_IMMUTABLE */
 # if HAVE_UF_APPEND
 	     "UF_APPEND (uappend)",
-# endif
+# endif /* HAVE_UF_APPEND */
 # if HAVE_UF_OPAQUE
 	     "UF_OPAQUE (opaque)",
-# endif
+# endif /* HAVE_UF_OPAQUE */
 # if HAVE_UF_NOUNLINK
 	     "UF_NOUNLINK (uunlink)",
-# endif
+# endif /* HAVE_UF_NOUNLINK */
 # if HAVE_UF_COMPRESSED
 	     "UF_COMPRESSED (compressed)",
-# endif
+# endif /* HAVE_UF_COMPRESSED */
 # if HAVE_UF_TRACKED
 	     "UF_TRACKED (tracked)",
-# endif
+# endif /* HAVE_UF_TRACKED */
 # if HAVE_UF_SYSTEM
 	     "UF_SYSTEM (system)",
-# endif
+# endif /* HAVE_UF_SYSTEM */
 # if HAVE_UF_SPARSE
 	     "UF_SPARSE (sparse)",
-# endif
+# endif /* HAVE_UF_SPARSE */
 # if HAVE_UF_OFFLINE
 	     "UF_OFFLINE (offline)",
-# endif
+# endif /* HAVE_UF_OFFLINE */
 # if HAVE_UF_REPARSE
 	     "UF_REPARSE (reparse)",
-# endif
+# endif /* HAVE_UF_REPARSE */
 # if HAVE_UF_ARCHIVE
 	     "UF_ARCHIVE (uarchive)",
-# endif
+# endif /* HAVE_UF_ARCHIVE */
 # if HAVE_UF_READONLY
 	     "UF_READONLY (readonly)",
-# endif
+# endif /* HAVE_UF_READONLY */
 # if HAVE_UF_HIDDEN
 	     "UF_HIDDEN (hidden)",
-# endif
+# endif /* HAVE_UF_HIDDEN */
 # if HAVE_SF_ARCHIVED
 	     "SF_ARCHIVED (archived)",
-# endif
+# endif /* HAVE_SF_ARCHIVED */
 # if HAVE_SF_IMMUTABLE
 	     "SF_IMMUTABLE (simmutable)",
-# endif
+# endif /* HAVE_SF_IMMUTABLE */
 # if HAVE_SF_APPEND
 	     "SF_APPEND (sappend)",
-# endif
+# endif /* HAVE_SF_APPEND */
 # if HAVE_SF_NOUNLINK
 	     "SF_NOUNLINK (sunlink)",
-# endif
+# endif /* HAVE_SF_NOUNLINK */
 # if HAVE_SF_SNAPSHOT
 	     "SF_SNAPSHOT (snapshot)",
-# endif
+# endif /* HAVE_SF_SNAPSHOT */
 	     NULL);
 #endif /* HAVE_ST_FLAGS */
 
@@ -1296,138 +1296,138 @@ show_help(void)
 	 "   -k --minor     diffs minor device numbers (for device files)\n"
 #if HAVE_ST_FLAGS
 	 "   -f --flags     diffs flags (4.4BSD)\n"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "   -l --acl       diffs file ACLs\n"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	 "   -q --xattr     diffs file extended attributes\n"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 "  Each of these options can be negated with an uppercase (short option)\n"
 	 "  or with --no-option (eg -M --no-mode for not diffing modes)\n"
 	 " Presets (cumulative, -2 implies -1, etc.):\n"
 	 "   -0 -p|--preset 0|none       No checks are made.         (-DTMUGNEIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "L"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	 "Q"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 ")\n"
 	 "   -1 -p|--preset 1|missing    Missing files are reported. (-dtMUGNEIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "L"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_LGETXATTR
 	 "Q"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 ")\n"
 	 "   -2 -p|--preset 2|mode       Add modes.                  (-dtmUGNEIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "L"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	 "Q"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 ")\n"
 	 "   -3 -p|--preset 3|owner      Add uid/gid ownership"
 #if HAVE_ACL
 	 ", ACLs."
-#else
+#else /* ! HAVE_ACL */
 	 ".      "
-#endif
+#endif /* ! HAVE_ACL */
 	 "(-dtmugNEIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "l"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	 "Q"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 ")\n"
 	 "   -4 -p|--preset 4|hardlinks  Add hardlinks.              (-dtmugneIYZSBCJK"
 #if HAVE_ST_FLAGS
 	 "F"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "l"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	 "Q"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 ")\n"
 	 "   -5 -p|--preset 5|contents   Add size, contents, blocks,\n"
 	 "                               major and minor.            (-dtmugneIYZsbcjk"
 #if HAVE_ST_FLAGS
 	 "F"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "l"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	 "Q"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 ")\n"
 	 "   -6 -p|--preset 6|notimes    "
 #if HAVE_ST_FLAGS || HAVE_LGETXATTR
 	 "Add %-13s (default) (-dtmugneIYZsbcjk"
 # if HAVE_ST_FLAGS
 	 "f"
-# endif
+# endif /* HAVE_ST_FLAGS */
 # if HAVE_ACL
 	 "l"
-# endif
+# endif /* HAVE_ACL */
 # if HAVE_LGETXATTR
 	 "q"
-# endif
+# endif /* HAVE_LGETXATTR */
 	 ")"
 #else /* ! HAVE_ST_FLAGS && ! HAVE_LGETXATTR */
 	 "Same as preset 5 or contents."
-#endif
+#endif /* ! HAVE_ST_FLAGS && ! HAVE_LGETXATTR */
 	 "\n"
 	 "   -7 -p|--preset 7|mtime      Add mtime.                  (-dtmugneiYZsbcjk"
 #if HAVE_ST_FLAGS
 	 "f"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "l"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	 "q"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 ")\n"
 	 "   -8 -p|--preset 8|amtimes    Add atime.                  (-dtmugneiyZsbcjk"
 #if HAVE_ST_FLAGS
 	 "f"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "l"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	 "q"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 ")\n"
 	 "   -9 -p|--preset 9|alltimes   Add ctime.                  (-dtmugneiyzsbcjk"
 #if HAVE_ST_FLAGS
 	 "f"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	 "l"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	 "q"
-#endif
+#endif /* HAVE_LGETXATTR */
 	 ")\n"
 	 " Miscellania:\n"
 	 "   -a --mode-and <bits>       applies <bits> AND mode before comparison\n"
@@ -1443,22 +1443,22 @@ show_help(void)
 	 "   -O --follow-symlinks       always dereference symbolic links\n"
 #if ! HAVE_GETOPT_LONG
 	 "WARNING: your system does not have getopt_long (use a GNU system !)\n"
-#endif
+#endif /* ! HAVE_GETOPT_LONG */
 	 ,progname, progname
 #if HAVE_ST_FLAGS || HAVE_LGETXATTR
 	 ,
 	 ""
 # if HAVE_ST_FLAGS
 	 "flags"
-# endif
+# endif /* HAVE_ST_FLAGS */
 # if HAVE_LGETXATTR
 #   if HAVE_ST_FLAGS
 	 ", "
-#   endif
+#   endif /* HAVE_ST_FLAGS */
 	 "xattrs"
-# endif
+# endif /* HAVE_LGETXATTR */
 	 "."
-#endif
+#endif /*  HAVE_ST_FLAGS || HAVE_LGETXATTR */
 	 );
 }
 
@@ -1864,12 +1864,12 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       rm1 = ((~S_IFMT)&(sbuf1.st_mode))
 #if HAVE_S_IFLNK
 	|(S_ISLNK(sbuf1.st_mode) ? 0777 : 0)
-#endif
+#endif /* HAVE_S_IFLNK */
 	;
       rm2 = ((~S_IFMT)&(sbuf2.st_mode))
 #if HAVE_S_IFLNK
 	|(S_ISLNK(sbuf1.st_mode) ? 0777 : 0)
-#endif
+#endif /* HAVE_S_IFLNK */
 	;
 
       mm1 = (rm1&(opts->mode_and))|(opts->mode_or);
@@ -1915,61 +1915,61 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 
 #if HAVE_UF_NODUMP
       CHECK_FLAG(UF_NODUMP, "nodump");
-#endif
+#endif /* HAVE_UF_NODUMP */
 #if HAVE_UF_IMMUTABLE
       CHECK_FLAG(UF_IMMUTABLE, "uimmutable");
-#endif
+#endif /* HAVE_UF_IMMUTABLE */
 #if HAVE_UF_APPEND
       CHECK_FLAG(UF_APPEND, "uappend");
-#endif
+#endif /* HAVE_UF_APPEND */
 #if HAVE_UF_OPAQUE
       CHECK_FLAG(UF_OPAQUE, "opaque");
-#endif
+#endif /* HAVE_UF_OPAQUE */
 #if HAVE_UF_NOUNLINK
       CHECK_FLAG(UF_NOUNLINK, "uunlink");
-#endif
+#endif /* HAVE_UF_NOUNLINK */
 #if HAVE_UF_COMPRESSED
       CHECK_FLAG(UF_COMPRESSED, "compressed");
-#endif
+#endif /* HAVE_UF_COMPRESSED */
 #if HAVE_UF_TRACKED
       CHECK_FLAG(UF_TRACKED, "tracked");
-#endif
+#endif /* HAVE_UF_TRACKED */
 #if HAVE_UF_SYSTEM
       CHECK_FLAG(UF_SYSTEM, "system");
-#endif
+#endif /* HAVE_UF_SYSTEM */
 #if HAVE_UF_SPARSE
       CHECK_FLAG(UF_SPARSE, "sparse");
-#endif
+#endif /* HAVE_UF_SPARSE */
 #if HAVE_UF_OFFLINE
       CHECK_FLAG(UF_OFFLINE, "offline");
-#endif
+#endif /* HAVE_UF_OFFLINE */
 #if HAVE_UF_REPARSE
       CHECK_FLAG(UF_REPARSE, "reparse");
-#endif
+#endif /* HAVE_UF_REPARSE */
 #if HAVE_UF_ARCHIVE
       CHECK_FLAG(UF_ARCHIVE, "uarchive");
-#endif
+#endif /* HAVE_UF_ARCHIVE */
 #if HAVE_UF_READONLY
       CHECK_FLAG(UF_READONLY, "readonly");
-#endif
+#endif /* HAVE_UF_READONLY */
 #if HAVE_UF_HIDDEN
       CHECK_FLAG(UF_HIDDEN, "hidden");
-#endif
+#endif /* HAVE_UF_HIDDEN */
 #if HAVE_SF_ARCHIVED
       CHECK_FLAG(SF_ARCHIVED, "archived");
-#endif
+#endif /* HAVE_SF_ARCHIVED */
 #if HAVE_SF_IMMUTABLE
       CHECK_FLAG(SF_IMMUTABLE, "simmutable");
-#endif
+#endif /* HAVE_SF_IMMUTABLE */
 #if HAVE_SF_APPEND
       CHECK_FLAG(SF_APPEND, "sappend");
-#endif
+#endif /* HAVE_SF_APPEND */
 #if HAVE_SF_NOUNLINK
       CHECK_FLAG(SF_NOUNLINK, "sunlink");
-#endif
+#endif /* HAVE_SF_NOUNLINK */
 #if HAVE_SF_SNAPSHOT
       CHECK_FLAG(SF_SNAPSHOT, "snapshot");
-#endif
+#endif /* HAVE_SF_SNAPSHOT */
 
 #undef CHECK_FLAG
 
@@ -2023,7 +2023,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       && (sbuf1.st_mtime != sbuf2.st_mtime
 #ifdef ST_MTIMENSEC
 	  || sbuf1.ST_MTIMENSEC.tv_nsec != sbuf2.ST_MTIMENSEC.tv_nsec
-#endif
+#endif /* defined(ST_MTIMENSEC) */
 	  )
       )
     {
@@ -2031,9 +2031,9 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 			      sbuf1.st_mtime, sbuf2.st_mtime,
 #ifdef ST_CTIMENSEC
 			      sbuf1.ST_MTIMENSEC.tv_nsec, sbuf2.ST_MTIMENSEC.tv_nsec
-#else
+#else /* ! defined(ST_CTIMENSEC) */
 			      -1, -1
-#endif
+#endif /* ! defined(ST_CTIMENSEC) */
 			      );
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
@@ -2041,7 +2041,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       && ( sbuf1.st_atime != sbuf2.st_atime
 #ifdef ST_ATIMENSEC
 	   || sbuf1.ST_ATIMENSEC.tv_nsec != sbuf2.ST_ATIMENSEC.tv_nsec
-#endif
+#endif /* ! defined(ST_ATIMENSEC) */
 	   )
       )
     {
@@ -2049,9 +2049,9 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 			      sbuf1.st_atime, sbuf2.st_atime,
 #ifdef ST_CTIMENSEC
 			      sbuf1.ST_ATIMENSEC.tv_nsec, sbuf2.ST_ATIMENSEC.tv_nsec
-#else
+#else /* ! defined(ST_CTIMENSEC) */
 			      -1, -1
-#endif
+#endif /* ! defined(ST_CTIMENSEC) */
 			      );
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
@@ -2059,7 +2059,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       && ( sbuf1.st_ctime != sbuf2.st_ctime
 #ifdef ST_CTIMENSEC
 	   || sbuf1.ST_CTIMENSEC.tv_nsec != sbuf2.ST_CTIMENSEC.tv_nsec
-#endif
+#endif /* ! defined(ST_CTIMENSEC) */
 	   )
       )
     {
@@ -2067,9 +2067,9 @@ dodiff(options_t* opts, const char* p1, const char* p2)
 			      sbuf1.st_ctime, sbuf2.st_ctime,
 #ifdef ST_CTIMENSEC
 			      sbuf1.ST_CTIMENSEC.tv_nsec, sbuf2.ST_CTIMENSEC.tv_nsec
-#else
+#else /* ! defined(ST_CTIMENSEC) */
 			      -1, -1
-#endif
+#endif /* ! defined(ST_CTIMENSEC) */
 			      );
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
@@ -2135,14 +2135,14 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       if (xl1) str_list_destroy(xl1);
       if (xl2) str_list_destroy(xl2);
     }
-#endif
+#endif /* HAVE_LGETXATTR */
 
 #if HAVE_ACL
   if (opts->acl
 #if HAVE_S_IFLNK
       && ((sbuf1.st_mode)&S_IFMT) != S_IFLNK
       && ((sbuf2.st_mode)&S_IFMT) != S_IFLNK
-#endif
+#endif /* HAVE_S_IFLNK */
       )
     {
       int nrv;
@@ -2158,7 +2158,7 @@ dodiff(options_t* opts, const char* p1, const char* p2)
       int nrv = diff_acl(opts, p1, p2, ACL_TYPE_DEFAULT, "default");
       BUMP_EXIT_CODE(rv, nrv);
     }
-#endif
+#endif /* HAVE_ACL */
 
   /* Type tests */
   if (((sbuf1.st_mode)&S_IFMT) != ((sbuf2.st_mode)&S_IFMT))
@@ -2338,12 +2338,12 @@ main(int argc, char*argv[])
 
   setprogname(argv[0]);
 
-  #if DEBUG
+#if DEBUG
   fprintf(stderr, "%s: memory stats at start:\n",
 	  progname);
   pmem();
   fprintf(stderr, "%s: end\n", progname);
-  #endif
+#endif /* DEBUG */
 
   memset(&options, 0, sizeof(options));
 
@@ -2397,15 +2397,15 @@ main(int argc, char*argv[])
 #if HAVE_ST_FLAGS
 	{ "flags",             0, 0, 'f' },
 	{ "no-flags",          0, 0, 'F' },
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	{ "acl",               0, 0, 'l' },
 	{ "no-acl",            0, 0, 'L' },
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	{ "xattr",             0, 0, 'q' },
 	{ "no-xattr",          0, 0, 'Q' },
-#endif
+#endif /* HAVE_LGETXATTR */
 	{ "preset",            1, 0, 'p' },
 	{ "mode-and",          1, 0, 'a' },
 	{ "mode-or",           1, 0, 'o' },
@@ -2420,24 +2420,24 @@ main(int argc, char*argv[])
       switch( ( optcode =
 #if HAVE_GETOPT_LONG
 	     getopt_long
-#else
+#else /* ! HAVE_GETOPT_LONG */
 	     getopt
-#endif
+#endif /* ! HAVE_GETOPT_LONG */
 	     (argc, argv, "vVhdDtTmM"
 	      "uUgGnNeEiIyYzZsSbBcCjJkK"
 #if HAVE_ST_FLAGS
 	      "fF"
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	      "lL"
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	      "qQ"
-#endif
+#endif /* HAVE_LGETXATTR */
 	      "0123456789p:a:o:wWxX:O"
 #if HAVE_GETOPT_LONG
 	      , long_options, NULL
-#endif
+#endif /* HAVE_GETOPT_LONG */
 	      )))
 	{
 	case -1:
@@ -2489,15 +2489,15 @@ main(int argc, char*argv[])
 #if HAVE_ST_FLAGS
 	case 'f': options.flags            = 1; break;
 	case 'F': options.flags            = 0; break;
-#endif
+#endif /* HAVE_ST_FLAGS */
 #if HAVE_ACL
 	case 'l': options.acl		  = 1; break;
 	case 'L': options.acl		  = 0; break;
-#endif
+#endif /* HAVE_ACL */
 #if HAVE_LGETXATTR
 	case 'q': options.xattr		  = 1; break;
 	case 'Q': options.xattr		  = 0; break;
-#endif
+#endif /* HAVE_LGETXATTR */
 	case '0':
 	case '1':
 	case '2':

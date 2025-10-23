@@ -1,5 +1,9 @@
 2025-10-22  Philippe Troin  <phil@fifi.org>
 
+	* tdiff.c (report_missing_xattr, compare_xattrs, open_path)
+	(get_file_type, show_version, show_help, dodiff, main): Comment
+	else/endif preprocessor directives.
+
 	* NEWS:
 	* README.md:
 	* tdiff.spec:
