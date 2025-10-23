@@ -172,7 +172,9 @@ static str_list_t *get_dir_list(const char* path, const struct stat*, int*);
 static int dodiff(options_t* opts, const char* p1, const char* p2);
 static char* pconcat(const char* p1, const char* p2);
 static int exec_process(const dexe_t *dex, const char* p1, const char* p2);
+#if HAVE_ACL && HAVE_LGETXATTR
 static int drop_acl_xattrs(const char*);
+#endif /* HAVE_ACL && HAVE_LGETXATTR */
 
 #if DEBUG
 static void print_options(const options_t*);
@@ -371,6 +373,7 @@ compare_xattrs(const char* p1, const char* p2,
   return rv;
 }
 
+# if HAVE_ACL
 static int
 drop_acl_xattrs(const char *xn)
 {
@@ -379,6 +382,7 @@ drop_acl_xattrs(const char *xn)
 	  || !strcmp(xn, "trusted.SGI_ACL_FILE")
 	  || !strcmp(xn, "trusted.SGI_ACL_DEFAULT"));
 }
+# endif /* HAVE_ACL */
 #endif /* HAVE_LGETXATTR */
 
 /*

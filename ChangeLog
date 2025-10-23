@@ -7,6 +7,8 @@
 	nanosecond structure members. No incidence since there no
 	platforms that have nanosecond fields on a subset of the struct
 	stat times.
+	(drop_acl_xattrs): Only include if HAVE_ACL. Fixes Android builds.
+	Only declare if HAVE_ACL and HAVE_LGETXATTR.
 
 	* NEWS:
 	* README.md:
