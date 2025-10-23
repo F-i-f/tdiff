@@ -1,5 +1,5 @@
 Name:		tdiff
-Version:	0.8.8
+Version:	0.8.9
 Release:	1%{?dist}
 Summary:	Compare tree permissions, modes, ownership, xattrs, etc
 
@@ -53,6 +53,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_docdir}/%{name}
 
 %changelog
+* Wed Oct 22 2025 Philippe Troin  <phil@fifi.org> - 0.8.9-1
+- Upstream release 0.8.9.
+  * Android builds could fail because of an unused static function.
+  * Code refactoring and cleanups.
+
 * Wed Oct 22 2025 Philippe Troin  <phil@fifi.org> - 0.8.8-1
 - Upstream release 0.8.8.
   * An excluded but missing file caused tdiff to exit with a failure

@@ -1,5 +1,16 @@
 -*- outline -*-
 
+* Release 0.8.9
+** October 22, 2025.
+
+** Bugs fixed:
+
+- Android builds could fail because of an unused static function.
+
+** Improvements:
+
+- Code refactoring and cleanups.
+
 * Release 0.8.8
 ** October 22, 2025.
 

@@ -1,5 +1,12 @@
 2025-10-22  Philippe Troin  <phil@fifi.org>
 
+	* configure.ac (AC_INIT):
+	* NEWS:
+	* README.md :
+	* tdiff.spec:
+	Bump version to 0.8.9, update changelog.
+
+
 	* tdiff.c (print_list, dodiff):
 	* genhash.c (gh_string_hash_old):
 	Dont use C99 // comments.
@@ -17,7 +24,7 @@
 	* NEWS:
 	* README.md:
 	* tdiff.spec:
-	Bbump version to 0.8.8, update changelog.
+	Bump version to 0.8.8, update changelog.
 
 	* configure.ac: Bump version to 0.8.8, update copyright.
 
