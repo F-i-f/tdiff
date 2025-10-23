@@ -3,6 +3,10 @@
 	* tdiff.c (report_missing_xattr, compare_xattrs, open_path)
 	(get_file_type, show_version, show_help, dodiff, main): Comment
 	else/endif preprocessor directives.
+	(dodiff): Use the right preprocessor checks before using
+	nanosecond structure members. No incidence since there no
+	platforms that have nanosecond fields on a subset of the struct
+	stat times.
 
 	* NEWS:
 	* README.md:

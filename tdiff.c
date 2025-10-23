@@ -2029,11 +2029,11 @@ dodiff(options_t* opts, const char* p1, const char* p2)
     {
       report_time_discrepancy(subpath, "mtime",
 			      sbuf1.st_mtime, sbuf2.st_mtime,
-#ifdef ST_CTIMENSEC
+#ifdef ST_MTIMENSEC
 			      sbuf1.ST_MTIMENSEC.tv_nsec, sbuf2.ST_MTIMENSEC.tv_nsec
-#else /* ! defined(ST_CTIMENSEC) */
+#else /* ! defined(ST_MTIMENSEC) */
 			      -1, -1
-#endif /* ! defined(ST_CTIMENSEC) */
+#endif /* ! defined(ST_MTIMENSEC) */
 			      );
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
@@ -2047,11 +2047,11 @@ dodiff(options_t* opts, const char* p1, const char* p2)
     {
       report_time_discrepancy(subpath, "atime",
 			      sbuf1.st_atime, sbuf2.st_atime,
-#ifdef ST_CTIMENSEC
+#ifdef ST_ATIMENSEC
 			      sbuf1.ST_ATIMENSEC.tv_nsec, sbuf2.ST_ATIMENSEC.tv_nsec
-#else /* ! defined(ST_CTIMENSEC) */
+#else /* ! defined(ST_ATIMENSEC) */
 			      -1, -1
-#endif /* ! defined(ST_CTIMENSEC) */
+#endif /* ! defined(ST_ATIMENSEC) */
 			      );
       BUMP_EXIT_CODE(rv, XIT_DIFF);
     }
